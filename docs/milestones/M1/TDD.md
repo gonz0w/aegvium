@@ -36,3 +36,5 @@ The [stream diagnostic packet](RELAYD-STREAM.md) retains thirty connected leaves
 The [buffered-request wake packet](RELAYD-BUFFER.md) adds four diagnostic controls (current connected admission: thirty-four); prior failed expectations remain unchanged and discovery-source inference is separate from installed provenance.
 
 The [TCP control packet](RELAYD-TCP.md) adds thirteen leaves alongside unchanged HTTP expectations (current connected admission: forty-seven). It compares plaintext transport-only relayd and retains original failures.
+
+The [recovery diagnostic](RELAYD-RECOVERY.md) adds six raw HEAD/POST controls and passive recovery snapshots (current connected admission: fifty-three), retaining all existing assertions.
