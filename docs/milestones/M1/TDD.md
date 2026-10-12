@@ -19,4 +19,6 @@ Host fixtures assert permitted backend receipt/body bytes, denied zero receipts 
 
 ## Native source-build slice
 
-The [native packet](NATIVE-ENGINE.md) defines an offline native compile followed by all 13 admitted engine/CRS cases. Host failures must reject compiler drift, incomplete/root build receipts and failed transfer/compile before any test admission. Native receipts identify the compiler, source archive, unprivileged compiler UID and newly built binary; guest deadline, patch/reboot, source/base and teardown gates remain mandatory. The cross-built binary is a separate control and cannot satisfy native build acceptance.
+The [native packet](NATIVE-ENGINE.md) defines an offline native compile followed by all admitted engine/CRS cases. Host failures must reject compiler drift, incomplete/root build receipts and failed transfer/compile before any test admission. Native receipts identify the compiler, source archive, unprivileged compiler UID and newly built binary; guest deadline, patch/reboot, source/base and teardown gates remain mandatory. The cross-built binary is a separate control and cannot satisfy native build acceptance.
+
+The [explicit-error adapter packet](ERROR-ADAPTER.md) scopes seven additional in-memory completion cases; current fixture admission requires 20 named cases. Older source-build and execution receipts retain their original 13-case scope.
