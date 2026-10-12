@@ -330,6 +330,51 @@ def relayd_config_guest(guest, work):
     return {'mode': 'syntax-only; daemon never started', 'input_sha256': hashes,
             'receipts': parse_relayd(log.read_text(), hashes['ingress.conf']), 'log_sha256': digest(log)}
 
+
+TRAFFIC_CASES = {'TestRelaydTraffic/' + name for name in (
+    'direct-benign-get', 'direct-benign-post', 'direct-uri-denied', 'direct-body-denied',
+    'relayd-benign-get', 'relayd-benign-post', 'relayd-uri-denied', 'relayd-body-denied',
+    'inspection-loss', 'recovery')}
+
+
+def parse_traffic(text, binary_hash, profile_hash, relayd_hash):
+    receipts, passed = {}, set()
+    for line in text.splitlines():
+        if line.startswith('TRAFFIC\t'):
+            parts = line.split('\t')
+            if len(parts) != 3 or parts[1] in receipts:
+                raise ValueError('malformed/duplicate traffic receipt')
+            receipts[parts[1]] = parts[2]
+        match = re.fullmatch(r'\s*--- PASS: (\S+) \([0-9.]+s\)', line)
+        if match:
+            if match[1] in passed or match[1] not in TRAFFIC_CASES | {'TestRelaydTraffic'}:
+                raise ValueError('unknown/duplicate traffic case')
+            passed.add(match[1])
+        if '--- SKIP:' in line or '--- FAIL:' in line:
+            raise ValueError('traffic skipped/failed test')
+    if (set(receipts) != {'relayd', 'profile', 'binary', 'uid', 'cleanup', 'daemon-log'}
+            or receipts.get('relayd') != relayd_hash or receipts.get('profile') != profile_hash
+            or receipts.get('binary') != binary_hash or receipts.get('cleanup') != 'verified'
+            or not re.fullmatch(r'[1-9][0-9]*', receipts.get('uid', ''))
+            or not re.fullmatch('[0-9a-f]{64}', receipts.get('daemon-log', ''))
+            or passed != TRAFFIC_CASES | {'TestRelaydTraffic'} or text.splitlines().count('PASS') != 1):
+        raise ValueError('incomplete/mismatched traffic results')
+    return {'receipts': receipts, 'cases': sorted(TRAFFIC_CASES), 'case_count': len(TRAFFIC_CASES)}
+
+
+def relayd_traffic_guest(guest, work, binary_hash, relayd_hash):
+    profile = (ROOT / 'research/relayd/traffic.conf').read_bytes()
+    profile_hash = hashlib.sha256(profile).hexdigest()
+    guest.require('set -eu; cat > /var/aegvium-relayd/traffic.conf', data=profile)
+    script = (ROOT / 'tools/native/relayd-traffic.sh').read_bytes()
+    script = script.replace(b'TRAFFIC_PROFILE_SHA256', profile_hash.encode()).replace(b'BINARY_SHA256', binary_hash.encode())
+    log = work / 'relayd-traffic.log'
+    with log.open('wb') as output:
+        response = guest.call('sh -s', data=script, seconds=150, output=output)
+    if response.returncode:
+        raise RuntimeError('relayd traffic experiment failed; see relayd-traffic.log')
+    return {**parse_traffic(log.read_text(), binary_hash, profile_hash, relayd_hash), 'log_sha256': digest(log)}
+
 def bound_child_storage():
     # Applies to supervisor/QEMU only. The snapshot stays in the private run.
     resource.setrlimit(resource.RLIMIT_FSIZE, (4 * 1024**3, 4 * 1024**3))
@@ -344,6 +389,7 @@ def run():
     parser.add_argument('--inject-failure', choices=('boot', 'ssh', 'auth', 'transfer', 'test'))
     parser.add_argument('--source-build', action='store_true')
     parser.add_argument('--relayd-config', action='store_true')
+    parser.add_argument('--relayd-traffic', action='store_true')
     args = parser.parse_args()
     os.umask(0o077)
     if git('status', '--porcelain'):
@@ -367,7 +413,7 @@ def run():
     duration = 1800 if args.source_build else 900
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
-              'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config, 'passed': False,
+              'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
@@ -406,7 +452,7 @@ def run():
         report['patch_refresh'] = patch_guest(guest, work)
         if args.inject_failure == 'transfer':
             raise RuntimeError('injected transfer-stage failure')
-        if args.relayd_config:
+        if args.relayd_config or args.relayd_traffic:
             print('Validating stock relayd configuration without starting daemon...', flush=True)
             report['relayd_config'] = relayd_config_guest(guest, work)
         if args.source_build:
@@ -415,6 +461,10 @@ def run():
             report['native_build'] = True
         else:
             report['native'] = engine_guest(guest, work, binary, binary_hash)
+        if args.relayd_traffic:
+            print('Running guest-loopback stock relayd / Coraza traffic comparison...', flush=True)
+            report['relayd_traffic'] = relayd_traffic_guest(guest, work, report['native']['receipts']['binary'],
+                                                           report['relayd_config']['receipts']['binary'])
         if args.inject_failure == 'test':
             raise RuntimeError('injected test-stage failure')
         report['native_subset_passed'] = True
