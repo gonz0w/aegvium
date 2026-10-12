@@ -21,3 +21,7 @@ This experiment observes middleware completion only. It cannot prove all request
 Run seven named adapter cases: empty benign GET, benign POST with exact byte assertion, read failure before data, partial-data read failure, URI denial, body denial and logged DetectionOnly URI forwarding. Require exact status and backend count for every case. Both read failures require 500 and zero receipts; the original upstream reader-error test still expects implicit 200 and zero receipts.
 
 Host tests, vet, race and audit are tooling evidence. Repeat the entire 20-case fixture in the independently owned patched OpenBSD guest as nonroot; admit the exact named set and verify teardown/source/base. Preserve the earlier 13-case build observations as historical. No full CRS, relayd parser, connector, appliance or OWASP Top 10 coverage claim.
+
+## Observed outcome
+
+Runtime candidate `3f6c03dc2e7ac9d12fa6ca0d451bfa0791970c18` passed the full 20-case fixture in the owned OpenBSD guest as UID 32767; explicit immediate/partial reader-error cases returned 500 and zero backend receipts. [Receipts](../../../research/native/error-adapter-observations.json) bind source/tree/binary/runtime hashes and verified teardown/source/base. Host tests, vet, race and advisory audit passed. Native evidence is cross-build execution only; source-build receipts for earlier candidates remain unchanged. No connector or phase gate is accepted.
