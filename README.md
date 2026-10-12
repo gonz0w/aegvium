@@ -33,3 +33,5 @@ The [inspection stream trace](docs/milestones/M1/RELAYD-STREAM.md) recorded only
 The [buffer wake control](docs/milestones/M1/RELAYD-BUFFER.md) let the second request through after extra client input. It supports a buffered-read hypothesis; baseline failures and safe repair/profile selection remain unresolved.
 
 The [official release-source comparison](docs/milestones/M1/RELAYD-SOURCE.md) authenticates the 7.9 source archive and finds the same callback condition in its static control flow. Installed binary attribution and a safe repair remain separate gates.
+
+The [stock TCP relay control](docs/milestones/M1/RELAYD-TCP.md) passed the tested pipelines without wake input, but its recovery POST failed after readiness. The full native comparison remains failed at 42/47; connector adoption remains open.

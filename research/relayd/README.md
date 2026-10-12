@@ -49,3 +49,7 @@ The [wake packet](../../docs/milestones/M1/RELAYD-BUFFER.md), [discovery-source 
 ## Official release-source comparison
 
 The [release-source study](../../docs/milestones/M1/RELAYD-SOURCE.md) authenticates the official 7.9 source archive and pins [fingerprints](release-source.json). Its HTTP reader retains the callback condition implicated by the wake controls. Release source attribution is now observed separately from the still-unresolved installed binary/image build lineage. This static slice adds no native run or runtime change; the failed 30/34 result remains unchanged.
+
+## Stock TCP transport control
+
+The [TCP control packet](../../docs/milestones/M1/RELAYD-TCP.md) and [receipts](tcp-observations.json) preserve an initial pre-start syntax failure and a corrected native comparison. Twelve of thirteen new TCP leaves passed, including both ordinary pipelines without wake input and exact backend counts. The TCP recovery POST returned EOF with zero backend receipts despite preceding readiness success. Four unchanged HTTP pipeline failures remained, so the full connected run failed at 42/47. Twenty engine cases, configtests and cleanup/source/base gates passed. Transport-only relayd remains a research candidate with an unresolved recovery blocker; no TLS/identity/profile adoption follows.

@@ -204,23 +204,29 @@ func TestRelaydTraffic(t *testing.T) {
 		return response.StatusCode, string(data), err
 	}
 	ready := func(t *testing.T) {
-		before := len(snapshot())
-		deadline := time.Now().Add(20 * time.Second)
-		for time.Now().Before(deadline) {
-			status, _, err := send("http://127.0.0.1:18080", "HEAD", "/_aegvium/ready", "")
-			if err == nil && status == 200 {
-				if len(snapshot()) != before {
-					t.Fatal("readiness reached synthetic backend")
+		for _, base := range []string{"http://127.0.0.1:18080", "http://127.0.0.1:18082"} {
+			before := len(snapshot())
+			deadline := time.Now().Add(20 * time.Second)
+			ok := false
+			for time.Now().Before(deadline) {
+				status, _, err := send(base, "HEAD", "/_aegvium/ready", "")
+				if err == nil && status == 200 {
+					if len(snapshot()) != before {
+						t.Fatal("readiness reached synthetic backend")
+					}
+					ok = true
+					break
 				}
-				return
+				time.Sleep(100 * time.Millisecond)
 			}
-			time.Sleep(100 * time.Millisecond)
+			if !ok {
+				t.Fatalf("relayd readiness deadline exceeded for %s", base)
+			}
 		}
-		t.Fatal("relayd readiness deadline exceeded")
 	}
 	ready(t)
 	for _, arm := range []struct{ name, base string }{
-		{"direct", "http://127.0.0.1:18081"}, {"relayd", "http://127.0.0.1:18080"},
+		{"direct", "http://127.0.0.1:18081"}, {"relayd", "http://127.0.0.1:18080"}, {"tcp", "http://127.0.0.1:18082"},
 	} {
 		for _, tc := range []struct {
 			name, method, path, body string
@@ -250,7 +256,7 @@ func TestRelaydTraffic(t *testing.T) {
 
 	// Raw request bytes preserve framing that a normal HTTP client would normalize.
 	for _, arm := range []struct{ name, address string }{
-		{"direct", "127.0.0.1:18081"}, {"relayd", "127.0.0.1:18080"},
+		{"direct", "127.0.0.1:18081"}, {"relayd", "127.0.0.1:18080"}, {"tcp", "127.0.0.1:18082"},
 		{"direct-longidle", "127.0.0.1:18081"}, {"relayd-longidle", "127.0.0.1:18080"},
 	} {
 		if arm.name == "direct-longidle" {
@@ -279,6 +285,9 @@ func TestRelaydTraffic(t *testing.T) {
 			{"wake-pipeline-denied-benign", "GET /forbidden HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{403, 200}, false, false, true},
 			{"wake-pipeline-benign-benign", "GET /allowed HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{200, 200}, false, false, true},
 		} {
+			if arm.name == "tcp" && tc.wake {
+				continue
+			}
 			if strings.HasSuffix(arm.name, "-longidle") && tc.name != "pipeline-denied-benign" && tc.name != "pipeline-benign-benign" && tc.name != "serialized-denied-benign" {
 				continue
 			}
@@ -427,6 +436,26 @@ func TestRelaydTraffic(t *testing.T) {
 			t.Fatal("inspection loss forwarded to backend")
 		}
 	})
+	t.Run("tcp-inspection-loss", func(t *testing.T) {
+		before := len(snapshot())
+		connection, err := net.DialTimeout("tcp4", backendServer.Addr, time.Second)
+		if err != nil {
+			t.Fatalf("backend was not alive during TCP inspection loss: %v", err)
+		}
+		_ = connection.Close()
+		for i := 0; i < 3; i++ {
+			status, _, err := send("http://127.0.0.1:18082", "GET", "/allowed", "")
+			if err == nil && status < 400 {
+				t.Fatalf("TCP inspection loss returned success status %d", status)
+			}
+			t.Logf("TCP loss attempt %d: status=%d transport-error=%t", i+1, status, err != nil)
+			time.Sleep(500 * time.Millisecond)
+		}
+		if len(snapshot()) != before {
+			t.Fatal("TCP inspection loss forwarded to backend")
+		}
+	})
+
 	t.Run("recovery", func(t *testing.T) {
 		inspection = start(t, "127.0.0.1:18081", inspectionHandler, time.Second)
 		ready(t)
@@ -435,6 +464,14 @@ func TestRelaydTraffic(t *testing.T) {
 		got := snapshot()[before:]
 		if err != nil || status != 200 || body != "synthetic backend\n" || len(got) != 1 || got[0] != "POST /allowed payload=recovered" {
 			t.Fatalf("recovery status=%d receipts=%v response=%q err=%v", status, got, body, err)
+		}
+	})
+	t.Run("tcp-recovery", func(t *testing.T) {
+		before := len(snapshot())
+		status, body, err := send("http://127.0.0.1:18082", "POST", "/allowed", "payload=recovered")
+		got := snapshot()[before:]
+		if err != nil || status != 200 || body != "synthetic backend\n" || len(got) != 1 || got[0] != "POST /allowed payload=recovered" {
+			t.Fatalf("TCP recovery status=%d receipts=%v response=%q err=%v", status, got, body, err)
 		}
 	})
 }
