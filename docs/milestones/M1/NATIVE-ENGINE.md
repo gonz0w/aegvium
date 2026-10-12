@@ -35,3 +35,7 @@ Failure injection must exercise boot/SSH/auth rotation/transfer/test failures an
 ## Implemented preparation
 
 `tools/lab-supervisor.py` adapts the BSD-licensed Nomvium process-group supervisor with a mandatory 1–900 second deadline. Host regression tests exercise controller EOF, deadline expiry, normal child exit and TERM-resistant child escalation. These establish host lifecycle behavior only. Image admission, credential rotation, patch provisioning and the guest controller remain outstanding; no Aegvium VM execution is claimed.
+
+### Independent image admission
+
+`python3 tools/native-image.py SOURCE NAME` streams and checks the pinned decoded qcow2 into a new `.tools/native/NAME` directory. It rejects symlinked source paths, nonregular files, hash mismatches and existing destinations. The base is private/read-only; the receipt explicitly records third-party provenance and no guest execution. This admits decoded image bytes only: compressed archive, bootstrap credentials, patches and guest lifecycle are separate checks before any boot.
