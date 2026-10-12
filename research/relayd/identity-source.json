@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "scope": "static identity transport research; no receiver, native run or runtime adoption",
+  "release": "OpenBSD 7.9",
+  "authenticated_archive_reference": "release-source.json",
+  "archive_sha256": "fb305c553059b48e8ee64539f392b783cb38a67865823f6f6a94f3b220a1268b",
+  "archive_match": true,
+  "manifest_reverification": {
+    "verifier": "host OpenSSL Ed25519 pkeyutl using previously pinned release key and exact signed message",
+    "valid_exit": 0,
+    "tampered_exit": 1
+  },
+  "members": {
+    "usr.sbin/relayd/relay.c": {
+      "bytes": 67985,
+      "sha256": "1263ab095f27146f3dd045102aed95f2e86b2eac5f7aad09cc4ff3373f4ce4a3",
+      "rcs_header": "/*\t$OpenBSD: relay.c,v 1.263 2026/04/02 13:38:24 tb Exp $\t*/"
+    },
+    "usr.sbin/relayd/parse.y": {
+      "bytes": 80606,
+      "sha256": "1aae1cb9e8ceab387662bdb023e3494b6b5508e81af1a107881a12c56a48d9d3",
+      "rcs_header": "/*\t$OpenBSD: parse.y,v 1.262 2026/04/06 09:14:54 kirill Exp $\t*/"
+    },
+    "usr.sbin/relayd/relayd.h": {
+      "bytes": 37879,
+      "sha256": "bebe060327f1451622cb7ff6fe0410e149942f9d56ffe8dd3154f596c3ecbd19",
+      "rcs_header": "/*\t$OpenBSD: relayd.h,v 1.278 2026/03/02 19:28:01 rsadowski Exp $\t*/"
+    },
+    "usr.sbin/relayd/proxy_protocol.c": {
+      "bytes": 3949,
+      "sha256": "ac408b6d2fd40809df14c7ae061532b98a618106b1cc08d7141dca0db1157875",
+      "rcs_header": null
+    },
+    "usr.sbin/relayd/check_tcp.c": {
+      "bytes": 10745,
+      "sha256": "dc8fcb4a413b5c624d3e9ebf740e301a58fa264e8d7fc87c2d3bbdb1e29b888d",
+      "rcs_header": "/*\t$OpenBSD: check_tcp.c,v 1.62 2026/03/02 19:28:01 rsadowski Exp $\t*/"
+    }
+  },
+  "analysis": {
+    "configuration": {
+      "path": "usr.sbin/relayd/parse.y",
+      "lines": [
+        "1107-1109",
+        "1955-1969"
+      ],
+      "finding": "forward option selects output v1/v2 flag"
+    },
+    "accepted_addresses": {
+      "path": "usr.sbin/relayd/relay.c",
+      "lines": [
+        "1124-1125",
+        "1172-1186"
+      ],
+      "finding": "source from accept; destination address from getsockname; configured listener port used by writer"
+    },
+    "output_order": {
+      "path": "usr.sbin/relayd/relay.c",
+      "lines": [
+        "774-792"
+      ],
+      "finding": "PROXY header appended before pending application output; shared TCP/HTTP connection path"
+    },
+    "writers": {
+      "path": "usr.sbin/relayd/proxy_protocol.c",
+      "lines": [
+        "55-88",
+        "90-144"
+      ],
+      "finding": "v1 TCP4/TCP6 text; v2 PROXY command with IPv4/IPv6 address block only; no TLS/SNI/ALPN TLVs emitted"
+    },
+    "http_health_probe": {
+      "paths": [
+        "usr.sbin/relayd/parse.y",
+        "usr.sbin/relayd/check_tcp.c"
+      ],
+      "lines": [
+        "917-930",
+        "187-191",
+        "214-237"
+      ],
+      "finding": "HTTP code probe builds bare HEAD request; TCP checker sends configured buffer without relay output PROXY writer"
+    }
+  },
+  "specification": {
+    "url": "https://www.haproxy.org/download/3.0/doc/proxy-protocol.txt",
+    "bytes": 49915,
+    "sha256": "66be61883fcad0dafc27af8c73c5c4d9aba6e43039ffe35fd72cf4d07266c98d",
+    "trust": "primary specification fetched over HTTPS; checksum is content pin, not release signature"
+  },
+  "license_review": "ISC-style notices inspected in unmodified ignored release members; no upstream code redistributed or runtime dependency added",
+  "native_status": "not executed; prior TLS run remains failed at 59/63 with all ten new TLS leaves passing",
+  "installed_binary_lineage": "unresolved; release source does not establish installed compiler/build/patch lineage",
+  "recommendation": "research strict per-listener v1 TCP4 receiver first, with separate readiness and explicit local peer containment gates; do not adopt PROXY as authentication or TLS metadata"
+}

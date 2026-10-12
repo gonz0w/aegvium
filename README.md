@@ -39,3 +39,5 @@ The [stock TCP relay control](docs/milestones/M1/RELAYD-TCP.md) passed the teste
 The [recovery follow-up](docs/milestones/M1/RELAYD-RECOVERY.md) traced the prior TCP recovery failure to premature inspection cleanup in the test fixture. Parent-owned inspection passed TCP recovery and six additional controls; the full native suite remains failed at 49/53 on existing HTTP pipelines.
 
 The [stock TCP/TLS study](docs/milestones/M1/RELAYD-TLS.md) passed ten new HTTPS cases, including intact pipelines, strict client certificate checks and inspection loss/recovery. The complete native comparison remains failed at 59/63 on unchanged HTTP pipelines; trust policy and connector adoption remain open.
+
+The [client-identity study](docs/milestones/M1/RELAYD-IDENTITY.md) identifies stock PROXY address output as a companion candidate, with separate readiness and sender-containment requirements. It adds source evidence and a proposed test matrix; receiver implementation and native trust qualification remain pending.

@@ -40,3 +40,5 @@ The [TCP control packet](RELAYD-TCP.md) adds thirteen leaves alongside unchanged
 The [recovery diagnostic](RELAYD-RECOVERY.md) adds six raw HEAD/POST controls and passive recovery snapshots (current connected admission: fifty-three), retaining all existing assertions.
 
 The [TLS termination packet](RELAYD-TLS.md) adds ten guest-only HTTPS/client-verification leaves (current connected admission: sixty-three) and ephemeral public-certificate/cleanup admission; prior failures remain required.
+
+The [identity feasibility study](RELAYD-IDENTITY.md) pins static source findings and proposes the next prefix/trust/readiness matrix. It adds no native cases; connected admission remains sixty-three. Receiver implementation requires a concrete bounded packet before execution.
