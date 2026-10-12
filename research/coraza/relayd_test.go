@@ -6,6 +6,8 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -185,6 +187,20 @@ func TestRelaydTraffic(t *testing.T) {
 		inspected.ServeHTTP(w, r)
 	})
 	inspection := start(t, "127.0.0.1:18081", inspectionHandler, time.Second)
+	certificate, err := os.ReadFile("/etc/ssl/aegvium-fixture.crt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("tls-certificate sha256=%x", sha256.Sum256(certificate))
+	roots := x509.NewCertPool()
+	if !roots.AppendCertsFromPEM(certificate) {
+		t.Fatal("invalid fixture certificate")
+	}
+	tlsConfig := &tls.Config{RootCAs: roots, ServerName: "fixture.test", MinVersion: tls.VersionTLS12}
+	tlsTransport := &http.Transport{Proxy: nil, DisableKeepAlives: true, TLSClientConfig: tlsConfig}
+	t.Cleanup(tlsTransport.CloseIdleConnections)
+	tlsClient := &http.Client{Transport: tlsTransport, Timeout: 3 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+
 	clientTransport := &http.Transport{Proxy: nil, DisableKeepAlives: true}
 	t.Cleanup(clientTransport.CloseIdleConnections)
 	client := &http.Client{Transport: clientTransport, Timeout: 3 * time.Second,
@@ -196,7 +212,11 @@ func TestRelaydTraffic(t *testing.T) {
 		}
 		req.Host = "fixture.test"
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		response, err := client.Do(req)
+		selected := client
+		if base == "https://127.0.0.1:18083" {
+			selected = tlsClient
+		}
+		response, err := selected.Do(req)
 		if err != nil {
 			return 0, "", err
 		}
@@ -234,7 +254,7 @@ func TestRelaydTraffic(t *testing.T) {
 	}
 
 	ready := func(t *testing.T) {
-		for _, base := range []string{"http://127.0.0.1:18080", "http://127.0.0.1:18082"} {
+		for _, base := range []string{"http://127.0.0.1:18080", "http://127.0.0.1:18082", "https://127.0.0.1:18083"} {
 			before := len(snapshot())
 			deadline := time.Now().Add(20 * time.Second)
 			ok := false
@@ -255,8 +275,49 @@ func TestRelaydTraffic(t *testing.T) {
 		}
 	}
 	ready(t)
+	for _, kind := range []string{"untrusted", "wrong-name"} {
+		t.Run("tls-reject-"+kind, func(t *testing.T) {
+			before := len(snapshot())
+			initialEvents, _ := eventSnapshot()
+			config := tlsConfig.Clone()
+			if kind == "untrusted" {
+				config.RootCAs = x509.NewCertPool()
+			} else {
+				config.ServerName = "wrong.fixture.test"
+			}
+			transport := &http.Transport{Proxy: nil, DisableKeepAlives: true, TLSClientConfig: config}
+			defer transport.CloseIdleConnections()
+			client := &http.Client{Transport: transport, Timeout: 3 * time.Second}
+			request, err := http.NewRequest("GET", "https://127.0.0.1:18083/allowed", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			request.Host = "fixture.test"
+			response, err := client.Do(request)
+			if response != nil {
+				_ = response.Body.Close()
+			}
+			var authority x509.UnknownAuthorityError
+			var name x509.HostnameError
+			if err == nil || (kind == "untrusted" && !errors.As(err, &authority)) || (kind == "wrong-name" && !errors.As(err, &name)) {
+				t.Fatalf("unexpected TLS verification outcome: %v", err)
+			}
+			events, _ := eventSnapshot()
+			applications := 0
+			for _, e := range events[len(initialEvents):] {
+				if e.Kind == "application-arrival" {
+					applications++
+				}
+			}
+			if len(snapshot()) != before || applications != 0 {
+				t.Fatal("rejected TLS verification reached application")
+			}
+			t.Logf("tls-rejection kind=%s backend-count=0 application-count=0", kind)
+		})
+	}
+
 	for _, arm := range []struct{ name, base string }{
-		{"direct", "http://127.0.0.1:18081"}, {"relayd", "http://127.0.0.1:18080"}, {"tcp", "http://127.0.0.1:18082"},
+		{"direct", "http://127.0.0.1:18081"}, {"relayd", "http://127.0.0.1:18080"}, {"tcp", "http://127.0.0.1:18082"}, {"tls", "https://127.0.0.1:18083"},
 	} {
 		for _, tc := range []struct {
 			name, method, path, body string
@@ -286,7 +347,7 @@ func TestRelaydTraffic(t *testing.T) {
 
 	// Raw request bytes preserve framing that a normal HTTP client would normalize.
 	for _, arm := range []struct{ name, address string }{
-		{"direct", "127.0.0.1:18081"}, {"relayd", "127.0.0.1:18080"}, {"tcp", "127.0.0.1:18082"},
+		{"direct", "127.0.0.1:18081"}, {"relayd", "127.0.0.1:18080"}, {"tcp", "127.0.0.1:18082"}, {"tls", "127.0.0.1:18083"},
 		{"direct-longidle", "127.0.0.1:18081"}, {"relayd-longidle", "127.0.0.1:18080"},
 	} {
 		if arm.name == "direct-longidle" {
@@ -315,6 +376,9 @@ func TestRelaydTraffic(t *testing.T) {
 			{"wake-pipeline-denied-benign", "GET /forbidden HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{403, 200}, false, false, true},
 			{"wake-pipeline-benign-benign", "GET /allowed HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{200, 200}, false, false, true},
 		} {
+			if arm.name == "tls" && tc.name != "pipeline-denied-benign" && tc.name != "pipeline-benign-benign" {
+				continue
+			}
 			if arm.name == "tcp" && tc.wake {
 				continue
 			}
@@ -332,6 +396,18 @@ func TestRelaydTraffic(t *testing.T) {
 				defer connection.Close()
 				if err := connection.SetDeadline(time.Now().Add(6 * time.Second)); err != nil {
 					t.Fatal(err)
+				}
+				if arm.name == "tls" {
+					secured := tls.Client(connection, tlsConfig.Clone())
+					if err := secured.Handshake(); err != nil {
+						t.Fatal(err)
+					}
+					state := secured.ConnectionState()
+					if len(state.VerifiedChains) == 0 {
+						t.Fatal("unverified TLS pipeline")
+					}
+					t.Logf("tls-handshake version=%#x cipher=%#x verified-chains=%d alpn=%q", state.Version, state.CipherSuite, len(state.VerifiedChains), state.NegotiatedProtocol)
+					connection = secured
 				}
 				wire := tc.wire
 				var secondWire string
@@ -486,6 +562,26 @@ func TestRelaydTraffic(t *testing.T) {
 		}
 	})
 
+	t.Run("tls-inspection-loss", func(t *testing.T) {
+		before := len(snapshot())
+		connection, err := net.DialTimeout("tcp4", backendServer.Addr, time.Second)
+		if err != nil {
+			t.Fatalf("backend was not alive during TLS inspection loss: %v", err)
+		}
+		_ = connection.Close()
+		for i := 0; i < 3; i++ {
+			status, _, err := send("https://127.0.0.1:18083", "GET", "/allowed", "")
+			if err == nil && status < 400 {
+				t.Fatalf("TLS inspection loss returned success %d", status)
+			}
+			t.Logf("TLS loss attempt %d: status=%d transport-error=%t", i+1, status, err != nil)
+			time.Sleep(500 * time.Millisecond)
+		}
+		if len(snapshot()) != before {
+			t.Fatal("TLS inspection loss reached backend")
+		}
+	})
+
 	t.Run("recovery", func(t *testing.T) {
 		observeRecovery(t)
 		inspection = start(fixtureT, "127.0.0.1:18081", inspectionHandler, time.Second)
@@ -506,6 +602,16 @@ func TestRelaydTraffic(t *testing.T) {
 			t.Fatalf("TCP recovery status=%d receipts=%v response=%q err=%v", status, got, body, err)
 		}
 	})
+	t.Run("tls-recovery", func(t *testing.T) {
+		observeRecovery(t)
+		before := len(snapshot())
+		status, body, err := send("https://127.0.0.1:18083", "POST", "/allowed", "payload=recovered")
+		got := snapshot()[before:]
+		if err != nil || status != 200 || body != "synthetic backend\n" || len(got) != 1 || got[0] != "POST /allowed payload=recovered" {
+			t.Fatalf("TLS recovery status=%d receipts=%v response=%q err=%v", status, got, body, err)
+		}
+	})
+
 	for _, arm := range []struct{ name, address string }{
 		{"direct", "127.0.0.1:18081"}, {"relayd", "127.0.0.1:18080"}, {"tcp", "127.0.0.1:18082"},
 	} {

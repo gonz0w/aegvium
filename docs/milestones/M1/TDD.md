@@ -38,3 +38,5 @@ The [buffered-request wake packet](RELAYD-BUFFER.md) adds four diagnostic contro
 The [TCP control packet](RELAYD-TCP.md) adds thirteen leaves alongside unchanged HTTP expectations (current connected admission: forty-seven). It compares plaintext transport-only relayd and retains original failures.
 
 The [recovery diagnostic](RELAYD-RECOVERY.md) adds six raw HEAD/POST controls and passive recovery snapshots (current connected admission: fifty-three), retaining all existing assertions.
+
+The [TLS termination packet](RELAYD-TLS.md) adds ten guest-only HTTPS/client-verification leaves (current connected admission: sixty-three) and ephemeral public-certificate/cleanup admission; prior failures remain required.
