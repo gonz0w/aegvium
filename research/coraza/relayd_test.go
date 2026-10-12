@@ -177,6 +177,7 @@ func TestRelaydTraffic(t *testing.T) {
 				w.WriteHeader(405)
 				return
 			}
+			recordEvent("readiness-arrival", r.Method, r.URL.Path, r.Context().Value(inspectionConnectionKey{}).(int))
 			w.WriteHeader(200)
 			return
 		}
@@ -203,6 +204,35 @@ func TestRelaydTraffic(t *testing.T) {
 		data, err := io.ReadAll(io.LimitReader(response.Body, 4096))
 		return response.StatusCode, string(data), err
 	}
+	fixtureT := t // Restored inspection belongs to the whole comparison.
+	observeRecovery := func(t *testing.T) {
+		before := len(snapshot())
+		initialEvents, _ := eventSnapshot()
+		initialWire := wireSnapshot()
+		t.Logf("recovery-start milliseconds=%d", time.Since(eventStart).Milliseconds())
+		t.Cleanup(func() {
+			eventList, overflow := eventSnapshot()
+			data, err := json.Marshal(eventList[len(initialEvents):])
+			if err != nil || overflow {
+				t.Fatalf("recovery diagnostics overflow=%t err=%v", overflow, err)
+			}
+			t.Logf("inspection-events %s", data)
+			wireData, err := json.Marshal(wireSnapshot()[len(initialWire):])
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Logf("inspection-wire %s", wireData)
+			got := snapshot()[before:]
+			hostile := 0
+			for _, receipt := range got {
+				if strings.Contains(receipt, "/forbidden") {
+					hostile++
+				}
+			}
+			t.Logf("recovery-observation backend-count=%d hostile-uri-count=%d", len(got), hostile)
+		})
+	}
+
 	ready := func(t *testing.T) {
 		for _, base := range []string{"http://127.0.0.1:18080", "http://127.0.0.1:18082"} {
 			before := len(snapshot())
@@ -457,7 +487,8 @@ func TestRelaydTraffic(t *testing.T) {
 	})
 
 	t.Run("recovery", func(t *testing.T) {
-		inspection = start(t, "127.0.0.1:18081", inspectionHandler, time.Second)
+		observeRecovery(t)
+		inspection = start(fixtureT, "127.0.0.1:18081", inspectionHandler, time.Second)
 		ready(t)
 		before := len(snapshot())
 		status, body, err := send("http://127.0.0.1:18080", "POST", "/allowed", "payload=recovered")
@@ -467,6 +498,7 @@ func TestRelaydTraffic(t *testing.T) {
 		}
 	})
 	t.Run("tcp-recovery", func(t *testing.T) {
+		observeRecovery(t)
 		before := len(snapshot())
 		status, body, err := send("http://127.0.0.1:18082", "POST", "/allowed", "payload=recovered")
 		got := snapshot()[before:]
@@ -474,6 +506,78 @@ func TestRelaydTraffic(t *testing.T) {
 			t.Fatalf("TCP recovery status=%d receipts=%v response=%q err=%v", status, got, body, err)
 		}
 	})
+	for _, arm := range []struct{ name, address string }{
+		{"direct", "127.0.0.1:18081"}, {"relayd", "127.0.0.1:18080"}, {"tcp", "127.0.0.1:18082"},
+	} {
+		for _, fresh := range []bool{false, true} {
+			mode := "reuse"
+			if fresh {
+				mode = "fresh"
+			}
+			t.Run(arm.name+"-recovery-head-post-"+mode, func(t *testing.T) {
+				observeRecovery(t)
+				before := len(snapshot())
+				dial := func() net.Conn {
+					conn, err := net.DialTimeout("tcp4", arm.address, time.Second)
+					if err != nil {
+						t.Fatal(err)
+					}
+					t.Cleanup(func() { _ = conn.Close() })
+					if err := conn.SetDeadline(time.Now().Add(6 * time.Second)); err != nil {
+						t.Fatal(err)
+					}
+					return conn
+				}
+				conn := dial()
+				defer func() { _ = conn.Close() }()
+				reader := bufio.NewReader(conn)
+				exchange := func(wire, method string) {
+					written, err := io.WriteString(conn, wire)
+					if err != nil || written != len(wire) {
+						t.Fatalf("recovery write bytes=%d want=%d err=%v", written, len(wire), err)
+					}
+					t.Logf("client-wire bytes=%d sha256=%x", written, sha256.Sum256([]byte(wire)))
+					response, err := http.ReadResponse(reader, &http.Request{Method: method})
+					if err != nil {
+						t.Fatalf("recovery %s read-error=%v", method, err)
+					}
+					body, err := io.ReadAll(io.LimitReader(response.Body, 4097))
+					_ = response.Body.Close()
+					t.Logf("recovery-response method=%s status=%d bytes=%d", method, response.StatusCode, len(body))
+					wantBody := ""
+					if method == "POST" {
+						wantBody = "synthetic backend\n"
+					}
+					if err != nil || len(body) > 4096 || response.StatusCode != 200 || string(body) != wantBody {
+						t.Fatalf("recovery %s status=%d body=%q err=%v", method, response.StatusCode, body, err)
+					}
+				}
+				head := "HEAD /_aegvium/ready HTTP/1.1\r\nHost: fixture.test\r\n"
+				if fresh {
+					head += "Connection: close\r\n"
+				}
+				exchange(head+"\r\n", "HEAD")
+				if len(snapshot()) != before {
+					t.Fatal("recovery HEAD reached backend")
+				}
+				if fresh {
+					if err := conn.Close(); err != nil {
+						t.Fatal(err)
+					}
+					conn = dial()
+					reader = bufio.NewReader(conn)
+				}
+				body := "payload=recovered"
+				post := fmt.Sprintf("POST /allowed HTTP/1.1\r\nHost: fixture.test\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: %d\r\nConnection: close\r\n\r\n%s", len(body), body)
+				exchange(post, "POST")
+				got := snapshot()[before:]
+				if len(got) != 1 || got[0] != "POST /allowed payload=recovered" {
+					t.Fatalf("recovery backend bytes=%v", got)
+				}
+			})
+		}
+	}
+
 }
 
 // Test-only recording at the inspection Read boundary; no bytes are changed.

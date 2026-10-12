@@ -20,7 +20,7 @@ class RelaydTrafficTests(unittest.TestCase):
 
     def test_incomplete_failed_skipped_root_and_unverified_traffic_rejected(self):
         original = self.valid()
-        self.assertEqual(LAB.parse_traffic(original, 'c' * 64, 'b' * 64, 'a' * 64)['case_count'], 47)
+        self.assertEqual(LAB.parse_traffic(original, 'c' * 64, 'b' * 64, 'a' * 64)['case_count'], 53)
         for changed in (
             original.replace('--- PASS: TestRelaydTraffic/inspection-loss (0.01s)\n', ''),
             original.replace('--- PASS: TestRelaydTraffic/relayd-mixed-framing-attack (0.01s)\n', ''),
@@ -29,6 +29,7 @@ class RelaydTrafficTests(unittest.TestCase):
             original.replace('--- PASS: TestRelaydTraffic/relayd-wake-pipeline-benign-benign (0.01s)\n', ''),
             original.replace('--- PASS: TestRelaydTraffic/tcp-pipeline-benign-benign (0.01s)\n', ''),
             original.replace('--- PASS: TestRelaydTraffic/tcp-inspection-loss (0.01s)\n', ''),
+            original.replace('--- PASS: TestRelaydTraffic/tcp-recovery-head-post-fresh (0.01s)\n', ''),
             original + '\n--- PASS: TestRelaydTraffic/recovery (0.01s)',
             original + '\n--- SKIP: TestRelaydTraffic (0.01s)',
             original + '\n--- FAIL: TestRelaydTraffic (0.01s)',
