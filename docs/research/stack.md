@@ -10,3 +10,5 @@ Reviewed 2026-10-11; upstream documentation is evidence of intent, not native qu
 Do not claim complete OWASP Top 10 protection or stable OpenBSD support from upstream feature lists. M1 selects the connector and records exact versions and licenses through an ADR.
 
 Research pins observed 2026-10-11: [Coraza v3.8.1](https://github.com/corazawaf/coraza/releases/tag/v3.8.1) and [coraza-caddy v2.6.2](https://github.com/corazawaf/coraza-caddy/releases/tag/v2.6.2). The isolated engine spike uses v3.8.1; no Caddy dependency is adopted. [CRS engine notes](https://coreruleset.org/20260511/migrating-crs-3-to-4-part-7-engines/) describe Coraza compatibility, but Aegvium has not run a pinned CRS corpus.
+
+The maintainer requested relayd connector feasibility, including a possible separate reusable project, on 2026-10-11. Read the [integration study](relayd-connector.md) for sibling reality, concrete relayd roles, alternative boundaries and native adoption criteria.

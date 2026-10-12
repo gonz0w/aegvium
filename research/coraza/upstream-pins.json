@@ -1,0 +1,85 @@
+{
+  "review_date": "2026-10-11",
+  "pins": [
+    {
+      "repository": "corazawaf/coraza",
+      "tag": "v3.8.1",
+      "commit": "9f8521398d1ff023b958fad0b944cac265763866",
+      "files": [
+        {
+          "path": "LICENSE",
+          "sha256": "aac51bcb84fa282e8214f6301da5948eee11caf9d4699b144fdc3222db7c4de9",
+          "blob_sha": "ad8a56d507adb873e027ee834c821652206d0088",
+          "url": "https://github.com/corazawaf/coraza/blob/9f8521398d1ff023b958fad0b944cac265763866/LICENSE"
+        },
+        {
+          "path": "go.mod",
+          "sha256": "fa1f5607d85b4b7cb2929c209cf3a284bb71e8d3dfb370f1e9fefbfa261c27ad",
+          "blob_sha": "0144a57d6f72e0419418a942f9e3e5705611279c",
+          "url": "https://github.com/corazawaf/coraza/blob/9f8521398d1ff023b958fad0b944cac265763866/go.mod"
+        }
+      ],
+      "scope": "source-review only, not runtime adoption"
+    },
+    {
+      "repository": "corazawaf/coraza-caddy",
+      "tag": "v2.6.2",
+      "commit": "82b47274c867754b5c91285b2671dfb2f6e2690f",
+      "files": [
+        {
+          "path": "LICENSE",
+          "sha256": "42e4b29037908c55795a0b6d8fbde370853c84eeec8d92c78cbbc436abb102e3",
+          "blob_sha": "8190d17bc32aac26c701e46dfc8e7f8a35da38f2",
+          "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/LICENSE"
+        },
+        {
+          "path": "go.mod",
+          "sha256": "a7ab4f0f3a8f45e75b51c315db4fcf7800c999ab18d1f51a2d881285380a30e4",
+          "blob_sha": "e4c54ba4738b7fef16106867986468f9275eca74",
+          "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/go.mod"
+        }
+      ],
+      "scope": "source-review only, not runtime adoption"
+    },
+    {
+      "repository": "corazawaf/coraza-coreruleset",
+      "tag": "v4.25.0",
+      "commit": "d522b2771f8e3fc704cb5aaa25f127f47a9ebfe9",
+      "files": [
+        {
+          "path": "LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "blob_sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+          "url": "https://github.com/corazawaf/coraza-coreruleset/blob/d522b2771f8e3fc704cb5aaa25f127f47a9ebfe9/LICENSE"
+        },
+        {
+          "path": "go.mod",
+          "sha256": "20f3852aa76f971a37839ce3609a684066603b40912c0b263a0041739eead240",
+          "blob_sha": "c696b72e6e99a9e9d9266dd5638dec9f17cc1df9",
+          "url": "https://github.com/corazawaf/coraza-coreruleset/blob/d522b2771f8e3fc704cb5aaa25f127f47a9ebfe9/go.mod"
+        },
+        {
+          "path": "version.go",
+          "sha256": "3338c7e1f19305254ebce28571ee0924213bacce09973c5da5d69b8b204bbaf9",
+          "blob_sha": "0072099f902d8d7cf04a898d586977e2fc5cfbf8",
+          "url": "https://github.com/corazawaf/coraza-coreruleset/blob/d522b2771f8e3fc704cb5aaa25f127f47a9ebfe9/version.go"
+        }
+      ],
+      "scope": "source-review only, not runtime adoption"
+    },
+    {
+      "repository": "coreruleset/coreruleset",
+      "tag": "v4.30.0",
+      "commit": "e03a4f6dabc7a30ebd8c52c97d28a154f590a48f",
+      "files": [
+        {
+          "path": "LICENSE",
+          "sha256": "676a192d3fc5205a288934ee02c5f934b782b91604a4b93589ba64520a4fec13",
+          "blob_sha": "c11c6604839cffe1d352535f6d35926d0bfbaaa0",
+          "url": "https://github.com/coreruleset/coreruleset/blob/e03a4f6dabc7a30ebd8c52c97d28a154f590a48f/LICENSE"
+        }
+      ],
+      "scope": "source-review only, not runtime adoption"
+    }
+  ]
+}

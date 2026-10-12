@@ -1,0 +1,209 @@
+{
+  "bundle": "github.com/corazawaf/coraza-coreruleset/v4@v4.25.0",
+  "files": [
+    {
+      "path": "@coraza.conf-recommended",
+      "sha256": "78ce259a1f37313c8eed9239c40025684d55cc04926ff6a9f7cc1f3281beb211"
+    },
+    {
+      "path": "@crs-setup.conf.example",
+      "sha256": "c7564e4112eb3d211cd76fe44d861278e9f4523592690dcb0e17c2e89e348f03"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-901-INITIALIZATION.conf",
+      "sha256": "0697b20139744a062e2eb5b09ba8e43add179b4d631d5c9d2727922572702a7e"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-905-COMMON-EXCEPTIONS.conf",
+      "sha256": "64d7fe396918bacba1d579b618d66726d750606a6c9d89cf5f07e3829ada01b0"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-911-METHOD-ENFORCEMENT.conf",
+      "sha256": "69c256a50570d42232dc8eaeec8045f4c9f02656acc2f11e7b09f07d000629f0"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-913-SCANNER-DETECTION.conf",
+      "sha256": "e98d35afb5a744e7a8e5a5e3c67ac89811b81299086a959e4ee0cc277d30ad42"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-920-PROTOCOL-ENFORCEMENT.conf",
+      "sha256": "ff5acd6539549fd4ef00bb7324fe3b003defcfda84fbfc828f52748289c475c7"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-921-PROTOCOL-ATTACK.conf",
+      "sha256": "9148105288e5ae21211ad27de21bf3df982d8d812763ea5c92dfbc55aa77421a"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-922-MULTIPART-ATTACK.conf",
+      "sha256": "3fda59a11a2e52780469c2543fdef179b98df4e7f5678018d9b7d0b80ddbc0c1"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-930-APPLICATION-ATTACK-LFI.conf",
+      "sha256": "3029efffb14befa978806bcdfd98b0e329d210f304ca06dc436700e920f11469"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-931-APPLICATION-ATTACK-RFI.conf",
+      "sha256": "eeb122f012a0f79f9253ff80f4b04befefaa75bb8730c78296e29414bdfde49c"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-932-APPLICATION-ATTACK-RCE.conf",
+      "sha256": "69385b2cd7456d8c05f676525175b393f5c9f2f71f27e42c1b42daf9752dbec7"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-933-APPLICATION-ATTACK-PHP.conf",
+      "sha256": "af891aaec846cac679209d88a82a7b4cedb07f0d0cae5802f5d69c2eae44599b"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-934-APPLICATION-ATTACK-GENERIC.conf",
+      "sha256": "97726fbafaa1962e97cb0d9cd4e2f0c8535f55c6540a438bbb8cd9fcfe0bb04a"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-941-APPLICATION-ATTACK-XSS.conf",
+      "sha256": "9f0849cd98875bce22ad796783a7c114ac61068ce35ec90643e5eeb5622256ff"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-942-APPLICATION-ATTACK-SQLI.conf",
+      "sha256": "352ae92e9c2d7b3a4da418d8a010dfa3aa9775f4cb1fca19af5ae85b3b3433e1"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-943-APPLICATION-ATTACK-SESSION-FIXATION.conf",
+      "sha256": "331aec52b970649b441f9da23caf65bc39ad7c781dd53c07356e48c90aadfed9"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-944-APPLICATION-ATTACK-JAVA.conf",
+      "sha256": "50f347add393670ecebc69727eb734ed633e7ae5dcf835f54e88a96d570c059e"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-949-BLOCKING-EVALUATION.conf",
+      "sha256": "659a4fb91f329cd1bbfb47402eef9a82e48c6175d7fa32f9ff2832746804adfd"
+    },
+    {
+      "path": "@owasp_crs/REQUEST-999-COMMON-EXCEPTIONS-AFTER.conf",
+      "sha256": "48417ddc31f6a25ef4af2990a6a640bb61fb84079f4c57fc919ddd0aa01bcfa4"
+    },
+    {
+      "path": "@owasp_crs/RESPONSE-950-DATA-LEAKAGES.conf",
+      "sha256": "b5228d12603c0cb431d614d1635723da2ded3b256992aa438f797ba0f272e62c"
+    },
+    {
+      "path": "@owasp_crs/RESPONSE-951-DATA-LEAKAGES-SQL.conf",
+      "sha256": "609ceff679891fdcd08d01c7270c3871ad9c816fde0a426ffa118e3eff41fb80"
+    },
+    {
+      "path": "@owasp_crs/RESPONSE-952-DATA-LEAKAGES-JAVA.conf",
+      "sha256": "340d8fc43f338e9e49801f5c05fcc915ef41a77923509574f099d90e703252c9"
+    },
+    {
+      "path": "@owasp_crs/RESPONSE-953-DATA-LEAKAGES-PHP.conf",
+      "sha256": "c8e1065f1ffc4fbe0a13cac8d9597af80e5a863d4f978bf57b635c7d8abdf6c0"
+    },
+    {
+      "path": "@owasp_crs/RESPONSE-954-DATA-LEAKAGES-IIS.conf",
+      "sha256": "f9b1a25aabaab7599e99f85825a5336baf2f0de8d282b9b0d5d56e9aff34ba3d"
+    },
+    {
+      "path": "@owasp_crs/RESPONSE-955-WEB-SHELLS.conf",
+      "sha256": "b5e2417e6ebc3ea65e45368da6bc21da07b4385846ccd1c077d644285689b25f"
+    },
+    {
+      "path": "@owasp_crs/RESPONSE-956-DATA-LEAKAGES-RUBY.conf",
+      "sha256": "43324acbb6e844d3c603df57f1397b591cb69004890a6d65706479d3fbbd2a24"
+    },
+    {
+      "path": "@owasp_crs/RESPONSE-959-BLOCKING-EVALUATION.conf",
+      "sha256": "378af2441fcf54737e45753c02cb4b565ee30ddfdac416a9edcc58bb5e69df71"
+    },
+    {
+      "path": "@owasp_crs/RESPONSE-980-CORRELATION.conf",
+      "sha256": "cae8f087dfdfb12358b2807d63406dddb346280ee0280613787e56a71efdaf72"
+    },
+    {
+      "path": "@owasp_crs/ai-critical-artifacts.data",
+      "sha256": "f25ec2ef43645f23f8fc7259eecd09e188977ba58304afec01964fcd3d94b4a9"
+    },
+    {
+      "path": "@owasp_crs/asp-dotnet-errors.data",
+      "sha256": "28840ce7f86109301bd6beb223509c0be764030ce681970aa9a4949b34334798"
+    },
+    {
+      "path": "@owasp_crs/iis-errors.data",
+      "sha256": "3eac5008e5dee373d0b876e92405af04cc4ce0f73625e7510499f708b516aa40"
+    },
+    {
+      "path": "@owasp_crs/java-classes.data",
+      "sha256": "5032a950a3d6a92959802fcb1363f19f99cabd8989e4ff883c23a891bb8ff865"
+    },
+    {
+      "path": "@owasp_crs/lfi-os-files.data",
+      "sha256": "0da82688353ce14c5505db312ad9bec8d38baa1ce0ff72421bdda6a6610ce15c"
+    },
+    {
+      "path": "@owasp_crs/php-errors.data",
+      "sha256": "6fead99bf5bb9c12b5cf552151e755bc9fbb75d4493ef52b6f56fdda9ea3f7e9"
+    },
+    {
+      "path": "@owasp_crs/php-function-names-933150.data",
+      "sha256": "fe65fb6db7efaed650e181a5e4f797d31cdf9ba3103791fe079becb83d72d17d"
+    },
+    {
+      "path": "@owasp_crs/php-variables.data",
+      "sha256": "217580554aef007b56bf6bac801aba15da376f19e24ab3300389bc64c21b650b"
+    },
+    {
+      "path": "@owasp_crs/restricted-files.data",
+      "sha256": "481312567373e9f38853b7b6a9e3903b7ddff999ad26ee93e2259d68f8266c04"
+    },
+    {
+      "path": "@owasp_crs/restricted-upload.data",
+      "sha256": "bc723197088c05059b94de388a74519d64b5bd389554f7bce8a92cb4b68b4f04"
+    },
+    {
+      "path": "@owasp_crs/ruby-errors.data",
+      "sha256": "4260542a45590762dff03353d6bc38b7a3711ae4c432d004799f897c92d3eb8b"
+    },
+    {
+      "path": "@owasp_crs/scanners-user-agents.data",
+      "sha256": "18514ad107433f7bac0364e105184ef8c8fd23c5385e4d230eede20242f1b312"
+    },
+    {
+      "path": "@owasp_crs/sql-errors.data",
+      "sha256": "ba9f3f7070f4c2c6c2d6165da06566f18aee19756c510ccde99aeff57fd5ca1a"
+    },
+    {
+      "path": "@owasp_crs/ssrf-no-scheme.data",
+      "sha256": "cb1e2bcf8cc2e75cbe082a66c755b2fc52e1ef5efeadbf49a5fb1cd3022c88c2"
+    },
+    {
+      "path": "@owasp_crs/ssrf.data",
+      "sha256": "3672c468732bbbff4b3e696da3e3a3cc152b10fdcf25df4c22407601c2d7bf0e"
+    },
+    {
+      "path": "@owasp_crs/unix-shell-aliases.data",
+      "sha256": "7860d692ba74be8465972e1c348d06b9ba41f61243406cfc7fed82db6fc26bee"
+    },
+    {
+      "path": "@owasp_crs/unix-shell-builtins.data",
+      "sha256": "7c7b600b457b06940a440095cf594f0e28de1891020de9840fc9ea7cf1e00e57"
+    },
+    {
+      "path": "@owasp_crs/unix-shell.data",
+      "sha256": "15a2207811abc94ebf92c2db11eeef1b2dc197928dd336f4bd960da965db8838"
+    },
+    {
+      "path": "@owasp_crs/web-shells-asp.data",
+      "sha256": "9a4944ad7058649cd824ce3175906ae8816316175308db90bfef5e4989739fb4"
+    },
+    {
+      "path": "@owasp_crs/web-shells-php.data",
+      "sha256": "7e8c27c1e23079c3cb9ed7e70e3153926102a2ec0df017488efb5f919fb98e3d"
+    },
+    {
+      "path": "@owasp_crs/windows-powershell-commands.data",
+      "sha256": "5055ffeb4ce22869dee0f611045991e64365e980bba68649f4468aea86476d93"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "97ea43d779892a3aced6dab9ff4815fff90b09f7d133b538de5e5d6c8e3e9f2f"
+    }
+  ]
+}

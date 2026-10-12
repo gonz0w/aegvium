@@ -1,8 +1,11 @@
 module github.com/gonz0w/aegvium/research/coraza
 
-go 1.27.0
+go 1.27.2
 
-require github.com/corazawaf/coraza/v3 v3.8.1
+require (
+	github.com/corazawaf/coraza-coreruleset/v4 v4.25.0
+	github.com/corazawaf/coraza/v3 v3.8.1
+)
 
 require (
 	github.com/corazawaf/libinjection-go v0.3.3 // indirect

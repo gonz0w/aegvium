@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-11",
+  "scans": [
+    {
+      "config": {
+        "protocol_version": "v1.0.0",
+        "scanner_name": "govulncheck",
+        "scanner_version": "v1.9.0",
+        "db": "https://vuln.go.dev",
+        "db_last_modified": "2026-10-08T22:31:09Z",
+        "go_version": "go1.27.0",
+        "scan_level": "symbol",
+        "scan_mode": "source"
+      },
+      "raw_sha256": "791778dd5f7d8e7b4de8d1180e4f04569d77e8aefc83b70f17318ba87f9eb6c5",
+      "finding_count": 152,
+      "unique_advisories": [
+        "GO-2026-6599",
+        "GO-2026-6600",
+        "GO-2026-6603",
+        "GO-2026-6604",
+        "GO-2026-6605",
+        "GO-2026-6607",
+        "GO-2026-6608",
+        "GO-2026-6609",
+        "GO-2026-6610",
+        "GO-2026-6611",
+        "GO-2026-6612",
+        "GO-2026-6613",
+        "GO-2026-6617"
+      ],
+      "symbol_advisories": [
+        "GO-2026-6603",
+        "GO-2026-6605",
+        "GO-2026-6607",
+        "GO-2026-6608",
+        "GO-2026-6610",
+        "GO-2026-6611",
+        "GO-2026-6613",
+        "GO-2026-6617"
+      ],
+      "interpretation": "Go database/static scan evidence, not exploitation proof or a complete security audit"
+    },
+    {
+      "config": {
+        "protocol_version": "v1.0.0",
+        "scanner_name": "govulncheck",
+        "scanner_version": "v1.9.0",
+        "db": "https://vuln.go.dev",
+        "db_last_modified": "2026-10-08T22:31:09Z",
+        "go_version": "go1.27.2",
+        "scan_level": "symbol",
+        "scan_mode": "source"
+      },
+      "raw_sha256": "172bb4853a83193d52b17d74f7f2721c5cb5f8cb3b6c441aca20604b9db6fadc",
+      "finding_count": 0,
+      "unique_advisories": [],
+      "symbol_advisories": [],
+      "interpretation": "Go database/static scan evidence, not exploitation proof or a complete security audit"
+    }
+  ]
+}

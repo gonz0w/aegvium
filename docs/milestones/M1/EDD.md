@@ -11,3 +11,7 @@ Deliverables: reproducible native build, dependency ADR, packet-flow/trust desig
 ## Authorized first slice
 
 The 2026-10-11 request to begin research authorizes the isolated research/coraza module, pinned v3.8.1 upstream HTTP middleware and synthetic in-memory backend. It opens no listener and installs no service. Test URI/body interruption, body preservation/limit, DetectionOnly, invalid rules and reader-error behavior. Runtime selection remains pending native comparison.
+
+## relayd integration direction
+
+The maintainer requested a reusable relayd–Coraza connector on 2026-10-11 if relayd has a justified role. Study stock relayd TLS/HTTP ingress to a companion inspection proxy first, against a single-process control. Direct library embedding/callout patches remain distinct alternatives with toolchain/upstream costs. See [feasibility and acceptance boundaries](../../research/relayd-connector.md); no connector or separate repository is adopted yet.
