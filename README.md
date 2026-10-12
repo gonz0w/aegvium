@@ -45,3 +45,5 @@ The [client-identity study](docs/milestones/M1/RELAYD-IDENTITY.md) identifies st
 The [restricted PROXY v1 parser](docs/milestones/M1/PROXY-PARSER.md) passed 25 isolated parser cases alongside 20 engine cases on OpenBSD. Buffered application bytes were preserved; socket deadlines, sender trust and connected PROXY qualification remain pending.
 
 The [PROXY connection adapter](docs/milestones/M1/PROXY-ADAPTER.md) passed deadline, closure and buffered-byte controls, including direct TCP in the owned OpenBSD guest (55 native cases total). Listener/readiness integration and sender authentication remain pending.
+
+The [PROXY listener lifecycle](docs/milestones/M1/PROXY-LISTENER.md) passed bounded pending-handshake, shutdown, readiness-gating and direct TCP controls (63 ordinary native cases). HTTP health wiring, actual relayd PROXY identity and sender containment remain pending.
