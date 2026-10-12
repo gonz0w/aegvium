@@ -11,6 +11,7 @@ Inspection of /Users/cam/DNS README/design found Unbound/NSD research and no rel
 | Integration | relayd's concrete role | Coraza boundary | Feasibility questions |
 | --- | --- | --- | --- |
 | TLS/HTTP ingress → companion HTTP inspection proxy → application | Base TLS listener, ingress policy and health checks of inspection nodes | Separate unprivileged Go process owns inspection and allowlisted upstream forwarding | Two parsers, trusted identity, body/framing normalization, failed-engine readiness, explicit error responses |
+| TCP relay with TLS termination → plaintext companion | Base TLS termination and health-checked TCP dispatch without HTTP ingress parsing | Go service owns HTTP inspection and allowlisted forwarding | Mandatory PROXY identity, readiness separation, local sender containment and TLS/authority metadata limits |
 | TCP/TLS pass-through → TLS inspection proxy | Health-checked TCP dispatch to inspection nodes | Go service owns TLS and HTTP | Fewer HTTP parsers, but prove native dispatch adds value for this appliance rather than unnecessary processes |
 | In-process Coraza library | relayd owns HTTP and calls engine directly | C/Go shared-library boundary | Go 1.27.2 platform support excludes OpenBSD c-shared; no documented stock relayd plugin hook; significant upstream/toolchain work |
 | New external inspection callout in relayd | relayd pauses forwarding pending a bounded engine verdict | New interprocess inspection protocol | Requires relayd source changes, bounded body buffering/backpressure, request identity, timeout/error/privilege/lifecycle design and upstream maintenance |
@@ -75,3 +76,7 @@ The [correlated Read-boundary trace](../milestones/M1/RELAYD-STREAM.md) recorded
 ## Buffered-read hypothesis control
 
 The [post-response CRLF comparison](../milestones/M1/RELAYD-BUFFER.md) admitted the second request in both relayed pipeline samples with exact responses/backend counts, while all four original pipeline failures remained. The suite failed at 30/34. This supports the buffered-read hypothesis suggested by the pinned discovery callback guard; it does not establish installed-source attribution or select a safe repair. Investigate release/source lineage and bounded buffer-draining behavior, or compare a stock transport-only ingress profile, before adoption. Extra CRLF is a diagnostic stimulus, not a product workaround.
+
+## Stock TCP/TLS identity direction
+
+The [TLS study](../milestones/M1/RELAYD-TLS.md) passed ten added HTTPS leaves while the full comparison retained four HTTP pipeline failures (59/63). The [identity source study](../milestones/M1/RELAYD-IDENTITY.md) traces stock v1/v2 output in authenticated release source, giving TCP/TLS termination a concrete companion-address transport candidate. The inspected writer carries addresses without TLS/SNI TLVs, and its HTTP health check sends a bare HEAD independently of that writer. A mandatory bounded PROXY receiver, separate readiness and qualified local sender containment are next research gates. Loopback and an address prefix do not authenticate relayd. No connector, product policy or new native result is adopted by this source study.

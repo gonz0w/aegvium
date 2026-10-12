@@ -61,3 +61,7 @@ The [recovery study](../../docs/milestones/M1/RELAYD-RECOVERY.md) and [retained 
 ## Stock TCP/TLS termination
 
 The [TLS packet](../../docs/milestones/M1/RELAYD-TLS.md) and [receipts](tls-observations.json) record all ten added HTTPS leaves passing through stock TCP relayd. Both ordinary pipelines reached inspection intact with expected responses and exact backend counts. Strict client trust/name checks rejected their negative controls before application arrivals; inspection loss produced three transport errors with zero backend forwards, and recovery admitted one exact POST. The full run remains failed at 59/63 on four unchanged HTTP pipelines. Public certificate fingerprints matched; guest TLS artifact/daemon cleanup, VM teardown, engine/configtests and source/base invariance passed. Server-side Host/SNI policy, client identity and connector adoption remain separate gates.
+
+## Client-identity source study
+
+The [identity packet](../../docs/milestones/M1/RELAYD-IDENTITY.md) and [source fingerprints](identity-source.json) trace stock PROXY v1/v2 output in authenticated OpenBSD 7.9 release source. Addresses precede application output; the inspected v2 writer emits no TLS/SNI TLVs, and HTTP health checks send bare HEAD requests separately. A mandatory receiver needs its own readiness and local sender containment design. This static slice adds no native run or implementation; the 59/63 failure and installed binary lineage gaps remain unchanged.
