@@ -30,7 +30,7 @@ for name, pin in pins.items():
         if marker.read_text().strip() == hashlib.sha256(binary.read_bytes()).hexdigest() and pinfile.read_text().strip() == artifact["sha256"]:
             continue
     print(f"Downloading {name} {pin['version']} for {target}", flush=True)
-    request = urllib.request.Request(artifact["url"], headers={"User-Agent": "waf-foundation-bootstrap"})
+    request = urllib.request.Request(artifact["url"], headers={"User-Agent": "aegvium-foundation-bootstrap"})
     with urllib.request.urlopen(request, timeout=60) as response:
         data = response.read()
     if hashlib.sha256(data).hexdigest() != artifact["sha256"]:

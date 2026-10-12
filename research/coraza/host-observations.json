@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-11",
+  "host": "darwin/arm64",
+  "go": "go1.27.0",
+  "scope": "Host-only characterization and OpenBSD cross-compilation; no native/CRS result",
+  "runs": [
+    {
+      "name": "engine-first-run.log",
+      "sha256": "b1372a84579f43744cc7c606839fee06900c203fd2d8967025774fb9f8eac6bd",
+      "output": "cd research/coraza && GOTOOLCHAIN=local GOCACHE=/Users/cam/WAF/.tools/go-cache go test -count=1 -v ./...\n# github.com/gonz0w/aegvium/research/coraza [github.com/gonz0w/aegvium/research/coraza.test]\n./engine_test.go:51:28: tx.ProcessRequest undefined (type types.Transaction has no field or method ProcessRequest)\nFAIL\tgithub.com/gonz0w/aegvium/research/coraza [build failed]\nFAIL\nmake: *** [research-test] Error 1\n"
+    },
+    {
+      "name": "engine-corrected-run.log",
+      "sha256": "21464d0869f01995e455233599a531703e5756520bf469effb348baf3c9dc14c",
+      "output": "cd research/coraza && GOTOOLCHAIN=local GOCACHE=/Users/cam/WAF/.tools/go-cache go test -count=1 -v ./...\n=== RUN   TestRequestInterruption\n=== RUN   TestRequestInterruption/benign-get\n=== RUN   TestRequestInterruption/uri-denied\n=== RUN   TestRequestInterruption/benign-post\n=== RUN   TestRequestInterruption/body-denied\n=== RUN   TestRequestInterruption/body-limit\n=== RUN   TestRequestInterruption/detection-uri\n    engine_test.go:67: DetectionOnly forwarded without recorded match\n=== RUN   TestRequestInterruption/detection-body\n--- FAIL: TestRequestInterruption (0.00s)\n    --- PASS: TestRequestInterruption/benign-get (0.00s)\n    --- PASS: TestRequestInterruption/uri-denied (0.00s)\n    --- PASS: TestRequestInterruption/benign-post (0.00s)\n    --- PASS: TestRequestInterruption/body-denied (0.00s)\n    --- PASS: TestRequestInterruption/body-limit (0.00s)\n    --- FAIL: TestRequestInterruption/detection-uri (0.00s)\n    --- PASS: TestRequestInterruption/detection-body (0.00s)\n=== RUN   TestInvalidRulesRejected\n--- PASS: TestInvalidRulesRejected (0.00s)\nFAIL\nFAIL\tgithub.com/gonz0w/aegvium/research/coraza\t0.319s\nFAIL\nmake: *** [research-test] Error 1\n"
+    },
+    {
+      "name": "engine-explicit-log-run.log",
+      "sha256": "2c041384ab81f5e7ae909de5575b6a92bb6fe428636d2c660fa91b46e43e9762",
+      "output": "cd research/coraza && GOTOOLCHAIN=local GOCACHE=/Users/cam/WAF/.tools/go-cache go test -count=1 -v ./...\n=== RUN   TestRequestInterruption\n=== RUN   TestRequestInterruption/benign-get\n=== RUN   TestRequestInterruption/uri-denied\n=== RUN   TestRequestInterruption/benign-post\n=== RUN   TestRequestInterruption/body-denied\n=== RUN   TestRequestInterruption/body-limit\n=== RUN   TestRequestInterruption/detection-uri\n=== RUN   TestRequestInterruption/detection-body\n--- PASS: TestRequestInterruption (0.00s)\n    --- PASS: TestRequestInterruption/benign-get (0.00s)\n    --- PASS: TestRequestInterruption/uri-denied (0.00s)\n    --- PASS: TestRequestInterruption/benign-post (0.00s)\n    --- PASS: TestRequestInterruption/body-denied (0.00s)\n    --- PASS: TestRequestInterruption/body-limit (0.00s)\n    --- PASS: TestRequestInterruption/detection-uri (0.00s)\n    --- PASS: TestRequestInterruption/detection-body (0.00s)\n=== RUN   TestInvalidRulesRejected\n--- PASS: TestInvalidRulesRejected (0.00s)\nPASS\nok  \tgithub.com/gonz0w/aegvium/research/coraza\t0.280s\n"
+    },
+    {
+      "name": "engine-expanded-run.log",
+      "sha256": "7a1d3ff242f58a764ab34d7970ab5820b6f38b5477a432df42f00d5e65d26fa3",
+      "output": "cd research/coraza && GOTOOLCHAIN=local GOCACHE=/Users/cam/WAF/.tools/go-cache go test -count=1 -v ./...\n=== RUN   TestRequestInterruption\n=== RUN   TestRequestInterruption/benign-get\n=== RUN   TestRequestInterruption/uri-denied\n=== RUN   TestRequestInterruption/benign-post\n=== RUN   TestRequestInterruption/body-denied\n=== RUN   TestRequestInterruption/body-limit\n=== RUN   TestRequestInterruption/detection-uri\n=== RUN   TestRequestInterruption/detection-body\n--- PASS: TestRequestInterruption (0.00s)\n    --- PASS: TestRequestInterruption/benign-get (0.00s)\n    --- PASS: TestRequestInterruption/uri-denied (0.00s)\n    --- PASS: TestRequestInterruption/benign-post (0.00s)\n    --- PASS: TestRequestInterruption/body-denied (0.00s)\n    --- PASS: TestRequestInterruption/body-limit (0.00s)\n    --- PASS: TestRequestInterruption/detection-uri (0.00s)\n    --- PASS: TestRequestInterruption/detection-body (0.00s)\n=== RUN   TestInvalidRulesRejected\n--- PASS: TestInvalidRulesRejected (0.00s)\n=== RUN   TestBodyReadFailure\n--- PASS: TestBodyReadFailure (0.00s)\nPASS\nok  \tgithub.com/gonz0w/aegvium/research/coraza\t0.294s\n"
+    },
+    {
+      "name": "engine-expanded-cross.log",
+      "sha256": "73e27698fbc9ca0fea3f5e847a37aafaf476b164b1b9883c40e4bba053d1ed46",
+      "output": "mkdir -p .tools/research\ncd research/coraza && GOTOOLCHAIN=local GOCACHE=/Users/cam/WAF/.tools/go-cache GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 go test -c -o ../../.tools/research/coraza-openbsd-amd64.test\n"
+    }
+  ]
+}

@@ -12,3 +12,10 @@ test:
 secrets:
 	.tools/bin/gitleaks dir --redact --no-banner --config .gitleaks.toml .
 verify: check lint test secrets
+
+.PHONY: research-test research-cross
+research-test:
+	cd research/coraza && GOTOOLCHAIN=local GOCACHE=$(CURDIR)/.tools/go-cache go test -count=1 -v ./...
+research-cross:
+	mkdir -p .tools/research
+	cd research/coraza && GOTOOLCHAIN=local GOCACHE=$(CURDIR)/.tools/go-cache GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 go test -c -o ../../.tools/research/coraza-openbsd-amd64.test

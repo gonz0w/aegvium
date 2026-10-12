@@ -1,0 +1,20 @@
+{
+  "upstream": "https://github.com/corazawaf/coraza/releases/tag/v3.8.1",
+  "version": "v3.8.1",
+  "license": "Apache-2.0",
+  "scope": "research only; dependency adoption review remains open",
+  "upstream_files": [
+    {
+      "file": "LICENSE",
+      "sha256": "aac51bcb84fa282e8214f6301da5948eee11caf9d4699b144fdc3222db7c4de9"
+    },
+    {
+      "file": "go.mod",
+      "sha256": "fa1f5607d85b4b7cb2929c209cf3a284bb71e8d3dfb370f1e9fefbfa261c27ad"
+    },
+    {
+      "file": "go.sum",
+      "sha256": "85d5e58921200bbfb38b8fdc951859fed3016680c49db6a80e647c38ae603e8e"
+    }
+  ]
+}

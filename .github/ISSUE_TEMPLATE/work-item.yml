@@ -1,0 +1,44 @@
+name: Work item
+description: Bounded Aegvium outcome
+labels: ["status:backlog"]
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: Scope and observable result
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance
+      description: Checklist and required evidence
+    validations:
+      required: true
+  - type: textarea
+    id: design
+    attributes:
+      label: Design and requirements
+    validations:
+      required: true
+  - type: textarea
+    id: relationships
+    attributes:
+      label: Relationships
+      description: Parent acceptance gate and blockers
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Existing evidence
+      description: Exact candidate receipts or explicit gaps
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Tracking scope
+    validations:
+      required: true
