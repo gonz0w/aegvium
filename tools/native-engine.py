@@ -27,6 +27,7 @@ def load(name):
 
 IMAGE = load('native-image')
 PATCHES = load('openbsd-patches')
+BUILD = load('native-build')
 PINS = json.loads((ROOT / 'research/native/image-pin.json').read_text())
 
 SSH_HARDEN = b'''set -eu
@@ -232,6 +233,52 @@ def engine_guest(guest, work, binary, binary_hash):
             'log_sha256': digest(work / 'native.log')}
 
 
+
+def parse_build(text, source_hash):
+    values = {}
+    for line in text.splitlines():
+        if line.startswith('BUILD\t'):
+            parts = line.split('\t')
+            if len(parts) != 3 or parts[1] in values:
+                raise ValueError('invalid native build receipt')
+            values[parts[1]] = parts[2]
+    if (set(values) != {'compiler', 'source', 'uid', 'binary'}
+            or not re.fullmatch(r'[1-9][0-9]*', values['uid'])
+            or any(not re.fullmatch('[0-9a-f]{64}', values[name]) for name in ('compiler', 'source', 'binary'))
+            or values['source'] != source_hash):
+        raise ValueError('native source build receipts incomplete')
+    return values
+
+
+def source_build_guest(guest, work, inputs):
+    guest.require('set -eu; mkdir /var/aegvium-build; chmod 755 /var/aegvium-build')
+    for name, asset in (('go.tar.gz', inputs['compiler']), ('source.tar.gz', inputs['source'])):
+        with asset.open('rb') as stream:
+            response = guest.call('set -eu; cat > /var/aegvium-build/' + name,
+                                  stream=stream, seconds=180)
+        if response.returncode:
+            raise RuntimeError('native build input transfer failed')
+    script = (ROOT / 'tools/native/source-build.sh').read_bytes()
+    script = script.replace(b'COMPILER_SHA256', inputs['compiler_sha256'].encode())
+    script = script.replace(b'SOURCE_SHA256', inputs['source_sha256'].encode())
+    log = work / 'build.log'
+    with log.open('wb') as output:
+        response = guest.call('sh -s', data=script, seconds=600, output=output)
+    if response.returncode:
+        raise RuntimeError(f'native source build failed ({response.returncode}); see build.log')
+    values = parse_build(log.read_text(), inputs['source_sha256'])
+    guest.require('set -eu; mkdir /var/aegvium-lab; chmod 755 /var/aegvium-lab; '
+                  'cp /var/aegvium-build/output/engine.test /var/aegvium-lab/engine.test; '
+                  'chmod 555 /var/aegvium-lab/engine.test')
+    repeat = (ROOT / 'tools/native/engine-repeat.sh').read_bytes().replace(b'BINARY_SHA256', values['binary'].encode())
+    with (work / 'native.log').open('wb') as output:
+        response = guest.call('sh -s', data=repeat, seconds=180, output=output)
+    if response.returncode:
+        raise RuntimeError('native-built test execution failed; see native.log')
+    return {'build_receipts': values, 'build_log_sha256': digest(log),
+            **parse_native((work / 'native.log').read_text(), values['binary']),
+            'log_sha256': digest(work / 'native.log')}
+
 def bound_child_storage():
     # Applies to supervisor/QEMU only. The snapshot stays in the private run.
     resource.setrlimit(resource.RLIMIT_FSIZE, (4 * 1024**3, 4 * 1024**3))
@@ -244,6 +291,7 @@ def git(*args):
 def run():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--inject-failure', choices=('boot', 'ssh', 'auth', 'transfer', 'test'))
+    parser.add_argument('--source-build', action='store_true')
     args = parser.parse_args()
     os.umask(0o077)
     if git('status', '--porcelain'):
@@ -262,14 +310,17 @@ def run():
     binary_hash = digest(binary)
     work = ROOT / '.tools/native-runs' / str(uuid.uuid4())
     work.mkdir(parents=True, mode=0o700)
+    build_inputs = BUILD.package(work) if args.source_build else None
     source = {name: digest(ROOT / name) for name in git('ls-files').splitlines()}
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
-              'binary_sha256': binary_hash, 'native_build': False, 'passed': False,
+              'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': 900,
                           'network': 'restrict=on; dynamic loopback-only SSH; no guest egress'}}
+    if build_inputs:
+        report['native_build_inputs'] = {key: value for key, value in build_inputs.items() if key not in ('compiler', 'source')}
     supervisor = None
     expires = time.monotonic() + 900
     try:
@@ -302,7 +353,12 @@ def run():
         report['patch_refresh'] = patch_guest(guest, work)
         if args.inject_failure == 'transfer':
             raise RuntimeError('injected transfer-stage failure')
-        report['native'] = engine_guest(guest, work, binary, binary_hash)
+        if args.source_build:
+            print('Offline unprivileged native compilation started.', flush=True)
+            report['native'] = source_build_guest(guest, work, build_inputs)
+            report['native_build'] = True
+        else:
+            report['native'] = engine_guest(guest, work, binary, binary_hash)
         if args.inject_failure == 'test':
             raise RuntimeError('injected test-stage failure')
         report['native_subset_passed'] = True
