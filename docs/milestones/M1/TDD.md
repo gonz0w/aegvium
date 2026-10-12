@@ -42,3 +42,5 @@ The [recovery diagnostic](RELAYD-RECOVERY.md) adds six raw HEAD/POST controls an
 The [TLS termination packet](RELAYD-TLS.md) adds ten guest-only HTTPS/client-verification leaves (current connected admission: sixty-three) and ephemeral public-certificate/cleanup admission; prior failures remain required.
 
 The [identity feasibility study](RELAYD-IDENTITY.md) pins static source findings and proposes the next prefix/trust/readiness matrix. It adds no native cases; connected admission remains sixty-three. Receiver implementation requires a concrete bounded packet before execution.
+
+The [prefix parser packet](PROXY-PARSER.md) extends ordinary native admission to 45 leaves (20 engine plus 25 isolated parser cases). Connected admission remains 63; no listener, deadline or trust boundary is implemented by the parser.
