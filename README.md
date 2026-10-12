@@ -25,3 +25,5 @@ The first [connected relayd/Coraza experiment](research/relayd/README.md) passed
 The subsequent [framing comparison](docs/milestones/M1/RELAYD-FRAMING.md) retained a failed relayd pipeline expectation (403 then EOF versus direct 403/200). Nineteen other connected cases passed; pipelining and broader parser qualification remain unresolved.
 
 The [reuse diagnostics](docs/milestones/M1/RELAYD-REUSE.md) observed serialized requests passing through relayd while both tested pipelines failed. Backend counts are retained on failure; the cause and supported connection profile remain unresolved.
+
+The [idle-time comparison](docs/milestones/M1/RELAYD-IDLE.md) delayed pipeline EOF without restoring second-request arrivals. A longer inspection idle timeout alone did not fix the tested relayd pipelines.

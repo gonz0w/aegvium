@@ -63,3 +63,7 @@ The [bounded framing comparison](../milestones/M1/RELAYD-FRAMING.md) failed its 
 ## Reuse diagnostic finding
 
 The [reuse repeat](../milestones/M1/RELAYD-REUSE.md) observed serialized denied/benign reuse passing through relayd, while denied/benign and benign/benign pipelines returned only their first response. Failed pipeline cleanup snapshots recorded zero and one backend receipts respectively, with zero hostile URI receipts. Direct controls passed. The suite remains failed at 22/24, and an extra health transition plus short fixture timeouts prevent cause attribution. Isolate timing and connection events before selecting a connector reuse profile; neither general support nor general incompatibility is established.
+
+## Idle-time comparison finding
+
+The [one-variable idle comparison](../milestones/M1/RELAYD-IDLE.md) shifted relayd pipeline EOF from about one to three seconds without recording a second application arrival or changing backend counts. Serialized reuse and direct pipelines passed in both profiles; the suite remained failed at 26/30. A longer inspection idle timeout alone did not restore these sampled pipelines. Aggregate events narrow the observation but do not establish relayd's internal buffering mechanism; synthetic packet evidence or attributable source tracing is needed before selecting a connection profile.

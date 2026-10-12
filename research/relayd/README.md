@@ -26,10 +26,14 @@ This establishes a small stock-relayd companion path and demonstrates useful hea
 
 The [framing packet](../../docs/milestones/M1/RELAYD-FRAMING.md) and [retained observations](framing-observations.json) add ten raw-wire cases to the connected fixture. The native run failed: nineteen connected cases passed, but relayd returned 403 then unexpected EOF for a denied-then-benign pipeline, whereas direct inspection returned 403/200. Its backend receipt assertion was not reached, so relayed pipeline counts remain unqualified. Chunked benign/attack, conflicting lengths and mixed framing attack passed their bounded receipt assertions in both arms. All twenty separate engine cases and configtests passed; daemon/VM cleanup and unchanged source/base verified.
 
-This failure remains visible and the framing slice’s twenty-case admission set requires it to pass. No expectation or runtime policy was relaxed. Connection reuse/pipelining needs diagnostic research before a supported profile can be selected; broad parser/connector gates remain open. The earlier ten-case evidence is unchanged.
+This failure remains visible and the framing slice's twenty-case admission set requires it to pass. No expectation or runtime policy was relaxed. Connection reuse/pipelining needs diagnostic research before a supported profile can be selected; broad parser/connector gates remain open. The earlier ten-case evidence is unchanged.
 
 ## Connection-reuse diagnostic result
 
 The [reuse packet](../../docs/milestones/M1/RELAYD-REUSE.md) and [observations](reuse-observations.json) retain another failed native run: 22/24 connected cases passed. Direct pipelines passed, while relayd returned only the first response for both denied/benign and benign/benign pipelines; cleanup snapshots counted respectively zero and one backend receipts. Serialized denied/benign reuse passed in both arms with one exact benign receipt. All raw snapshots recorded zero hostile URI receipts.
 
 Backend snapshots now survive response failure, but do not convert those failures into admission. An extra health down/up transition and short fixture timeouts leave the mechanism unproven. Engine/configtests, daemon/VM cleanup and source/base invariance passed. Original failed evidence and expectations remain unchanged; no supported connector reuse profile is adopted.
+
+## Idle-time comparison
+
+The [idle-time packet](../../docs/milestones/M1/RELAYD-IDLE.md) and [observations](idle-observations.json) retain a failed 26/30 connected run. Changing inspection idle timeout from one to three seconds delayed pipeline EOF by about two seconds without admitting either second request. Each relayed pipeline recorded only its first application arrival; direct pipelines and serialized reuse passed in both profiles. Aggregate anonymous state events include health probes and are not per-connection packet traces. Increasing idle timeout alone did not fix these samples. Engine/configtests and all cleanup/source/base gates passed; no runtime support policy is selected.

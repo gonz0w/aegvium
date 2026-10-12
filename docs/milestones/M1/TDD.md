@@ -27,6 +27,6 @@ The [connected relayd packet](RELAYD-TRAFFIC.md) separately admits ten guest-onl
 
 The [framing extension](RELAYD-FRAMING.md) adds ten raw-wire direct/relayd cases, expanding current connected admission to twenty. Its small matrix and historical ten-case happy-path comparison remain distinct from full #16 qualification.
 
-The [reuse diagnostic packet](RELAYD-REUSE.md) adds four cases (current connected admission: twenty-four) and receipt observations retained on response failures. Historical twenty-case framing failure remains unchanged.
+The [reuse diagnostic packet](RELAYD-REUSE.md) added four cases (connected admission at that slice: twenty-four) and receipt observations retained on response failures. Historical twenty-case framing failure remains unchanged.
 
 The [idle-time packet](RELAYD-IDLE.md) adds six comparison cases (current connected admission: thirty), retaining anonymous inspection events and unchanged baseline expectations.

@@ -14,4 +14,6 @@ The [connected relayd packet](../../docs/milestones/M1/RELAYD-TRAFFIC.md) scopes
 
 The [framing packet](../../docs/milestones/M1/RELAYD-FRAMING.md) extended guest-only connected admission to twenty cases. Raw TCP inputs preserve chunking, conflicting/mixed lengths and one denied-then-benign pipeline sequence; host skips remain skips.
 
-The [reuse diagnostic packet](../../docs/milestones/M1/RELAYD-REUSE.md) expands current connected admission to twenty-four cases, retaining backend snapshots on response failure. Its failed native observations and historical framing failure remain separate; host connected skips are unchanged.
+The [reuse diagnostic packet](../../docs/milestones/M1/RELAYD-REUSE.md) expanded connected admission to twenty-four cases, retaining backend snapshots on response failure. Its failed native observations and historical framing failure remain separate; host connected skips are unchanged.
+
+The [idle diagnostic packet](../../docs/milestones/M1/RELAYD-IDLE.md) expands current connected admission to thirty leaves and retains bounded anonymous inspection events. The failed one-/three-second comparison is separate from earlier failed suites.
