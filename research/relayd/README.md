@@ -45,3 +45,7 @@ The [stream packet](../../docs/milestones/M1/RELAYD-STREAM.md) and [receipts](st
 ## Buffered-read hypothesis control
 
 The [wake packet](../../docs/milestones/M1/RELAYD-BUFFER.md), [discovery-source fingerprint](buffer-source.json) and [observations](buffer-observations.json) record all four post-response CRLF controls passing while four baseline pipeline cases still failed (30/34 overall). The stimulus let both requests reach inspection with expected responses and exact backend counts; it supports a buffered-read hypothesis rather than selecting a workaround or proving installed source behavior. No relayd configuration/source or baseline expectation changed. Engine/configtests, cleanup and source/base invariance passed; provenance and safe repair/profile selection remain open.
+
+## Official release-source comparison
+
+The [release-source study](../../docs/milestones/M1/RELAYD-SOURCE.md) authenticates the official 7.9 source archive and pins [fingerprints](release-source.json). Its HTTP reader retains the callback condition implicated by the wake controls. Release source attribution is now observed separately from the still-unresolved installed binary/image build lineage. This static slice adds no native run or runtime change; the failed 30/34 result remains unchanged.

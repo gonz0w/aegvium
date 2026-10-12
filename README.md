@@ -31,3 +31,5 @@ The [idle-time comparison](docs/milestones/M1/RELAYD-IDLE.md) delayed pipeline E
 The [inspection stream trace](docs/milestones/M1/RELAYD-STREAM.md) recorded only the first request's bytes in failed relayd pipelines, while direct pipelines and serialized controls consumed both. Socket buffering and exact relayd handling remain unresolved.
 
 The [buffer wake control](docs/milestones/M1/RELAYD-BUFFER.md) let the second request through after extra client input. It supports a buffered-read hypothesis; baseline failures and safe repair/profile selection remain unresolved.
+
+The [official release-source comparison](docs/milestones/M1/RELAYD-SOURCE.md) authenticates the 7.9 source archive and finds the same callback condition in its static control flow. Installed binary attribution and a safe repair remain separate gates.
