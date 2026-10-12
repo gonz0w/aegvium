@@ -20,13 +20,15 @@ class RelaydTrafficTests(unittest.TestCase):
 
     def test_incomplete_failed_skipped_root_and_unverified_traffic_rejected(self):
         original = self.valid()
-        self.assertEqual(LAB.parse_traffic(original, 'c' * 64, 'b' * 64, 'a' * 64)['case_count'], 34)
+        self.assertEqual(LAB.parse_traffic(original, 'c' * 64, 'b' * 64, 'a' * 64)['case_count'], 47)
         for changed in (
             original.replace('--- PASS: TestRelaydTraffic/inspection-loss (0.01s)\n', ''),
             original.replace('--- PASS: TestRelaydTraffic/relayd-mixed-framing-attack (0.01s)\n', ''),
             original.replace('--- PASS: TestRelaydTraffic/relayd-serialized-denied-benign (0.01s)\n', ''),
             original.replace('--- PASS: TestRelaydTraffic/relayd-longidle-pipeline-benign-benign (0.01s)\n', ''),
             original.replace('--- PASS: TestRelaydTraffic/relayd-wake-pipeline-benign-benign (0.01s)\n', ''),
+            original.replace('--- PASS: TestRelaydTraffic/tcp-pipeline-benign-benign (0.01s)\n', ''),
+            original.replace('--- PASS: TestRelaydTraffic/tcp-inspection-loss (0.01s)\n', ''),
             original + '\n--- PASS: TestRelaydTraffic/recovery (0.01s)',
             original + '\n--- SKIP: TestRelaydTraffic (0.01s)',
             original + '\n--- FAIL: TestRelaydTraffic (0.01s)',
@@ -50,5 +52,5 @@ class RelaydTrafficTests(unittest.TestCase):
     def test_traffic_profile_matches_reviewed_syntax_except_mode_comment(self):
         syntax = (LAB.ROOT / 'research/relayd/ingress.conf').read_text()
         traffic = (LAB.ROOT / 'research/relayd/traffic.conf').read_text()
-        self.assertEqual(traffic, syntax.replace('# Syntax-only research fixture; no daemon is started.',
+        self.assertEqual(traffic[:traffic.index('tcp protocol "inspection_transport"')], syntax.replace('# Syntax-only research fixture; no daemon is started.',
                                                 '# Foreground traffic research fixture; owned disposable guest only.'))

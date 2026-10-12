@@ -34,3 +34,5 @@ The [idle-time packet](RELAYD-IDLE.md) added six comparison cases (connected adm
 The [stream diagnostic packet](RELAYD-STREAM.md) retains thirty connected leaves and adds bounded Read-boundary metrics correlated with anonymous inspection connections; host recorder tests do not qualify connected traffic.
 
 The [buffered-request wake packet](RELAYD-BUFFER.md) adds four diagnostic controls (current connected admission: thirty-four); prior failed expectations remain unchanged and discovery-source inference is separate from installed provenance.
+
+The [TCP control packet](RELAYD-TCP.md) adds thirteen leaves alongside unchanged HTTP expectations (current connected admission: forty-seven). It compares plaintext transport-only relayd and retains original failures.

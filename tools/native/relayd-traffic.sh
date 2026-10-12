@@ -9,7 +9,7 @@ cd /var/aegvium-relayd
 [ "$(sha256 -q /var/aegvium-lab/engine.test)" = 'BINARY_SHA256' ]
 if pgrep -x relayd >/dev/null; then exit 1; else code=$?; [ "$code" -eq 1 ]; fi
 netstat -an -f inet > before-listeners.txt
-awk '$4 ~ /[.:]1808[01]$/ && $NF == "LISTEN" { found=1 } END { exit found }' before-listeners.txt
+awk '$4 ~ /[.:]1808[012]$/ && $NF == "LISTEN" { found=1 } END { exit found }' before-listeners.txt
 [ ! -e control.sock ]
 /usr/sbin/relayd -n -f traffic.conf
 owned_pid=''
@@ -33,7 +33,7 @@ cleanup() {
     fi
     if pgrep -x relayd >/dev/null; then exit 1; else code=$?; [ "$code" -eq 1 ] || exit 1; fi
     netstat -an -f inet > after-listeners.txt
-    awk '$4 ~ /[.:]1808[01]$/ && $NF == "LISTEN" { found=1 } END { exit found }' after-listeners.txt || exit 1
+    awk '$4 ~ /[.:]1808[012]$/ && $NF == "LISTEN" { found=1 } END { exit found }' after-listeners.txt || exit 1
     rm -f control.sock
     [ ! -e control.sock ] || exit 1
     cat daemon.log
