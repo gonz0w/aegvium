@@ -1,0 +1,230 @@
+[
+  {
+    "module": "github.com/corazawaf/coraza-coreruleset/v4",
+    "version": "v4.25.0",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "license": "Apache-2.0"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/corazawaf/coraza/v3",
+    "version": "v3.8.1",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "aac51bcb84fa282e8214f6301da5948eee11caf9d4699b144fdc3222db7c4de9",
+        "license": "Apache-2.0"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/corazawaf/libinjection-go",
+    "version": "v0.3.3",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "3296b49ab7f460064a220ce0c5b0ea698a9c82a3d72bec5f10d0e0529cce1023",
+        "license": "BSD-3-Clause"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/goccy/go-json",
+    "version": "v0.10.5",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "a707cd425201945d57500566c47c74dc9fb8cd02ef91b9a761abddeb2401e6a7",
+        "license": "MIT"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/goccy/go-yaml",
+    "version": "v1.19.2",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "43fe703ea9ebe27f0a6e5d2a1f6dd094fbe324251c743498f3ec19986d7349cd",
+        "license": "MIT"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/gotnospirit/makeplural",
+    "version": "v0.0.0-20180622080156-a5f48d94d976",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "b8c158998cd7b90dc515207de641bfca6ef64b19cc36d8baab3b12617efc56dc",
+        "license": "BSD-2-Clause"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/gotnospirit/messageformat",
+    "version": "v0.0.0-20221001023931-dfe49f1eb092",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "b8c158998cd7b90dc515207de641bfca6ef64b19cc36d8baab3b12617efc56dc",
+        "license": "BSD-2-Clause"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/kaptinlin/go-i18n",
+    "version": "v0.1.4",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "40b491cd50bd8ed096161a1fbfa6129619d7d37b322854419d56c5d206ca5796",
+        "license": "MIT"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/kaptinlin/jsonschema",
+    "version": "v0.4.6",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "5d814ade985a3820b8bafba311ea323ab1929a7d864a5a7c3e6cfeb283cd42c5",
+        "license": "MIT"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/petar-dambovaliev/aho-corasick",
+    "version": "v0.0.0-20250424160509-463d218d4745",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "74966845d68faf110f9b5142c1610392e668d981f500eabe34702aafa86b6825",
+        "license": "MIT"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/tidwall/gjson",
+    "version": "v1.18.0",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "be83ad53208d03a9fe08c7fac231cabf79422989ef5706bff217bd35104ebf07",
+        "license": "MIT"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/tidwall/match",
+    "version": "v1.1.1",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "be83ad53208d03a9fe08c7fac231cabf79422989ef5706bff217bd35104ebf07",
+        "license": "MIT"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/tidwall/pretty",
+    "version": "v1.2.1",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "0ca70311227fe097c662dece3f359e3317fa7f9d41f8d29eb45fc5135e216139",
+        "license": "MIT"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "github.com/valllabh/ocsf-schema-golang",
+    "version": "v1.0.3",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "license": "Apache-2.0"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "golang.org/x/net",
+    "version": "v0.58.0",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+        "license": "BSD-3-Clause"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "golang.org/x/sync",
+    "version": "v0.22.0",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+        "license": "BSD-3-Clause"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "golang.org/x/text",
+    "version": "v0.41.0",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+        "license": "BSD-3-Clause"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "google.golang.org/protobuf",
+    "version": "v1.36.11",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "4835612df0098ca95f8e7d9e3bffcb02358d435dbb38057c844c99d7f725eb20",
+        "license": "BSD-3-Clause"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  },
+  {
+    "module": "rsc.io/binaryregexp",
+    "version": "v0.2.0",
+    "license_files": [
+      {
+        "file": "LICENSE",
+        "sha256": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067",
+        "license": "BSD-3-Clause"
+      }
+    ],
+    "scope": "packages loaded by engine/CRS research tests, not approved appliance dependencies"
+  }
+]

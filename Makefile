@@ -6,7 +6,7 @@ hooks:
 check:
 	sh tools/check-repo.sh
 lint:
-	.tools/bin/shellcheck tools/check-repo.sh .githooks/pre-commit .githooks/commit-msg
+	.tools/bin/shellcheck tools/run-research-go.sh tools/check-repo.sh .githooks/pre-commit .githooks/commit-msg
 test:
 	.tools/venv/bin/python3 -m unittest discover -s tools/tests -v
 secrets:
@@ -15,7 +15,14 @@ verify: check lint test secrets
 
 .PHONY: research-test research-cross
 research-test:
-	cd research/coraza && GOTOOLCHAIN=local GOCACHE=$(CURDIR)/.tools/go-cache go test -count=1 -v ./...
+	cd research/coraza && ../../tools/run-research-go.sh test -count=1 -v ./...
 research-cross:
 	mkdir -p .tools/research
-	cd research/coraza && GOTOOLCHAIN=local GOCACHE=$(CURDIR)/.tools/go-cache GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 go test -c -o ../../.tools/research/coraza-openbsd-amd64.test
+	cd research/coraza && GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 ../../tools/run-research-go.sh test -c -o ../../.tools/research/coraza-openbsd-amd64.test
+
+.PHONY: research-tools research-audit
+research-tools:
+	python3 tools/bootstrap-research.py
+
+research-audit:
+	cd research/coraza && PATH=$(CURDIR)/.tools/go/bin:$$PATH GOTOOLCHAIN=local ../../.tools/research-bin/govulncheck -test ./...

@@ -1,0 +1,15 @@
+{
+  "release": "7.9",
+  "builder": "2.1.0",
+  "assets": {
+    "openbsd-7.9-host.id_rsa": {
+      "url": "https://github.com/anyvm-org/openbsd-builder/releases/download/v2.1.0/openbsd-7.9-host.id_rsa",
+      "sha256": "1ebee64506c7f6eee95c0780bf790937a9e42d3e79fe76ee42e0889477f421cb"
+    },
+    "openbsd-7.9.qcow2.zst": {
+      "url": "https://github.com/anyvm-org/openbsd-builder/releases/download/v2.1.0/openbsd-7.9.qcow2.zst",
+      "sha256": "d0a3a481488a1bdb4eccd4d24f0e4770714ea0f5d1c7c07ee92982ea5a6865b4"
+    }
+  },
+  "qcow2_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062"
+}
