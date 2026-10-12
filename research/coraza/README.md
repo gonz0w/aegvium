@@ -12,4 +12,6 @@ The [explicit-error adapter packet](../../docs/milestones/M1/ERROR-ADAPTER.md) a
 
 The [connected relayd packet](../../docs/milestones/M1/RELAYD-TRAFFIC.md) scopes guest-loopback inspection/proxy/backend listeners and a foreground stock relayd process inside the owned VM only. Host runs retain an explicit `TestRelaydTraffic` skip; that test is separately admitted by `make research-relayd-traffic`. Ordinary native engine repeats select their existing 20 cases. The [connected native observations](../relayd/traffic-observations.json) separately record the admitted comparison; no connector is adopted.
 
-The [framing packet](../../docs/milestones/M1/RELAYD-FRAMING.md) extends guest-only connected admission to twenty cases. Raw TCP inputs preserve chunking, conflicting/mixed lengths and one denied-then-benign pipeline sequence; host skips remain skips.
+The [framing packet](../../docs/milestones/M1/RELAYD-FRAMING.md) extended guest-only connected admission to twenty cases. Raw TCP inputs preserve chunking, conflicting/mixed lengths and one denied-then-benign pipeline sequence; host skips remain skips.
+
+The [reuse diagnostic packet](../../docs/milestones/M1/RELAYD-REUSE.md) expands current connected admission to twenty-four cases, retaining backend snapshots on response failure. Its failed native observations and historical framing failure remain separate; host connected skips are unchanged.

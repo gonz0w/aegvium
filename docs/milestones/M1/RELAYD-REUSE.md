@@ -21,3 +21,21 @@ Keep the original twenty cases and add direct/relayd benign pipelines and serial
 ## Limits and rollback
 
 HTTP/1.1 guest-loopback synthetic traffic only. No cause attribution without additional evidence, packet trace, independent parser, supported reuse profile, TLS/identity qualification or connector adoption. Existing image/source lineage gaps remain. Disposable guest destruction is rollback; do not install services or alter live networks. Keep historical framing evidence unchanged.
+
+## Observed result
+
+Candidate `e5380dfb3465604afa32c334a8732925e98cb2f8` ran as UID 32767 in the owned patched/rebooted OpenBSD 7.9 amd64 guest. The connected suite **failed**: twenty-two of twenty-four cases passed. The separate twenty engine cases and stock configtests passed. [Source-bound receipts](../../../research/relayd/reuse-observations.json) preserve the full named outcomes, failure observations and native log/report hashes.
+
+| Sequence | Direct statuses / backend count | Relayd statuses / backend count |
+|---|---|---|
+| Denied then benign pipeline | 403, 200 / 1 | 403 then unexpected EOF / 0 |
+| Benign then benign pipeline | 200, 200 / 2 | 200 then unexpected EOF / 1 |
+| Serialized denied then benign | 403, 200 / 1 | 403, 200 / 1 |
+
+All fourteen raw-case cleanup snapshots recorded zero hostile URI receipts. Failed pipeline counts are observations, not successful backend assertions or proof against all later forwarding. Successful serialized/direct cases also passed exact method/path/body assertions. The original pipeline expectation is unchanged; the earlier run's missing count remains historically unqualified.
+
+Inspection loss returned 500/500/502 with zero backend forwards and recovery passed. Health logs also recorded an extra down/up transition with a TCP-connect timeout before the deliberate loss; this run cannot attribute either pipeline failure exclusively to relayd, Coraza or a timeout setting. The fixture has a one-second Go idle timeout, three-second read/write timeouts and five-second relayd session timeout. No packet capture or installed source provenance analysis establishes the mechanism.
+
+Bootstrap rejection, authenticated 34 patches/reboot, foreground daemon/listener/socket cleanup, owned VM teardown and unchanged source/base verified. Native execution uses a host cross-build; no new native source-build claim.
+
+Next bounded work should isolate idle/session timing and health transitions in separate synthetic profiles and capture request-arrival/connection events before selecting a reuse support policy. Preserve both failed suites; do not claim general relayd pipelining support or incompatibility from this profile. TLS/identity, broader parser corpus, full CRS, lineage and connector adoption remain open.
