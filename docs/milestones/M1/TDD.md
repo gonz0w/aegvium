@@ -44,3 +44,5 @@ The [TLS termination packet](RELAYD-TLS.md) adds ten guest-only HTTPS/client-ver
 The [identity feasibility study](RELAYD-IDENTITY.md) pins static source findings and proposes the next prefix/trust/readiness matrix. It adds no native cases; connected admission remains sixty-three. Receiver implementation requires a concrete bounded packet before execution.
 
 The [prefix parser packet](PROXY-PARSER.md) extends ordinary native admission to 45 leaves (20 engine plus 25 isolated parser cases). Connected admission remains 63; no listener, deadline or trust boundary is implemented by the parser.
+
+The [connection handoff packet](PROXY-ADAPTER.md) adds eight in-memory net.Conn and two owned-guest TCP leaves (ordinary native admission: 55). Host TCP skips remain skips; relayd-connected admission remains 63.

@@ -104,7 +104,10 @@ EXPECTED |= {'TestProxyV1Accepted/' + name for name in ('coalesced', 'one-byte',
     'TestProxyV1Rejected/' + name for name in ('missing', 'truncated', 'overlong', 'bare-lf', 'magic', 'family',
     'unknown', 'v2', 'source', 'destination', 'leading-zero-address', 'mapped-ipv6', 'zero-port', 'overflow-port',
     'leading-zero-port', 'signed-port', 'duplicate-space', 'tab', 'extra-field', 'wrong-destination')} | {'TestProxyV1ReadFailure'}
-GROUPS = {'TestPinnedCRSSmoke', 'TestRequestInterruption', 'TestExplicitInspectionError', 'TestProxyV1Accepted', 'TestProxyV1Rejected'}
+EXPECTED |= {'TestProxyV1Conn/' + name for name in ('coalesced', 'deadline-cleared', 'timeout-silent', 'timeout-partial',
+    'malformed', 'initial-deadline-failure', 'clear-deadline-failure', 'invalid-budget')} | {
+    'TestProxyV1TCP/' + name for name in ('handoff', 'timeout')}
+GROUPS = {'TestPinnedCRSSmoke', 'TestRequestInterruption', 'TestExplicitInspectionError', 'TestProxyV1Accepted', 'TestProxyV1Rejected', 'TestProxyV1Conn', 'TestProxyV1TCP'}
 
 
 def digest(path):
