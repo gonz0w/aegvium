@@ -2,7 +2,10 @@
 package spike
 
 import (
+	"bufio"
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -154,6 +157,89 @@ func TestRelaydTraffic(t *testing.T) {
 			})
 		}
 	}
+
+	// Raw request bytes preserve framing that a normal HTTP client would normalize.
+	for _, arm := range []struct{ name, address string }{
+		{"direct", "127.0.0.1:18081"}, {"relayd", "127.0.0.1:18080"},
+	} {
+		chunked := func(body string) string { return fmt.Sprintf("%x\r\n%s\r\n0\r\n\r\n", len(body), body) }
+		post := "POST /allowed HTTP/1.1\r\nHost: fixture.test\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: close\r\n"
+		for _, tc := range []struct {
+			name, wire, receipt string
+			statuses            []int
+			reject              bool
+		}{
+			{"chunked-benign", post + "Transfer-Encoding: chunked\r\n\r\n" + chunked("payload=ordinary"), "POST /allowed payload=ordinary", []int{200}, false},
+			{"chunked-denied", post + "Transfer-Encoding: chunked\r\n\r\n" + chunked("payload=forbidden"), "", []int{403}, false},
+			{"conflicting-length", post + "Content-Length: 16\r\nContent-Length: 17\r\n\r\npayload=ordinary", "", nil, true},
+			{"mixed-framing-attack", post + "Content-Length: 1\r\nTransfer-Encoding: chunked\r\n\r\n" + chunked("payload=forbidden"), "", nil, true},
+			{"pipeline-denied-benign", "GET /forbidden HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{403, 200}, false},
+		} {
+			t.Run(arm.name+"-"+tc.name, func(t *testing.T) {
+				before := len(snapshot())
+				connection, err := net.DialTimeout("tcp4", arm.address, time.Second)
+				if err != nil {
+					t.Fatal(err)
+				}
+				defer connection.Close()
+				if err := connection.SetDeadline(time.Now().Add(6 * time.Second)); err != nil {
+					t.Fatal(err)
+				}
+				if _, err := io.WriteString(connection, tc.wire); err != nil {
+					t.Fatal(err)
+				}
+				reader := bufio.NewReader(connection)
+				var statuses []int
+				var readError error
+				responses := len(tc.statuses)
+				if tc.reject {
+					responses = 1
+				}
+				for i := 0; i < responses; i++ {
+					response, err := http.ReadResponse(reader, &http.Request{Method: "POST"})
+					if err != nil {
+						readError = err
+						break
+					}
+					statuses = append(statuses, response.StatusCode)
+					body, err := io.ReadAll(io.LimitReader(response.Body, 4097))
+					_ = response.Body.Close()
+					if err != nil || len(body) > 4096 {
+						t.Fatalf("raw response body exceeded bound or failed: size=%d err=%v", len(body), err)
+					}
+				}
+				if tc.reject {
+					// A bounded wait ending in timeout is not proof of safe rejection.
+					if readError != nil && !errors.Is(readError, io.EOF) && !errors.Is(readError, io.ErrUnexpectedEOF) {
+						t.Fatalf("inconclusive malformed-framing result: %v", readError)
+					}
+					if len(statuses) > 0 && statuses[0] < 400 {
+						t.Fatalf("malformed framing returned success: %v", statuses)
+					}
+					time.Sleep(250 * time.Millisecond)
+				} else {
+					if readError != nil || len(statuses) != len(tc.statuses) {
+						t.Fatalf("raw statuses=%v read-error=%v; want %v", statuses, readError, tc.statuses)
+					}
+					for i := range statuses {
+						if statuses[i] != tc.statuses[i] {
+							t.Fatalf("raw statuses=%v; want %v", statuses, tc.statuses)
+						}
+					}
+				}
+				got := snapshot()[before:]
+				if tc.receipt == "" {
+					if len(got) != 0 {
+						t.Fatalf("raw rejected request reached backend: %v", got)
+					}
+				} else if len(got) != 1 || got[0] != tc.receipt {
+					t.Fatalf("raw backend bytes=%v; want exactly %q", got, tc.receipt)
+				}
+				t.Logf("framing statuses=%v backend-count=%d closed=%t", statuses, len(got), readError != nil)
+			})
+		}
+	}
+
 	t.Run("inspection-loss", func(t *testing.T) {
 		before := len(snapshot())
 		connection, err := net.DialTimeout("tcp4", backendServer.Addr, time.Second)

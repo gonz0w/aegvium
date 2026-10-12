@@ -24,3 +24,5 @@ The [native packet](NATIVE-ENGINE.md) defines an offline native compile followed
 The [explicit-error adapter packet](ERROR-ADAPTER.md) scopes seven additional in-memory completion cases; current fixture admission requires 20 named cases. Older source-build and execution receipts retain their original 13-case scope.
 
 The [connected relayd packet](RELAYD-TRAFFIC.md) separately admits ten guest-only traffic cases against a direct-inspection control, listener loss and recovery. Host skips remain skips; ordinary native admission still selects 20 engine cases. Connected results and source-build evidence remain distinct.
+
+The [framing extension](RELAYD-FRAMING.md) adds ten raw-wire direct/relayd cases, expanding current connected admission to twenty. Its small matrix and historical ten-case happy-path comparison remain distinct from full #16 qualification.
