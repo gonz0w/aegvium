@@ -282,6 +282,54 @@ def source_build_guest(guest, work, inputs):
             **parse_native((work / 'native.log').read_text(), values['binary']),
             'log_sha256': digest(work / 'native.log')}
 
+
+def relayd_inputs():
+    profile = (ROOT / 'research/relayd/ingress.conf').read_bytes()
+    reference = b'    protocol "inspection_ingress"'
+    if profile.count(reference) != 1:
+        raise ValueError('reviewed protocol reference mismatch')
+    return {'ingress.conf': profile,
+            'missing-protocol.conf': profile.replace(reference, b'    protocol "missing"'),
+            'bad-syntax.conf': profile + b'unsupported_aegvium_option\n'}
+
+
+def parse_relayd(text, profile_hash):
+    receipts = {}
+    for line in text.splitlines():
+        if line.startswith('RELAYD\t'):
+            parts = line.split('\t')
+            if len(parts) != 3 or parts[1] in receipts:
+                raise ValueError('malformed/duplicate relayd receipt')
+            receipts[parts[1]] = parts[2]
+    expected = {'valid': 'accepted', 'missing-protocol': 'rejected', 'bad-syntax': 'rejected',
+                'no-daemon': 'verified-before-after', 'no-listener': 'verified-before-after',
+                'no-control-socket': 'verified-before-after', 'uid': '0', 'profile': profile_hash}
+    hashes = {'binary', 'valid-log', 'missing-log', 'bad-log'}
+    if (set(receipts) != set(expected) | hashes
+            or any(receipts.get(name) != value for name, value in expected.items())
+            or any(not re.fullmatch('[0-9a-f]{64}', receipts[name]) for name in hashes)):
+        raise ValueError('incomplete/mismatched relayd configtest receipts')
+    return receipts
+
+
+def relayd_config_guest(guest, work):
+    inputs = relayd_inputs()
+    hashes = {name: hashlib.sha256(data).hexdigest() for name, data in inputs.items()}
+    guest.require('set -eu; umask 077; mkdir /var/aegvium-relayd')
+    for name, data in inputs.items():
+        guest.require('set -eu; cat > /var/aegvium-relayd/' + name, data=data)
+    script = (ROOT / 'tools/native/relayd-config.sh').read_bytes()
+    for token, name in ((b'PROFILE_SHA256', 'ingress.conf'), (b'MISSING_SHA256', 'missing-protocol.conf'),
+                        (b'BAD_SHA256', 'bad-syntax.conf')):
+        script = script.replace(token, hashes[name].encode())
+    log = work / 'relayd-config.log'
+    with log.open('wb') as output:
+        response = guest.call('sh -s', data=script, seconds=60, output=output)
+    if response.returncode:
+        raise RuntimeError('relayd configtest failed; see relayd-config.log')
+    return {'mode': 'syntax-only; daemon never started', 'input_sha256': hashes,
+            'receipts': parse_relayd(log.read_text(), hashes['ingress.conf']), 'log_sha256': digest(log)}
+
 def bound_child_storage():
     # Applies to supervisor/QEMU only. The snapshot stays in the private run.
     resource.setrlimit(resource.RLIMIT_FSIZE, (4 * 1024**3, 4 * 1024**3))
@@ -295,6 +343,7 @@ def run():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--inject-failure', choices=('boot', 'ssh', 'auth', 'transfer', 'test'))
     parser.add_argument('--source-build', action='store_true')
+    parser.add_argument('--relayd-config', action='store_true')
     args = parser.parse_args()
     os.umask(0o077)
     if git('status', '--porcelain'):
@@ -318,7 +367,7 @@ def run():
     duration = 1800 if args.source_build else 900
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
-              'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'passed': False,
+              'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
@@ -357,6 +406,9 @@ def run():
         report['patch_refresh'] = patch_guest(guest, work)
         if args.inject_failure == 'transfer':
             raise RuntimeError('injected transfer-stage failure')
+        if args.relayd_config:
+            print('Validating stock relayd configuration without starting daemon...', flush=True)
+            report['relayd_config'] = relayd_config_guest(guest, work)
         if args.source_build:
             print('Offline unprivileged native compilation started.', flush=True)
             report['native'] = source_build_guest(guest, work, build_inputs)
