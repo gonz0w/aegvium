@@ -17,3 +17,5 @@ The [framing packet](../../docs/milestones/M1/RELAYD-FRAMING.md) extended guest-
 The [reuse diagnostic packet](../../docs/milestones/M1/RELAYD-REUSE.md) expanded connected admission to twenty-four cases, retaining backend snapshots on response failure. Its failed native observations and historical framing failure remain separate; host connected skips are unchanged.
 
 The [idle diagnostic packet](../../docs/milestones/M1/RELAYD-IDLE.md) expands current connected admission to thirty leaves and retains bounded anonymous inspection events. The failed one-/three-second comparison is separate from earlier failed suites.
+
+The [stream diagnostic packet](../../docs/milestones/M1/RELAYD-STREAM.md) retains thirty connected leaves and adds bounded inspection Read metrics. Two host recorder subcases prove split-read preservation and capped overflow recording; they do not add native engine acceptance or qualify connected behavior.

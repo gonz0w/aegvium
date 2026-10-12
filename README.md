@@ -27,3 +27,5 @@ The subsequent [framing comparison](docs/milestones/M1/RELAYD-FRAMING.md) retain
 The [reuse diagnostics](docs/milestones/M1/RELAYD-REUSE.md) observed serialized requests passing through relayd while both tested pipelines failed. Backend counts are retained on failure; the cause and supported connection profile remain unresolved.
 
 The [idle-time comparison](docs/milestones/M1/RELAYD-IDLE.md) delayed pipeline EOF without restoring second-request arrivals. A longer inspection idle timeout alone did not fix the tested relayd pipelines.
+
+The [inspection stream trace](docs/milestones/M1/RELAYD-STREAM.md) recorded only the first request's bytes in failed relayd pipelines, while direct pipelines and serialized controls consumed both. Socket buffering and exact relayd handling remain unresolved.
