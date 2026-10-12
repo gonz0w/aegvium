@@ -13,4 +13,4 @@ printf 'RECEIPT\tkernel_sha256\t%s\n' "$(sha256 -q /bsd)"
 printf 'RECEIPT\tpatches\t%s\n' "$(syspatch -l | paste -sd , -)"
 # Expand identity checks inside the unprivileged shell.
 # shellcheck disable=SC2016
-su -m nobody -c 'set -eu; [ "$(id -u)" -ne 0 ]; printf "RECEIPT\tuid\t%s\n" "$(id -u)"; cd /var/aegvium-lab; exec ./engine.test -test.v -test.timeout=120s'
+su -m nobody -c 'set -eu; [ "$(id -u)" -ne 0 ]; printf "RECEIPT\tuid\t%s\n" "$(id -u)"; cd /var/aegvium-lab; exec ./engine.test -test.v -test.timeout=120s -test.run="^(TestPinnedCRSSmoke|TestRequestInterruption|TestInvalidRulesRejected|TestBodyReadFailure|TestExplicitInspectionError)$"'

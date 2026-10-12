@@ -67,3 +67,5 @@ Observed source-build evidence is retained in [build-observations.json](../../..
 The [explicit-error adapter slice](ERROR-ADAPTER.md) extends current admission to 20 named cases. Its native execution is a separate cross-build repeat; the earlier 13-case native source-build receipts remain unchanged and do not qualify this adapter.
 
 The [stock relayd configtest packet](RELAYD-CONFIG.md) adds an optional syntax-only profile before the complete engine repeat. It never starts relayd, opens a listener or installs a service; all existing native budget/patch/teardown gates apply.
+
+`make research-relayd-traffic` is a separately scoped [connected fixture](RELAYD-TRAFFIC.md): automatic configtest, existing 20-case engine repeat and ten separately admitted native traffic cases. Its foreground processes and listeners exist only in the independently owned guest and must be cleaned up before verified VM teardown. The source-build preparer now admits the connected test file alongside the original four module files; old 745-file/13-case source-build observations remain historical. No current source-build result is inferred from a cross-built traffic run.
