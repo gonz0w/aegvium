@@ -334,7 +334,9 @@ def relayd_config_guest(guest, work):
 TRAFFIC_CASES = {'TestRelaydTraffic/' + name for name in (
     'direct-benign-get', 'direct-benign-post', 'direct-uri-denied', 'direct-body-denied',
     'relayd-benign-get', 'relayd-benign-post', 'relayd-uri-denied', 'relayd-body-denied',
-    'inspection-loss', 'recovery')}
+    'inspection-loss', 'recovery')} | {
+    'TestRelaydTraffic/' + arm + '-' + name for arm in ('direct', 'relayd') for name in
+    ('chunked-benign', 'chunked-denied', 'conflicting-length', 'mixed-framing-attack', 'pipeline-denied-benign')}
 
 
 def parse_traffic(text, binary_hash, profile_hash, relayd_hash):

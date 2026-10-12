@@ -21,3 +21,5 @@ The research module includes pinned CRS smoke tests and [dependency/advisory rev
 Offline native engine compilation is now observed: [native source-build receipts](research/native/build-observations.json) preserve the initial timeout and fresh successful build with all 13 smoke cases. Connector and appliance acceptance remain separate.
 
 The first [connected relayd/Coraza experiment](research/relayd/README.md) passed ten plain-HTTP guest-only cases, including inspection loss/recovery and direct-control comparison. TLS, trust/parser qualification and connector adoption remain open.
+
+The subsequent [framing comparison](docs/milestones/M1/RELAYD-FRAMING.md) retained a failed relayd pipeline expectation (403 then EOF versus direct 403/200). Nineteen other connected cases passed; pipelining and broader parser qualification remain unresolved.
