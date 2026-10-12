@@ -6,7 +6,7 @@ hooks:
 check:
 	sh tools/check-repo.sh
 lint:
-	.tools/bin/shellcheck tools/run-research-go.sh tools/check-repo.sh .githooks/pre-commit .githooks/commit-msg
+	.tools/bin/shellcheck tools/native/engine-repeat.sh tools/native/patch-openbsd.sh tools/run-research-go.sh tools/check-repo.sh .githooks/pre-commit .githooks/commit-msg
 test:
 	.tools/venv/bin/python3 -m unittest discover -s tools/tests -v
 secrets:
@@ -26,3 +26,7 @@ research-tools:
 
 research-audit:
 	cd research/coraza && PATH=$(CURDIR)/.tools/go/bin:$$PATH GOTOOLCHAIN=local ../../.tools/research-bin/govulncheck -test ./...
+
+.PHONY: research-native
+research-native:
+	python3 tools/native-engine.py

@@ -4,7 +4,7 @@ Lean, auditable HTTP/HTTPS inspection appliance for a separate homelab VM behind
 
 Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
 
-Status: repository foundation, proposed architecture and an authorized research-only engine spike. No WAF binary, supported appliance, native qualification or installer exists yet.
+Status: repository foundation, proposed architecture and authorized engine research and a bounded native execution repeat. No WAF appliance, full native qualification or installer exists yet.
 
 Candidate flow: client → EdgeWall → relayd (TLS) → local Coraza inspection proxy with OWASP CRS → explicitly configured backend. The connector and body handling require native evidence before adoption. CrowdSec is an optional later behavioral layer, not the inline WAF engine.
 
@@ -16,4 +16,4 @@ Run `make tools hooks` then `make verify`. Checks run locally, with no GitHub Ac
 
 Track work in the [private Project](https://github.com/users/gonz0w/projects/5), [roadmap index](docs/milestones/github-roadmap-index.md), and [GitHub workflow](docs/engineering/github-workflow.md). The [Coraza spike](research/coraza/README.md) exercises synthetic request semantics; `make research-test` and `make research-cross` are separate research gates.
 
-The next slice adds pinned CRS smoke tests and [dependency/advisory review](docs/research/dependency-review.md). Run `make research-tools` before research commands; `make research-audit` queries the Go advisory database. [Native engine preparation](docs/milestones/M1/NATIVE-ENGINE.md) remains distinct from native execution.
+The research module includes pinned CRS smoke tests and [dependency/advisory review](docs/research/dependency-review.md). Run `make research-tools` before research commands; `make research-audit` queries the Go advisory database. [Native engine design](docs/milestones/M1/NATIVE-ENGINE.md) and [observed execution receipts](research/native/README.md) remain distinct from native builds and connector qualification.
