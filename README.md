@@ -43,3 +43,5 @@ The [stock TCP/TLS study](docs/milestones/M1/RELAYD-TLS.md) passed ten new HTTPS
 The [client-identity study](docs/milestones/M1/RELAYD-IDENTITY.md) identifies stock PROXY address output as a companion candidate, with separate readiness and sender-containment requirements. It adds source evidence and a proposed test matrix; receiver implementation and native trust qualification remain pending.
 
 The [restricted PROXY v1 parser](docs/milestones/M1/PROXY-PARSER.md) passed 25 isolated parser cases alongside 20 engine cases on OpenBSD. Buffered application bytes were preserved; socket deadlines, sender trust and connected PROXY qualification remain pending.
+
+The [PROXY connection adapter](docs/milestones/M1/PROXY-ADAPTER.md) passed deadline, closure and buffered-byte controls, including direct TCP in the owned OpenBSD guest (55 native cases total). Listener/readiness integration and sender authentication remain pending.
