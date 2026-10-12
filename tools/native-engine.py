@@ -96,8 +96,11 @@ EXPECTED = {
     ('benign-query', 'benign-post', 'sql-injection', 'script-injection')
 } | {'TestRequestInterruption/' + name for name in
      ('benign-get', 'uri-denied', 'benign-post', 'body-denied', 'body-limit',
-      'detection-uri', 'detection-body')} | {'TestInvalidRulesRejected', 'TestBodyReadFailure'}
-GROUPS = {'TestPinnedCRSSmoke', 'TestRequestInterruption'}
+      'detection-uri', 'detection-body')} | {'TestInvalidRulesRejected', 'TestBodyReadFailure'} | {
+    'TestExplicitInspectionError/' + name for name in
+    ('empty-benign', 'benign-post', 'read-error', 'partial-read-error',
+     'uri-denied', 'body-denied', 'detection-uri')}
+GROUPS = {'TestPinnedCRSSmoke', 'TestRequestInterruption', 'TestExplicitInspectionError'}
 
 
 def digest(path):

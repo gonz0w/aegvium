@@ -43,3 +43,7 @@ The [OpenBSD 7.9 relayd manual](https://man.openbsd.org/OpenBSD-7.9/relayd.conf.
 Pinned discovery source: [OpenBSD relay_http.c](https://github.com/openbsd/src/blob/78e1d99e9924d1948e4cb7b4f374f5ab4b53bb29/usr.sbin/relayd/relay_http.c). Its HTTP framing/body forwarding paths require comparative native tests. This is current-tree discovery and must not be represented as the exact OpenBSD 7.9 installed source; establish release/patch lineage before native conclusions.
 
 The reviewed [Go 1.27.2 platform support source](https://github.com/golang/go/blob/go1.27.2/src/internal/platform/supported.go) does not list OpenBSD under c-shared. A custom toolchain/libcoraza port is therefore a distinct research effort, not a supported drop-in option. No patched relayd, native integration, parser safety or performance has been demonstrated. Follow #15/#16 and the [native packet](../milestones/M1/NATIVE-ENGINE.md).
+
+## Explicit-error feasibility slice
+
+The [completion-adapter experiment](../milestones/M1/ERROR-ADAPTER.md) records generic 500 responses and zero synthetic backend receipts for immediate/partial body-read errors, while retaining unmodified upstream behavior and allow/deny/DetectionOnly controls. All 20 fixture cases passed in an owned OpenBSD guest using a host cross-built binary. This addresses one prerequisite for a future companion; it does not provide a proxy API, readiness, relayd listener or cross-parser evidence.

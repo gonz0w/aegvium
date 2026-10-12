@@ -7,3 +7,5 @@ Run `make research-test`; `make research-cross` compiles the test binary for Ope
 Tests assert synthetic backend receipt counts only after permitted engine results. The in-memory backend is not an appliance proxy. No CRS corpus, relayd framing, TLS, response phase, concurrency, streaming or native enforcement is qualified. Retain failures and source-bound PR results; the [native repeat](../native/README.md) records guest execution under the disposable lab design.
 
 The additional CRS v4.25.0 embedded bundle is pinned to the Caddy comparison candidate. Four smoke cases test benign query/POST and SQL/script attack denial, with backend receipts/body preservation. This is not the full CRS corpus. See [dependency review](../../docs/research/dependency-review.md).
+
+The [explicit-error adapter packet](../../docs/milestones/M1/ERROR-ADAPTER.md) adds a test-only completion wrapper and seven cases. It experiments with explicit failure for silent inspection aborts while preserving the original middleware characterization. It is not a companion proxy or readiness API. Current native admission requires all 20 named cases; earlier 13-case observations remain historical.
