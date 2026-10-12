@@ -55,3 +55,7 @@ The [syntax-only ingress fixture](../../research/relayd/README.md) was accepted 
 ## Connected companion observation
 
 The [first traffic fixture](../../research/relayd/README.md) passed ten plain-HTTP cases in the owned OpenBSD guest: identical direct/relayd benign and URI/body-denial controls, inspection-listener loss with the backend alive, and recovery. Stock relayd's health-check logs observed down/up transitions; loss returned 500/502/502 with zero backend forwards, and recovery preserved POST bytes. Foreground daemon/listener cleanup and VM teardown/source/base passed. This establishes a small companion-proxy path with stock relayd without modifying it, while leaving TLS, trust, both-parser malformed framing, existing-connector comparison and adoption open.
+
+## Framing compatibility finding
+
+The [bounded framing comparison](../milestones/M1/RELAYD-FRAMING.md) failed its denied-then-benign pipeline expectation through stock relayd: 403 then unexpected EOF, versus direct 403/200. Nineteen other connected cases passed, including exact benign chunked body bytes and zero backend receipts for the tested chunked attack, conflicting lengths and mixed framing attack. The failed pipeline stopped before checking backend receipts; it is not evidence of bypass or supported pipelining. Cleanup and the separate engine/configtest gates passed. Preserve the failure and investigate connection reuse with receipts on failed exchanges before selecting a connector support profile.

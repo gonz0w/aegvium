@@ -29,3 +29,21 @@ Host Go checks retain the connected skip. Native repeat must use the owned patch
 ## Compatibility and limits
 
 Plain HTTP/1.1 synthetic requests only. Duplicate transfer codings, trailer semantics, compression, encoded paths, alternate whitespace/line endings, longer smuggling/pipeline sequences, HTTP/2/3, TLS/SNI/Host policy, client identity, direct-access containment, responses, full CRS, performance and comprehensive resource/crash/reload coverage remain open. A passed sample does not accept #16 or any phase gate. Recovery remains the existing fixture cleanup and inspection-listener restart; no relayd source patch or product policy is selected.
+
+## Observed failed result
+
+Candidate `eea72112d0cf2d372beea012f7ccbc6086139402` executed inside the owned patched/rebooted OpenBSD 7.9 amd64 guest as UID 32767. Nineteen of twenty connected cases passed; the connected suite and native run **failed** RF-03. The separate twenty-case engine fixture and stock configtests passed. [Source-bound observations](../../../research/relayd/framing-observations.json) retain the failed run and raw log/report hashes.
+
+| Raw sample | Direct inspection | Through stock relayd | Backend observation |
+|---|---|---|---|
+| Chunked benign | 200 | 200 | Exactly one expected decoded POST per arm |
+| Chunked synthetic attack | 403 | 403 | Zero per arm |
+| Conflicting lengths | 400 | EOF before a response | Zero per arm |
+| Mixed length/coding attack | 403 | 403 | Zero per arm |
+| Denied then benign pipeline | 403, 200 | 403, then unexpected EOF | Direct exactly one benign receipt; relayed receipt assertion was not reached |
+
+The relayd conflicting-length exchange closed in about five seconds, before the six-second client deadline; it was not admitted from a client timeout. Pipeline failure occurred before its backend receipt assertion, so this run does not qualify relayed pipeline forwarding counts or establish a bypass. `response_read_ended_before_response` records only an EOF seen while decoding a response; false does not prove the connection stayed open afterward. No standards compliance or universal header rejection claim is made.
+
+Foreground relayd process/listener/control-socket cleanup, bootstrap rejection, authenticated 34-patch installation/reboot, owned VM teardown and unchanged source/base all verified. Host cross-build execution is distinct from historical native source compilation. No expectations were weakened and no relayd/runtime policy was patched. The first ten-case result remains historical.
+
+Next bounded research should capture backend receipts even when response assertions fail and distinguish relayd/Go connection-reuse behavior, serialized requests and pipelining. Preserve this run when adding diagnostic cases; any new runtime candidate requires another isolated native run. Pipelining remains unresolved and cannot be claimed supported; RF-03, #16 and connector adoption remain open.
