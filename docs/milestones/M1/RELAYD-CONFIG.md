@@ -29,3 +29,7 @@ Native postconditions: valid profile exits zero; missing protocol and bad syntax
 ## Compatibility and recovery
 
 Plain HTTP syntax only, OpenBSD 7.9 amd64 installed baseline. No TLS key/certificate dependency or configuration API is selected. Remove the ignored private run/input copies to undo preparation; the read-only base and source remain unchanged. A future foreground traffic experiment must separately scope daemon ownership, readiness behavior, identity and both parsers before publication or service adoption.
+
+## Observed outcome
+
+Runtime candidate `62a0f7e3be7bb191fd56b1c7e172c16659d6c439` passed valid/invalid configtest expectations and pre/post absence checks in the owned patched/rebooted guest. All 20 engine cases passed as nonroot; cleanup/source/base passed. [Source-bound receipts](../../../research/relayd/config-observations.json) retain installed relayd/config hashes and raw log/report hashes. Host checks passed 40 tests, lint and secret scan. No connected traffic, health behavior, relayd source-build reproduction or phase acceptance is claimed.
