@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "scope": "static readiness feasibility and proposed research design; no endpoint, helper or native run",
+  "release": "OpenBSD 7.9",
+  "authenticated_archive_reference": "release-source.json",
+  "archive_sha256": "fb305c553059b48e8ee64539f392b783cb38a67865823f6f6a94f3b220a1268b",
+  "archive_match": true,
+  "authentication": "inherited signed-manifest verification from release-source.json; archive hash recomputed; no new signature verification",
+  "members": {
+    "usr.sbin/relayd/parse.y": {
+      "bytes": 80606,
+      "sha256": "1aae1cb9e8ceab387662bdb023e3494b6b5508e81af1a107881a12c56a48d9d3",
+      "rcs_header": "/*\t$OpenBSD: parse.y,v 1.262 2026/04/06 09:14:54 kirill Exp $\t*/"
+    },
+    "usr.sbin/relayd/relay.c": {
+      "bytes": 67985,
+      "sha256": "1263ab095f27146f3dd045102aed95f2e86b2eac5f7aad09cc4ff3373f4ce4a3",
+      "rcs_header": "/*\t$OpenBSD: relay.c,v 1.263 2026/04/02 13:38:24 tb Exp $\t*/"
+    },
+    "usr.sbin/relayd/check_tcp.c": {
+      "bytes": 10745,
+      "sha256": "dc8fcb4a413b5c624d3e9ebf740e301a58fa264e8d7fc87c2d3bbdb1e29b888d",
+      "rcs_header": "/*\t$OpenBSD: check_tcp.c,v 1.62 2026/03/02 19:28:01 rsadowski Exp $\t*/"
+    },
+    "usr.sbin/relayd/check_script.c": {
+      "bytes": 4424,
+      "sha256": "5b02ad16bb2160d0c4e612ecb1b7e5dff22301edf142c2da60735782ceecb75f",
+      "rcs_header": "/*\t$OpenBSD: check_script.c,v 1.23 2026/03/02 19:28:01 rsadowski Exp $\t*/"
+    }
+  },
+  "analysis": {
+    "shared_port": {
+      "references": [
+        "parse.y:752-779",
+        "relay.c:1404-1409",
+        "check_tcp.c:58-66"
+      ],
+      "finding": "table conf.port supplies both selected relay output and TCP-based health destination"
+    },
+    "bare_head": {
+      "references": [
+        "parse.y:912-930"
+      ],
+      "finding": "HTTP code check creates bare HEAD with HTTP/1.0 without host, HTTP/1.1 with configured host"
+    },
+    "script_configuration": {
+      "references": [
+        "parse.y:1003-1013"
+      ],
+      "finding": "check script stores path and enables script flag"
+    },
+    "script_privilege_timeout": {
+      "references": [
+        "check_script.c:95-184"
+      ],
+      "finding": "executes host-name argument after privilege drop; timer kills direct child; process group/descendant cleanup not established"
+    },
+    "script_result": {
+      "references": [
+        "check_script.c:65-81",
+        "check_script.c:159-167"
+      ],
+      "finding": "zero is DOWN, positive is UP, negative is UNKNOWN; child exit status returned, signalled child becomes zero"
+    }
+  },
+  "native_syntax": "not run",
+  "native_health_transitions": "not run",
+  "runtime_adoption": false
+}
