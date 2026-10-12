@@ -4,6 +4,7 @@ package spike
 import (
 	"bufio"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -52,14 +53,41 @@ func TestRelaydTraffic(t *testing.T) {
 		w.WriteHeader(200)
 		_, _ = w.Write([]byte("synthetic backend\n"))
 	})
-	start := func(t *testing.T, address string, handler http.Handler) *http.Server {
+	type inspectionEvent struct {
+		Milliseconds int64  `json:"milliseconds"`
+		Kind         string `json:"kind"`
+		Method       string `json:"method,omitempty"`
+		Path         string `json:"path,omitempty"`
+	}
+	var eventMu sync.Mutex
+	var events []inspectionEvent
+	var eventOverflow bool
+	eventStart := time.Now()
+	recordEvent := func(kind, method, path string) {
+		eventMu.Lock()
+		defer eventMu.Unlock()
+		if len(events) >= 1024 {
+			eventOverflow = true
+			return
+		}
+		events = append(events, inspectionEvent{time.Since(eventStart).Milliseconds(), kind, method, path})
+	}
+	eventSnapshot := func() ([]inspectionEvent, bool) {
+		eventMu.Lock()
+		defer eventMu.Unlock()
+		return append([]inspectionEvent(nil), events...), eventOverflow
+	}
+	start := func(t *testing.T, address string, handler http.Handler, idle time.Duration) *http.Server {
 		listener, err := net.Listen("tcp4", address)
 		if err != nil {
 			t.Fatal(err)
 		}
 		server := &http.Server{Addr: listener.Addr().String(), Handler: handler,
 			ReadHeaderTimeout: 2 * time.Second, ReadTimeout: 3 * time.Second,
-			WriteTimeout: 3 * time.Second, IdleTimeout: time.Second, MaxHeaderBytes: 4096}
+			WriteTimeout: 3 * time.Second, IdleTimeout: idle, MaxHeaderBytes: 4096}
+		if address == "127.0.0.1:18081" {
+			server.ConnState = func(_ net.Conn, state http.ConnState) { recordEvent("connection-"+state.String(), "", "") }
+		}
 		t.Cleanup(func() { _ = server.Close() })
 		go func() {
 			if err := server.Serve(listener); err != nil && err != http.ErrServerClosed {
@@ -68,7 +96,7 @@ func TestRelaydTraffic(t *testing.T) {
 		}()
 		return server
 	}
-	backendServer := start(t, "127.0.0.1:0", backend)
+	backendServer := start(t, "127.0.0.1:0", backend, time.Second)
 	target, err := url.Parse("http://" + backendServer.Addr)
 	if err != nil {
 		t.Fatal(err)
@@ -94,9 +122,10 @@ func TestRelaydTraffic(t *testing.T) {
 			w.WriteHeader(200)
 			return
 		}
+		recordEvent("application-arrival", r.Method, r.URL.Path)
 		inspected.ServeHTTP(w, r)
 	})
-	inspection := start(t, "127.0.0.1:18081", inspectionHandler)
+	inspection := start(t, "127.0.0.1:18081", inspectionHandler, time.Second)
 	clientTransport := &http.Transport{Proxy: nil, DisableKeepAlives: true}
 	t.Cleanup(clientTransport.CloseIdleConnections)
 	client := &http.Client{Transport: clientTransport, Timeout: 3 * time.Second,
@@ -144,6 +173,9 @@ func TestRelaydTraffic(t *testing.T) {
 			{"uri-denied", "GET", "/forbidden", "", 403, 0},
 			{"body-denied", "POST", "/allowed", "payload=forbidden", 403, 0},
 		} {
+			if strings.HasSuffix(arm.name, "-longidle") && tc.name != "pipeline-denied-benign" && tc.name != "pipeline-benign-benign" && tc.name != "serialized-denied-benign" {
+				continue
+			}
 			t.Run(arm.name+"-"+tc.name, func(t *testing.T) {
 				before := len(snapshot())
 				status, body, err := send(arm.base, tc.method, tc.path, tc.body)
@@ -161,7 +193,15 @@ func TestRelaydTraffic(t *testing.T) {
 	// Raw request bytes preserve framing that a normal HTTP client would normalize.
 	for _, arm := range []struct{ name, address string }{
 		{"direct", "127.0.0.1:18081"}, {"relayd", "127.0.0.1:18080"},
+		{"direct-longidle", "127.0.0.1:18081"}, {"relayd-longidle", "127.0.0.1:18080"},
 	} {
+		if arm.name == "direct-longidle" {
+			if err := inspection.Close(); err != nil {
+				t.Fatal(err)
+			}
+			inspection = start(t, "127.0.0.1:18081", inspectionHandler, 3*time.Second)
+			ready(t)
+		}
 		chunked := func(body string) string { return fmt.Sprintf("%x\r\n%s\r\n0\r\n\r\n", len(body), body) }
 		post := "POST /allowed HTTP/1.1\r\nHost: fixture.test\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: close\r\n"
 		for _, tc := range []struct {
@@ -178,8 +218,12 @@ func TestRelaydTraffic(t *testing.T) {
 			{"pipeline-benign-benign", "GET /allowed HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{200, 200}, false, false},
 			{"serialized-denied-benign", "GET /forbidden HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{403, 200}, false, true},
 		} {
+			if strings.HasSuffix(arm.name, "-longidle") && tc.name != "pipeline-denied-benign" && tc.name != "pipeline-benign-benign" && tc.name != "serialized-denied-benign" {
+				continue
+			}
 			t.Run(arm.name+"-"+tc.name, func(t *testing.T) {
 				before := len(snapshot())
+				initialEvents, _ := eventSnapshot()
 				connection, err := net.DialTimeout("tcp4", arm.address, time.Second)
 				if err != nil {
 					t.Fatal(err)
@@ -208,6 +252,12 @@ func TestRelaydTraffic(t *testing.T) {
 							hostile++
 						}
 					}
+					eventList, overflow := eventSnapshot()
+					data, err := json.Marshal(eventList[len(initialEvents):])
+					if err != nil || overflow {
+						t.Fatalf("inspection diagnostics incomplete: overflow=%t err=%v", overflow, err)
+					}
+					t.Logf("inspection-events %s", data)
 					t.Logf("raw-observation statuses=%v backend-count=%d hostile-uri-count=%d read-error=%v", statuses, len(got), hostile, readError)
 				})
 				responses := len(tc.statuses)
@@ -276,6 +326,11 @@ func TestRelaydTraffic(t *testing.T) {
 		}
 	}
 
+	if err := inspection.Close(); err != nil {
+		t.Fatal(err)
+	}
+	inspection = start(t, "127.0.0.1:18081", inspectionHandler, time.Second)
+	ready(t)
 	t.Run("inspection-loss", func(t *testing.T) {
 		before := len(snapshot())
 		connection, err := net.DialTimeout("tcp4", backendServer.Addr, time.Second)
@@ -299,7 +354,7 @@ func TestRelaydTraffic(t *testing.T) {
 		}
 	})
 	t.Run("recovery", func(t *testing.T) {
-		inspection = start(t, "127.0.0.1:18081", inspectionHandler)
+		inspection = start(t, "127.0.0.1:18081", inspectionHandler, time.Second)
 		ready(t)
 		before := len(snapshot())
 		status, body, err := send("http://127.0.0.1:18080", "POST", "/allowed", "payload=recovered")
