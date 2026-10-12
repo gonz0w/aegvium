@@ -4,6 +4,6 @@ Authorized bounded research, 2026-10-11. No listener, reverse proxy, appliance c
 
 Run `make research-test`; `make research-cross` compiles the test binary for OpenBSD amd64 without running it. Run `make research-tools` first. Research Go 1.27.2 is checksum-pinned under ignored .tools; the earlier Go 1.27.0 evidence remains historical, not the current baseline. Cache/output stay under ignored .tools. Module integrity uses go.sum; dependency/advisory review remains separate from runtime adoption.
 
-Tests assert synthetic backend receipt counts only after permitted engine results. The in-memory backend is not an appliance proxy. No CRS corpus, relayd framing, TLS, response phase, concurrency, streaming or native enforcement is qualified. Retain failures and source-bound PR results; native execution needs the disposable lab design.
+Tests assert synthetic backend receipt counts only after permitted engine results. The in-memory backend is not an appliance proxy. No CRS corpus, relayd framing, TLS, response phase, concurrency, streaming or native enforcement is qualified. Retain failures and source-bound PR results; the [native repeat](../native/README.md) records guest execution under the disposable lab design.
 
 The additional CRS v4.25.0 embedded bundle is pinned to the Caddy comparison candidate. Four smoke cases test benign query/POST and SQL/script attack denial, with backend receipts/body preservation. This is not the full CRS corpus. See [dependency review](../../docs/research/dependency-review.md).

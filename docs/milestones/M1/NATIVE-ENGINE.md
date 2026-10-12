@@ -1,6 +1,6 @@
 # First native engine repeat packet
 
-Status: proposed implementation packet for the next bounded research slice. The user authorized continued research on 2026-10-11 after merging PR #42. This does not accept a runtime connector or any production policy.
+Status: implemented bounded research controller with [recorded observations](../../../research/native/README.md); full lab acceptance remains open. The user authorized continued research on 2026-10-11 after merging PR #42. This does not accept a runtime connector or any production policy.
 
 ## PRD
 
@@ -51,3 +51,5 @@ The transferred binary must match its host digest and run as nonroot `nobody`. A
 `--inject-failure boot|ssh|auth|transfer|test` triggers a controlled abort after launch or the named stage for cleanup exercises; these are controller aborts, not simulations of every possible low-level guest failure. Shared reports must explicitly distinguish stage injections, host failure-path tests and actual native receipts. Private logs and original failed reports remain in `.tools/native-runs`.
 
 Generic QEMU/SSH/patch code and patch pins are adapted from Nomvium's BSD-licensed tooling; original notices are retained in LICENSE. The guest scripts are only supplied by the owned controller and must never be invoked against a live machine. Native execution does not close #12/#14 or any phase gate until all their acceptance criteria are met.
+
+Observed native abort stages are boot and auth; SSH/transfer/test stage aborts and comprehensive low-level guest failure injection remain outstanding. Host tests cover EOF/deadline/TERM resistance/startup-receipt failure and misleading authentication/result rejection. The packet’s broader failure criteria are not declared complete.
