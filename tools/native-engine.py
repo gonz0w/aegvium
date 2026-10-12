@@ -338,7 +338,9 @@ TRAFFIC_CASES = {'TestRelaydTraffic/' + name for name in (
     'TestRelaydTraffic/' + arm + '-' + name for arm in ('direct', 'relayd') for name in
     ('chunked-benign', 'chunked-denied', 'conflicting-length', 'mixed-framing-attack', 'pipeline-denied-benign', 'pipeline-benign-benign', 'serialized-denied-benign')} | {
     'TestRelaydTraffic/' + arm + '-' + name for arm in ('direct-longidle', 'relayd-longidle')
-    for name in ('pipeline-denied-benign', 'pipeline-benign-benign', 'serialized-denied-benign')}
+    for name in ('pipeline-denied-benign', 'pipeline-benign-benign', 'serialized-denied-benign')} | {
+    'TestRelaydTraffic/' + arm + '-' + name for arm in ('direct', 'relayd')
+    for name in ('wake-pipeline-denied-benign', 'wake-pipeline-benign-benign')}
 
 
 def parse_traffic(text, binary_hash, profile_hash, relayd_hash):

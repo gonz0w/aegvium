@@ -29,6 +29,8 @@ The [framing extension](RELAYD-FRAMING.md) adds ten raw-wire direct/relayd cases
 
 The [reuse diagnostic packet](RELAYD-REUSE.md) added four cases (connected admission at that slice: twenty-four) and receipt observations retained on response failures. Historical twenty-case framing failure remains unchanged.
 
-The [idle-time packet](RELAYD-IDLE.md) adds six comparison cases (current connected admission: thirty), retaining anonymous inspection events and unchanged baseline expectations.
+The [idle-time packet](RELAYD-IDLE.md) added six comparison cases (connected admission at that slice: thirty), retaining anonymous inspection events and unchanged baseline expectations.
 
 The [stream diagnostic packet](RELAYD-STREAM.md) retains thirty connected leaves and adds bounded Read-boundary metrics correlated with anonymous inspection connections; host recorder tests do not qualify connected traffic.
+
+The [buffered-request wake packet](RELAYD-BUFFER.md) adds four diagnostic controls (current connected admission: thirty-four); prior failed expectations remain unchanged and discovery-source inference is separate from installed provenance.

@@ -29,3 +29,5 @@ The [reuse diagnostics](docs/milestones/M1/RELAYD-REUSE.md) observed serialized 
 The [idle-time comparison](docs/milestones/M1/RELAYD-IDLE.md) delayed pipeline EOF without restoring second-request arrivals. A longer inspection idle timeout alone did not fix the tested relayd pipelines.
 
 The [inspection stream trace](docs/milestones/M1/RELAYD-STREAM.md) recorded only the first request's bytes in failed relayd pipelines, while direct pipelines and serialized controls consumed both. Socket buffering and exact relayd handling remain unresolved.
+
+The [buffer wake control](docs/milestones/M1/RELAYD-BUFFER.md) let the second request through after extra client input. It supports a buffered-read hypothesis; baseline failures and safe repair/profile selection remain unresolved.

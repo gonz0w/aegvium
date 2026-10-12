@@ -267,14 +267,17 @@ func TestRelaydTraffic(t *testing.T) {
 			statuses            []int
 			reject              bool
 			serial              bool
+			wake                bool
 		}{
-			{"chunked-benign", post + "Transfer-Encoding: chunked\r\n\r\n" + chunked("payload=ordinary"), "POST /allowed payload=ordinary", []int{200}, false, false},
-			{"chunked-denied", post + "Transfer-Encoding: chunked\r\n\r\n" + chunked("payload=forbidden"), "", []int{403}, false, false},
-			{"conflicting-length", post + "Content-Length: 16\r\nContent-Length: 17\r\n\r\npayload=ordinary", "", nil, true, false},
-			{"mixed-framing-attack", post + "Content-Length: 1\r\nTransfer-Encoding: chunked\r\n\r\n" + chunked("payload=forbidden"), "", nil, true, false},
-			{"pipeline-denied-benign", "GET /forbidden HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{403, 200}, false, false},
-			{"pipeline-benign-benign", "GET /allowed HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{200, 200}, false, false},
-			{"serialized-denied-benign", "GET /forbidden HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{403, 200}, false, true},
+			{"chunked-benign", post + "Transfer-Encoding: chunked\r\n\r\n" + chunked("payload=ordinary"), "POST /allowed payload=ordinary", []int{200}, false, false, false},
+			{"chunked-denied", post + "Transfer-Encoding: chunked\r\n\r\n" + chunked("payload=forbidden"), "", []int{403}, false, false, false},
+			{"conflicting-length", post + "Content-Length: 16\r\nContent-Length: 17\r\n\r\npayload=ordinary", "", nil, true, false, false},
+			{"mixed-framing-attack", post + "Content-Length: 1\r\nTransfer-Encoding: chunked\r\n\r\n" + chunked("payload=forbidden"), "", nil, true, false, false},
+			{"pipeline-denied-benign", "GET /forbidden HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{403, 200}, false, false, false},
+			{"pipeline-benign-benign", "GET /allowed HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{200, 200}, false, false, false},
+			{"serialized-denied-benign", "GET /forbidden HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{403, 200}, false, true, false},
+			{"wake-pipeline-denied-benign", "GET /forbidden HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{403, 200}, false, false, true},
+			{"wake-pipeline-benign-benign", "GET /allowed HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{200, 200}, false, false, true},
 		} {
 			if strings.HasSuffix(arm.name, "-longidle") && tc.name != "pipeline-denied-benign" && tc.name != "pipeline-benign-benign" && tc.name != "serialized-denied-benign" {
 				continue
@@ -331,7 +334,10 @@ func TestRelaydTraffic(t *testing.T) {
 					responses = 1
 				}
 				for i := 0; i < responses; i++ {
-					if i == 1 && tc.serial {
+					if i == 1 && (tc.serial || tc.wake) {
+						if tc.wake {
+							secondWire = "\r\n"
+						}
 						written, err := io.WriteString(connection, secondWire)
 						if err != nil || written != len(secondWire) {
 							readError = err
@@ -377,7 +383,7 @@ func TestRelaydTraffic(t *testing.T) {
 					}
 				} else {
 					wantCount := 1
-					if tc.name == "pipeline-benign-benign" {
+					if strings.HasSuffix(tc.name, "pipeline-benign-benign") {
 						wantCount = 2
 					}
 					if len(got) != wantCount {
