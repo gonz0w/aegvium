@@ -23,3 +23,11 @@ Host tests are tooling evidence. The native controller must require all 45 leave
 ## Compatibility and rollback
 
 The parser is a deliberately restricted experiment, not a complete PROXY implementation or authenticated connector. Native in-memory execution cannot establish stock relayd wire output, socket timing, trusted identity, bypass prevention, header sanitization or readiness. No dependency, listener, service, network/PF or installer change. Rollback removes the parser experiment and its admission extension; retain original observations.
+
+## Observed native execution
+
+[Retained receipts](../../../research/native/proxy-parser-observations.json) identify signed runtime `3e006d4d880373630ff5e4eb9a5cb1bed972d427`, tree `a4c4b360735b3b35eb6e7bb08a41013e0c7186cd`, and owned run `b6123552-43a3-46d8-b51e-3b77a8dea8cb`. All 45 admitted leaves passed on OpenBSD 7.9 amd64 as UID 32767: twenty unchanged engine cases, four accepted prefix/stream cases, twenty rejection cases and the injected reader failure. No native cases skipped. The accepted maximum prefix is exactly 56 bytes; the one-byte fixture exercised fragmentation, while coalesced and pipelined fixtures preserved their exact remaining application bytes.
+
+The guest authenticated all 34 reviewed patches, reported zero pending patches and rebooted before execution. Fresh credentials/bootstrap rejection, unchanged source/base and owned VM teardown passed. The controller executed a host cross-built binary, not a fresh native source build. Host make verify passed 43 tests; research Go tests, vet, race, OpenBSD cross-build and advisory review passed, with connected host execution explicitly skipped. Offline export verification included both parser files without performing native compilation.
+
+Published fingerprints cover 25 runtime inputs and match the signed tested candidate; subsequent documentation/receipt publication does not represent another execution. No relayd daemon, connected PROXY wire path, socket deadline or authenticated peer boundary was exercised. The previous connected comparison remains separately failed at 59/63. Next work needs a bounded deadline-setting adapter and isolated readiness design before native stock-relayd identity comparison or header/Coraza identity mapping.
