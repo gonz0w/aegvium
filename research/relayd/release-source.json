@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "scope": "authenticated official release source; static research only, not installed binary attribution",
+  "release": "OpenBSD 7.9",
+  "release_page": "https://www.openbsd.org/79.html",
+  "archive": {
+    "url": "https://cdn.openbsd.org/pub/OpenBSD/7.9/src.tar.gz",
+    "bytes": 204451355,
+    "sha256": "fb305c553059b48e8ee64539f392b783cb38a67865823f6f6a94f3b220a1268b"
+  },
+  "authentication": {
+    "manifest_url": "https://cdn.openbsd.org/pub/OpenBSD/7.9/SHA256.sig",
+    "manifest_sha256": "8c23e45e4c09939151f119eddc3619a7fa2f09c8c745e00bfa4dfe46ddb09900",
+    "signed_message_sha256": "6d74777275e929b84601e62370c94960832ddd0f29f51c3b02da9012bf4a283e",
+    "public_key_url": "https://cdn.openbsd.org/pub/OpenBSD/7.9/openbsd-79-base.pub",
+    "public_key_sha256": "b7ee8e7981549a1f707a4ed05115a99959a5f9e34b9bed9f9a098be17dd7e4b1",
+    "public_key_base64": "RWTSdNN9A3yvWNn7mUjXwv9DOCOUnyfuV+mq1iGPIfD+NhN8EYnEQ1at",
+    "key_anchor": "exact base64 key compared with official release page over HTTPS",
+    "format": "Ed record: 2-byte algorithm, 8-byte key ID, 32-byte public key / 64-byte signature; key IDs matched",
+    "verifier": "OpenSSL 3.6.3 host Ed25519 pkeyutl -verify -rawin; no native signify run",
+    "valid_manifest_exit": 0,
+    "one_byte_modified_message_exit": 1,
+    "archive_matches_signed_entry": true
+  },
+  "source": {
+    "path": "usr.sbin/relayd/relay_http.c",
+    "bytes": 54232,
+    "sha256": "bef2d0040c176a3ffc867b8f48d8566f090ecbf3ca1113a8559e2514cb1bc744",
+    "rcs_header": "/*\t$OpenBSD: relay_http.c,v 1.96 2026/04/02 13:35:36 tb Exp $\t*/",
+    "analysis_lines": {
+      "header_loop": "214-237",
+      "bodyless_get": "490-497",
+      "tail_callback": "598-602",
+      "body_callback": "647-660"
+    }
+  },
+  "license_review": "ISC-style upstream permission notice retained in ignored unmodified source; no upstream code copied into Git or new runtime dependency",
+  "conclusion": "Release source retains the same header-reader callback exclusion as the discovery snapshot. Consistent with wake observations, not proof of installed mechanism or safe repair.",
+  "installed_binary_sha256": "18f66755fcd95225005da2784e8071a2e97eaf749c0c32a53b721c2151d0f010",
+  "installed_source_build_lineage": "unresolved; third-party image, applied patches, compiler and exact build inputs remain separate",
+  "native_run": "none in this slice; existing failed 30/34 receipt unchanged"
+}
