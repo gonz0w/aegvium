@@ -25,3 +25,20 @@ Direct/relayd wake denied/benign requires 403/200 and exactly one benign backend
 ## Limits and rollback
 
 A successful wake sample supports a buffered-read hypothesis but does not establish where bytes waited, exact installed source, complete parser safety or a safe production repair. Do not relax baseline admission, publish an upstream bug report or adopt a connector from this result. TLS/identity, broader corpus, full CRS and provenance remain open. Dispose of the owned guest; no live services or networks change.
+
+## Observed result
+
+Candidate `830ee68a0269d16ec58f012e7234fd215285fa0f` ran as UID 32767 in the owned patched/rebooted OpenBSD 7.9 amd64 guest. All four new wake controls passed. The four original relayed pipeline failures remained, so the connected suite and native run **failed** at 30/34. Separate twenty engine cases and stock configtests passed. [Source-bound receipts](../../../research/relayd/buffer-observations.json) retain the client writes, correlated stream/arrival observations, exact named outcomes and native log/report hashes.
+
+| Relayed sequence | Baseline | After post-response CRLF |
+|---|---|---|
+| Denied/benign pipeline | 403 then EOF; 47 consumed bytes; 0 backend receipts | 403/200; 111 cumulative consumed bytes; 1 exact benign receipt |
+| Benign/benign pipeline | 200 then EOF; 45 consumed bytes; 1 backend receipt | 200/200; 109 cumulative consumed bytes; 2 exact benign receipts |
+
+Each wake client first successfully wrote the complete two-request stream (111 or 109 bytes), then successfully wrote the two-byte CRLF stimulus after the first response. Relayed inspection snapshots progressed from only the first request to both request markers and two handler arrivals on the same anonymous connection. Direct wake controls also passed; their readers additionally consumed one byte of the stimulus before closing, illustrating why a Read snapshot is not a full packet trace. All twenty-four raw snapshots recorded zero hostile URI receipts and no overflow; failed baseline counts remain observations, not successful assertions or proof against later forwarding.
+
+This differential result supports a buffered-request/read-event hypothesis in this fixture. The discovery source's callback guard offers a candidate mechanism, but its exact relationship to the installed binary remains unresolved. Extra CRLF changes the stimulus; it is not a selected client workaround, safe production repair or evidence that every buffered request drains correctly. No baseline expectation or relayd source/configuration changed.
+
+Inspection loss returned 500/500/502 with zero backend forwards and recovery passed. Bootstrap rejection, authenticated 34 patches/reboot, foreground daemon/listener/control-socket cleanup, VM teardown and unchanged source/base verified. Native execution is a host cross-build; host recorder tests are separate from native engine admission.
+
+Next bounded research should establish release/source attribution and assess a repair/control that drains buffered headers without weakening framing, resource, recursion, body or lifecycle guarantees. A stock transport-only relayd control is another distinct ingress profile to compare before any adoption. No patch, external report, supported profile or connector API is approved here. TLS/identity, broader corpus, full CRS, image/build lineage and phase gates remain open.

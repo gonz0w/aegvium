@@ -71,3 +71,7 @@ The [one-variable idle comparison](../milestones/M1/RELAYD-IDLE.md) shifted rela
 ## Inspection stream finding
 
 The [correlated Read-boundary trace](../milestones/M1/RELAYD-STREAM.md) recorded only the first request's bytes for each failed relayd pipeline, although clients wrote both. Direct pipelines consumed both; serialized controls consumed both and passed in both idle profiles. This narrows the visible failure before inspection consumes a second request but does not locate relayd/socket buffers or establish exact installed source behavior. A serialized relayed stream hash matches a reconstruction with second-request Connection/Host headers reordered; full byte preservation and normalization safety remain unqualified. The suite remains failed at 26/30. Establish source/stream attribution before selecting a supported ingress profile.
+
+## Buffered-read hypothesis control
+
+The [post-response CRLF comparison](../milestones/M1/RELAYD-BUFFER.md) admitted the second request in both relayed pipeline samples with exact responses/backend counts, while all four original pipeline failures remained. The suite failed at 30/34. This supports the buffered-read hypothesis suggested by the pinned discovery callback guard; it does not establish installed-source attribution or select a safe repair. Investigate release/source lineage and bounded buffer-draining behavior, or compare a stock transport-only ingress profile, before adoption. Extra CRLF is a diagnostic stimulus, not a product workaround.

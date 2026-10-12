@@ -19,3 +19,5 @@ The [reuse diagnostic packet](../../docs/milestones/M1/RELAYD-REUSE.md) expanded
 The [idle diagnostic packet](../../docs/milestones/M1/RELAYD-IDLE.md) expands current connected admission to thirty leaves and retains bounded anonymous inspection events. The failed one-/three-second comparison is separate from earlier failed suites.
 
 The [stream diagnostic packet](../../docs/milestones/M1/RELAYD-STREAM.md) retains thirty connected leaves and adds bounded inspection Read metrics. Two host recorder subcases prove split-read preservation and capped overflow recording; they do not add native engine acceptance or qualify connected behavior.
+
+The [buffer wake packet](../../docs/milestones/M1/RELAYD-BUFFER.md) adds four diagnostic controls (current connected admission: thirty-four). Passing wake samples do not erase baseline pipeline failures or approve a workaround; host connected skips remain skips.
