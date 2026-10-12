@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "scope": "static discovery-source analysis; not installed OpenBSD 7.9 binary/source lineage",
+  "repository": "https://github.com/openbsd/src",
+  "commit": "78e1d99e9924d1948e4cb7b4f374f5ab4b53bb29",
+  "path": "usr.sbin/relayd/relay_http.c",
+  "git_blob": "043d78e48f2d2c4af769b39733866be0961d49a0",
+  "bytes": 58638,
+  "sha256": "6eb25464c3726587a1144e2c28f53e05c17da496b40e989759172a28958cea2d",
+  "rcs_header": "/*\t$OpenBSD: relay_http.c,v 1.107 2026/10/02 18:06:20 rsadowski Exp $\t*/",
+  "license_review": "ISC-style permission notice retained in ignored unmodified source; no copied source or new runtime dependency",
+  "analysis_references": {
+    "header_loop": "https://github.com/openbsd/src/blob/78e1d99e9924d1948e4cb7b4f374f5ab4b53bb29/usr.sbin/relayd/relay_http.c#L225-L247",
+    "get_state": "https://github.com/openbsd/src/blob/78e1d99e9924d1948e4cb7b4f374f5ab4b53bb29/usr.sbin/relayd/relay_http.c#L517-L528",
+    "tail_callback": "https://github.com/openbsd/src/blob/78e1d99e9924d1948e4cb7b4f374f5ab4b53bb29/usr.sbin/relayd/relay_http.c#L605-L635",
+    "body_callback": "https://github.com/openbsd/src/blob/78e1d99e9924d1948e4cb7b4f374f5ab4b53bb29/usr.sbin/relayd/relay_http.c#L679-L697"
+  },
+  "native_attribution": "unresolved; installed binary hash remains separate from this newer discovery snapshot"
+}
