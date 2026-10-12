@@ -21,3 +21,11 @@ Controls occur later than the original recovery POST and their order is fixed, s
 Admission guards require all fifty-three leaves, rejecting missing/failed/skipped cases. Host Go connected skip remains a skip. Run local checks/vet/race/advisory review and cross-build before a signed clean candidate's owned patched/rebooted native repeat. Keep twenty engine cases separate, retain all failures, and require daemon/listener/socket cleanup, VM teardown and unchanged source/base. Diagnostics use synthetic markers and anonymous IDs; Read observations are not packet traces or installed-binary source attribution.
 
 Discard the owned guest. A result scopes the next investigation; it adopts no supported profile or readiness contract.
+
+## Fixture lifetime correction and retained diagnostic
+
+Source review found that the original HTTP recovery subtest started the restored inspection server using its own testing.T. The start helper registered server.Close with that subtest's Cleanup, so the listener was closed when the HTTP recovery leaf ended, before TCP recovery and subsequent controls. The intended shared fixture lifetime requires ownership by the parent comparison test. This is a test-fixture correction, not a relayd repair or readiness retry; preserve every status and receipt assertion.
+
+Candidate `74a9df89ab40c062ba7142dc73346848d1e43b2a`, owned run `fa698697-af43-4568-8a3c-10d369c2f3ce`, retained the lifetime bug with added diagnostics. All fifty-three leaves ran; forty-one passed and twelve failed. Besides four original HTTP pipelines and TCP recovery, the baseline HTTP serialized reuse and all six new raw controls failed. Both direct controls could not connect to inspection (connection refused), and the original TCP recovery had zero inspection events/reads and zero backend receipts. This supports the source-level cleanup explanation rather than an ingress-specific recovery defect. Separate twenty engine cases/configtests, authenticated patches/reboot, daemon/VM cleanup and source/base invariance passed.
+
+RR-03: bind only the restored server to the parent testing.T and repeat the unchanged fifty-three assertions in a fresh owned guest. Keep the failed diagnostic and historical TCP comparison separate from the corrected candidate; successful repetition cannot retroactively turn either attempt into passing evidence.

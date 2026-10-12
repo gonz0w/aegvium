@@ -1,0 +1,3847 @@
+{
+  "schema": 1,
+  "scope": "bounded readiness-to-application recovery diagnostics; historical failures retained; not runtime adoption",
+  "runs": [
+    {
+      "schema": 1,
+      "commit": "74a9df89ab40c062ba7142dc73346848d1e43b2a",
+      "tree": "e1bed3005e4a6fda1f79d49b60a9e33b211a7e92",
+      "started": "2026-10-12T20:45:32.958591+00:00",
+      "binary_sha256": "18a6c69f2b9ba434a1c333210e142f2df600306a7eed57c12aa2b45a5c88e569",
+      "native_build": false,
+      "native_build_requested": false,
+      "relayd_config_requested": true,
+      "relayd_traffic_requested": true,
+      "passed": false,
+      "host_go": "go version go1.27.2 darwin/arm64",
+      "image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+      "injected_failure": null,
+      "profile": {
+        "cpu": 2,
+        "ram_mib": 2048,
+        "acceleration": "TCG",
+        "deadline_seconds": 900,
+        "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+      },
+      "qemu_version": "QEMU emulator version 11.1.1",
+      "qemu_sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f",
+      "bootstrap_revoked": true,
+      "patch_refresh": {
+        "signature_verified": true,
+        "installed": 34,
+        "pending": 0,
+        "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+        "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+        "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+        "boot_before": "1791837948",
+        "boot_after": "1791838288"
+      },
+      "relayd_config": {
+        "mode": "syntax-only; daemon never started",
+        "input_sha256": {
+          "ingress.conf": "d4ad8dedfb9dfcce07c09f32e8fc4e8f2ca474916d1d031cdbe71ac67a7a2174",
+          "missing-protocol.conf": "6cc41f0e1305b6167ea8421f23709fdf5947a25d76c12f4ab4386d966e41067b",
+          "bad-syntax.conf": "a1388be5e2601d0013b1100c1ed765052083f20a20d3dface0898091550fc2dc"
+        },
+        "receipts": {
+          "valid": "accepted",
+          "missing-protocol": "rejected",
+          "bad-syntax": "rejected",
+          "no-daemon": "verified-before-after",
+          "no-listener": "verified-before-after",
+          "no-control-socket": "verified-before-after",
+          "uid": "0",
+          "binary": "18f66755fcd95225005da2784e8071a2e97eaf749c0c32a53b721c2151d0f010",
+          "profile": "d4ad8dedfb9dfcce07c09f32e8fc4e8f2ca474916d1d031cdbe71ac67a7a2174",
+          "valid-log": "5c4567d5f6e78fff55ba7b68fef63553cf2631cc914b4182ea570b376da537d1",
+          "missing-log": "54c944175094e7ea7b0bdfe2351766f073a3994fab613089142ba53088868f91",
+          "bad-log": "a811bb18bb3dc9222aebbff2b536b06c37156b861a5f38c6e65c88dc74e09aeb"
+        },
+        "log_sha256": "6447e58c8ca3466bd983952635b6edb530bf2da23912fdec6e5af782543a74ae"
+      },
+      "native": {
+        "receipts": {
+          "os": "OpenBSD 7.9 amd64",
+          "binary": "18a6c69f2b9ba434a1c333210e142f2df600306a7eed57c12aa2b45a5c88e569",
+          "kernel": "GENERIC.MP#16",
+          "kernel_sha256": "2831b491b0529e99c6738be8193b58f8b6003e0fd8344a9c7ca4966639886a6c",
+          "patches": "001_xserver,002_smtpd,003_vmd,004_elf,005_sysv,006_nfs,007_ipsec,008_npppd,009_iked,010_ifioctl,011_nipledge,012_kernproc,013_ttyioctl,014_expat,015_smtpd,016_nfs,017_wscons,018_shmat,019_expat,020_xserver,021_ldapd,022_nsd,023_unbound,024_libressl,025_procargs,026_sysvipc,027_iked,028_wgbind,029_sysvsem,030_uidrange,031_isakmpd,032_xserver,033_expat,034_wsdisplay",
+          "uid": "32767"
+        },
+        "cases": [
+          "TestBodyReadFailure",
+          "TestExplicitInspectionError/benign-post",
+          "TestExplicitInspectionError/body-denied",
+          "TestExplicitInspectionError/detection-uri",
+          "TestExplicitInspectionError/empty-benign",
+          "TestExplicitInspectionError/partial-read-error",
+          "TestExplicitInspectionError/read-error",
+          "TestExplicitInspectionError/uri-denied",
+          "TestInvalidRulesRejected",
+          "TestPinnedCRSSmoke/benign-post",
+          "TestPinnedCRSSmoke/benign-query",
+          "TestPinnedCRSSmoke/script-injection",
+          "TestPinnedCRSSmoke/sql-injection",
+          "TestRequestInterruption/benign-get",
+          "TestRequestInterruption/benign-post",
+          "TestRequestInterruption/body-denied",
+          "TestRequestInterruption/body-limit",
+          "TestRequestInterruption/detection-body",
+          "TestRequestInterruption/detection-uri",
+          "TestRequestInterruption/uri-denied"
+        ],
+        "case_count": 20,
+        "log_sha256": "262b14eb6b463e4468ff32b416cb173943168121aa4782d2ec1f1b20b2ba371d"
+      },
+      "error": "relayd traffic experiment failed; see relayd-traffic.log",
+      "teardown": {
+        "pid": 12579,
+        "returncode": 0,
+        "reason": "controller-eof",
+        "deadline_seconds": 900,
+        "escalated": false,
+        "teardown_verified": true
+      },
+      "baseline_unchanged": true,
+      "source_unchanged": true,
+      "finished": "2026-10-12T20:53:06.297972+00:00",
+      "run_id": "fa698697-af43-4568-8a3c-10d369c2f3ce",
+      "runtime_inputs": {
+        ".go-version": "6c075150045fda9bac31bb93cf5a0a0bc91622a75c1f10fb2971e6f994c6d4d6",
+        "research/coraza/crs_test.go": "33df0a96989f7229d7f9868a5aeac81afdf003a96407e0e793ce1976e6a9f618",
+        "research/coraza/engine_test.go": "0b204ff60105de40dbb09f8b1b8a45fbf4ba102f7c74c0e476862a2a1e24feb6",
+        "research/coraza/go.mod": "ac86dd4ae5a1da1f3ef495b1c46294639a60c5c83664c9d9f64a9ca74b7c4e97",
+        "research/coraza/go.sum": "c25d17e3767e6be54a77544315504ebca194d7a2d99a042add630e51df9e3def",
+        "research/coraza/relayd_test.go": "5cfa923ee92a50d1124f05e9b0ad55e98f2007d486ca57cf510af39835192e6c",
+        "research/native/image-pin.json": "8b3c0b1961712f01f2fbc11532da3d4576845fffddc24856782a850da81d6f8b",
+        "research/relayd/ingress.conf": "d4ad8dedfb9dfcce07c09f32e8fc4e8f2ca474916d1d031cdbe71ac67a7a2174",
+        "research/relayd/traffic.conf": "2c77605af78f45ddeab1f80d63775b62b90584857ea8e32f952511bdb771890b",
+        "tools/bootstrap-research.py": "01d65124fe4af8fe06d2b7ef67c81e69ae12271c60311770c94f810488e0f780",
+        "tools/lab-supervisor.py": "db15797036a830eb2c9a59c6b8a5e64990c69dfcef0edfca7e4cac50b17943a2",
+        "tools/native-build.py": "ca2a09bd393354053850e4e824fd6c1365ad5f5a0ec72cc0a2576ebaa9d378cd",
+        "tools/native-engine.py": "897596bbf1e54ee7055167409ce65edc7d8af3598181c1d7fa64560af26b2eb7",
+        "tools/native-image.py": "4e286adac78b34e3172736f8cc78e64d2c7cae456d03426243a5378b8f953290",
+        "tools/native/engine-repeat.sh": "c56fb91cc69a95ff7b3c89ac0c127f222bbfbdc64d3e2f52c37a8244f6b4b3de",
+        "tools/native/patch-openbsd.sh": "eae9d586161ed5f30c6d179ff55884b5a47ddad7c3b5a7a4637345219e8190e7",
+        "tools/native/relayd-config.sh": "cb859310476cfb56f33ca4e66d198034936f0f9f856b6f5d879abb5d489f81a4",
+        "tools/native/relayd-traffic.sh": "0a107a0c6dfbcb9d22a317dec989fccd155f337ddd05cdccfcc056985a258a46",
+        "tools/native/source-build.sh": "9230531994182aeec02eeb814b70aa11f070c00ee13e8fba29d0937ac57339a8",
+        "tools/openbsd-patches.json": "0cf5b352ea5d50d91d106abd42e65b8dac105b6c72fca3c83bfd1706bc891771",
+        "tools/openbsd-patches.py": "a7afe69f68a9ff7a80fe1f0c9a7dbf99ea594f535f68e79e848e706ba797fe6c",
+        "tools/research-pins.json": "7383179c02c51b05fc29776bfe538c1ee1f6438aa5b35065d1a44a3b06f02efe",
+        "tools/run-research-go.sh": "06d4587549d98741339751f7360dd9a1a4402a253cd280eee221d3c8f382094a"
+      },
+      "raw_report_sha256": "120e46e3b3ddd5b9a1c3a303d1dd39e8af0e993b6675b2c98a71d851d8cd3867",
+      "traffic_failed_observation": {
+        "admitted": false,
+        "log_sha256": "f99a021e550df718183d5e9c52aacfa82fc8078e309645700af4c0ee33850431",
+        "receipts": {
+          "relayd": "18f66755fcd95225005da2784e8071a2e97eaf749c0c32a53b721c2151d0f010",
+          "profile": "2c77605af78f45ddeab1f80d63775b62b90584857ea8e32f952511bdb771890b",
+          "binary": "18a6c69f2b9ba434a1c333210e142f2df600306a7eed57c12aa2b45a5c88e569",
+          "uid": "32767",
+          "cleanup": "verified",
+          "daemon-log": "dce46c59caa32af501bcdac1c65c5e23f815d9d8221f2cd3c624e6c9d1324428"
+        },
+        "case_results": [
+          {
+            "case": "TestRelaydTraffic/direct-benign-get",
+            "outcome": "pass",
+            "elapsed_seconds": 0.04
+          },
+          {
+            "case": "TestRelaydTraffic/direct-benign-post",
+            "outcome": "pass",
+            "elapsed_seconds": 0.04
+          },
+          {
+            "case": "TestRelaydTraffic/direct-uri-denied",
+            "outcome": "pass",
+            "elapsed_seconds": 0.01
+          },
+          {
+            "case": "TestRelaydTraffic/direct-body-denied",
+            "outcome": "pass",
+            "elapsed_seconds": 0.01
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-benign-get",
+            "outcome": "pass",
+            "elapsed_seconds": 0.04
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-benign-post",
+            "outcome": "pass",
+            "elapsed_seconds": 0.03
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-uri-denied",
+            "outcome": "pass",
+            "elapsed_seconds": 0.01
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-body-denied",
+            "outcome": "pass",
+            "elapsed_seconds": 0.02
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-benign-get",
+            "outcome": "pass",
+            "elapsed_seconds": 0.02
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-benign-post",
+            "outcome": "pass",
+            "elapsed_seconds": 0.02
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-uri-denied",
+            "outcome": "pass",
+            "elapsed_seconds": 0.01
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-body-denied",
+            "outcome": "pass",
+            "elapsed_seconds": 0.01
+          },
+          {
+            "case": "TestRelaydTraffic/direct-chunked-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.14
+          },
+          {
+            "case": "TestRelaydTraffic/direct-chunked-denied",
+            "outcome": "pass",
+            "elapsed_seconds": 0.02
+          },
+          {
+            "case": "TestRelaydTraffic/direct-conflicting-length",
+            "outcome": "pass",
+            "elapsed_seconds": 0.27
+          },
+          {
+            "case": "TestRelaydTraffic/direct-mixed-framing-attack",
+            "outcome": "pass",
+            "elapsed_seconds": 0.45
+          },
+          {
+            "case": "TestRelaydTraffic/direct-pipeline-denied-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.02
+          },
+          {
+            "case": "TestRelaydTraffic/direct-pipeline-benign-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.03
+          },
+          {
+            "case": "TestRelaydTraffic/direct-serialized-denied-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.02
+          },
+          {
+            "case": "TestRelaydTraffic/direct-wake-pipeline-denied-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.02
+          },
+          {
+            "case": "TestRelaydTraffic/direct-wake-pipeline-benign-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.03
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-chunked-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.03
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-chunked-denied",
+            "outcome": "pass",
+            "elapsed_seconds": 0.02
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-conflicting-length",
+            "outcome": "pass",
+            "elapsed_seconds": 5.28
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-mixed-framing-attack",
+            "outcome": "pass",
+            "elapsed_seconds": 0.27
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-pipeline-denied-benign",
+            "outcome": "fail",
+            "elapsed_seconds": 1.02
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-pipeline-benign-benign",
+            "outcome": "fail",
+            "elapsed_seconds": 1.41
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-serialized-denied-benign",
+            "outcome": "fail",
+            "elapsed_seconds": 2.18
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-wake-pipeline-denied-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.67
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-wake-pipeline-benign-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.06
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-chunked-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.07
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-chunked-denied",
+            "outcome": "pass",
+            "elapsed_seconds": 0.03
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-conflicting-length",
+            "outcome": "pass",
+            "elapsed_seconds": 0.28
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-mixed-framing-attack",
+            "outcome": "pass",
+            "elapsed_seconds": 0.27
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-pipeline-denied-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.03
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-pipeline-benign-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.03
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-serialized-denied-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.03
+          },
+          {
+            "case": "TestRelaydTraffic/direct-longidle-pipeline-denied-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.02
+          },
+          {
+            "case": "TestRelaydTraffic/direct-longidle-pipeline-benign-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.03
+          },
+          {
+            "case": "TestRelaydTraffic/direct-longidle-serialized-denied-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.03
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-longidle-pipeline-denied-benign",
+            "outcome": "fail",
+            "elapsed_seconds": 3.03
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-longidle-pipeline-benign-benign",
+            "outcome": "fail",
+            "elapsed_seconds": 3.03
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-longidle-serialized-denied-benign",
+            "outcome": "pass",
+            "elapsed_seconds": 0.03
+          },
+          {
+            "case": "TestRelaydTraffic/inspection-loss",
+            "outcome": "pass",
+            "elapsed_seconds": 1.55
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-inspection-loss",
+            "outcome": "pass",
+            "elapsed_seconds": 1.55
+          },
+          {
+            "case": "TestRelaydTraffic/recovery",
+            "outcome": "pass",
+            "elapsed_seconds": 0.49
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-recovery",
+            "outcome": "fail",
+            "elapsed_seconds": 0.01
+          },
+          {
+            "case": "TestRelaydTraffic/direct-recovery-head-post-reuse",
+            "outcome": "fail",
+            "elapsed_seconds": 0.01
+          },
+          {
+            "case": "TestRelaydTraffic/direct-recovery-head-post-fresh",
+            "outcome": "fail",
+            "elapsed_seconds": 0.01
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-recovery-head-post-reuse",
+            "outcome": "fail",
+            "elapsed_seconds": 0.01
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-recovery-head-post-fresh",
+            "outcome": "fail",
+            "elapsed_seconds": 0.01
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-recovery-head-post-reuse",
+            "outcome": "fail",
+            "elapsed_seconds": 0.01
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-recovery-head-post-fresh",
+            "outcome": "fail",
+            "elapsed_seconds": 0.01
+          }
+        ],
+        "raw_observations": [],
+        "loss_observations": [
+          {
+            "arm": "http",
+            "attempt": 1,
+            "http_status": 500,
+            "transport_error": false
+          },
+          {
+            "arm": "http",
+            "attempt": 2,
+            "http_status": 502,
+            "transport_error": false
+          },
+          {
+            "arm": "http",
+            "attempt": 3,
+            "http_status": 502,
+            "transport_error": false
+          },
+          {
+            "arm": "tcp",
+            "attempt": 1,
+            "http_status": 0,
+            "transport_error": true
+          },
+          {
+            "arm": "tcp",
+            "attempt": 2,
+            "http_status": 0,
+            "transport_error": true
+          },
+          {
+            "arm": "tcp",
+            "attempt": 3,
+            "http_status": 0,
+            "transport_error": true
+          }
+        ],
+        "exchange_observations": [
+          {
+            "case": "TestRelaydTraffic/direct-chunked-benign",
+            "client_writes": [
+              {
+                "bytes": 169,
+                "sha256": "374540829008e2bd1da08e7154299c1b705e7495c4e125f1739699cdf44da950"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 17,
+                "milliseconds": 872,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 17,
+                "milliseconds": 873,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 17,
+                "milliseconds": 873,
+                "kind": "application-arrival",
+                "method": "POST",
+                "path": "/allowed"
+              },
+              {
+                "connection": 17,
+                "milliseconds": 971,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 17,
+                "milliseconds": 872,
+                "bytes": 169,
+                "sha256": "374540829008e2bd1da08e7154299c1b705e7495c4e125f1739699cdf44da950",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-chunked-denied",
+            "client_writes": [
+              {
+                "bytes": 170,
+                "sha256": "a4d46881e6747bacf3503bb32fee7bfb71833569af77708f8fec71490c30cd50"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 18,
+                "milliseconds": 1003,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 18,
+                "milliseconds": 1008,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 18,
+                "milliseconds": 1008,
+                "kind": "application-arrival",
+                "method": "POST",
+                "path": "/allowed"
+              },
+              {
+                "connection": 18,
+                "milliseconds": 1011,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 18,
+                "milliseconds": 1007,
+                "bytes": 170,
+                "sha256": "a4d46881e6747bacf3503bb32fee7bfb71833569af77708f8fec71490c30cd50",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-conflicting-length",
+            "client_writes": [
+              {
+                "bytes": 170,
+                "sha256": "a58c053acce3da04d76920d9897ee7a74ec7928209c29ab8308670c95599f803"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 19,
+                "milliseconds": 1022,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 19,
+                "milliseconds": 1027,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 19,
+                "milliseconds": 1028,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 19,
+                "milliseconds": 1026,
+                "bytes": 170,
+                "sha256": "a58c053acce3da04d76920d9897ee7a74ec7928209c29ab8308670c95599f803",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              400
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-mixed-framing-attack",
+            "client_writes": [
+              {
+                "bytes": 189,
+                "sha256": "c33415c17ccd666072e07b1aab245b214fbb1a3712ad3d98ae434118020bf05a"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 20,
+                "milliseconds": 1297,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 20,
+                "milliseconds": 1299,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 20,
+                "milliseconds": 1299,
+                "kind": "application-arrival",
+                "method": "POST",
+                "path": "/allowed"
+              },
+              {
+                "connection": 20,
+                "milliseconds": 1456,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 21,
+                "milliseconds": 1457,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 22,
+                "milliseconds": 1457,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 22,
+                "milliseconds": 1460,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 22,
+                "milliseconds": 1460,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 21,
+                "milliseconds": 1475,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 21,
+                "milliseconds": 1475,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 22,
+                "milliseconds": 1475,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 21,
+                "milliseconds": 1477,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 20,
+                "milliseconds": 1298,
+                "bytes": 189,
+                "sha256": "c33415c17ccd666072e07b1aab245b214fbb1a3712ad3d98ae434118020bf05a",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 22,
+                "milliseconds": 1459,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 21,
+                "milliseconds": 1474,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-pipeline-denied-benign",
+            "client_writes": [
+              {
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 23,
+                "milliseconds": 1743,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 23,
+                "milliseconds": 1744,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 23,
+                "milliseconds": 1744,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/forbidden"
+              },
+              {
+                "connection": 23,
+                "milliseconds": 1746,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 23,
+                "milliseconds": 1747,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 23,
+                "milliseconds": 1747,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 23,
+                "milliseconds": 1756,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 23,
+                "milliseconds": 1744,
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403,
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-pipeline-benign-benign",
+            "client_writes": [
+              {
+                "bytes": 109,
+                "sha256": "8ce7fedf9f019e41da77969381610c22e536e6dbccb5b8ba35cd0d54c3e6c42e"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 24,
+                "milliseconds": 1764,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 24,
+                "milliseconds": 1765,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 24,
+                "milliseconds": 1765,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 24,
+                "milliseconds": 1774,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 24,
+                "milliseconds": 1775,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 24,
+                "milliseconds": 1775,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 24,
+                "milliseconds": 1784,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 24,
+                "milliseconds": 1765,
+                "bytes": 109,
+                "sha256": "8ce7fedf9f019e41da77969381610c22e536e6dbccb5b8ba35cd0d54c3e6c42e",
+                "allowed_get_markers": 2,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              200,
+              200
+            ],
+            "backend_count": 2,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-serialized-denied-benign",
+            "client_writes": [
+              {
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c"
+              },
+              {
+                "bytes": 64,
+                "sha256": "bae46d0d51d51f105e42cfa97542cf7361e6e51cafe12c4f80e9ab05822d47fe"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 25,
+                "milliseconds": 1792,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 25,
+                "milliseconds": 1794,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 25,
+                "milliseconds": 1794,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/forbidden"
+              },
+              {
+                "connection": 25,
+                "milliseconds": 1796,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 25,
+                "milliseconds": 1799,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 25,
+                "milliseconds": 1799,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 25,
+                "milliseconds": 1808,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 25,
+                "milliseconds": 1793,
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 0,
+                "overflow": false
+              },
+              {
+                "connection": 25,
+                "milliseconds": 1797,
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403,
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-wake-pipeline-denied-benign",
+            "client_writes": [
+              {
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6"
+              },
+              {
+                "bytes": 2,
+                "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 26,
+                "milliseconds": 1816,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 26,
+                "milliseconds": 1817,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 26,
+                "milliseconds": 1818,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/forbidden"
+              },
+              {
+                "connection": 26,
+                "milliseconds": 1819,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 26,
+                "milliseconds": 1820,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 26,
+                "milliseconds": 1820,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 26,
+                "milliseconds": 1831,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 26,
+                "milliseconds": 1817,
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 26,
+                "milliseconds": 1825,
+                "bytes": 112,
+                "sha256": "5bc76049474129f08b31c3db55896f843627fd53bc17893e490ee668cb190b75",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403,
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-wake-pipeline-benign-benign",
+            "client_writes": [
+              {
+                "bytes": 109,
+                "sha256": "8ce7fedf9f019e41da77969381610c22e536e6dbccb5b8ba35cd0d54c3e6c42e"
+              },
+              {
+                "bytes": 2,
+                "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 27,
+                "milliseconds": 1843,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 27,
+                "milliseconds": 1844,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 27,
+                "milliseconds": 1844,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 27,
+                "milliseconds": 1853,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 27,
+                "milliseconds": 1854,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 27,
+                "milliseconds": 1854,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 27,
+                "milliseconds": 1867,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 27,
+                "milliseconds": 1844,
+                "bytes": 109,
+                "sha256": "8ce7fedf9f019e41da77969381610c22e536e6dbccb5b8ba35cd0d54c3e6c42e",
+                "allowed_get_markers": 2,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 27,
+                "milliseconds": 1859,
+                "bytes": 110,
+                "sha256": "7c5cb0275d862805b6567c3885e59ff8a171da19753b68d57fc6d47733adc459",
+                "allowed_get_markers": 2,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              200,
+              200
+            ],
+            "backend_count": 2,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-chunked-benign",
+            "client_writes": [
+              {
+                "bytes": 169,
+                "sha256": "374540829008e2bd1da08e7154299c1b705e7495c4e125f1739699cdf44da950"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 28,
+                "milliseconds": 1880,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 28,
+                "milliseconds": 1882,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 28,
+                "milliseconds": 1882,
+                "kind": "application-arrival",
+                "method": "POST",
+                "path": "/allowed"
+              },
+              {
+                "connection": 28,
+                "milliseconds": 1892,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 28,
+                "milliseconds": 1881,
+                "bytes": 169,
+                "sha256": "4a0c97a47c5784ca0620a28dfae469c9431d192a67d8ecffa790d812a7cbe83d",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-chunked-denied",
+            "client_writes": [
+              {
+                "bytes": 170,
+                "sha256": "a4d46881e6747bacf3503bb32fee7bfb71833569af77708f8fec71490c30cd50"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 29,
+                "milliseconds": 1910,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 29,
+                "milliseconds": 1911,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 29,
+                "milliseconds": 1912,
+                "kind": "application-arrival",
+                "method": "POST",
+                "path": "/allowed"
+              },
+              {
+                "connection": 29,
+                "milliseconds": 1915,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 29,
+                "milliseconds": 1911,
+                "bytes": 170,
+                "sha256": "42d494edde1ae76debb506a61fe221cba75117a14d0a492b258fc47b2be101bf",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-conflicting-length",
+            "client_writes": [
+              {
+                "bytes": 170,
+                "sha256": "a58c053acce3da04d76920d9897ee7a74ec7928209c29ab8308670c95599f803"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 30,
+                "milliseconds": 2465,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 31,
+                "milliseconds": 2466,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 31,
+                "milliseconds": 2468,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 31,
+                "milliseconds": 2468,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 31,
+                "milliseconds": 2469,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 30,
+                "milliseconds": 2471,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 30,
+                "milliseconds": 2471,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 30,
+                "milliseconds": 2473,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 32,
+                "milliseconds": 3476,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 33,
+                "milliseconds": 3476,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 33,
+                "milliseconds": 3477,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 33,
+                "milliseconds": 3477,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 33,
+                "milliseconds": 3479,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 32,
+                "milliseconds": 3480,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 32,
+                "milliseconds": 3480,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 32,
+                "milliseconds": 3482,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 34,
+                "milliseconds": 4475,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 35,
+                "milliseconds": 4476,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 35,
+                "milliseconds": 4477,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 35,
+                "milliseconds": 4477,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 35,
+                "milliseconds": 4478,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 34,
+                "milliseconds": 4479,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 34,
+                "milliseconds": 4480,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 34,
+                "milliseconds": 4481,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 36,
+                "milliseconds": 5486,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 37,
+                "milliseconds": 5487,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 37,
+                "milliseconds": 5489,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 37,
+                "milliseconds": 5489,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 37,
+                "milliseconds": 5490,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 36,
+                "milliseconds": 5492,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 36,
+                "milliseconds": 5492,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 36,
+                "milliseconds": 5493,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 38,
+                "milliseconds": 6494,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 39,
+                "milliseconds": 6495,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 39,
+                "milliseconds": 6496,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 39,
+                "milliseconds": 6496,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 39,
+                "milliseconds": 6497,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 38,
+                "milliseconds": 6499,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 38,
+                "milliseconds": 6499,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 38,
+                "milliseconds": 6500,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 31,
+                "milliseconds": 2467,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 30,
+                "milliseconds": 2470,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 33,
+                "milliseconds": 3477,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 32,
+                "milliseconds": 3480,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 35,
+                "milliseconds": 4476,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 34,
+                "milliseconds": 4478,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 37,
+                "milliseconds": 5488,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 36,
+                "milliseconds": 5491,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 39,
+                "milliseconds": 6495,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 38,
+                "milliseconds": 6498,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": "unexpected EOF"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-mixed-framing-attack",
+            "client_writes": [
+              {
+                "bytes": 189,
+                "sha256": "c33415c17ccd666072e07b1aab245b214fbb1a3712ad3d98ae434118020bf05a"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 40,
+                "milliseconds": 7214,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 40,
+                "milliseconds": 7216,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 40,
+                "milliseconds": 7216,
+                "kind": "application-arrival",
+                "method": "POST",
+                "path": "/allowed"
+              },
+              {
+                "connection": 40,
+                "milliseconds": 7219,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 40,
+                "milliseconds": 7216,
+                "bytes": 189,
+                "sha256": "8653ba1e9b45548023c627ecadc8ea56c3ff1e70888abd72eac37681ba471bd5",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-pipeline-denied-benign",
+            "client_writes": [
+              {
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 41,
+                "milliseconds": 7485,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 41,
+                "milliseconds": 7487,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 41,
+                "milliseconds": 7487,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/forbidden"
+              },
+              {
+                "connection": 41,
+                "milliseconds": 7488,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 42,
+                "milliseconds": 7504,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 43,
+                "milliseconds": 7505,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 43,
+                "milliseconds": 7506,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 43,
+                "milliseconds": 7506,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 43,
+                "milliseconds": 7507,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 42,
+                "milliseconds": 7508,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 42,
+                "milliseconds": 7508,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 42,
+                "milliseconds": 7509,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 41,
+                "milliseconds": 8496,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 41,
+                "milliseconds": 7486,
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 0,
+                "overflow": false
+              },
+              {
+                "connection": 43,
+                "milliseconds": 7506,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 42,
+                "milliseconds": 7508,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": "unexpected EOF"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-pipeline-benign-benign",
+            "client_writes": [
+              {
+                "bytes": 109,
+                "sha256": "8ce7fedf9f019e41da77969381610c22e536e6dbccb5b8ba35cd0d54c3e6c42e"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 44,
+                "milliseconds": 8508,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 44,
+                "milliseconds": 8511,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 44,
+                "milliseconds": 8511,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 45,
+                "milliseconds": 8518,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 46,
+                "milliseconds": 8518,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 46,
+                "milliseconds": 8520,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 46,
+                "milliseconds": 8520,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 46,
+                "milliseconds": 8523,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 45,
+                "milliseconds": 8524,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 45,
+                "milliseconds": 8524,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 45,
+                "milliseconds": 8525,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 44,
+                "milliseconds": 8529,
+                "kind": "connection-idle"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 44,
+                "milliseconds": 8510,
+                "bytes": 45,
+                "sha256": "83c4b3a054f506584aba37524ef9607cf226f58617f193877b4eb485fc21c349",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 0,
+                "overflow": false
+              },
+              {
+                "connection": 46,
+                "milliseconds": 8519,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 45,
+                "milliseconds": 8523,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": "unexpected EOF"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-serialized-denied-benign",
+            "client_writes": [
+              {
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c"
+              },
+              {
+                "bytes": 64,
+                "sha256": "bae46d0d51d51f105e42cfa97542cf7361e6e51cafe12c4f80e9ab05822d47fe"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 44,
+                "milliseconds": 9930,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 47,
+                "milliseconds": 9953,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 48,
+                "milliseconds": 9953,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 48,
+                "milliseconds": 9955,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 48,
+                "milliseconds": 9955,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 48,
+                "milliseconds": 9974,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 47,
+                "milliseconds": 9981,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 47,
+                "milliseconds": 9981,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 47,
+                "milliseconds": 9982,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 49,
+                "milliseconds": 9983,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 49,
+                "milliseconds": 9990,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 49,
+                "milliseconds": 9990,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/forbidden"
+              },
+              {
+                "connection": 49,
+                "milliseconds": 9994,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 50,
+                "milliseconds": 10985,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 51,
+                "milliseconds": 10986,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 50,
+                "milliseconds": 10988,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 50,
+                "milliseconds": 10988,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 50,
+                "milliseconds": 10989,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 49,
+                "milliseconds": 11682,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 51,
+                "milliseconds": 12083,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 51,
+                "milliseconds": 12083,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 51,
+                "milliseconds": 12086,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 52,
+                "milliseconds": 12088,
+                "kind": "connection-new"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 48,
+                "milliseconds": 9954,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 47,
+                "milliseconds": 9979,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 49,
+                "milliseconds": 9990,
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 0,
+                "overflow": false
+              },
+              {
+                "connection": 50,
+                "milliseconds": 10987,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 51,
+                "milliseconds": 12082,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 53,
+                "milliseconds": 12090,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": "connection reset by peer"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-wake-pipeline-denied-benign",
+            "client_writes": [
+              {
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6"
+              },
+              {
+                "bytes": 2,
+                "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 52,
+                "milliseconds": 12098,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 52,
+                "milliseconds": 12098,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 52,
+                "milliseconds": 12100,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 54,
+                "milliseconds": 12737,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 54,
+                "milliseconds": 12739,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 54,
+                "milliseconds": 12739,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/forbidden"
+              },
+              {
+                "connection": 54,
+                "milliseconds": 12741,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 54,
+                "milliseconds": 12750,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 54,
+                "milliseconds": 12750,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 54,
+                "milliseconds": 12765,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 54,
+                "milliseconds": 12738,
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 0,
+                "overflow": false
+              },
+              {
+                "connection": 54,
+                "milliseconds": 12749,
+                "bytes": 111,
+                "sha256": "dc18262bfc4add0d2fedae7f267b92efe92ebdd36e84e0ac45a883aecf4e0cd9",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403,
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-wake-pipeline-benign-benign",
+            "client_writes": [
+              {
+                "bytes": 109,
+                "sha256": "8ce7fedf9f019e41da77969381610c22e536e6dbccb5b8ba35cd0d54c3e6c42e"
+              },
+              {
+                "bytes": 2,
+                "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 55,
+                "milliseconds": 12787,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 55,
+                "milliseconds": 12788,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 55,
+                "milliseconds": 12788,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 55,
+                "milliseconds": 12802,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 55,
+                "milliseconds": 12812,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 55,
+                "milliseconds": 12812,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 55,
+                "milliseconds": 12828,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 55,
+                "milliseconds": 12788,
+                "bytes": 45,
+                "sha256": "83c4b3a054f506584aba37524ef9607cf226f58617f193877b4eb485fc21c349",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 0,
+                "overflow": false
+              },
+              {
+                "connection": 55,
+                "milliseconds": 12811,
+                "bytes": 109,
+                "sha256": "adf85f4f0ebe632be38f54883e9873bb15843725ae2c274fd1d2d6564c9f7a97",
+                "allowed_get_markers": 2,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              200,
+              200
+            ],
+            "backend_count": 2,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-chunked-benign",
+            "client_writes": [
+              {
+                "bytes": 169,
+                "sha256": "374540829008e2bd1da08e7154299c1b705e7495c4e125f1739699cdf44da950"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 56,
+                "milliseconds": 12850,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 56,
+                "milliseconds": 12852,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 56,
+                "milliseconds": 12852,
+                "kind": "application-arrival",
+                "method": "POST",
+                "path": "/allowed"
+              },
+              {
+                "connection": 56,
+                "milliseconds": 12875,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 56,
+                "milliseconds": 12851,
+                "bytes": 169,
+                "sha256": "374540829008e2bd1da08e7154299c1b705e7495c4e125f1739699cdf44da950",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-chunked-denied",
+            "client_writes": [
+              {
+                "bytes": 170,
+                "sha256": "a4d46881e6747bacf3503bb32fee7bfb71833569af77708f8fec71490c30cd50"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 57,
+                "milliseconds": 12922,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 57,
+                "milliseconds": 12925,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 57,
+                "milliseconds": 12925,
+                "kind": "application-arrival",
+                "method": "POST",
+                "path": "/allowed"
+              },
+              {
+                "connection": 57,
+                "milliseconds": 12929,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 57,
+                "milliseconds": 12924,
+                "bytes": 170,
+                "sha256": "a4d46881e6747bacf3503bb32fee7bfb71833569af77708f8fec71490c30cd50",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-conflicting-length",
+            "client_writes": [
+              {
+                "bytes": 170,
+                "sha256": "a58c053acce3da04d76920d9897ee7a74ec7928209c29ab8308670c95599f803"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 58,
+                "milliseconds": 12948,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 58,
+                "milliseconds": 12953,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 58,
+                "milliseconds": 12955,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 59,
+                "milliseconds": 13213,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 60,
+                "milliseconds": 13213,
+                "kind": "connection-new"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 58,
+                "milliseconds": 12953,
+                "bytes": 170,
+                "sha256": "a58c053acce3da04d76920d9897ee7a74ec7928209c29ab8308670c95599f803",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 60,
+                "milliseconds": 13215,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              400
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-mixed-framing-attack",
+            "client_writes": [
+              {
+                "bytes": 189,
+                "sha256": "c33415c17ccd666072e07b1aab245b214fbb1a3712ad3d98ae434118020bf05a"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 59,
+                "milliseconds": 13221,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 59,
+                "milliseconds": 13221,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 61,
+                "milliseconds": 13224,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 59,
+                "milliseconds": 13225,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 61,
+                "milliseconds": 13228,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 61,
+                "milliseconds": 13228,
+                "kind": "application-arrival",
+                "method": "POST",
+                "path": "/allowed"
+              },
+              {
+                "connection": 61,
+                "milliseconds": 13231,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 59,
+                "milliseconds": 13220,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 61,
+                "milliseconds": 13226,
+                "bytes": 189,
+                "sha256": "c33415c17ccd666072e07b1aab245b214fbb1a3712ad3d98ae434118020bf05a",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-pipeline-denied-benign",
+            "client_writes": [
+              {
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 62,
+                "milliseconds": 13497,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 62,
+                "milliseconds": 13499,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 62,
+                "milliseconds": 13499,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/forbidden"
+              },
+              {
+                "connection": 62,
+                "milliseconds": 13500,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 62,
+                "milliseconds": 13501,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 62,
+                "milliseconds": 13501,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 62,
+                "milliseconds": 13511,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 62,
+                "milliseconds": 13498,
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403,
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-pipeline-benign-benign",
+            "client_writes": [
+              {
+                "bytes": 109,
+                "sha256": "8ce7fedf9f019e41da77969381610c22e536e6dbccb5b8ba35cd0d54c3e6c42e"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 63,
+                "milliseconds": 13526,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 63,
+                "milliseconds": 13527,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 63,
+                "milliseconds": 13527,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 63,
+                "milliseconds": 13536,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 63,
+                "milliseconds": 13536,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 63,
+                "milliseconds": 13536,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 63,
+                "milliseconds": 13546,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 63,
+                "milliseconds": 13527,
+                "bytes": 109,
+                "sha256": "8ce7fedf9f019e41da77969381610c22e536e6dbccb5b8ba35cd0d54c3e6c42e",
+                "allowed_get_markers": 2,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              200,
+              200
+            ],
+            "backend_count": 2,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-serialized-denied-benign",
+            "client_writes": [
+              {
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c"
+              },
+              {
+                "bytes": 64,
+                "sha256": "bae46d0d51d51f105e42cfa97542cf7361e6e51cafe12c4f80e9ab05822d47fe"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 64,
+                "milliseconds": 13562,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 64,
+                "milliseconds": 13563,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 64,
+                "milliseconds": 13563,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/forbidden"
+              },
+              {
+                "connection": 64,
+                "milliseconds": 13564,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 64,
+                "milliseconds": 13569,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 64,
+                "milliseconds": 13569,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 64,
+                "milliseconds": 13578,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 64,
+                "milliseconds": 13562,
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 0,
+                "overflow": false
+              },
+              {
+                "connection": 64,
+                "milliseconds": 13568,
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403,
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-longidle-pipeline-denied-benign",
+            "client_writes": [
+              {
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 67,
+                "milliseconds": 13615,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 67,
+                "milliseconds": 13617,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 67,
+                "milliseconds": 13617,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/forbidden"
+              },
+              {
+                "connection": 67,
+                "milliseconds": 13618,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 67,
+                "milliseconds": 13618,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 67,
+                "milliseconds": 13618,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 67,
+                "milliseconds": 13628,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 67,
+                "milliseconds": 13616,
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403,
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-longidle-pipeline-benign-benign",
+            "client_writes": [
+              {
+                "bytes": 109,
+                "sha256": "8ce7fedf9f019e41da77969381610c22e536e6dbccb5b8ba35cd0d54c3e6c42e"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 68,
+                "milliseconds": 13638,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 68,
+                "milliseconds": 13639,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 68,
+                "milliseconds": 13639,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 68,
+                "milliseconds": 13648,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 68,
+                "milliseconds": 13648,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 68,
+                "milliseconds": 13648,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 68,
+                "milliseconds": 13657,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 68,
+                "milliseconds": 13639,
+                "bytes": 109,
+                "sha256": "8ce7fedf9f019e41da77969381610c22e536e6dbccb5b8ba35cd0d54c3e6c42e",
+                "allowed_get_markers": 2,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              200,
+              200
+            ],
+            "backend_count": 2,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-longidle-serialized-denied-benign",
+            "client_writes": [
+              {
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c"
+              },
+              {
+                "bytes": 64,
+                "sha256": "bae46d0d51d51f105e42cfa97542cf7361e6e51cafe12c4f80e9ab05822d47fe"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 69,
+                "milliseconds": 13667,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 69,
+                "milliseconds": 13668,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 69,
+                "milliseconds": 13668,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/forbidden"
+              },
+              {
+                "connection": 69,
+                "milliseconds": 13669,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 69,
+                "milliseconds": 13672,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 69,
+                "milliseconds": 13672,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 69,
+                "milliseconds": 13682,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 69,
+                "milliseconds": 13667,
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 0,
+                "overflow": false
+              },
+              {
+                "connection": 69,
+                "milliseconds": 13671,
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403,
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-longidle-pipeline-denied-benign",
+            "client_writes": [
+              {
+                "bytes": 111,
+                "sha256": "be2926ae97a8d3902e331e2ff632e00cb80cff48b0c0b8e728166e15394e56c6"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 70,
+                "milliseconds": 13699,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 70,
+                "milliseconds": 13701,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 70,
+                "milliseconds": 13702,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/forbidden"
+              },
+              {
+                "connection": 70,
+                "milliseconds": 13703,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 71,
+                "milliseconds": 14225,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 72,
+                "milliseconds": 14226,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 72,
+                "milliseconds": 14228,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 72,
+                "milliseconds": 14229,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 72,
+                "milliseconds": 14229,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 71,
+                "milliseconds": 14230,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 71,
+                "milliseconds": 14230,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 71,
+                "milliseconds": 14230,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 73,
+                "milliseconds": 15235,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 74,
+                "milliseconds": 15236,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 73,
+                "milliseconds": 15238,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 74,
+                "milliseconds": 15240,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 74,
+                "milliseconds": 15240,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 73,
+                "milliseconds": 15241,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 73,
+                "milliseconds": 15242,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 74,
+                "milliseconds": 15245,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 75,
+                "milliseconds": 16245,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 76,
+                "milliseconds": 16248,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 75,
+                "milliseconds": 16250,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 75,
+                "milliseconds": 16250,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 76,
+                "milliseconds": 16250,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 76,
+                "milliseconds": 16250,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 75,
+                "milliseconds": 16251,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 76,
+                "milliseconds": 16253,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 70,
+                "milliseconds": 16717,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 70,
+                "milliseconds": 13701,
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 0,
+                "overflow": false
+              },
+              {
+                "connection": 72,
+                "milliseconds": 14228,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 71,
+                "milliseconds": 14229,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 73,
+                "milliseconds": 15237,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 74,
+                "milliseconds": 15240,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 75,
+                "milliseconds": 16248,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 76,
+                "milliseconds": 16248,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": "unexpected EOF"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-longidle-pipeline-benign-benign",
+            "client_writes": [
+              {
+                "bytes": 109,
+                "sha256": "8ce7fedf9f019e41da77969381610c22e536e6dbccb5b8ba35cd0d54c3e6c42e"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 77,
+                "milliseconds": 16731,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 77,
+                "milliseconds": 16734,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 77,
+                "milliseconds": 16735,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              },
+              {
+                "connection": 77,
+                "milliseconds": 16745,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 78,
+                "milliseconds": 17255,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 79,
+                "milliseconds": 17256,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 79,
+                "milliseconds": 17258,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 79,
+                "milliseconds": 17258,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 78,
+                "milliseconds": 17259,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 78,
+                "milliseconds": 17259,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 78,
+                "milliseconds": 17260,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 79,
+                "milliseconds": 17260,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 80,
+                "milliseconds": 18264,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 81,
+                "milliseconds": 18265,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 80,
+                "milliseconds": 18267,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 80,
+                "milliseconds": 18267,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 81,
+                "milliseconds": 18268,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 81,
+                "milliseconds": 18268,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 81,
+                "milliseconds": 18269,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 80,
+                "milliseconds": 18269,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 82,
+                "milliseconds": 19275,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 83,
+                "milliseconds": 19276,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 82,
+                "milliseconds": 19278,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 82,
+                "milliseconds": 19278,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 83,
+                "milliseconds": 19278,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 83,
+                "milliseconds": 19278,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 82,
+                "milliseconds": 19279,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 83,
+                "milliseconds": 19281,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 77,
+                "milliseconds": 19752,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 77,
+                "milliseconds": 16734,
+                "bytes": 45,
+                "sha256": "83c4b3a054f506584aba37524ef9607cf226f58617f193877b4eb485fc21c349",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 0,
+                "overflow": false
+              },
+              {
+                "connection": 79,
+                "milliseconds": 17257,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 78,
+                "milliseconds": 17258,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 80,
+                "milliseconds": 18266,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 81,
+                "milliseconds": 18267,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 82,
+                "milliseconds": 19277,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 83,
+                "milliseconds": 19277,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": "unexpected EOF"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-longidle-serialized-denied-benign",
+            "client_writes": [
+              {
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c"
+              },
+              {
+                "bytes": 64,
+                "sha256": "bae46d0d51d51f105e42cfa97542cf7361e6e51cafe12c4f80e9ab05822d47fe"
+              }
+            ],
+            "inspection_events": [
+              {
+                "connection": 84,
+                "milliseconds": 19764,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 84,
+                "milliseconds": 19765,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 84,
+                "milliseconds": 19765,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/forbidden"
+              },
+              {
+                "connection": 84,
+                "milliseconds": 19767,
+                "kind": "connection-idle"
+              },
+              {
+                "connection": 84,
+                "milliseconds": 19770,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 84,
+                "milliseconds": 19770,
+                "kind": "application-arrival",
+                "method": "GET",
+                "path": "/allowed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 84,
+                "milliseconds": 19764,
+                "bytes": 47,
+                "sha256": "e52bf915932aa15b950e345db3e4f10f250e614e7f0f7fb1a10687d182f23e4c",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 0,
+                "overflow": false
+              },
+              {
+                "connection": 84,
+                "milliseconds": 19769,
+                "bytes": 111,
+                "sha256": "dc18262bfc4add0d2fedae7f267b92efe92ebdd36e84e0ac45a883aecf4e0cd9",
+                "allowed_get_markers": 1,
+                "forbidden_get_markers": 1,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "http_statuses": [
+              403,
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/recovery",
+            "client_writes": [],
+            "started_milliseconds": 22904,
+            "inspection_events": [
+              {
+                "connection": 87,
+                "milliseconds": 23318,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 88,
+                "milliseconds": 23318,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 87,
+                "milliseconds": 23319,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 87,
+                "milliseconds": 23319,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 88,
+                "milliseconds": 23320,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 88,
+                "milliseconds": 23320,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 87,
+                "milliseconds": 23321,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 88,
+                "milliseconds": 23324,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 89,
+                "milliseconds": 23361,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 89,
+                "milliseconds": 23362,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 89,
+                "milliseconds": 23362,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 89,
+                "milliseconds": 23363,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 90,
+                "milliseconds": 23369,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 90,
+                "milliseconds": 23370,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 90,
+                "milliseconds": 23370,
+                "kind": "readiness-arrival",
+                "method": "HEAD",
+                "path": "/_aegvium/ready"
+              },
+              {
+                "connection": 90,
+                "milliseconds": 23372,
+                "kind": "connection-closed"
+              },
+              {
+                "connection": 91,
+                "milliseconds": 23379,
+                "kind": "connection-new"
+              },
+              {
+                "connection": 91,
+                "milliseconds": 23380,
+                "kind": "connection-active"
+              },
+              {
+                "connection": 91,
+                "milliseconds": 23380,
+                "kind": "application-arrival",
+                "method": "POST",
+                "path": "/allowed"
+              },
+              {
+                "connection": 91,
+                "milliseconds": 23389,
+                "kind": "connection-closed"
+              }
+            ],
+            "inspection_streams": [
+              {
+                "connection": 87,
+                "milliseconds": 23319,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 88,
+                "milliseconds": 23319,
+                "bytes": 100,
+                "sha256": "e581f348c5d71e67027db882a0ed2145c702911b48b46c1bcbab6fe4a6f31330",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 89,
+                "milliseconds": 23362,
+                "bytes": 153,
+                "sha256": "5a95a36cf4ff206926a87b124a3e1fc662ee58f513c608c20a358d18e89273cc",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 90,
+                "milliseconds": 23370,
+                "bytes": 153,
+                "sha256": "125f2d4e3d2cd370b882581351d1bb4b0c9c1706bbf93378e0f181d93efc712a",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 1,
+                "connection_close_markers": 1,
+                "overflow": false
+              },
+              {
+                "connection": 91,
+                "milliseconds": 23380,
+                "bytes": 206,
+                "sha256": "c9a53964ed3428e283167d31509291b8508a7ea5de3eb1aa57e0760168f965a3",
+                "allowed_get_markers": 0,
+                "forbidden_get_markers": 0,
+                "ready_head_markers": 0,
+                "connection_close_markers": 1,
+                "overflow": false
+              }
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-recovery",
+            "client_writes": [],
+            "started_milliseconds": 23397,
+            "client_failure": {
+              "http_status": 0,
+              "empty_receipts": true,
+              "error": "EOF"
+            },
+            "inspection_events": [],
+            "inspection_streams": [],
+            "backend_count": 0,
+            "hostile_uri_count": 0
+          },
+          {
+            "case": "TestRelaydTraffic/direct-recovery-head-post-reuse",
+            "client_writes": [],
+            "started_milliseconds": 23408,
+            "inspection_events": [],
+            "inspection_streams": [],
+            "backend_count": 0,
+            "hostile_uri_count": 0
+          },
+          {
+            "case": "TestRelaydTraffic/direct-recovery-head-post-fresh",
+            "client_writes": [],
+            "started_milliseconds": 23417,
+            "inspection_events": [],
+            "inspection_streams": [],
+            "backend_count": 0,
+            "hostile_uri_count": 0
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-recovery-head-post-reuse",
+            "client_writes": [
+              {
+                "bytes": 53,
+                "sha256": "3770b95d021369d95afcc69cac7abd08b398896fd61a565af3226171698cd2ce"
+              }
+            ],
+            "started_milliseconds": 23423,
+            "responses": [
+              {
+                "method": "HEAD",
+                "http_status": 500,
+                "body_bytes": 0
+              }
+            ],
+            "inspection_events": [],
+            "inspection_streams": [],
+            "backend_count": 0,
+            "hostile_uri_count": 0
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-recovery-head-post-fresh",
+            "client_writes": [
+              {
+                "bytes": 72,
+                "sha256": "a4eb53c07389b49737ab6777c5c0ebe2b12a54d7c9438299a5928f0b1e74e101"
+              }
+            ],
+            "started_milliseconds": 23437,
+            "responses": [
+              {
+                "method": "HEAD",
+                "http_status": 500,
+                "body_bytes": 0
+              }
+            ],
+            "inspection_events": [],
+            "inspection_streams": [],
+            "backend_count": 0,
+            "hostile_uri_count": 0
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-recovery-head-post-reuse",
+            "client_writes": [
+              {
+                "bytes": 53,
+                "sha256": "3770b95d021369d95afcc69cac7abd08b398896fd61a565af3226171698cd2ce"
+              }
+            ],
+            "started_milliseconds": 23450,
+            "read_errors": [
+              {
+                "method": "HEAD",
+                "error": "connection reset by peer"
+              }
+            ],
+            "inspection_events": [],
+            "inspection_streams": [],
+            "backend_count": 0,
+            "hostile_uri_count": 0
+          },
+          {
+            "case": "TestRelaydTraffic/tcp-recovery-head-post-fresh",
+            "client_writes": [
+              {
+                "bytes": 72,
+                "sha256": "a4eb53c07389b49737ab6777c5c0ebe2b12a54d7c9438299a5928f0b1e74e101"
+              }
+            ],
+            "started_milliseconds": 23462,
+            "read_errors": [
+              {
+                "method": "HEAD",
+                "error": "unexpected EOF"
+              }
+            ],
+            "inspection_events": [],
+            "inspection_streams": [],
+            "backend_count": 0,
+            "hostile_uri_count": 0
+          }
+        ],
+        "passed_case_count": 41,
+        "failed_case_count": 12,
+        "syntax_errors": []
+      }
+    }
+  ]
+}

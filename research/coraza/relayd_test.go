@@ -204,6 +204,7 @@ func TestRelaydTraffic(t *testing.T) {
 		data, err := io.ReadAll(io.LimitReader(response.Body, 4096))
 		return response.StatusCode, string(data), err
 	}
+	fixtureT := t // Restored inspection belongs to the whole comparison.
 	observeRecovery := func(t *testing.T) {
 		before := len(snapshot())
 		initialEvents, _ := eventSnapshot()
@@ -487,7 +488,7 @@ func TestRelaydTraffic(t *testing.T) {
 
 	t.Run("recovery", func(t *testing.T) {
 		observeRecovery(t)
-		inspection = start(t, "127.0.0.1:18081", inspectionHandler, time.Second)
+		inspection = start(fixtureT, "127.0.0.1:18081", inspectionHandler, time.Second)
 		ready(t)
 		before := len(snapshot())
 		status, body, err := send("http://127.0.0.1:18080", "POST", "/allowed", "payload=recovered")
