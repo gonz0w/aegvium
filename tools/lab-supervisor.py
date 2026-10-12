@@ -16,8 +16,8 @@ def main():
     record = Path(sys.argv[1])
     duration = int(sys.argv[2])
     command = sys.argv[4:]
-    if not 1 <= duration <= 900 or sys.argv[3] != '--' or not command:
-        raise ValueError('expected result path deadline-seconds (1..900) -- command')
+    if not 1 <= duration <= 1800 or sys.argv[3] != '--' or not command:
+        raise ValueError('expected result path deadline-seconds (1..1800) -- command')
     expires = time.monotonic() + duration
     reason = 'child-exit'
     stopping = False

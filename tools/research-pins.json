@@ -6,6 +6,11 @@
       "darwin_arm64": {
         "url": "https://go.dev/dl/go1.27.2.darwin-arm64.tar.gz",
         "sha256": "76812b213b1b2302c978d28fa52fa92d541704b9e7d9d5db8002c50e4018c4c5"
+      },
+      "openbsd_amd64": {
+        "url": "https://go.dev/dl/go1.27.2.openbsd-amd64.tar.gz",
+        "sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+        "size": 70013564
       }
     }
   },

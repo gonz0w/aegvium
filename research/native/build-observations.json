@@ -1,0 +1,185 @@
+{
+  "schema": 1,
+  "scope": "offline nonroot native engine source build and 13-case smoke repeat; not connector/appliance acceptance",
+  "manifest_hash_encoding": "SHA-256 of source_files JSON sorted keys, compact separators, UTF-8",
+  "runs": [
+    {
+      "schema": 1,
+      "commit": "eb67c2d9aa0a92f82d18919747191728faa6f1a4",
+      "tree": "46672d98e227b7864636c53b182d64477bfef237",
+      "started": "2026-10-12T03:25:33.015401+00:00",
+      "native_build": false,
+      "native_build_requested": true,
+      "passed": false,
+      "host_go": "go version go1.27.2 darwin/arm64",
+      "image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+      "injected_failure": null,
+      "profile": {
+        "cpu": 2,
+        "ram_mib": 2048,
+        "acceleration": "TCG",
+        "deadline_seconds": 900,
+        "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+      },
+      "native_build_inputs": {
+        "compiler_sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+        "source_sha256": "981120857cd074921bf8dab8885de3a53301782873ce6032126b90b7190cee91",
+        "source_file_count": 745,
+        "source_manifest_sha256": "8fe8f149af2f4ead32dee604bf53ac1dbffcbe507bed3bd718211d62388519e9"
+      },
+      "qemu_version": "QEMU emulator version 11.1.1",
+      "qemu_sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f",
+      "bootstrap_revoked": true,
+      "patch_refresh": {
+        "signature_verified": true,
+        "installed": 34,
+        "pending": 0,
+        "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+        "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+        "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+        "boot_before": "1791775548",
+        "boot_after": "1791775859"
+      },
+      "error": "Shared 900-second deadline exhausted during offline native compilation; no completed binary or native test pass.",
+      "teardown": {
+        "pid": 54344,
+        "returncode": 0,
+        "reason": "controller-eof",
+        "deadline_seconds": 900,
+        "escalated": false,
+        "teardown_verified": true
+      },
+      "baseline_unchanged": true,
+      "source_unchanged": true,
+      "finished": "2026-10-12T03:40:34.247595+00:00",
+      "runtime_inputs": {
+        ".go-version": "6c075150045fda9bac31bb93cf5a0a0bc91622a75c1f10fb2971e6f994c6d4d6",
+        "research/coraza/crs_test.go": "33df0a96989f7229d7f9868a5aeac81afdf003a96407e0e793ce1976e6a9f618",
+        "research/coraza/engine_test.go": "7ada2b1cfd8a67d9d9170a891da1969ecbeb66cc182db6411e1f854bc703ba1c",
+        "research/coraza/go.mod": "ac86dd4ae5a1da1f3ef495b1c46294639a60c5c83664c9d9f64a9ca74b7c4e97",
+        "research/coraza/go.sum": "c25d17e3767e6be54a77544315504ebca194d7a2d99a042add630e51df9e3def",
+        "research/native/image-pin.json": "8b3c0b1961712f01f2fbc11532da3d4576845fffddc24856782a850da81d6f8b",
+        "tools/bootstrap-research.py": "01d65124fe4af8fe06d2b7ef67c81e69ae12271c60311770c94f810488e0f780",
+        "tools/lab-supervisor.py": "c9edb8e3bb6e1ddd901f88514e6b0eaa37a777c2d769bf282016baf6e3c103d0",
+        "tools/native-build.py": "0841b5a5164047569d4ac606d120ccd16bca71dca204e3c110eec82bdfcecf6a",
+        "tools/native-engine.py": "b5dc476d9a9201506a287f4c2dda41f1a8fc11c78c37c22e8b7d1dca745b2fbb",
+        "tools/native-image.py": "4e286adac78b34e3172736f8cc78e64d2c7cae456d03426243a5378b8f953290",
+        "tools/native/engine-repeat.sh": "f5a69d8132ff81394ebdc582b9131081e2ebd9652bc88b0d00484285891e25f4",
+        "tools/native/patch-openbsd.sh": "eae9d586161ed5f30c6d179ff55884b5a47ddad7c3b5a7a4637345219e8190e7",
+        "tools/native/source-build.sh": "9230531994182aeec02eeb814b70aa11f070c00ee13e8fba29d0937ac57339a8",
+        "tools/openbsd-patches.json": "0cf5b352ea5d50d91d106abd42e65b8dac105b6c72fca3c83bfd1706bc891771",
+        "tools/openbsd-patches.py": "a7afe69f68a9ff7a80fe1f0c9a7dbf99ea594f535f68e79e848e706ba797fe6c",
+        "tools/research-pins.json": "7383179c02c51b05fc29776bfe538c1ee1f6438aa5b35065d1a44a3b06f02efe",
+        "tools/run-research-go.sh": "06d4587549d98741339751f7360dd9a1a4402a253cd280eee221d3c8f382094a"
+      },
+      "raw_report_sha256": "1ce088446c53b6109cd2a3a798e2233ce17b682611bd2058d6fe1ce90e5970a4",
+      "host_cross_binary_sha256": "5fe21358c38e92ab0bbd5f0cc904f9015bce272468cdabffa862e1358da620fa"
+    },
+    {
+      "schema": 1,
+      "commit": "b57423a70f45f2256e68a355d6b426ef119313cb",
+      "tree": "aace9d1bb361859b7251b6d57f4c07ef48bb67ca",
+      "started": "2026-10-12T03:45:14.577477+00:00",
+      "native_build": true,
+      "native_build_requested": true,
+      "passed": true,
+      "host_go": "go version go1.27.2 darwin/arm64",
+      "image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+      "injected_failure": null,
+      "profile": {
+        "cpu": 2,
+        "ram_mib": 2048,
+        "acceleration": "TCG",
+        "deadline_seconds": 1800,
+        "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+      },
+      "native_build_inputs": {
+        "compiler_sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+        "source_sha256": "a5cc31ea9cedc424fe66511deb3371552539bdd7aa4a0249a78b9c2e6aef8cf9",
+        "source_file_count": 745,
+        "source_manifest_sha256": "8fe8f149af2f4ead32dee604bf53ac1dbffcbe507bed3bd718211d62388519e9"
+      },
+      "qemu_version": "QEMU emulator version 11.1.1",
+      "qemu_sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f",
+      "bootstrap_revoked": true,
+      "patch_refresh": {
+        "signature_verified": true,
+        "installed": 34,
+        "pending": 0,
+        "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+        "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+        "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+        "boot_before": "1791776728",
+        "boot_after": "1791776956"
+      },
+      "native": {
+        "build_receipts": {
+          "compiler": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+          "source": "a5cc31ea9cedc424fe66511deb3371552539bdd7aa4a0249a78b9c2e6aef8cf9",
+          "uid": "32767",
+          "binary": "2e3ed433dbf6d91150128103068eaa4aad9864db859ae5d19b3a3472281956ae"
+        },
+        "build_log_sha256": "8337e2688e75ad94e09032a64f287587733e2b8356cc1bf7682ad8d815027cd8",
+        "receipts": {
+          "os": "OpenBSD 7.9 amd64",
+          "binary": "2e3ed433dbf6d91150128103068eaa4aad9864db859ae5d19b3a3472281956ae",
+          "kernel": "GENERIC.MP#16",
+          "kernel_sha256": "47aad3fe773f9817047446a0b3869a2b9efde19194e6024ab3dd311296bd89ee",
+          "patches": "001_xserver,002_smtpd,003_vmd,004_elf,005_sysv,006_nfs,007_ipsec,008_npppd,009_iked,010_ifioctl,011_nipledge,012_kernproc,013_ttyioctl,014_expat,015_smtpd,016_nfs,017_wscons,018_shmat,019_expat,020_xserver,021_ldapd,022_nsd,023_unbound,024_libressl,025_procargs,026_sysvipc,027_iked,028_wgbind,029_sysvsem,030_uidrange,031_isakmpd,032_xserver,033_expat,034_wsdisplay",
+          "uid": "32767"
+        },
+        "cases": [
+          "TestBodyReadFailure",
+          "TestInvalidRulesRejected",
+          "TestPinnedCRSSmoke/benign-post",
+          "TestPinnedCRSSmoke/benign-query",
+          "TestPinnedCRSSmoke/script-injection",
+          "TestPinnedCRSSmoke/sql-injection",
+          "TestRequestInterruption/benign-get",
+          "TestRequestInterruption/benign-post",
+          "TestRequestInterruption/body-denied",
+          "TestRequestInterruption/body-limit",
+          "TestRequestInterruption/detection-body",
+          "TestRequestInterruption/detection-uri",
+          "TestRequestInterruption/uri-denied"
+        ],
+        "case_count": 13,
+        "log_sha256": "1b5c345953ebf5caf6b66c801dee89945071948979460510700fb31fbd683c68"
+      },
+      "native_subset_passed": true,
+      "teardown": {
+        "pid": 67615,
+        "returncode": 0,
+        "reason": "controller-eof",
+        "deadline_seconds": 1800,
+        "escalated": false,
+        "teardown_verified": true
+      },
+      "baseline_unchanged": true,
+      "source_unchanged": true,
+      "finished": "2026-10-12T03:57:14.154994+00:00",
+      "runtime_inputs": {
+        ".go-version": "6c075150045fda9bac31bb93cf5a0a0bc91622a75c1f10fb2971e6f994c6d4d6",
+        "research/coraza/crs_test.go": "33df0a96989f7229d7f9868a5aeac81afdf003a96407e0e793ce1976e6a9f618",
+        "research/coraza/engine_test.go": "7ada2b1cfd8a67d9d9170a891da1969ecbeb66cc182db6411e1f854bc703ba1c",
+        "research/coraza/go.mod": "ac86dd4ae5a1da1f3ef495b1c46294639a60c5c83664c9d9f64a9ca74b7c4e97",
+        "research/coraza/go.sum": "c25d17e3767e6be54a77544315504ebca194d7a2d99a042add630e51df9e3def",
+        "research/native/image-pin.json": "8b3c0b1961712f01f2fbc11532da3d4576845fffddc24856782a850da81d6f8b",
+        "tools/bootstrap-research.py": "01d65124fe4af8fe06d2b7ef67c81e69ae12271c60311770c94f810488e0f780",
+        "tools/lab-supervisor.py": "db15797036a830eb2c9a59c6b8a5e64990c69dfcef0edfca7e4cac50b17943a2",
+        "tools/native-build.py": "0841b5a5164047569d4ac606d120ccd16bca71dca204e3c110eec82bdfcecf6a",
+        "tools/native-engine.py": "469107679e35c004c8fb78a0dd4566c2c08ff25c8292bce57848b52905216c5c",
+        "tools/native-image.py": "4e286adac78b34e3172736f8cc78e64d2c7cae456d03426243a5378b8f953290",
+        "tools/native/engine-repeat.sh": "f5a69d8132ff81394ebdc582b9131081e2ebd9652bc88b0d00484285891e25f4",
+        "tools/native/patch-openbsd.sh": "eae9d586161ed5f30c6d179ff55884b5a47ddad7c3b5a7a4637345219e8190e7",
+        "tools/native/source-build.sh": "9230531994182aeec02eeb814b70aa11f070c00ee13e8fba29d0937ac57339a8",
+        "tools/openbsd-patches.json": "0cf5b352ea5d50d91d106abd42e65b8dac105b6c72fca3c83bfd1706bc891771",
+        "tools/openbsd-patches.py": "a7afe69f68a9ff7a80fe1f0c9a7dbf99ea594f535f68e79e848e706ba797fe6c",
+        "tools/research-pins.json": "7383179c02c51b05fc29776bfe538c1ee1f6438aa5b35065d1a44a3b06f02efe",
+        "tools/run-research-go.sh": "06d4587549d98741339751f7360dd9a1a4402a253cd280eee221d3c8f382094a"
+      },
+      "raw_report_sha256": "19277902057ddb1bbf7b0e819e6afff69abd348a44679931c332e9845212b728",
+      "host_cross_binary_sha256": "5fe21358c38e92ab0bbd5f0cc904f9015bce272468cdabffa862e1358da620fa"
+    }
+  ]
+}

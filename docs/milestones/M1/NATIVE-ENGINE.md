@@ -34,7 +34,7 @@ Failure injection must exercise boot/SSH/auth rotation/transfer/test failures an
 
 ## Implemented preparation
 
-`tools/lab-supervisor.py` adapts the BSD-licensed Nomvium process-group supervisor with a mandatory 1–900 second deadline. Host regression tests exercise controller EOF, deadline expiry, normal child exit and TERM-resistant child escalation. These establish host lifecycle behavior only. Image admission is implemented; guest execution evidence is recorded separately from these host checks.
+`tools/lab-supervisor.py` adapts the BSD-licensed Nomvium process-group supervisor with a mandatory 1–1800 second supervisor deadline (900 seconds for engine repeats). Host regression tests exercise controller EOF, deadline expiry, normal child exit and TERM-resistant child escalation. These establish host lifecycle behavior only. Image admission is implemented; guest execution evidence is recorded separately from these host checks.
 
 ### Independent image admission
 
@@ -53,3 +53,13 @@ The transferred binary must match its host digest and run as nonroot `nobody`. A
 Generic QEMU/SSH/patch code and patch pins are adapted from Nomvium's BSD-licensed tooling; original notices are retained in LICENSE. The guest scripts are only supplied by the owned controller and must never be invoked against a live machine. Native execution does not close #12/#14 or any phase gate until all their acceptance criteria are met.
 
 Observed native abort stages are boot and auth; SSH/transfer/test stage aborts and comprehensive low-level guest failure injection remain outstanding. Host tests cover EOF/deadline/TERM resistance/startup-receipt failure and misleading authentication/result rejection. The packet’s broader failure criteria are not declared complete.
+
+## Bounded native source-build slice
+
+`make research-native-build` uses the same independently owned, patched, rotated and restricted guest with a separate 1800-second total budget for cold source compilation (the ordinary engine-repeat profile remains 900 seconds). Before launch, `tools/native-build.py` verifies the official Go 1.27.2 OpenBSD amd64 archive by pinned SHA/size, verifies cached modules and vendors an independent source copy with downloads disabled. Only regular files are exported; original source must remain unchanged. Vendor licenses remain in the private source bundle. This covers the existing engine module; connector-wide distribution review remains open.
+
+The guest verifies both archive hashes before extraction, checks Go version/OS/architecture, makes compiler/source root-owned and readable, and compiles as nonroot with CGO off, `GOTOOLCHAIN=local`, `GOPROXY=off`, vendored mode, telemetry off and two compile workers. Output/cache is private to the fixture user. Receipts distinguish host cross-build hash from native output hash. Only a successful native compile plus the complete 13-case repeat, patch/reboot and teardown/source/base receipts can pass this slice. A deadline or compile failure is retained as failure; no live budget extension or stale cross-build fallback is allowed. The initial 900-second source-build attempt exhausted its budget while the native compiler was still working; it is retained separately. The revised cold-build profile is a fresh signed candidate with an explicit 1800-second maximum, unchanged CPU/RAM/network/storage limits, and a 1200-second compilation-stage ceiling clamped by the shared deadline. It does not accept the connector, signed official image lineage or full #14 outcome.
+
+Host negative tests check compiler checksum/size drift, missing/malformed native build receipts and failed native transfer/compile. Native execution is source-bound after a signed clean candidate. The [official Go download manifest](https://go.dev/dl/?mode=json) supplies the archive pin. Prepare it using `python3 tools/native-build.py fetch`; guest egress stays disabled.
+
+Observed source-build evidence is retained in [build-observations.json](../../../research/native/build-observations.json). The original 900-second attempt failed by deadline; the fresh signed 1800-second candidate compiled offline and passed the 13-case repeat, with verified teardown and unchanged source/base. This is engine-fixture evidence only; connector builds and full #14 acceptance remain open.
