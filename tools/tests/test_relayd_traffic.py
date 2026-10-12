@@ -13,14 +13,14 @@ SPEC.loader.exec_module(LAB)
 class RelaydTrafficTests(unittest.TestCase):
     def valid(self):
         receipts = {'relayd': 'a' * 64, 'profile': 'b' * 64, 'binary': 'c' * 64,
-                    'uid': '32767', 'cleanup': 'verified', 'daemon-log': 'd' * 64}
+                    'uid': '32767', 'cleanup': 'verified', 'daemon-log': 'd' * 64, 'tls-cert': 'f' * 64, 'tls-cleanup': 'verified'}
         return '\n'.join([f'TRAFFIC\t{k}\t{v}' for k, v in receipts.items()]
                          + [f'--- PASS: {name} (0.01s)' for name in sorted(LAB.TRAFFIC_CASES | {'TestRelaydTraffic'})]
-                         + ['PASS'])
+                         + ['    relayd_test.go:1: tls-certificate sha256=' + 'f' * 64, 'PASS'])
 
     def test_incomplete_failed_skipped_root_and_unverified_traffic_rejected(self):
         original = self.valid()
-        self.assertEqual(LAB.parse_traffic(original, 'c' * 64, 'b' * 64, 'a' * 64)['case_count'], 53)
+        self.assertEqual(LAB.parse_traffic(original, 'c' * 64, 'b' * 64, 'a' * 64)['case_count'], 63)
         for changed in (
             original.replace('--- PASS: TestRelaydTraffic/inspection-loss (0.01s)\n', ''),
             original.replace('--- PASS: TestRelaydTraffic/relayd-mixed-framing-attack (0.01s)\n', ''),
@@ -30,6 +30,9 @@ class RelaydTrafficTests(unittest.TestCase):
             original.replace('--- PASS: TestRelaydTraffic/tcp-pipeline-benign-benign (0.01s)\n', ''),
             original.replace('--- PASS: TestRelaydTraffic/tcp-inspection-loss (0.01s)\n', ''),
             original.replace('--- PASS: TestRelaydTraffic/tcp-recovery-head-post-fresh (0.01s)\n', ''),
+            original.replace('--- PASS: TestRelaydTraffic/tls-reject-wrong-name (0.01s)\n', ''),
+            original.replace('tls-cleanup\tverified', 'tls-cleanup\tassumed'),
+            original.replace('tls-cert\t' + 'f' * 64, 'tls-cert\t' + 'e' * 64),
             original + '\n--- PASS: TestRelaydTraffic/recovery (0.01s)',
             original + '\n--- SKIP: TestRelaydTraffic (0.01s)',
             original + '\n--- FAIL: TestRelaydTraffic (0.01s)',

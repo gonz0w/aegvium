@@ -37,3 +37,5 @@ The [official release-source comparison](docs/milestones/M1/RELAYD-SOURCE.md) au
 The [stock TCP relay control](docs/milestones/M1/RELAYD-TCP.md) passed the tested pipelines without wake input, but its recovery POST failed after readiness. The full native comparison remains failed at 42/47; connector adoption remains open.
 
 The [recovery follow-up](docs/milestones/M1/RELAYD-RECOVERY.md) traced the prior TCP recovery failure to premature inspection cleanup in the test fixture. Parent-owned inspection passed TCP recovery and six additional controls; the full native suite remains failed at 49/53 on existing HTTP pipelines.
+
+The [stock TCP/TLS study](docs/milestones/M1/RELAYD-TLS.md) passed ten new HTTPS cases, including intact pipelines, strict client certificate checks and inspection loss/recovery. The complete native comparison remains failed at 59/63 on unchanged HTTP pipelines; trust policy and connector adoption remain open.

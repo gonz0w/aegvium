@@ -343,7 +343,9 @@ TRAFFIC_CASES = {'TestRelaydTraffic/' + name for name in (
     'TestRelaydTraffic/' + arm + '-' + name for arm in ('direct', 'relayd')
     for name in ('wake-pipeline-denied-benign', 'wake-pipeline-benign-benign')} | {
     'TestRelaydTraffic/' + arm + '-recovery-head-post-' + mode
-    for arm in ('direct', 'relayd', 'tcp') for mode in ('reuse', 'fresh')}
+    for arm in ('direct', 'relayd', 'tcp') for mode in ('reuse', 'fresh')} | {
+    'TestRelaydTraffic/tls-' + name for name in ('benign-get', 'benign-post', 'uri-denied', 'body-denied',
+    'pipeline-denied-benign', 'pipeline-benign-benign', 'inspection-loss', 'recovery', 'reject-untrusted', 'reject-wrong-name')}
 
 
 def parse_traffic(text, binary_hash, profile_hash, relayd_hash):
@@ -361,11 +363,14 @@ def parse_traffic(text, binary_hash, profile_hash, relayd_hash):
             passed.add(match[1])
         if '--- SKIP:' in line or '--- FAIL:' in line:
             raise ValueError('traffic skipped/failed test')
-    if (set(receipts) != {'relayd', 'profile', 'binary', 'uid', 'cleanup', 'daemon-log'}
+    if (set(receipts) != {'relayd', 'profile', 'binary', 'uid', 'cleanup', 'daemon-log', 'tls-cert', 'tls-cleanup'}
             or receipts.get('relayd') != relayd_hash or receipts.get('profile') != profile_hash
             or receipts.get('binary') != binary_hash or receipts.get('cleanup') != 'verified'
             or not re.fullmatch(r'[1-9][0-9]*', receipts.get('uid', ''))
             or not re.fullmatch('[0-9a-f]{64}', receipts.get('daemon-log', ''))
+            or receipts.get('tls-cleanup') != 'verified'
+            or not re.fullmatch('[0-9a-f]{64}', receipts.get('tls-cert', ''))
+            or re.findall(r'tls-certificate sha256=([0-9a-f]{64})', text) != [receipts.get('tls-cert')]
             or passed != TRAFFIC_CASES | {'TestRelaydTraffic'} or text.splitlines().count('PASS') != 1):
         raise ValueError('incomplete/mismatched traffic results')
     return {'receipts': receipts, 'cases': sorted(TRAFFIC_CASES), 'case_count': len(TRAFFIC_CASES)}
