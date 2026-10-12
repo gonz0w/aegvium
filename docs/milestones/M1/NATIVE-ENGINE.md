@@ -31,3 +31,7 @@ No native source-build claim: host Go 1.27.2 cross-compiles the CGO-disabled tes
 Failure injection must exercise boot/SSH/auth rotation/transfer/test failures and deadline/EOF teardown. Never treat a failed SSH attempt alone as credential revocation. Retain raw private logs locally and sanitize shared receipts. A gate remains failed if cleanup cannot be observed.
 
 [Official OpenBSD release](https://www.openbsd.org/79.html), [errata](https://www.openbsd.org/errata79.html), and [QEMU networking documentation](https://www.qemu.org/docs/master/system/invocation.html) are primary references. Nomvium's independently reviewed harness is a pattern, not an adopted Aegvium harness or evidence of Aegvium execution.
+
+## Implemented preparation
+
+`tools/lab-supervisor.py` adapts the BSD-licensed Nomvium process-group supervisor with a mandatory 1–900 second deadline. Host regression tests exercise controller EOF, deadline expiry, normal child exit and TERM-resistant child escalation. These establish host lifecycle behavior only. Image admission, credential rotation, patch provisioning and the guest controller remain outstanding; no Aegvium VM execution is claimed.

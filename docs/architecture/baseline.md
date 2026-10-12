@@ -11,3 +11,7 @@ No path may bypass inspection. Only the ingress component can reach the local in
 Review client identity, forwarding headers, TLS trust, SNI/Host routing, request smuggling across parsers, request/response bodies, websocket/streaming policy, timeouts and engine-error behavior. Never equate CRS loading with full functional coverage.
 
 Use base rc.d, syslog/newsyslog and acme-client where suitable after design. Management is a separate least-privilege boundary; no web console is selected. BootWeave builds media later from verified WAF artifacts.
+
+## Management UI baseline
+
+The maintainer specified OpenBSD relayd/httpd for Nomvium and Arxwall management web serving. This is an intended sibling-project baseline, not evidence that their current implementations already use it. relayd can own TLS and ingress policy; httpd can serve static assets and FastCGI. The dynamic UI contract and privilege boundary still need project-specific design. This management path is separate from Aegvium application inspection and does not establish a relayd–Coraza connector.
