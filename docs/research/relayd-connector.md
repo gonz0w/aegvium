@@ -67,3 +67,7 @@ The [reuse repeat](../milestones/M1/RELAYD-REUSE.md) observed serialized denied/
 ## Idle-time comparison finding
 
 The [one-variable idle comparison](../milestones/M1/RELAYD-IDLE.md) shifted relayd pipeline EOF from about one to three seconds without recording a second application arrival or changing backend counts. Serialized reuse and direct pipelines passed in both profiles; the suite remained failed at 26/30. A longer inspection idle timeout alone did not restore these sampled pipelines. Aggregate events narrow the observation but do not establish relayd's internal buffering mechanism; synthetic packet evidence or attributable source tracing is needed before selecting a connection profile.
+
+## Inspection stream finding
+
+The [correlated Read-boundary trace](../milestones/M1/RELAYD-STREAM.md) recorded only the first request's bytes for each failed relayd pipeline, although clients wrote both. Direct pipelines consumed both; serialized controls consumed both and passed in both idle profiles. This narrows the visible failure before inspection consumes a second request but does not locate relayd/socket buffers or establish exact installed source behavior. A serialized relayed stream hash matches a reconstruction with second-request Connection/Host headers reordered; full byte preservation and normalization safety remain unqualified. The suite remains failed at 26/30. Establish source/stream attribution before selecting a supported ingress profile.
