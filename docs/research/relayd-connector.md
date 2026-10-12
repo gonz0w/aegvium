@@ -47,3 +47,7 @@ The reviewed [Go 1.27.2 platform support source](https://github.com/golang/go/bl
 ## Explicit-error feasibility slice
 
 The [completion-adapter experiment](../milestones/M1/ERROR-ADAPTER.md) records generic 500 responses and zero synthetic backend receipts for immediate/partial body-read errors, while retaining unmodified upstream behavior and allow/deny/DetectionOnly controls. All 20 fixture cases passed in an owned OpenBSD guest using a host cross-built binary. This addresses one prerequisite for a future companion; it does not provide a proxy API, readiness, relayd listener or cross-parser evidence.
+
+## Stock relayd syntax observation
+
+The [syntax-only ingress fixture](../../research/relayd/README.md) was accepted by the installed stock relayd in the owned patched OpenBSD guest. Unknown protocol and bad syntax were rejected; process/listener/control-socket absence and teardown/source/base were verified. It names a sole inspection target with HTTP status readiness checking and no application target. Configuration acceptance alone cannot prove no-bypass behavior; the next connected experiment must exercise readiness loss, actual backend receipts and both parsers. No daemon, TLS or companion proxy was started in this slice.

@@ -46,7 +46,7 @@ Failure injection must exercise boot/SSH/auth rotation/transfer/test failures an
 
 Fresh public-key access must succeed, the public bootstrap key must receive an explicit public-key authentication rejection, and fresh access must still succeed. The pinned October 8 patch set has 34 assets; native checks authenticate both the installed official key and manifest, verify signify and all asset hashes, apply the offline mirror, require no pending patches and a changed boot time. No current/latest patch claim is made. The release/patch receipts authenticate an installed baseline, not the original third-party image's complete build history.
 
-The transferred binary must match its host digest and run as nonroot `nobody`. Admission requires all 13 named engine/CRS cases and their two parent groups, no unknown/duplicate/skipped/failed results, exact OS/patch/kernel/binary receipts and verified cleanup with unchanged source/base. A pass remains a native execution repeat of a host cross-build, not a native source build, actual relayd integration or full CRS corpus.
+The transferred binary must match its host digest and run as nonroot `nobody`. Current admission requires all 20 named engine/CRS/adapter cases and their three parent groups, no unknown/duplicate/skipped/failed results, exact OS/patch/kernel/binary receipts and verified cleanup with unchanged source/base. A pass remains a native execution repeat of a host cross-build, not a native source build, actual relayd integration or full CRS corpus.
 
 `--inject-failure boot|ssh|auth|transfer|test` triggers a controlled abort after launch or the named stage for cleanup exercises; these are controller aborts, not simulations of every possible low-level guest failure. Shared reports must explicitly distinguish stage injections, host failure-path tests and actual native receipts. Private logs and original failed reports remain in `.tools/native-runs`.
 
@@ -65,3 +65,5 @@ Host negative tests check compiler checksum/size drift, missing/malformed native
 Observed source-build evidence is retained in [build-observations.json](../../../research/native/build-observations.json). The original 900-second attempt failed by deadline; the fresh signed 1800-second candidate compiled offline and passed the 13-case repeat, with verified teardown and unchanged source/base. This is engine-fixture evidence only; connector builds and full #14 acceptance remain open.
 
 The [explicit-error adapter slice](ERROR-ADAPTER.md) extends current admission to 20 named cases. Its native execution is a separate cross-build repeat; the earlier 13-case native source-build receipts remain unchanged and do not qualify this adapter.
+
+The [stock relayd configtest packet](RELAYD-CONFIG.md) adds an optional syntax-only profile before the complete engine repeat. It never starts relayd, opens a listener or installs a service; all existing native budget/patch/teardown gates apply.
