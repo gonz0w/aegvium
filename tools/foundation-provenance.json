@@ -1,0 +1,115 @@
+{
+  "source": "Bootweave BSD-3-Clause foundation; inspected 2026-10-11; preserves inherited notices",
+  "files": [
+    {
+      "path": "LICENSE",
+      "source_sha256": "0d35db89b79b1d7652ffcbc4d384d0946291f0ee1ecad8e5007861a4e045e567",
+      "adapted_sha256": "e441bdc0e174520927b5a7439a4ca9ce3c36c513fa92043032a41a48c5720f2d"
+    },
+    {
+      "path": ".editorconfig",
+      "source_sha256": "441db1e817391a69d084f7d98abdbc0576723b589de93c73d98c73b9243d6bce",
+      "adapted_sha256": "441db1e817391a69d084f7d98abdbc0576723b589de93c73d98c73b9243d6bce"
+    },
+    {
+      "path": ".gitattributes",
+      "source_sha256": "20b37a32cf88ed39ca53f943bdcd5ca6ed3abf8a6081d7e56755e8c4a4119124",
+      "adapted_sha256": "20b37a32cf88ed39ca53f943bdcd5ca6ed3abf8a6081d7e56755e8c4a4119124"
+    },
+    {
+      "path": ".python-version",
+      "source_sha256": "922fe0c3de073b01988e23348ea184456161678c5e329e6f34be89be24383f93",
+      "adapted_sha256": "922fe0c3de073b01988e23348ea184456161678c5e329e6f34be89be24383f93"
+    },
+    {
+      "path": ".gitignore",
+      "source_sha256": "7f30f9a7f2ac5f4c117b982220222819a33e009ce4e31e20bfc7d2c021403a91",
+      "adapted_sha256": "7f30f9a7f2ac5f4c117b982220222819a33e009ce4e31e20bfc7d2c021403a91"
+    },
+    {
+      "path": ".gitleaks.toml",
+      "source_sha256": "e590a3e962bbc9ba04e5e39006a2e8e1642f49a7496173e15af629dd9fc9a12e",
+      "adapted_sha256": "e590a3e962bbc9ba04e5e39006a2e8e1642f49a7496173e15af629dd9fc9a12e"
+    },
+    {
+      "path": ".githooks/pre-commit",
+      "source_sha256": "eb311443d236758ff6a674fe68f154d66014021656909762adf1b3e4ceba890c",
+      "adapted_sha256": "eb311443d236758ff6a674fe68f154d66014021656909762adf1b3e4ceba890c"
+    },
+    {
+      "path": ".githooks/commit-msg",
+      "source_sha256": "ffa0a0c55a681d5753994f1765c488b8c2e9951fb492ff8dd319309c8a63fe0b",
+      "adapted_sha256": "ffa0a0c55a681d5753994f1765c488b8c2e9951fb492ff8dd319309c8a63fe0b"
+    },
+    {
+      "path": ".github/CODEOWNERS",
+      "source_sha256": "38b8919578ebb88c1f74c8c0c0ed23d96ffd0ca032fdc40dc2529bcbf80a77b4",
+      "adapted_sha256": "38b8919578ebb88c1f74c8c0c0ed23d96ffd0ca032fdc40dc2529bcbf80a77b4"
+    },
+    {
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_sha256": "d925b4633477634689190e81bf91acf9f54c61878ae80f7930e4f8c7d165e39a",
+      "adapted_sha256": "d925b4633477634689190e81bf91acf9f54c61878ae80f7930e4f8c7d165e39a"
+    },
+    {
+      "path": ".github/main-ruleset.json",
+      "source_sha256": "ace117767b52b474963562298fb35bf32e1fb1fa1c2b6ebdfbdabc66acb456e8",
+      "adapted_sha256": "ace117767b52b474963562298fb35bf32e1fb1fa1c2b6ebdfbdabc66acb456e8"
+    },
+    {
+      "path": ".github/release-tags-ruleset.json",
+      "source_sha256": "0a449bfe11523c616449f6177d56aafd45355c880a0ceed92585887e78ea2b13",
+      "adapted_sha256": "0a449bfe11523c616449f6177d56aafd45355c880a0ceed92585887e78ea2b13"
+    },
+    {
+      "path": "tools/check-repo.sh",
+      "source_sha256": "d8ea0c91ef79cec28c2b1cf309912ee9b277cc9fea4fd35e948c9cc0a1cf04ee",
+      "adapted_sha256": "d8ea0c91ef79cec28c2b1cf309912ee9b277cc9fea4fd35e948c9cc0a1cf04ee"
+    },
+    {
+      "path": "tools/check-repo.py",
+      "source_sha256": "d9b0a3ccffddf66cc693b432dcef21a2a273b8ee4b70f6916e84f67557294f4f",
+      "adapted_sha256": "d9b0a3ccffddf66cc693b432dcef21a2a273b8ee4b70f6916e84f67557294f4f"
+    },
+    {
+      "path": "tools/check-dco.py",
+      "source_sha256": "3c93b6667d72f5d7d1b6eb84c0e5ec6c42489eb894dced34f6a7d04ab21af803",
+      "adapted_sha256": "3c93b6667d72f5d7d1b6eb84c0e5ec6c42489eb894dced34f6a7d04ab21af803"
+    },
+    {
+      "path": "tools/bootstrap-tools.py",
+      "source_sha256": "1100196d79be61748a8e2ee82ed40b670f17c77e56c7d30eeb9c416fc40e50f0",
+      "adapted_sha256": "6d93e882803232610b56221d30a6b7e0235dcbecfd502d2e10704cf1d569ac6a"
+    },
+    {
+      "path": "tools/pins.json",
+      "source_sha256": "d9e333ef5165e4c9d4852731439b8819f74b4403a0b6e7339e7fa06a1b6edf65",
+      "adapted_sha256": "d9e333ef5165e4c9d4852731439b8819f74b4403a0b6e7339e7fa06a1b6edf65"
+    },
+    {
+      "path": "tools/requirements-ci.txt",
+      "source_sha256": "ba9cda3816893aef2685822438e7cdbb7dc563b1ce9bd8e6166b5c475da3ad5f",
+      "adapted_sha256": "ba9cda3816893aef2685822438e7cdbb7dc563b1ce9bd8e6166b5c475da3ad5f"
+    },
+    {
+      "path": "tools/tests/test_foundation.py",
+      "source_sha256": "583ae07b36da8f16a0741a975d9a1d2c0330138a2f1eb44c8bbac5679a3a34c7",
+      "adapted_sha256": "583ae07b36da8f16a0741a975d9a1d2c0330138a2f1eb44c8bbac5679a3a34c7"
+    },
+    {
+      "path": "docs/templates/EDD_TEMPLATE.md",
+      "source_sha256": "14da46f6bf7c58db5887271ee21e8b66739672c852db8cdf591a01b4bf2ed10e",
+      "adapted_sha256": "14da46f6bf7c58db5887271ee21e8b66739672c852db8cdf591a01b4bf2ed10e"
+    },
+    {
+      "path": "docs/templates/TDD_TEMPLATE.md",
+      "source_sha256": "ad2880565f637207d5a06959ad45540f1bc760d21a744fe07553ca93af84a215",
+      "adapted_sha256": "ad2880565f637207d5a06959ad45540f1bc760d21a744fe07553ca93af84a215"
+    },
+    {
+      "path": "docs/templates/PRD_TEMPLATE.md",
+      "source_sha256": "98aa1fcc7865bfe65e55cfe9176cfa6f1a652ee30d46fc54d5db709bc4c5dedc",
+      "adapted_sha256": "98aa1fcc7865bfe65e55cfe9176cfa6f1a652ee30d46fc54d5db709bc4c5dedc"
+    }
+  ]
+}

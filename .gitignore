@@ -1,0 +1,15 @@
+.tools/
+__pycache__/
+*.pyc
+bin/
+dist/
+.DS_Store
+*.test
+coverage.out
+.env
+*.key
+*.pem
+artifacts/
+*.img
+*.iso
+*.qcow2

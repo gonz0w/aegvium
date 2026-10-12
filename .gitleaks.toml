@@ -1,0 +1,12 @@
+title = "Bootweave secret scanning"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Git internals and isolated development tools"
+paths = [
+  '(^|/)\.git/',
+  '(^|/)\.tools/',
+  '(^|/)__pycache__/',
+]
