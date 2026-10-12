@@ -29,3 +29,9 @@ Admit ten connected named cases: direct and relayed benign GET/POST plus URI/bod
 Run the existing 20 engine cases separately. Host Go checks must explicitly retain the connected-test skip on non-OpenBSD/non-admitted hosts; a host skip never supplies native evidence. Native parsing rejects unknown, skipped, duplicate, failed or incomplete connected case sets, missing cleanup and binary/config drift. Repeat in the patched/rebooted owned guest; retain raw logs privately and sanitized source-bound receipts.
 
 This is the first stock-relayd versus direct-companion functional comparison. Existing connector/Caddy comparison, CRS corpus, malformed framing across both parsers, persistent connection transitions, TLS/SNI/Host policy, identity, privileges, performance and comprehensive crash/reload/timeout/resource testing remain separate #15/#16/#17/#18 gates. Do not infer no-bypass security from this small synthetic sample.
+
+## Observed outcome
+
+Runtime candidate `343fcc6ad8a57de2a347ce67341f375d3592ca01` passed all ten connected cases as UID 32767 on OpenBSD 7.9 amd64. Both arms preserved benign request bodies and blocked the synthetic URI/body attacks. With inspection closed and backend alive, observed responses were 500/502/502 with zero backend forwards. Health logs showed down/up transitions; recovery reached the backend once with exact POST bytes. Configtests and existing 20 engine cases also passed.
+
+[Source-bound receipts](../../../research/relayd/traffic-observations.json) retain binary/config/runtime/log/report hashes and actual loss/health observations. Foreground daemon shutdown, ingress/inspection IPv4 listener absence, control-socket removal, VM teardown and unchanged source/base passed. Host checks passed 43 tests/lint/secret scan plus vet/race and advisory scan; the connected host test remains explicitly skipped. This is native execution of a host cross-build, not a new native source build or phase acceptance.

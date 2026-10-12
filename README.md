@@ -4,7 +4,7 @@ Lean, auditable HTTP/HTTPS inspection appliance for a separate homelab VM behind
 
 Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
 
-Status: repository foundation, proposed architecture and authorized engine research, native execution repeats and an offline native source build. No WAF appliance, full native qualification or installer exists yet.
+Status: repository foundation, proposed architecture and authorized engine research, native execution repeats, an offline native source build and a bounded connected relayd fixture. No WAF appliance, full native qualification or installer exists yet.
 
 Candidate flow: client → EdgeWall → relayd (TLS) → local Coraza inspection proxy with OWASP CRS → explicitly configured backend. The connector and body handling require native evidence before adoption. CrowdSec is an optional later behavioral layer, not the inline WAF engine.
 
@@ -19,3 +19,5 @@ Track work in the [private Project](https://github.com/users/gonz0w/projects/5),
 The research module includes pinned CRS smoke tests and [dependency/advisory review](docs/research/dependency-review.md). Run `make research-tools` before research commands; `make research-audit` queries the Go advisory database. [Native engine design](docs/milestones/M1/NATIVE-ENGINE.md) and [observed execution receipts](research/native/README.md) include separate cross-build execution and native source-build observations; connector qualification remains open.
 
 Offline native engine compilation is now observed: [native source-build receipts](research/native/build-observations.json) preserve the initial timeout and fresh successful build with all 13 smoke cases. Connector and appliance acceptance remain separate.
+
+The first [connected relayd/Coraza experiment](research/relayd/README.md) passed ten plain-HTTP guest-only cases, including inspection loss/recovery and direct-control comparison. TLS, trust/parser qualification and connector adoption remain open.

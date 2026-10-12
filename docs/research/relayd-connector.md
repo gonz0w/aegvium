@@ -1,6 +1,6 @@
 # relayd–Coraza integration feasibility
 
-Status: source/documentation research, 2026-10-11. The maintainer requested a reusable relayd–Coraza connector if relayd provides a justified role, with a separate project possible after feasibility. No separate repository, published connector or relayd patch is selected.
+Status: bounded source and native research, 2026-10-12. The maintainer requested a reusable relayd–Coraza connector if relayd provides a justified role, with a separate project possible after feasibility. No separate repository, published connector or relayd patch is selected.
 
 ## Existing project reality
 
@@ -42,7 +42,7 @@ The [OpenBSD 7.9 relayd manual](https://man.openbsd.org/OpenBSD-7.9/relayd.conf.
 
 Pinned discovery source: [OpenBSD relay_http.c](https://github.com/openbsd/src/blob/78e1d99e9924d1948e4cb7b4f374f5ab4b53bb29/usr.sbin/relayd/relay_http.c). Its HTTP framing/body forwarding paths require comparative native tests. This is current-tree discovery and must not be represented as the exact OpenBSD 7.9 installed source; establish release/patch lineage before native conclusions.
 
-The reviewed [Go 1.27.2 platform support source](https://github.com/golang/go/blob/go1.27.2/src/internal/platform/supported.go) does not list OpenBSD under c-shared. A custom toolchain/libcoraza port is therefore a distinct research effort, not a supported drop-in option. No patched relayd, native integration, parser safety or performance has been demonstrated. Follow #15/#16 and the [native packet](../milestones/M1/NATIVE-ENGINE.md).
+The reviewed [Go 1.27.2 platform support source](https://github.com/golang/go/blob/go1.27.2/src/internal/platform/supported.go) does not list OpenBSD under c-shared. A custom toolchain/libcoraza port is therefore a distinct research effort, not a supported drop-in option. No patched relayd, parser safety or performance qualification has been demonstrated. The first connected stock-relayd observation below is limited to its admitted fixture. Follow #15/#16 and the [native packet](../milestones/M1/NATIVE-ENGINE.md).
 
 ## Explicit-error feasibility slice
 
@@ -51,3 +51,7 @@ The [completion-adapter experiment](../milestones/M1/ERROR-ADAPTER.md) records g
 ## Stock relayd syntax observation
 
 The [syntax-only ingress fixture](../../research/relayd/README.md) was accepted by the installed stock relayd in the owned patched OpenBSD guest. Unknown protocol and bad syntax were rejected; process/listener/control-socket absence and teardown/source/base were verified. It names a sole inspection target with HTTP status readiness checking and no application target. Configuration acceptance alone cannot prove no-bypass behavior; the next connected experiment must exercise readiness loss, actual backend receipts and both parsers. No daemon, TLS or companion proxy was started in this slice.
+
+## Connected companion observation
+
+The [first traffic fixture](../../research/relayd/README.md) passed ten plain-HTTP cases in the owned OpenBSD guest: identical direct/relayd benign and URI/body-denial controls, inspection-listener loss with the backend alive, and recovery. Stock relayd's health-check logs observed down/up transitions; loss returned 500/502/502 with zero backend forwards, and recovery preserved POST bytes. Foreground daemon/listener cleanup and VM teardown/source/base passed. This establishes a small companion-proxy path with stock relayd without modifying it, while leaving TLS, trust, both-parser malformed framing, existing-connector comparison and adoption open.
