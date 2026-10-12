@@ -4,7 +4,7 @@
     {
       "path": "LICENSE",
       "source_sha256": "0d35db89b79b1d7652ffcbc4d384d0946291f0ee1ecad8e5007861a4e045e567",
-      "adapted_sha256": "e441bdc0e174520927b5a7439a4ca9ce3c36c513fa92043032a41a48c5720f2d"
+      "adapted_sha256": "450599c4ba03f1fcf084b0de9fa25a0ab998986e45b160e1dd3ffc2b8d383d23"
     },
     {
       "path": ".editorconfig",
@@ -54,7 +54,7 @@
     {
       "path": ".github/main-ruleset.json",
       "source_sha256": "ace117767b52b474963562298fb35bf32e1fb1fa1c2b6ebdfbdabc66acb456e8",
-      "adapted_sha256": "ace117767b52b474963562298fb35bf32e1fb1fa1c2b6ebdfbdabc66acb456e8"
+      "adapted_sha256": "79addf514add77e8058d4d1b0bf236b9cdae5e64a6c45b6cec0aa0ec46c209d9"
     },
     {
       "path": ".github/release-tags-ruleset.json",
@@ -79,7 +79,7 @@
     {
       "path": "tools/bootstrap-tools.py",
       "source_sha256": "1100196d79be61748a8e2ee82ed40b670f17c77e56c7d30eeb9c416fc40e50f0",
-      "adapted_sha256": "6d93e882803232610b56221d30a6b7e0235dcbecfd502d2e10704cf1d569ac6a"
+      "adapted_sha256": "b611f181c1c1281eecefc56ebc6b1d41c73af159f65ab8f9810195bd51dac9e1"
     },
     {
       "path": "tools/pins.json",
@@ -110,6 +110,19 @@
       "path": "docs/templates/PRD_TEMPLATE.md",
       "source_sha256": "98aa1fcc7865bfe65e55cfe9176cfa6f1a652ee30d46fc54d5db709bc4c5dedc",
       "adapted_sha256": "98aa1fcc7865bfe65e55cfe9176cfa6f1a652ee30d46fc54d5db709bc4c5dedc"
+    },
+    {
+      "path": "docs/engineering/review.md",
+      "source": "Nomvium /Users/cam/DNS/docs/engineering/review.md",
+      "source_sha256": "5aa0708200a5e52c9c101a8e7051430b3fd9391bdabfe802428ece21aa69cde9",
+      "adapted_sha256": "5b205709cfa95aa71699279d77a501bcdf4803c87ddc3ee17410f69f90eefc77"
+    },
+    {
+      "path": "docs/process/document-lifecycle.md",
+      "source": "Nomvium /Users/cam/DNS/docs/process/document-lifecycle.md",
+      "source_sha256": "6f38b4697e77c0ea80a502d06387ba83b8d87755cece25889432f8777d66ccfa",
+      "adapted_sha256": "f57f44473abd6b79e4ed39a6a705bf3a4c9fb99cb5a451be1128233b80750cbf"
     }
-  ]
+  ],
+  "adaptations": "2026-10-11 Aegvium rename; research and local review workflow reconciled with Nomvium at /Users/cam/DNS. Inherited copyright notices retained."
 }

@@ -8,7 +8,10 @@
 6. Require signed Conventional Commits, author DCO sign-offs and codex/ topic branches. Never disable signing silently. Post-bootstrap changes use PRs; leave them open.
 7. Run make verify locally. GitHub Actions, runners and hosted success publishers are prohibited.
 8. Keep credentials, TLS private keys, production traffic and private inventories out of Git and evidence.
-9. BootWeave owns the generic installer. WAF owns its payload and runtime policy. Do not invent its extension schema.
+9. BootWeave owns the generic installer. Aegvium owns its payload and runtime policy. Do not invent its extension schema.
 10. Track requirements, tests, native evidence, compatibility and rollback separately. Do not claim OWASP Top 10 coverage from a build or attack string demo.
 11. Do not deploy, enable services, merge, release or modify live networks without authorization.
 12. Do not spawn agents unless the user explicitly requests parallel agent work.
+
+13. The 2026-10-11 user request authorizes the Aegvium rename, tracking setup and bounded research. Keep results separate from runtime adoption.
+14. Inspect open PRs and unblocked Ready issues on continue; keep issue state, native blockers and Project fields consistent.

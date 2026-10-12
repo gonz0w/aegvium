@@ -12,3 +12,7 @@ Status: proposed; no native results yet.
 | WAF-07/08 | Deferred until installer and behavioral integration designs exist |
 
 Include response-phase inspection if supported, false-positive samples, rule exclusions and detection/enforcement distinction. Request smuggling tests must exercise both ingress and inspection parsers. Record exact candidate/base/tree, environment, commands, outcomes and limitations. Agree measured latency/throughput/memory budgets before performance acceptance. Cross-compilation is not native execution evidence.
+
+## First engine slice (M1-02)
+
+Host fixtures assert permitted backend receipt/body bytes, denied zero receipts with expected status, explicit-log DetectionOnly matches with intentional forwarding, invalid config rejection and reader-error zero receipts. Characterize response error status separately from desired appliance behavior. OpenBSD cross-build is tooling evidence only; repeat natively after lab admission. See retained [observations](../../research/coraza-engine.md).
