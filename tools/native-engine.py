@@ -263,7 +263,7 @@ def source_build_guest(guest, work, inputs):
     script = script.replace(b'SOURCE_SHA256', inputs['source_sha256'].encode())
     log = work / 'build.log'
     with log.open('wb') as output:
-        response = guest.call('sh -s', data=script, seconds=600, output=output)
+        response = guest.call('sh -s', data=script, seconds=1200, output=output)
     if response.returncode:
         raise RuntimeError(f'native source build failed ({response.returncode}); see build.log')
     values = parse_build(log.read_text(), inputs['source_sha256'])
@@ -312,17 +312,18 @@ def run():
     work.mkdir(parents=True, mode=0o700)
     build_inputs = BUILD.package(work) if args.source_build else None
     source = {name: digest(ROOT / name) for name in git('ls-files').splitlines()}
+    duration = 1800 if args.source_build else 900
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
               'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
-              'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': 900,
+              'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
                           'network': 'restrict=on; dynamic loopback-only SSH; no guest egress'}}
     if build_inputs:
         report['native_build_inputs'] = {key: value for key, value in build_inputs.items() if key not in ('compiler', 'source')}
     supervisor = None
-    expires = time.monotonic() + 900
+    expires = time.monotonic() + duration
     try:
         with socket.socket() as reservation:
             reservation.bind(('127.0.0.1', 0))
@@ -334,7 +335,7 @@ def run():
         report['qemu_sha256'] = digest(Path(command[0]).resolve())
         with (work / 'qemu.log').open('wb') as output:
             supervisor = subprocess.Popen([sys.executable, str(ROOT / 'tools/lab-supervisor.py'),
-                                           str(work / 'teardown.json'), '900', '--', *command],
+                                           str(work / 'teardown.json'), str(duration), '--', *command],
                                           stdin=subprocess.PIPE, stdout=output, stderr=output,
                                           env={**os.environ, 'TMPDIR': str(work)},
                                           preexec_fn=bound_child_storage)

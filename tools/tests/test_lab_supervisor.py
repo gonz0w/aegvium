@@ -69,7 +69,7 @@ class SupervisorTests(unittest.TestCase):
 
     def test_unbounded_deadline_rejected(self):
         result = subprocess.run([sys.executable, str(SUPERVISOR), '/tmp/unused',
-                                 '901', '--', sys.executable, '-c', 'pass'],
+                                 '1801', '--', sys.executable, '-c', 'pass'],
                                 capture_output=True)
         self.assertNotEqual(result.returncode, 0)
 
