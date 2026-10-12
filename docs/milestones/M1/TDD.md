@@ -26,3 +26,5 @@ The [explicit-error adapter packet](ERROR-ADAPTER.md) scopes seven additional in
 The [connected relayd packet](RELAYD-TRAFFIC.md) separately admits ten guest-only traffic cases against a direct-inspection control, listener loss and recovery. Host skips remain skips; ordinary native admission still selects 20 engine cases. Connected results and source-build evidence remain distinct.
 
 The [framing extension](RELAYD-FRAMING.md) adds ten raw-wire direct/relayd cases, expanding current connected admission to twenty. Its small matrix and historical ten-case happy-path comparison remain distinct from full #16 qualification.
+
+The [reuse diagnostic packet](RELAYD-REUSE.md) adds four cases (current connected admission: twenty-four) and receipt observations retained on response failures. Historical twenty-case framing failure remains unchanged.

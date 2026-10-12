@@ -168,12 +168,15 @@ func TestRelaydTraffic(t *testing.T) {
 			name, wire, receipt string
 			statuses            []int
 			reject              bool
+			serial              bool
 		}{
-			{"chunked-benign", post + "Transfer-Encoding: chunked\r\n\r\n" + chunked("payload=ordinary"), "POST /allowed payload=ordinary", []int{200}, false},
-			{"chunked-denied", post + "Transfer-Encoding: chunked\r\n\r\n" + chunked("payload=forbidden"), "", []int{403}, false},
-			{"conflicting-length", post + "Content-Length: 16\r\nContent-Length: 17\r\n\r\npayload=ordinary", "", nil, true},
-			{"mixed-framing-attack", post + "Content-Length: 1\r\nTransfer-Encoding: chunked\r\n\r\n" + chunked("payload=forbidden"), "", nil, true},
-			{"pipeline-denied-benign", "GET /forbidden HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{403, 200}, false},
+			{"chunked-benign", post + "Transfer-Encoding: chunked\r\n\r\n" + chunked("payload=ordinary"), "POST /allowed payload=ordinary", []int{200}, false, false},
+			{"chunked-denied", post + "Transfer-Encoding: chunked\r\n\r\n" + chunked("payload=forbidden"), "", []int{403}, false, false},
+			{"conflicting-length", post + "Content-Length: 16\r\nContent-Length: 17\r\n\r\npayload=ordinary", "", nil, true, false},
+			{"mixed-framing-attack", post + "Content-Length: 1\r\nTransfer-Encoding: chunked\r\n\r\n" + chunked("payload=forbidden"), "", nil, true, false},
+			{"pipeline-denied-benign", "GET /forbidden HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{403, 200}, false, false},
+			{"pipeline-benign-benign", "GET /allowed HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{200, 200}, false, false},
+			{"serialized-denied-benign", "GET /forbidden HTTP/1.1\r\nHost: fixture.test\r\n\r\nGET /allowed HTTP/1.1\r\nHost: fixture.test\r\nConnection: close\r\n\r\n", "GET /allowed ", []int{403, 200}, false, true},
 		} {
 			t.Run(arm.name+"-"+tc.name, func(t *testing.T) {
 				before := len(snapshot())
@@ -185,17 +188,39 @@ func TestRelaydTraffic(t *testing.T) {
 				if err := connection.SetDeadline(time.Now().Add(6 * time.Second)); err != nil {
 					t.Fatal(err)
 				}
-				if _, err := io.WriteString(connection, tc.wire); err != nil {
+				wire := tc.wire
+				var secondWire string
+				if tc.serial {
+					parts := strings.SplitN(wire, "GET /allowed", 2)
+					wire, secondWire = parts[0], "GET /allowed"+parts[1]
+				}
+				if _, err := io.WriteString(connection, wire); err != nil {
 					t.Fatal(err)
 				}
 				reader := bufio.NewReader(connection)
 				var statuses []int
 				var readError error
+				t.Cleanup(func() {
+					got := snapshot()[before:]
+					hostile := 0
+					for _, receipt := range got {
+						if strings.Contains(receipt, "/forbidden") {
+							hostile++
+						}
+					}
+					t.Logf("raw-observation statuses=%v backend-count=%d hostile-uri-count=%d read-error=%v", statuses, len(got), hostile, readError)
+				})
 				responses := len(tc.statuses)
 				if tc.reject {
 					responses = 1
 				}
 				for i := 0; i < responses; i++ {
+					if i == 1 && tc.serial {
+						if _, err := io.WriteString(connection, secondWire); err != nil {
+							readError = err
+							t.Fatal(err)
+						}
+					}
 					response, err := http.ReadResponse(reader, &http.Request{Method: "POST"})
 					if err != nil {
 						readError = err
@@ -232,8 +257,19 @@ func TestRelaydTraffic(t *testing.T) {
 					if len(got) != 0 {
 						t.Fatalf("raw rejected request reached backend: %v", got)
 					}
-				} else if len(got) != 1 || got[0] != tc.receipt {
-					t.Fatalf("raw backend bytes=%v; want exactly %q", got, tc.receipt)
+				} else {
+					wantCount := 1
+					if tc.name == "pipeline-benign-benign" {
+						wantCount = 2
+					}
+					if len(got) != wantCount {
+						t.Fatalf("raw backend bytes=%v; want %d receipts of %q", got, wantCount, tc.receipt)
+					}
+					for _, receipt := range got {
+						if receipt != tc.receipt {
+							t.Fatalf("raw backend bytes=%v; want exactly %q", got, tc.receipt)
+						}
+					}
 				}
 				t.Logf("framing statuses=%v backend-count=%d closed=%t", statuses, len(got), readError != nil)
 			})
