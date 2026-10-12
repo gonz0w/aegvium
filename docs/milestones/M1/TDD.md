@@ -46,3 +46,5 @@ The [identity feasibility study](RELAYD-IDENTITY.md) pins static source findings
 The [prefix parser packet](PROXY-PARSER.md) extends ordinary native admission to 45 leaves (20 engine plus 25 isolated parser cases). Connected admission remains 63; no listener, deadline or trust boundary is implemented by the parser.
 
 The [connection handoff packet](PROXY-ADAPTER.md) adds eight in-memory net.Conn and two owned-guest TCP leaves (ordinary native admission: 55). Host TCP skips remain skips; relayd-connected admission remains 63.
+
+The [listener lifecycle packet](PROXY-LISTENER.md) adds six synthetic-listener and two owned-guest TCP leaves (ordinary native admission: 63). This set is distinct from the unchanged 63 stock-relayd connected leaves.
