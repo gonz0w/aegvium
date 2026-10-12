@@ -59,3 +59,7 @@ The [first traffic fixture](../../research/relayd/README.md) passed ten plain-HT
 ## Framing compatibility finding
 
 The [bounded framing comparison](../milestones/M1/RELAYD-FRAMING.md) failed its denied-then-benign pipeline expectation through stock relayd: 403 then unexpected EOF, versus direct 403/200. Nineteen other connected cases passed, including exact benign chunked body bytes and zero backend receipts for the tested chunked attack, conflicting lengths and mixed framing attack. The failed pipeline stopped before checking backend receipts; it is not evidence of bypass or supported pipelining. Cleanup and the separate engine/configtest gates passed. Preserve the failure and investigate connection reuse with receipts on failed exchanges before selecting a connector support profile.
+
+## Reuse diagnostic finding
+
+The [reuse repeat](../milestones/M1/RELAYD-REUSE.md) observed serialized denied/benign reuse passing through relayd, while denied/benign and benign/benign pipelines returned only their first response. Failed pipeline cleanup snapshots recorded zero and one backend receipts respectively, with zero hostile URI receipts. Direct controls passed. The suite remains failed at 22/24, and an extra health transition plus short fixture timeouts prevent cause attribution. Isolate timing and connection events before selecting a connector reuse profile; neither general support nor general incompatibility is established.

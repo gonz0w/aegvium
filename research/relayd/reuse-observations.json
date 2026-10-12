@@ -1,0 +1,421 @@
+{
+  "schema": 1,
+  "scope": "bounded failed pipeline repeat and serialized reuse diagnostic; no supported connector profile or cause attribution",
+  "runs": [
+    {
+      "schema": 1,
+      "commit": "e5380dfb3465604afa32c334a8732925e98cb2f8",
+      "tree": "fce2089005bce7d0a230535e192f4442172dc3fc",
+      "started": "2026-10-12T16:55:01.525613+00:00",
+      "binary_sha256": "1534491cd0824aadca0b1a9278c6e8bbe769b84285ed3e11e50245d9cad8ed1a",
+      "native_build": false,
+      "native_build_requested": false,
+      "relayd_config_requested": true,
+      "relayd_traffic_requested": true,
+      "passed": false,
+      "host_go": "go version go1.27.2 darwin/arm64",
+      "image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+      "injected_failure": null,
+      "profile": {
+        "cpu": 2,
+        "ram_mib": 2048,
+        "acceleration": "TCG",
+        "deadline_seconds": 900,
+        "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+      },
+      "qemu_version": "QEMU emulator version 11.1.1",
+      "qemu_sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f",
+      "bootstrap_revoked": true,
+      "patch_refresh": {
+        "signature_verified": true,
+        "installed": 34,
+        "pending": 0,
+        "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+        "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+        "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+        "boot_before": "1791824115",
+        "boot_after": "1791824404"
+      },
+      "relayd_config": {
+        "mode": "syntax-only; daemon never started",
+        "input_sha256": {
+          "ingress.conf": "d4ad8dedfb9dfcce07c09f32e8fc4e8f2ca474916d1d031cdbe71ac67a7a2174",
+          "missing-protocol.conf": "6cc41f0e1305b6167ea8421f23709fdf5947a25d76c12f4ab4386d966e41067b",
+          "bad-syntax.conf": "a1388be5e2601d0013b1100c1ed765052083f20a20d3dface0898091550fc2dc"
+        },
+        "receipts": {
+          "valid": "accepted",
+          "missing-protocol": "rejected",
+          "bad-syntax": "rejected",
+          "no-daemon": "verified-before-after",
+          "no-listener": "verified-before-after",
+          "no-control-socket": "verified-before-after",
+          "uid": "0",
+          "binary": "18f66755fcd95225005da2784e8071a2e97eaf749c0c32a53b721c2151d0f010",
+          "profile": "d4ad8dedfb9dfcce07c09f32e8fc4e8f2ca474916d1d031cdbe71ac67a7a2174",
+          "valid-log": "5c4567d5f6e78fff55ba7b68fef63553cf2631cc914b4182ea570b376da537d1",
+          "missing-log": "54c944175094e7ea7b0bdfe2351766f073a3994fab613089142ba53088868f91",
+          "bad-log": "a811bb18bb3dc9222aebbff2b536b06c37156b861a5f38c6e65c88dc74e09aeb"
+        },
+        "log_sha256": "6447e58c8ca3466bd983952635b6edb530bf2da23912fdec6e5af782543a74ae"
+      },
+      "native": {
+        "receipts": {
+          "os": "OpenBSD 7.9 amd64",
+          "binary": "1534491cd0824aadca0b1a9278c6e8bbe769b84285ed3e11e50245d9cad8ed1a",
+          "kernel": "GENERIC.MP#16",
+          "kernel_sha256": "391ed5415d6ae441240042166676cf3b1439495151eac3eddbaf80b22d546334",
+          "patches": "001_xserver,002_smtpd,003_vmd,004_elf,005_sysv,006_nfs,007_ipsec,008_npppd,009_iked,010_ifioctl,011_nipledge,012_kernproc,013_ttyioctl,014_expat,015_smtpd,016_nfs,017_wscons,018_shmat,019_expat,020_xserver,021_ldapd,022_nsd,023_unbound,024_libressl,025_procargs,026_sysvipc,027_iked,028_wgbind,029_sysvsem,030_uidrange,031_isakmpd,032_xserver,033_expat,034_wsdisplay",
+          "uid": "32767"
+        },
+        "cases": [
+          "TestBodyReadFailure",
+          "TestExplicitInspectionError/benign-post",
+          "TestExplicitInspectionError/body-denied",
+          "TestExplicitInspectionError/detection-uri",
+          "TestExplicitInspectionError/empty-benign",
+          "TestExplicitInspectionError/partial-read-error",
+          "TestExplicitInspectionError/read-error",
+          "TestExplicitInspectionError/uri-denied",
+          "TestInvalidRulesRejected",
+          "TestPinnedCRSSmoke/benign-post",
+          "TestPinnedCRSSmoke/benign-query",
+          "TestPinnedCRSSmoke/script-injection",
+          "TestPinnedCRSSmoke/sql-injection",
+          "TestRequestInterruption/benign-get",
+          "TestRequestInterruption/benign-post",
+          "TestRequestInterruption/body-denied",
+          "TestRequestInterruption/body-limit",
+          "TestRequestInterruption/detection-body",
+          "TestRequestInterruption/detection-uri",
+          "TestRequestInterruption/uri-denied"
+        ],
+        "case_count": 20,
+        "log_sha256": "482bd4bc60792ba36c744244226e1923511b8df5f33059794f6e00f77052a3bc"
+      },
+      "error": "relayd traffic experiment failed; see relayd-traffic.log",
+      "teardown": {
+        "pid": 93890,
+        "returncode": 0,
+        "reason": "controller-eof",
+        "deadline_seconds": 900,
+        "escalated": false,
+        "teardown_verified": true
+      },
+      "baseline_unchanged": true,
+      "source_unchanged": true,
+      "finished": "2026-10-12T17:01:21.167456+00:00",
+      "runtime_inputs": {
+        ".go-version": "6c075150045fda9bac31bb93cf5a0a0bc91622a75c1f10fb2971e6f994c6d4d6",
+        "research/coraza/crs_test.go": "33df0a96989f7229d7f9868a5aeac81afdf003a96407e0e793ce1976e6a9f618",
+        "research/coraza/engine_test.go": "0b204ff60105de40dbb09f8b1b8a45fbf4ba102f7c74c0e476862a2a1e24feb6",
+        "research/coraza/go.mod": "ac86dd4ae5a1da1f3ef495b1c46294639a60c5c83664c9d9f64a9ca74b7c4e97",
+        "research/coraza/go.sum": "c25d17e3767e6be54a77544315504ebca194d7a2d99a042add630e51df9e3def",
+        "research/coraza/relayd_test.go": "0fc3b37990fcd30b1fdeb5e8afde503346577497be93bf9beebfc90cd3848a1c",
+        "research/native/image-pin.json": "8b3c0b1961712f01f2fbc11532da3d4576845fffddc24856782a850da81d6f8b",
+        "research/relayd/ingress.conf": "d4ad8dedfb9dfcce07c09f32e8fc4e8f2ca474916d1d031cdbe71ac67a7a2174",
+        "research/relayd/traffic.conf": "c088b29d0b5e2dfa992d3b4150ab7356fffc83946f8721fa32e2a926087ba270",
+        "tools/bootstrap-research.py": "01d65124fe4af8fe06d2b7ef67c81e69ae12271c60311770c94f810488e0f780",
+        "tools/lab-supervisor.py": "db15797036a830eb2c9a59c6b8a5e64990c69dfcef0edfca7e4cac50b17943a2",
+        "tools/native-build.py": "ca2a09bd393354053850e4e824fd6c1365ad5f5a0ec72cc0a2576ebaa9d378cd",
+        "tools/native-engine.py": "53ae36edab41c469a1a13d4626d826c5d1400c98cd78038f5f6e840e3bface59",
+        "tools/native-image.py": "4e286adac78b34e3172736f8cc78e64d2c7cae456d03426243a5378b8f953290",
+        "tools/native/engine-repeat.sh": "c56fb91cc69a95ff7b3c89ac0c127f222bbfbdc64d3e2f52c37a8244f6b4b3de",
+        "tools/native/patch-openbsd.sh": "eae9d586161ed5f30c6d179ff55884b5a47ddad7c3b5a7a4637345219e8190e7",
+        "tools/native/relayd-config.sh": "cb859310476cfb56f33ca4e66d198034936f0f9f856b6f5d879abb5d489f81a4",
+        "tools/native/relayd-traffic.sh": "fcb3f2c9e4244f1b1f15cf94e177b21163c1f0c57792581b8390265c61ecf1a1",
+        "tools/native/source-build.sh": "9230531994182aeec02eeb814b70aa11f070c00ee13e8fba29d0937ac57339a8",
+        "tools/openbsd-patches.json": "0cf5b352ea5d50d91d106abd42e65b8dac105b6c72fca3c83bfd1706bc891771",
+        "tools/openbsd-patches.py": "a7afe69f68a9ff7a80fe1f0c9a7dbf99ea594f535f68e79e848e706ba797fe6c",
+        "tools/research-pins.json": "7383179c02c51b05fc29776bfe538c1ee1f6438aa5b35065d1a44a3b06f02efe",
+        "tools/run-research-go.sh": "06d4587549d98741339751f7360dd9a1a4402a253cd280eee221d3c8f382094a"
+      },
+      "raw_report_sha256": "5ebcdb0936e41147c04667e63f67da0a342583c53122f918c22be4e2055fe737",
+      "relayd_traffic_failed_observation": {
+        "admitted": false,
+        "case_results": [
+          {
+            "case": "TestRelaydTraffic/direct-benign-get",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/direct-benign-post",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/direct-uri-denied",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/direct-body-denied",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-benign-get",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-benign-post",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-uri-denied",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-body-denied",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/direct-chunked-benign",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/direct-chunked-denied",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/direct-conflicting-length",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/direct-mixed-framing-attack",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/direct-pipeline-denied-benign",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/direct-pipeline-benign-benign",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/direct-serialized-denied-benign",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-chunked-benign",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-chunked-denied",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-conflicting-length",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-mixed-framing-attack",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-pipeline-denied-benign",
+            "outcome": "fail"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-pipeline-benign-benign",
+            "outcome": "fail"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-serialized-denied-benign",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/inspection-loss",
+            "outcome": "pass"
+          },
+          {
+            "case": "TestRelaydTraffic/recovery",
+            "outcome": "pass"
+          }
+        ],
+        "passed_case_count": 22,
+        "failed_case_count": 2,
+        "receipts": {
+          "relayd": "18f66755fcd95225005da2784e8071a2e97eaf749c0c32a53b721c2151d0f010",
+          "profile": "c088b29d0b5e2dfa992d3b4150ab7356fffc83946f8721fa32e2a926087ba270",
+          "binary": "1534491cd0824aadca0b1a9278c6e8bbe769b84285ed3e11e50245d9cad8ed1a",
+          "uid": "32767",
+          "cleanup": "verified",
+          "daemon-log": "950b20d35cb7eb0a0612469d28110d9cef1efb3a4557d5a1aa850c33db7e5964"
+        },
+        "raw_observations": [
+          {
+            "case": "TestRelaydTraffic/direct-chunked-benign",
+            "http_statuses": [
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-chunked-denied",
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-conflicting-length",
+            "http_statuses": [
+              400
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-mixed-framing-attack",
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-pipeline-denied-benign",
+            "http_statuses": [
+              403,
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-pipeline-benign-benign",
+            "http_statuses": [
+              200,
+              200
+            ],
+            "backend_count": 2,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/direct-serialized-denied-benign",
+            "http_statuses": [
+              403,
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-chunked-benign",
+            "http_statuses": [
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-chunked-denied",
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-conflicting-length",
+            "http_statuses": [],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": "unexpected EOF"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-mixed-framing-attack",
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-pipeline-denied-benign",
+            "http_statuses": [
+              403
+            ],
+            "backend_count": 0,
+            "hostile_uri_count": 0,
+            "response_read_error": "unexpected EOF"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-pipeline-benign-benign",
+            "http_statuses": [
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": "unexpected EOF"
+          },
+          {
+            "case": "TestRelaydTraffic/relayd-serialized-denied-benign",
+            "http_statuses": [
+              403,
+              200
+            ],
+            "backend_count": 1,
+            "hostile_uri_count": 0,
+            "response_read_error": null
+          }
+        ],
+        "loss_observations": [
+          {
+            "attempt": 1,
+            "http_status": 500,
+            "transport_error": false
+          },
+          {
+            "attempt": 2,
+            "http_status": 500,
+            "transport_error": false
+          },
+          {
+            "attempt": 3,
+            "http_status": 502,
+            "transport_error": false
+          }
+        ],
+        "observed_health_transitions": [
+          [
+            "unknown",
+            "down"
+          ],
+          [
+            "down",
+            "up"
+          ],
+          [
+            "up",
+            "down"
+          ],
+          [
+            "down",
+            "up"
+          ],
+          [
+            "up",
+            "down"
+          ],
+          [
+            "down",
+            "up"
+          ]
+        ],
+        "log_sha256": "3dd622ea1c39287dd0a92993778b98c771260c6e2b13bd5fcc1e5bc9197703c6"
+      }
+    }
+  ]
+}
