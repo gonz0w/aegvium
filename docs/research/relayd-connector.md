@@ -28,6 +28,10 @@ relayd must provide an independently useful ingress/dispatch boundary in the sel
 - Request and admitted response phases, body limits/storage/cleanup, timeout/backpressure and unsupported upgrades/streaming are explicit. No generic HTTP/2/3 or websocket support claim.
 - Compare stock relayd availability/privilege separation with the companion's actual native privileges and resource costs. A base daemon does not automatically confine the Go engine.
 
+## Planned sibling proxy
+
+The maintainer plans an OpenBSD relayd-based reverse-proxy project with a role similar to Traefik or Caddy. A reusable Coraza integration could serve both that project and Aegvium. This gives relayd reuse a concrete product motivation; it does not establish feature parity or select a connector protocol. Keep generic ingress/routing orchestration in the future proxy, inspection integration in a possible connector, and appliance policy/CRS tuning in Aegvium. Native failure, identity and framing evidence still governs adoption. No sibling repository or API is created by this note.
+
 ## Reusable project boundary
 
 Develop the first bounded fixture in Aegvium research. If the tested integration has a coherent reusable API/configuration boundary and supports stock relayd, a separate connector project can own the minimal Go adapter, native rc.d examples, versioned supported profiles and conformance tests. Aegvium keeps product routes, policy/CRS tuning, management and BootWeave payloads. Name, repository visibility/license/notices and any publication are selected after feasibility; this request is not evidence that upstream accepts a relayd patch.
