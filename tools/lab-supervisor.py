@@ -29,12 +29,12 @@ def main():
 
     signal.signal(signal.SIGTERM, stop)
     signal.signal(signal.SIGINT, stop)
-    child = subprocess.Popen(command, stdin=subprocess.DEVNULL, start_new_session=True)
-    record.with_suffix('.started.json').write_text(json.dumps({'pid': child.pid}) + '\n')
     selector = selectors.DefaultSelector()
-    selector.register(sys.stdin, selectors.EVENT_READ)
+    child = subprocess.Popen(command, stdin=subprocess.DEVNULL, start_new_session=True)
     escalated = False
     try:
+        record.with_suffix('.started.json').write_text(json.dumps({'pid': child.pid}) + '\n')
+        selector.register(sys.stdin, selectors.EVENT_READ)
         while child.poll() is None and not stopping:
             if time.monotonic() >= expires:
                 reason = 'deadline'

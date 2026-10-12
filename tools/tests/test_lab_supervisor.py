@@ -72,3 +72,15 @@ class SupervisorTests(unittest.TestCase):
                                  '901', '--', sys.executable, '-c', 'pass'],
                                 capture_output=True)
         self.assertNotEqual(result.returncode, 0)
+
+    def test_startup_receipt_failure_still_reaps_owned_child(self):
+        with tempfile.TemporaryDirectory() as folder:
+            result = Path(folder) / 'teardown.json'
+            result.with_suffix('.started.json').mkdir()  # Force a real I/O failure.
+            child = subprocess.Popen(
+                [sys.executable, str(SUPERVISOR), str(result), '30', '--',
+                 sys.executable, '-c', 'import time; time.sleep(60)'],
+                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = child.communicate(timeout=20)
+            self.assertNotEqual(child.returncode, 0, (stdout, stderr))
+            self.assertTrue(json.loads(result.read_text())['teardown_verified'])
