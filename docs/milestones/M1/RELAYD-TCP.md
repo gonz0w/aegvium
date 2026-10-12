@@ -21,3 +21,7 @@ Health selection remains useful, but transport-only forwarding supplies no HTTP 
 Current admission must require all forty-seven named leaves and reject omission/failure/skip. Native execution requires signed clean source, patched/rebooted owned guest, nonroot fixture, syntax acceptance, daemon/listener/control-socket cleanup, owned VM teardown and unchanged source/base. Cleanup checks include all three fixture ports. Host connected skip remains a skip; twenty native engine cases remain separate.
 
 Run local repository and research checks before native execution. Preserve actual statuses, stream observations, receipt counts and failures. No measured result or safe profile is assumed in advance. Dispose of the owned guest; no live service or network changes.
+
+## Initial syntax failure
+
+Candidate `b89d9b1c461da9d7db00894b1fd8dc9118163109`, owned run `1e62de40-2665-4067-963f-d8713d13df30`, failed traffic syntax validation at the empty TCP protocol block. The release parser accepts an empty block only without the intervening newline. The foreground daemon was never started and zero connected cases ran; no traffic cleanup receipt exists for this pre-start failure. Separate twenty engine cases and historical syntax tests passed. Authenticated patches/reboot, bootstrap rejection, owned VM teardown and source/base invariance passed. Correct the block to inline empty braces and repeat in a fresh owned guest; retain this attempt rather than describing it as traffic evidence.
