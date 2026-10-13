@@ -48,3 +48,5 @@ Stable links, not a duplicate live queue. Use the [private Project](https://gith
 - [#39: M5: Review usability and explicit private candidate acceptance](https://github.com/gonz0w/aegvium/issues/39)
 - [#40: Later: Review CrowdSec native package parser remediation and privacy fit](https://github.com/gonz0w/aegvium/issues/40)
 - [#41: Later: Research response inspection streaming upgrades and HTTP versions](https://github.com/gonz0w/aegvium/issues/41)
+
+- [#69: M1: Classify relayd checker signal results and verify script identity](https://github.com/gonz0w/aegvium/issues/69)
