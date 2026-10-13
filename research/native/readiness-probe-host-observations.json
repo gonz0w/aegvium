@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "scope": "bounded host probe-core research; no executable/process-exit, native TCP or stock relayd wiring evidence",
+  "commit": "4a774460a3c03badaa13a6f5b18a82bf3b7ea8e6",
+  "tree": "9a4a7bafd0d0399f70a74c66a578e5641b524a4a",
+  "host_go": "go1.27.2 darwin/arm64",
+  "probe_cases": [
+    "TestReadyProbe/ready",
+    "TestReadyProbe/unavailable",
+    "TestReadyProbe/redirect",
+    "TestReadyProbe/malformed",
+    "TestReadyProbe/oversized",
+    "TestReadyProbe/body",
+    "TestReadyProbe/missing-no-store",
+    "TestReadyProbe/keepalive",
+    "TestReadyProbe/validation",
+    "TestReadyProbe/dial-failure",
+    "TestReadyProbe/silent-timeout"
+  ],
+  "probe_case_count": 11,
+  "runtime_inputs": {
+    "research/coraza/ready_probe.go": "9dca30b6adcdf78621ef41a57778fa2460efa5a3bc21ff043430fa538309342e",
+    "research/coraza/ready_probe_test.go": "e1496459992b38b84c06d120a73e546bd1a7223c4df3c0b92a51829360cd76b7",
+    "tools/native-build.py": "b91d947f61aa763541cc31263abf0141782af2ea71aafa3cc60c349517a76083"
+  },
+  "checks": {
+    "make_verify": {
+      "passed": true,
+      "tests": 43,
+      "log_sha256": "8953e3f74d0b5ccd9b76d6de2ba3c059ff255ef150e6fb2af78fe2b08c608100"
+    },
+    "host_research_test": {
+      "passed": true,
+      "log_sha256": "02f15b0a05403def660209013989d4832cf824670710d9cb6448f6af6986fbc5",
+      "capability_skips": [
+        "TestProxyV1TCP",
+        "TestProxyV1ListenerTCP",
+        "TestProxyReadyTCP",
+        "TestRelaydTraffic"
+      ]
+    },
+    "go_vet": "passed working candidate; runtime inputs unchanged at signed commit",
+    "go_race": {
+      "passed": true,
+      "log_sha256": "8e4cd7fd91d511ab26e86f46e5143563fe897687d3f7063289037105e67f7981"
+    },
+    "openbsd_cross_build": {
+      "passed": true,
+      "log_sha256": "56ab4e6a84bfb9e43530d6ec566936cd8ba7afb836287f069b875098eebdb52e",
+      "native_execution": false
+    },
+    "advisory_review": {
+      "passed": true,
+      "log_sha256": "be12ed488f582797d6bde294e6ff5f2673ba111a30728bba0db5c878735085a9",
+      "result": "No vulnerabilities found"
+    },
+    "offline_source_export": "module verification and staged vendoring passed; both probe files included"
+  },
+  "native_execution": "not run for probe core",
+  "ordinary_native_admission": 73,
+  "prior_native_result_reference": "proxy-readiness-observations.json",
+  "relayd_connected_admission": 63,
+  "prior_relayd_result": "failed 59/63; unchanged",
+  "limitations": [
+    "net.Pipe I/O controls; refusal is an injected dial error",
+    "integer mapping only; no CLI exit status",
+    "deadline/close failure injection and real probe TCP remain pending",
+    "synthetic engine signal; no rule readiness or sender authentication"
+  ]
+}
