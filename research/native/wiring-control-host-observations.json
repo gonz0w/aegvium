@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "scope": "phase-control protocol host tooling; native entry not executed",
+  "commit": "a772d9488875adee2406f8fe8d53f556b25b85e5",
+  "tree": "326dbf83e84ced5642fc1a767408625a4572b229",
+  "host_go": "go1.27.2 darwin/arm64",
+  "cases": [
+    "TestWiringCommands",
+    "TestWiringControlLoop/transitions-stop",
+    "TestWiringControlLoop/changed-phase",
+    "TestWiringControlLoop/malformed",
+    "TestWiringControlLoop/deadline",
+    "TestWiringControlLoop/write-failure"
+  ],
+  "case_count": 6,
+  "runtime_inputs": {
+    "tools/native-build.py": "a47768c2c5a7fa2705d8cc1ff887e8a54a278662c1ac9f68b91caaa5c08a089b",
+    "research/coraza/wiring_control_test.go": "d4ac872af433e263ae27f4cd5269bf6896df4c1dd38f9e604ab7e87ccfd7ce24",
+    "research/coraza/wiring_control_host_test.go": "dd3483eb2c41f074ceb3fc4d5dfc157ba2b92b6247e35b3562cfb4e7d643fcec",
+    "research/coraza/wiring_fixture_test.go": "a10134afb418209237240d1bcec20de9a7a9a048a24bfab26f67b57b9b5bdc3c",
+    "research/coraza/wiring_host_test.go": "55044772c63d492c369b78d1b2f54ccbb0c5161606a31f63a1eb39811805de47",
+    "research/coraza/engine_test.go": "0b204ff60105de40dbb09f8b1b8a45fbf4ba102f7c74c0e476862a2a1e24feb6",
+    "research/coraza/proxy_v1.go": "6c9b1f559a1d2e1131dcb7e4bcc092e39180f799ac3914e93c2683698041e5ab",
+    "research/coraza/proxy_conn.go": "f6358938b51d25879b2528fc8d6b7ea4d22dabe82a383f1c012df3f5742a1138",
+    "research/coraza/proxy_listener.go": "97a2c04f84f6d2d02b4463e1c6b65a2391d1b0468a61289e7bfe683e4e8cfcff",
+    "research/coraza/proxy_ready.go": "184f3a1403092a58163546454a5f9e00adbbb79e4ca0fc5ea0960541560df794",
+    "research/coraza/go.mod": "ac86dd4ae5a1da1f3ef495b1c46294639a60c5c83664c9d9f64a9ca74b7c4e97",
+    "research/coraza/go.sum": "c25d17e3767e6be54a77544315504ebca194d7a2d99a042add630e51df9e3def"
+  },
+  "checks": {
+    "wiring-control-clean.log": {
+      "passed": true,
+      "log_sha256": "f4a75ef071aeeee4e240c78689cb405ccac3c4c0605143b9e56fb053547221d4"
+    },
+    "wiring-control-clean-host.log": {
+      "passed": true,
+      "log_sha256": "7b8c59fe4e19508ad44e22bb3cbfd15ae1c98c6509967f174967d340db682589"
+    },
+    "wiring-control-clean-vet.log": {
+      "passed": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "wiring-control-clean-race.log": {
+      "passed": true,
+      "log_sha256": "5dec4641e0bbd45ca15792798e2e47a953c656c3f2dec06ad7152200bdd66923"
+    },
+    "wiring-control-clean-cross.log": {
+      "passed": true,
+      "log_sha256": "56ab4e6a84bfb9e43530d6ec566936cd8ba7afb836287f069b875098eebdb52e"
+    },
+    "wiring-control-clean-export.log": {
+      "passed": true,
+      "log_sha256": "66cca22dbc16c7881aa835468b22f7bc2d5932daa7ef63f2c7f330609a600866"
+    },
+    "wiring-control-clean-audit.log": {
+      "passed": true,
+      "log_sha256": "be12ed488f582797d6bde294e6ff5f2673ba111a30728bba0db5c878735085a9"
+    }
+  },
+  "make_verify_tests": 45,
+  "native_execution": false,
+  "ordinary_native_admission": 90,
+  "native_entry": "TestNativeWiringFixture explicitly skipped on host and excluded from ordinary native repeat",
+  "limitations": [
+    "root control/receipt directory ownership and native UID guard not qualified",
+    "no stock relayd state, unchanged checker invocation or native forwarding result",
+    "last acknowledgement is not liveness; child/generation/phase checks required",
+    "successful Stop acknowledges fixture cleanup only; daemon/socket/VM gates remain independent",
+    "future native controller must budget patch/reboot plus bounded 240-second child",
+    "synthetic readiness and bounded requests; sender/rules/lineage/adoption unresolved"
+  ]
+}
