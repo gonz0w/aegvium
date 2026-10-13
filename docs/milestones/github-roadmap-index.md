@@ -50,3 +50,5 @@ Stable links, not a duplicate live queue. Use the [private Project](https://gith
 - [#41: Later: Research response inspection streaming upgrades and HTTP versions](https://github.com/gonz0w/aegvium/issues/41)
 
 - [#69: M1: Classify relayd checker signal results and verify script identity](https://github.com/gonz0w/aegvium/issues/69)
+
+- [#73: M1: Qualify stock relayd checker readiness and forwarding transitions](https://github.com/gonz0w/aegvium/issues/73)
