@@ -36,6 +36,9 @@ cleanup() {
     fi
     rm -f control.sock
     assert_absent || exit 1
+    [ ! -e states.log ] || cat states.log
+    [ ! -e syntax.log ] || cat syntax.log
+    cat daemon.log
     printf 'CONTRACT\tcleanup\tverified\n'
     printf 'CONTRACT\tdaemon-log\t%s\n' "$(sha256 -q daemon.log)"
     exit "$prior"
