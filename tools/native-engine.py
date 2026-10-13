@@ -28,6 +28,7 @@ def load(name):
 IMAGE = load('native-image')
 PATCHES = load('openbsd-patches')
 BUILD = load('native-build')
+SIGNALS = load('relayd-signals')
 PINS = json.loads((ROOT / 'research/native/image-pin.json').read_text())
 
 SSH_HARDEN = b'''set -eu
@@ -467,6 +468,7 @@ def run():
     parser.add_argument('--relayd-config', action='store_true')
     parser.add_argument('--relayd-traffic', action='store_true')
     parser.add_argument('--relayd-contract', action='store_true')
+    parser.add_argument('--relayd-signals', action='store_true')
     args = parser.parse_args()
     os.umask(0o077)
     if git('status', '--porcelain'):
@@ -482,6 +484,8 @@ def run():
     binary = ROOT / '.tools/research/coraza-openbsd-amd64.test'
     # Always derive the executable from this clean candidate, never stale cache.
     subprocess.run(['make', 'research-cross', 'research-readycheck-cross'], cwd=ROOT, check=True, timeout=180)
+    if args.relayd_signals:
+        subprocess.run(['make', 'research-signalobserve-cross'], cwd=ROOT, check=True, timeout=180)
     binary_hash = digest(binary)
     work = ROOT / '.tools/native-runs' / str(uuid.uuid4())
     work.mkdir(parents=True, mode=0o700)
@@ -490,7 +494,7 @@ def run():
     duration = 1800 if args.source_build else 900
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
-              'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
+              'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
@@ -546,6 +550,12 @@ def run():
             report['native_build'] = True
         else:
             report['native'] = engine_guest(guest, work, binary, binary_hash)
+        if args.relayd_signals:
+            print('Running isolated plain/instrumented signal comparison...', flush=True)
+            observer = ROOT / '.tools/research/signalobserve-openbsd-amd64'
+            report['relayd_signals'] = SIGNALS.guest_run(guest, work, observer, digest(observer))
+            if not report['relayd_signals']['admitted']:
+                raise RuntimeError('native signal comparison failed; partial receipts retained')
         if args.relayd_contract:
             print('Running isolated stock-relayd script contract controls...', flush=True)
             report['relayd_contract'] = relayd_contract_guest(guest, work, checker_hash)

@@ -6,7 +6,7 @@ hooks:
 check:
 	sh tools/check-repo.sh
 lint:
-	.tools/bin/shellcheck tools/native/relayd-traffic.sh tools/native/relayd-checker-contract.sh tools/native/relayd-config.sh tools/native/source-build.sh tools/native/engine-repeat.sh tools/native/patch-openbsd.sh tools/run-research-go.sh tools/check-repo.sh .githooks/pre-commit .githooks/commit-msg
+	.tools/bin/shellcheck tools/native/relayd-traffic.sh tools/native/relayd-checker-contract.sh tools/native/relayd-signals.sh tools/native/relayd-config.sh tools/native/source-build.sh tools/native/engine-repeat.sh tools/native/patch-openbsd.sh tools/run-research-go.sh tools/check-repo.sh .githooks/pre-commit .githooks/commit-msg
 test:
 	.tools/venv/bin/python3 -m unittest discover -s tools/tests -v
 secrets:
@@ -56,3 +56,7 @@ research-signalobserve-cross:
 .PHONY: research-relayd-contract
 research-relayd-contract:
 	python3 tools/native-engine.py --relayd-contract
+
+.PHONY: research-relayd-signals
+research-relayd-signals:
+	python3 tools/native-engine.py --relayd-signals
