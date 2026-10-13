@@ -58,3 +58,5 @@ Stable links, not a duplicate live queue. Use the [private Project](https://gith
 - [#82: M1: Native-built fixture and checker recovery](https://github.com/gonz0w/aegvium/issues/82): compile both current research binaries offline on OpenBSD and run ordinary plus generation-recovery admission; completed prerequisite #80 is Done.
 
 - [#84: M1: Pinned CRS request roles and modes](https://github.com/gonz0w/aegvium/issues/84): twenty-four synthetic request vectors with matched-rule/backend witnesses; full CRS qualification remains open.
+
+- [#86: M1: Bounded body admission](https://github.com/gonz0w/aegvium/issues/86): paired CRS/body-gate observations plus header/length controls; research policy and transport qualification remain separate.

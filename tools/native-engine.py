@@ -163,6 +163,67 @@ def parse_crs_corpus(text):
     return [observations[k] for k in sorted(observations)]
 
 
+BODY_CASES = {
+    'form-benign': ((200, 1), (200, 1)), 'json-benign': ((200, 1), (200, 1)),
+    'form-sql': ((403, 0), (403, 0)), 'json-script': ((403, 0), (403, 0)),
+    'exact-cap': ((200, 1), (200, 1)), 'declared-over': ((200, 1), (413, 0)),
+    'unknown-over': ((200, 1), (413, 0)), 'understated-over': ((200, 1), (413, 0)),
+    'invalid-json': ((400, 0), (400, 0)), 'text-media': ((403, 0), (415, 0)),
+    'encoded-json': ((403, 0), (415, 0)), 'read-error': ((200, 0), (500, 0)),
+    'partial-read-error': ((200, 0), (500, 0)),
+}
+BODY_KEYS = {(profile, name) for profile in ('baseline', 'gated') for name in BODY_CASES}
+EXPECTED |= {'TestBoundedBodyAdmission/' + profile + '/' + name for profile, name in BODY_KEYS}
+EXPECTED |= {'TestBodyAdmissionHeaders/' + name for name in ('utf8-json', 'identity-json', 'duplicate-media',
+              'malformed-media', 'unsupported-charset', 'duplicate-encoding', 'short-declared', 'long-declared')}
+GROUPS |= {'TestBoundedBodyAdmission', 'TestBoundedBodyAdmission/baseline', 'TestBoundedBodyAdmission/gated', 'TestBodyAdmissionHeaders'}
+
+
+def parse_body_admission(text):
+    items = {}
+    for line in text.splitlines():
+        if 'BODY-ADMISSION ' not in line:
+            continue
+        match = re.fullmatch(r'\s*body_admission_test.go:[0-9]+: BODY-ADMISSION (\{.*\})', line)
+        if not match:
+            raise ValueError('malformed body admission line')
+        item = json.loads(match[1])
+        if set(item) != {'profile', 'case', 'status', 'backend', 'read', 'closed', 'rules', 'phases'}:
+            raise ValueError('unknown/missing body admission field')
+        key = (item['profile'], item['case'])
+        if key not in BODY_KEYS or key in items:
+            raise ValueError('unknown/duplicate body admission case')
+        gated = item['profile'] == 'gated'
+        status, backend = BODY_CASES[item['case']][int(gated)]
+        if (any(type(item[n]) is not int for n in ('status', 'backend', 'read', 'closed'))
+                or item['status'] != status or item['backend'] != backend or not 0 <= item['read'] <= 4096
+                or item['closed'] != int(gated) or gated and item['read'] > 129):
+            raise ValueError('body status/backend/read/ownership mismatch')
+        rules, phases = item['rules'], item['phases']
+        if (not isinstance(rules, list) or not isinstance(phases, list) or len(rules) != len(phases)
+                or any(type(i) is not int or not 100000 <= i <= 999999 for i in rules)
+                or rules != sorted(set(rules)) or any(type(p) is not int or not 1 <= p <= 5 for p in phases)):
+            raise ValueError('invalid body matched-rule receipt')
+        if item['case'] in ('form-sql', 'json-script'):
+            family = 942 if item['case'] == 'form-sql' else 941
+            if not any(i // 1000 == family for i in rules):
+                raise ValueError('body attack lacks expected family')
+        if item['case'] == 'invalid-json' and 200002 not in rules:
+            raise ValueError('malformed JSON lacks processor rejection evidence')
+        if gated and item['case'] in ('declared-over', 'text-media', 'encoded-json', 'read-error') and item['read'] != 0:
+            raise ValueError('early body rejection consumed bytes')
+        if gated and item['case'] in ('unknown-over', 'understated-over') and item['read'] != 129:
+            raise ValueError('actual-byte limit witness missing')
+        if item['case'] == 'partial-read-error' and item['read'] != 16:
+            raise ValueError('partial reader failure witness missing')
+        if gated and status in (413, 415, 500) and rules:
+            raise ValueError('gate rejection reached inspection')
+        items[key] = item
+    if set(items) != BODY_KEYS:
+        raise ValueError('missing body admission case')
+    return [items[key] for key in sorted(items)]
+
+
 def digest(path):
     with os.fdopen(IMAGE.regular_fd(path), 'rb') as stream:
         return hashlib.file_digest(stream, 'sha256').hexdigest()
@@ -193,7 +254,7 @@ def parse_native(text, binary_hash):
             or receipts['patches'].split(',') != [name.removeprefix('syspatch79-').removesuffix('.tgz')
                                                   for name in PATCHES.PINS['assets']]):
         raise ValueError('incomplete/mismatched native receipts or test set')
-    return {'receipts': receipts, 'cases': sorted(EXPECTED), 'case_count': len(EXPECTED), 'crs_corpus': parse_crs_corpus(text)}
+    return {'receipts': receipts, 'cases': sorted(EXPECTED), 'case_count': len(EXPECTED), 'crs_corpus': parse_crs_corpus(text), 'body_admission': parse_body_admission(text)}
 
 
 class Guest:
