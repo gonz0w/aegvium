@@ -47,8 +47,7 @@ func parseWiringCommand(data []byte) (wiringCommand, error) {
 	if err != nil || phase == 0 || phase > 16 || strconv.FormatUint(phase, 10) != fields[0] {
 		return wiringCommand{}, errors.New("invalid phase")
 	}
-	switch fields[1] {
-	case "down", "ready", "close", "stop":
+	if wiringOperation(fields[1]) {
 		return wiringCommand{phase, fields[1]}, nil
 	}
 	return wiringCommand{}, errors.New("unknown operation")
@@ -189,7 +188,11 @@ func TestNativeWiringFixture(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 240*time.Second)
+	budget := 240 * time.Second
+	if os.Getenv("AEGVIUM_WIRING_FAULTS") == "owned-guest" {
+		budget = 360 * time.Second
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), budget)
 	defer cancel()
 	if err := runWiringControls(ctx, f, "/var/aegvium-wiring/control/phase", "/var/aegvium-wiring/receipts/state.json"); err != nil {
 		t.Fatal(err)

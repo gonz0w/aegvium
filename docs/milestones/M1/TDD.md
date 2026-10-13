@@ -48,3 +48,5 @@ The [prefix parser packet](PROXY-PARSER.md) extends ordinary native admission to
 The [connection handoff packet](PROXY-ADAPTER.md) adds eight in-memory net.Conn and two owned-guest TCP leaves (ordinary native admission: 55). Host TCP skips remain skips; relayd-connected admission remains 63.
 
 The [listener lifecycle packet](PROXY-LISTENER.md) adds six synthetic-listener and two owned-guest TCP leaves (ordinary native admission: 63). This set is distinct from the unchanged 63 stock-relayd connected leaves.
+
+The [connected readiness packet](READINESS-WIRING.md) separately admits the five-phase readiness matrix and eight-phase/four-fault study, alongside ninety ordinary native leaves. Require exact generation/phase/UID/hash/counter gates, direct checker outcomes, table state, polling-window witnesses, post-DOWN zero-delta ingress and independent data-ready controls. Current observations include four forwarded UP-window requests; they do not establish instantaneous or existing-connection revocation. Closed-health restart, broader parser/trust/rule and adoption gates remain open.

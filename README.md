@@ -48,12 +48,6 @@ The [PROXY connection adapter](docs/milestones/M1/PROXY-ADAPTER.md) passed deadl
 
 The [PROXY listener lifecycle](docs/milestones/M1/PROXY-LISTENER.md) passed bounded pending-handshake, shutdown, readiness-gating and direct TCP controls (63 ordinary native cases). HTTP health wiring, actual relayd PROXY identity and sender containment remain pending.
 
-The [separate readiness endpoint](docs/milestones/M1/PROXY-READINESS.md) passed handler and two-port lifecycle controls on OpenBSD (73 ordinary native cases). It follows the receiver and a synthetic engine signal. Actual rule readiness, stock relayd checker wiring and sender authentication remain pending.
+The [readiness and checker packet](docs/milestones/M1/PROXY-READINESS.md) records 90 ordinary native cases and the original failed stock-script contract: conventional positive error exits can report UP. The separate signal/account comparison is retained; plain TERM wait-status attribution remains open.
 
-The [readiness probe core](docs/milestones/M1/PROXY-READINESS.md) passed 11 bounded host controls with explicit healthy/unhealthy integer mapping. Executable exits, real native probe TCP and stock relayd health wiring remain pending.
-
-The [standalone fixture checker](docs/milestones/M1/PROXY-READINESS.md) shares the bounded probe core and passed ten host wrapper/process controls. OpenBSD cross-build passed; native TCP/process-exit and relayd wiring remain unqualified.
-
-The [native checker repeat](docs/milestones/M1/PROXY-READINESS.md) passed 90 ordinary OpenBSD cases, including actual helper process exits across fixed-loopback readiness/recovery and failure controls. Stock relayd script/account/wiring and actual rule readiness remain pending.
-
-The [stock relayd script-contract study](docs/milestones/M1/PROXY-READINESS.md) retains two failed native contract runs: syntax and the 90-case checker subset passed, but the self-TERM shell control reported UP. Positive error exits also reported UP. Signal/account qualification and full checker wiring remain open.
+The [connected readiness study](docs/milestones/M1/READINESS-WIRING.md) now includes the first down/ready/recovery/receiver-close matrix and four health faults with a ready inspection path. Silent, malformed, redirect and refused health caused eventual table DOWN and blocked fresh post-DOWN ingress. All four requests sent during the observed UP polling windows still forwarded. Three health-mode recoveries passed; closed-listener restart, in-flight/keepalive behavior, sender containment, actual rule readiness and runtime adoption remain unqualified. Implementation, tests, native receipts and findings are delivered together.
