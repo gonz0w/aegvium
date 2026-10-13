@@ -53,3 +53,5 @@ The [separate readiness endpoint](docs/milestones/M1/PROXY-READINESS.md) passed 
 The [readiness probe core](docs/milestones/M1/PROXY-READINESS.md) passed 11 bounded host controls with explicit healthy/unhealthy integer mapping. Executable exits, real native probe TCP and stock relayd health wiring remain pending.
 
 The [standalone fixture checker](docs/milestones/M1/PROXY-READINESS.md) shares the bounded probe core and passed ten host wrapper/process controls. OpenBSD cross-build passed; native TCP/process-exit and relayd wiring remain unqualified.
+
+The [native checker repeat](docs/milestones/M1/PROXY-READINESS.md) passed 90 ordinary OpenBSD cases, including actual helper process exits across fixed-loopback readiness/recovery and failure controls. Stock relayd script/account/wiring and actual rule readiness remain pending.

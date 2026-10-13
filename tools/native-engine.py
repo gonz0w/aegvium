@@ -112,7 +112,9 @@ EXPECTED |= {'TestProxyV1Listener/' + name for name in ('progress', 'capacity', 
     'TestProxyV1ListenerTCP/' + name for name in ('progress', 'bare-head')}
 EXPECTED |= {'TestProxyReady/' + name for name in ('transitions', 'head', 'route', 'method', 'nil', 'close', 'accept-failure', 'server-bounds')} | {
     'TestProxyReadyTCP/' + name for name in ('lifecycle', 'accept-failure')}
-GROUPS = {'TestPinnedCRSSmoke', 'TestRequestInterruption', 'TestExplicitInspectionError', 'TestProxyV1Accepted', 'TestProxyV1Rejected', 'TestProxyV1Conn', 'TestProxyV1TCP', 'TestProxyV1Listener', 'TestProxyV1ListenerTCP', 'TestProxyReady', 'TestProxyReadyTCP'}
+EXPECTED |= {'TestReadyProbe/' + name for name in ('ready', 'unavailable', 'redirect', 'malformed', 'oversized', 'body', 'missing-no-store', 'keepalive', 'validation', 'dial-failure', 'silent-timeout')} | {
+    'TestReadyCheckerTCP/' + name for name in ('transitions', 'refused', 'silent', 'malformed', 'invalid-argument', 'missing-executable')}
+GROUPS = {'TestPinnedCRSSmoke', 'TestRequestInterruption', 'TestExplicitInspectionError', 'TestProxyV1Accepted', 'TestProxyV1Rejected', 'TestProxyV1Conn', 'TestProxyV1TCP', 'TestProxyV1Listener', 'TestProxyV1ListenerTCP', 'TestProxyReady', 'TestProxyReadyTCP', 'TestReadyProbe', 'TestReadyCheckerTCP'}
 
 
 def digest(path):
@@ -430,7 +432,7 @@ def run():
     PATCHES.verify()
     binary = ROOT / '.tools/research/coraza-openbsd-amd64.test'
     # Always derive the executable from this clean candidate, never stale cache.
-    subprocess.run(['make', 'research-cross'], cwd=ROOT, check=True, timeout=180)
+    subprocess.run(['make', 'research-cross', 'research-readycheck-cross'], cwd=ROOT, check=True, timeout=180)
     binary_hash = digest(binary)
     work = ROOT / '.tools/native-runs' / str(uuid.uuid4())
     work.mkdir(parents=True, mode=0o700)
@@ -481,6 +483,14 @@ def run():
         if args.relayd_config or args.relayd_traffic:
             print('Validating stock relayd configuration without starting daemon...', flush=True)
             report['relayd_config'] = relayd_config_guest(guest, work)
+        checker = ROOT / '.tools/research/readycheck-openbsd-amd64'
+        checker_hash = digest(checker)
+        with checker.open('rb') as stream:
+            response = guest.call('set -eu; cat > /var/aegvium-lab-readycheck; chmod 555 /var/aegvium-lab-readycheck', stream=stream, seconds=120)
+        if response.returncode:
+            raise RuntimeError('checker transfer failed')
+        guest.require('test "$(sha256 -q /var/aegvium-lab-readycheck)" = "' + checker_hash + '"')
+        report['checker'] = {'sha256': checker_hash, 'transfer_verified': True, 'host_cross_built': True}
         if args.source_build:
             print('Offline unprivileged native compilation started.', flush=True)
             report['native'] = source_build_guest(guest, work, build_inputs)
