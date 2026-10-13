@@ -147,6 +147,58 @@ class WiringTests(unittest.TestCase):
                 LAB.admit_replacements(changed, hashes)
 
 
+    def test_generation_admission_rejects_stale_recovery_and_false_crash_cleanup(self):
+        hashes = {'profile': 'a'*64, 'engine': 'b'*64, 'checker': 'c'*64}
+        values = {'syntax': 'accepted', 'cleanup': 'verified', 'daemon-continuity': 'verified', **hashes,
+                  'uid': '32767', 'relayd': 'd'*64, 'daemon-log': 'e'*64,
+                  'fixture-exit-1': '0', 'fixture-exit-3': '0', 'crash-owned-2': 'verified',
+                  'crash-injection-2': 'SIGKILL', 'crash-victim-uid-2': '32767', 'crash-wait-2': '137'}
+        events = [{'Phase': 1, 'Request': 'benign', 'Role': 'sink', 'Status': 200},
+                  {'Phase': 1, 'Request': 'benign', 'Role': 'inspection', 'Status': 200},
+                  {'Phase': 1, 'Request': 'denied', 'Role': 'inspection', 'Status': 403}]
+        for g, ops in {1: ('startup', 'ready', 'health-refused', 'stop'), 2: ('startup', 'ready'), 3: ('startup', 'ready', 'stop')}.items():
+            values[f'fixture-log-{g}'] = 'f'*64
+            values[f'fixture-absence-{g}'] = 'verified'
+            for p, operation in enumerate(ops):
+                values[f'ack-{g}-{p}'] = json.dumps({'schema': 1, 'generation': str(g)*32,
+                    'uid': 32767, 'phase': p, 'operation': operation, 'ready': operation in ('ready', 'health-refused'),
+                    'terminal': operation == 'stop', 'cleaned': operation == 'stop', 'events': events if p else None})
+                if operation != 'stop':
+                    label = f'{g}-{p}'
+                    up = p == 1
+                    values[f'state-{label}'] = 'up' if up else 'down'
+                    values[f'polls-{label}'] = '1'
+                    values[f'checker-exit-{label}'] = '1' if up else '0'
+                    values[f'direct-{label}'] = (f'HTTP/1.0 {200 if up else 503} fixture\r\nCache-Control: no-store\r\n\r\n').encode().hex() if p != 2 else ''
+                    for name in ('benign', 'denied') if p else ('benign',):
+                        values[f'request-{label}-{name}'] = (f'HTTP/1.1 {200 if name == "benign" else 403} fixture\r\n\r\n' + ('synthetic sink\n' if name == 'benign' else '')).encode().hex() if up else ''
+        for g in (1, 2):
+            label = f'gap-{g}'
+            for kind, value in (('state', 'down'), ('polls', '1'), ('checker-exit', '0'), ('direct', ''), ('request', '')):
+                values[f'{kind}-{label}' + ('-benign' if kind == 'request' else '')] = value
+            values[f'gap-ack-{g}'] = values[f'ack-{g}-{3 if g == 1 else 1}']
+        values['before-crash-2'] = values['after-crash-2'] = values['ack-2-1']
+        values['final-ack'] = values['ack-3-2']
+        text = lambda d: '\n'.join('WIRING\t'+k+'\t'+v for k, v in d.items())
+        self.assertEqual(LAB.admit_generations(text(values), hashes)['generation_count'], 3)
+        # A shell wait receipt is not a direct kernel wait-status classification.
+        self.assertEqual(LAB.admit_generations(text({**values, 'crash-wait-2': '1'}), hashes)['crash_shell_wait'], 1)
+        for key, value in [('uid', '0'), ('crash-victim-uid-2', '89'), ('crash-wait-2', '0'), ('crash-wait-2', '127'),
+                           ('crash-wait-2', '256'), ('fixture-absence-2', 'assumed'), ('daemon-continuity', 'assumed'),
+                           ('request-gap-2-benign', values['request-2-1-benign']), ('request-3-1-benign', ''),
+                           ('direct-1-2', values['direct-1-1']), ('final-ack', values['ack-1-3']), ('cleanup', 'assumed')]:
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                LAB.admit_generations(text({**values, key: value}), hashes)
+        for key, field, value in [('ack-3-0', 'events', events), ('ack-3-1', 'events', events + [events[0]]),
+                                  ('after-crash-2', 'cleaned', True), ('ack-1-2', 'ready', False), ('ack-2-0', 'ready', True)]:
+            ack = json.loads(values[key]); ack[field] = value
+            with self.subTest(key=key, field=field), self.assertRaises(ValueError):
+                LAB.admit_generations(text({**values, key: json.dumps(ack)}), hashes)
+        reused = {k: v.replace('2'*32, '1'*32) for k, v in values.items()}
+        for changed in (text(reused), text(values)+'\nWIRING\tcleanup\tverified', text({k:v for k,v in values.items() if k!='fixture-absence-2'})):
+            with self.assertRaises(ValueError):
+                LAB.admit_generations(changed, hashes)
+
     def test_supervisor_failure_keeps_log_receipt_even_when_wire_receipts_are_invalid(self):
         class Guest:
             def require(self, *args, **kwargs):
