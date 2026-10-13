@@ -119,6 +119,50 @@ EXPECTED |= {'TestReadyProbe/' + name for name in ('ready', 'unavailable', 'redi
 GROUPS = {'TestPinnedCRSSmoke', 'TestRequestInterruption', 'TestExplicitInspectionError', 'TestProxyV1Accepted', 'TestProxyV1Rejected', 'TestProxyV1Conn', 'TestProxyV1TCP', 'TestProxyV1Listener', 'TestProxyV1ListenerTCP', 'TestProxyReady', 'TestProxyReadyTCP', 'TestReadyProbe', 'TestReadyCheckerTCP'}
 
 
+CORPUS_KEYS = {(mode, role, kind) for mode in ('On', 'DetectionOnly')
+               for role in ('query', 'form', 'json', 'cookie') for kind in ('benign', 'sql', 'script')}
+EXPECTED |= {'TestPinnedCRSRequestCorpus/' + mode + '/' + role + '-' + kind for mode, role, kind in CORPUS_KEYS}
+GROUPS |= {'TestPinnedCRSRequestCorpus', 'TestPinnedCRSRequestCorpus/On', 'TestPinnedCRSRequestCorpus/DetectionOnly'}
+
+
+def parse_crs_corpus(text):
+    observations = {}
+    pins = re.findall(r'^\s*crs_corpus_test.go:[0-9]+: CRS-INPUTS ([0-9a-f]{64})$', text, re.MULTILINE)
+    wanted_pin = hashlib.sha256((ROOT / 'research/coraza/crs-inputs.json').read_bytes()).hexdigest()
+    if pins != [wanted_pin]:
+        raise ValueError('missing/duplicate/mismatched pinned CRS inputs')
+    for line in text.splitlines():
+        if 'CRS-CORPUS ' not in line:
+            continue
+        match = re.fullmatch(r'\s*crs_corpus_test.go:[0-9]+: CRS-CORPUS (\{.*\})', line)
+        if not match:
+            raise ValueError('malformed CRS observation line')
+        item = json.loads(match[1])
+        if set(item) != {'mode', 'role', 'kind', 'status', 'backend', 'rules', 'phases'}:
+            raise ValueError('unknown/missing CRS observation field')
+        key = (item['mode'], item['role'], item['kind'])
+        if key not in CORPUS_KEYS or key in observations:
+            raise ValueError('unknown/duplicate CRS vector')
+        attack = item['kind'] != 'benign'
+        denied = attack and item['mode'] == 'On'
+        if (type(item['status']) is not int or type(item['backend']) is not int
+                or item['status'] != (403 if denied else 200) or item['backend'] != (0 if denied else 1)):
+            raise ValueError('CRS enforcement/backend mismatch')
+        rules, phases = item['rules'], item['phases']
+        if (not isinstance(rules, list) or not isinstance(phases, list) or len(rules) != len(phases)
+                or any(type(i) is not int or not 100000 <= i <= 999999 for i in rules)
+                or rules != sorted(set(rules))
+                or any(type(p) is not int or not 1 <= p <= 5 for p in phases)):
+            raise ValueError('invalid CRS rule/phase receipt')
+        family = 942 if item['kind'] == 'sql' else 941
+        if attack and not any(i // 1000 == family for i in rules):
+            raise ValueError('attack lacks expected CRS family match')
+        observations[key] = item
+    if set(observations) != CORPUS_KEYS:
+        raise ValueError('missing CRS corpus vector')
+    return [observations[k] for k in sorted(observations)]
+
+
 def digest(path):
     with os.fdopen(IMAGE.regular_fd(path), 'rb') as stream:
         return hashlib.file_digest(stream, 'sha256').hexdigest()
@@ -149,7 +193,7 @@ def parse_native(text, binary_hash):
             or receipts['patches'].split(',') != [name.removeprefix('syspatch79-').removesuffix('.tgz')
                                                   for name in PATCHES.PINS['assets']]):
         raise ValueError('incomplete/mismatched native receipts or test set')
-    return {'receipts': receipts, 'cases': sorted(EXPECTED), 'case_count': len(EXPECTED)}
+    return {'receipts': receipts, 'cases': sorted(EXPECTED), 'case_count': len(EXPECTED), 'crs_corpus': parse_crs_corpus(text)}
 
 
 class Guest:
