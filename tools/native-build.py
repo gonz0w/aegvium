@@ -77,7 +77,7 @@ def package(work):
                    cwd=module, env=env, check=True, timeout=120)
     with tempfile.TemporaryDirectory(prefix='build-source-', dir=work) as temporary:
         stage = Path(temporary)
-        names = ('go.mod', 'go.sum', 'engine_test.go', 'crs_test.go', 'relayd_test.go', 'proxy_v1.go', 'proxy_v1_test.go', 'proxy_conn.go', 'proxy_conn_test.go', 'proxy_listener.go', 'proxy_listener_test.go', 'proxy_ready.go', 'proxy_ready_test.go')
+        names = ('go.mod', 'go.sum', 'engine_test.go', 'crs_test.go', 'relayd_test.go', 'proxy_v1.go', 'proxy_v1_test.go', 'proxy_conn.go', 'proxy_conn_test.go', 'proxy_listener.go', 'proxy_listener_test.go', 'proxy_ready.go', 'proxy_ready_test.go', 'ready_probe.go', 'ready_probe_test.go')
         for name in names:
             IMAGE.copy_verified(module / name, stage / name, digest(module / name))
             # Go vendor can update go.mod; stage is independent, source stays untouched.
