@@ -51,3 +51,5 @@ The [PROXY listener lifecycle](docs/milestones/M1/PROXY-LISTENER.md) passed boun
 The [separate readiness endpoint](docs/milestones/M1/PROXY-READINESS.md) passed handler and two-port lifecycle controls on OpenBSD (73 ordinary native cases). It follows the receiver and a synthetic engine signal. Actual rule readiness, stock relayd checker wiring and sender authentication remain pending.
 
 The [readiness probe core](docs/milestones/M1/PROXY-READINESS.md) passed 11 bounded host controls with explicit healthy/unhealthy integer mapping. Executable exits, real native probe TCP and stock relayd health wiring remain pending.
+
+The [standalone fixture checker](docs/milestones/M1/PROXY-READINESS.md) shares the bounded probe core and passed ten host wrapper/process controls. OpenBSD cross-build passed; native TCP/process-exit and relayd wiring remain unqualified.

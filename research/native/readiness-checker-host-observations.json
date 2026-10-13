@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "scope": "standalone research checker host tooling; no native probe/process or stock-relayd health result",
+  "commit": "7b4b28afc87fe22c1ffc188756d2e06de7c77f48",
+  "tree": "95b18aa4c01f7b8a26871c44b09d99cd102fbaf3",
+  "host_go": "go1.27.2 darwin/arm64",
+  "command_cases": [
+    "TestCheckerExit/healthy",
+    "TestCheckerExit/down",
+    "TestCheckerExit/unexpected-positive",
+    "TestCheckerExit/unexpected-negative",
+    "TestCheckerExit/panic",
+    "TestCheckerInvalidProcess/missing",
+    "TestCheckerInvalidProcess/hostname",
+    "TestCheckerInvalidProcess/extra",
+    "TestCheckerInvalidProcess/other-address",
+    "TestCheckerInvalidProcess/metacharacters"
+  ],
+  "command_case_count": 10,
+  "prior_core_host_case_count": 11,
+  "runtime_inputs": {
+    "Makefile": "411e417caeab1ba063959336c368d6aa7d0e9e40da60e8fb8b235737cd4638ab",
+    "tools/native-build.py": "ee4332cffb8412557d98352b0b355355f620325333041740fadeba79de3be3e5",
+    "research/coraza/ready_probe.go": "b38fa3c5656831902d1d04794852690a2efe4ecf6a9557d6dfa0dd99f0cfc21d",
+    "research/coraza/ready_probe_test.go": "e1496459992b38b84c06d120a73e546bd1a7223c4df3c0b92a51829360cd76b7",
+    "research/coraza/internal/readyprobe/probe.go": "596335c9103807c31c705b8f51b89cf9829216f203c6be3e5d99326c9f9aaf1f",
+    "research/coraza/cmd/readycheck/main.go": "e25613e6467ffefbbcddb175ccfac9e11986bce886c0f15c6f7222321f0616ee",
+    "research/coraza/cmd/readycheck/main_test.go": "63c70f71d2c40d76b82c1e91083f13df23d97cd096e712058dce459a84aaf193"
+  },
+  "checks": {
+    "checker-clean.log": {
+      "passed": true,
+      "log_sha256": "2990ba5eabf5932ed81a3a167d040d66916e8f5eb32ac3a0f5042442452ecfd7"
+    },
+    "checker-clean-host.log": {
+      "passed": true,
+      "log_sha256": "91853569e09dc5ce3bc14adead40c022ba1e6dff0cc628aa0e89daa712cf1a42"
+    },
+    "checker-race.log": {
+      "passed": true,
+      "log_sha256": "0e9a684a4934ec2e85c6bc3ea3cb24e92d5594031846a94e2ab43fe1fc6516bd"
+    },
+    "checker-cross.log": {
+      "passed": true,
+      "log_sha256": "f93a99dc261b5a78c9339b6e928c9af55a3e2cf99b75f0e267666ecf1b1b481a"
+    },
+    "checker-audit.log": {
+      "passed": true,
+      "log_sha256": "be12ed488f582797d6bde294e6ff5f2673ba111a30728bba0db5c878735085a9"
+    }
+  },
+  "make_verify_tests": 43,
+  "offline_export": "shared core and command/test entries verified; module/vendor verification passed",
+  "host_native_capabilities": "explicitly skipped",
+  "native_execution": false,
+  "ordinary_native_admission": 73,
+  "prior_native_reference": "proxy-readiness-observations.json",
+  "relayd_connected_result": "historical failed 59/63; unchanged",
+  "limitations": [
+    "host real processes tested only invalid no-dial arguments",
+    "positive success and panic are wrapper unit cases, not native process behavior",
+    "runtime fatal/external positive exits can still falsely report health",
+    "fixed endpoint/200ms fixture profile; no adoption",
+    "native TCP/exit/signal/missing-executable/relayd wiring pending"
+  ]
+}

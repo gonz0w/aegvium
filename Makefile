@@ -42,3 +42,8 @@ research-relayd-config:
 .PHONY: research-relayd-traffic
 research-relayd-traffic:
 	python3 tools/native-engine.py --relayd-traffic
+
+.PHONY: research-readycheck-cross
+research-readycheck-cross:
+	mkdir -p .tools/research
+	cd research/coraza && GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 ../../tools/run-research-go.sh build -o ../../.tools/research/readycheck-openbsd-amd64 ./cmd/readycheck
