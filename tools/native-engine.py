@@ -345,6 +345,54 @@ def relayd_config_guest(guest, work):
             'receipts': parse_relayd(log.read_text(), hashes['ingress.conf']), 'log_sha256': digest(log)}
 
 
+def contract_inputs():
+    inputs = {'profile.conf': (ROOT / 'research/relayd/checker-contract.conf').read_bytes()}
+    for name, action in (('up', 'exit 1'), ('down', 'exit 0'), ('positive', 'exit 2'), ('signal', 'kill -TERM $$')):
+        inputs[name + '.sh'] = ('#!/bin/sh\n# SPDX-License-Identifier: BSD-3-Clause\n'
+                               'id -u > /var/aegvium-contract/uid/' + name + '\n' + action + '\n').encode()
+    return inputs
+
+
+def parse_contract(text, profile_hash, checker_hash):
+    receipts = {}
+    for line in text.splitlines():
+        if line.startswith('CONTRACT\t'):
+            parts = line.split('\t')
+            if len(parts) != 3 or parts[1] in receipts:
+                raise ValueError('malformed/duplicate contract receipt')
+            receipts[parts[1]] = parts[2]
+    expected = {'syntax': 'accepted', 'up': 'up', 'down': 'down', 'positive': 'up',
+                'signal': 'down', 'missing': 'down', 'checker': 'down', 'cleanup': 'verified',
+                'profile': profile_hash, 'checker-sha': checker_hash}
+    hashes = {'relayd', 'states-log', 'syntax-log', 'daemon-log'}
+    if (set(receipts) != set(expected) | hashes | {'script-uid'}
+            or any(receipts.get(k) != v for k, v in expected.items())
+            or not re.fullmatch('[1-9][0-9]*', receipts.get('script-uid', ''))
+            or any(not re.fullmatch('[0-9a-f]{64}', receipts[k]) for k in hashes)):
+        raise ValueError('incomplete/mismatched relayd checker contract receipts')
+    return receipts
+
+
+def relayd_contract_guest(guest, work, checker_hash):
+    inputs = contract_inputs()
+    hashes = {name: hashlib.sha256(data).hexdigest() for name, data in inputs.items()}
+    guest.require('set -eu; umask 022; mkdir /var/aegvium-contract; chmod 755 /var/aegvium-contract')
+    for name, data in inputs.items():
+        guest.require('set -eu; cat > /var/aegvium-contract/' + name, data=data)
+        if name.endswith('.sh'):
+            guest.require('chmod 555 /var/aegvium-contract/' + name)
+    script = (ROOT / 'tools/native/relayd-checker-contract.sh').read_bytes()
+    script = script.replace(b'CONTRACT_PROFILE_SHA256', hashes['profile.conf'].encode()).replace(b'CHECKER_SHA256', checker_hash.encode())
+    log = work / 'relayd-contract.log'
+    with log.open('wb') as output:
+        response = guest.call('sh -s', data=script, seconds=120, output=output)
+    if response.returncode:
+        raise RuntimeError('relayd checker contract failed; see relayd-contract.log')
+    return {'scope': 'script contract only; no backend/health listener or application traffic',
+            'input_sha256': hashes, 'receipts': parse_contract(log.read_text(), hashes['profile.conf'], checker_hash),
+            'log_sha256': digest(log)}
+
+
 TRAFFIC_CASES = {'TestRelaydTraffic/' + name for name in (
     'direct-benign-get', 'direct-benign-post', 'direct-uri-denied', 'direct-body-denied',
     'relayd-benign-get', 'relayd-benign-post', 'relayd-uri-denied', 'relayd-body-denied',
@@ -418,6 +466,7 @@ def run():
     parser.add_argument('--source-build', action='store_true')
     parser.add_argument('--relayd-config', action='store_true')
     parser.add_argument('--relayd-traffic', action='store_true')
+    parser.add_argument('--relayd-contract', action='store_true')
     args = parser.parse_args()
     os.umask(0o077)
     if git('status', '--porcelain'):
@@ -441,7 +490,7 @@ def run():
     duration = 1800 if args.source_build else 900
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
-              'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'passed': False,
+              'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
@@ -497,6 +546,9 @@ def run():
             report['native_build'] = True
         else:
             report['native'] = engine_guest(guest, work, binary, binary_hash)
+        if args.relayd_contract:
+            print('Running isolated stock-relayd script contract controls...', flush=True)
+            report['relayd_contract'] = relayd_contract_guest(guest, work, checker_hash)
         if args.relayd_traffic:
             print('Running guest-loopback stock relayd / Coraza traffic comparison...', flush=True)
             report['relayd_traffic'] = relayd_traffic_guest(guest, work, report['native']['receipts']['binary'],
