@@ -88,10 +88,10 @@ def admit(text, hashes):
     return {'receipts': values, 'generation': generation, 'phases': acks, 'phase_count': 5}
 
 
-def guest_run(guest, work, binary_hash, checker_hash, faults=False, replacements=False):
+def guest_run(guest, work, binary_hash, checker_hash, faults=False, replacements=False, generations=False):
     profile = (ROOT / 'research/relayd/readiness-wiring.conf').read_bytes()
     hashes = {'profile': hashlib.sha256(profile).hexdigest(), 'engine': binary_hash, 'checker': checker_hash}
-    if faults and replacements:
+    if sum((faults, replacements, generations)) > 1:
         raise ValueError('select one connected wiring study')
     if replacements:
         replacement = (ROOT / 'research/relayd/checker-exit2.sh').read_bytes()
@@ -99,7 +99,7 @@ def guest_run(guest, work, binary_hash, checker_hash, faults=False, replacements
     guest.require('set -eu; umask 022; mkdir /var/aegvium-wiring; chmod 755 /var/aegvium-wiring; cat > /var/aegvium-wiring/profile.conf', data=profile)
     if replacements:
         guest.require('set -eu; cat > /var/aegvium-wiring/exit2.sh; chmod 555 /var/aegvium-wiring/exit2.sh', data=replacement)
-    script = (ROOT / ('tools/native/relayd-checker-replacement.sh' if replacements else 'tools/native/relayd-health-faults.sh' if faults else 'tools/native/relayd-wiring.sh')).read_bytes()
+    script = (ROOT / ('tools/native/relayd-generations.sh' if generations else 'tools/native/relayd-checker-replacement.sh' if replacements else 'tools/native/relayd-health-faults.sh' if faults else 'tools/native/relayd-wiring.sh')).read_bytes()
     tokens = [(b'PROFILE_SHA256', 'profile'), (b'ENGINE_SHA256', 'engine'), (b'CHECKER_SHA256', 'checker')]
     if replacements:
         tokens.append((b'REPLACEMENT_SHA256', 'replacement'))
@@ -107,12 +107,12 @@ def guest_run(guest, work, binary_hash, checker_hash, faults=False, replacements
         script = script.replace(token, hashes[key].encode())
     log = work / 'relayd-wiring.log'
     with log.open('wb') as output:
-        reply = guest.call('sh -s', data=script, seconds=420 if faults or replacements else 300, output=output)
+        reply = guest.call('sh -s', data=script, seconds=420 if faults or replacements or generations else 300, output=output)
     result = {'hashes': hashes, 'supervisor_exit': reply.returncode, 'admitted': False,
               'log_sha256': hashlib.sha256(log.read_bytes()).hexdigest(), 'partial_receipts': {}}
     try:
         result['partial_receipts'] = receipts(log.read_text())
-        result.update((admit_replacements if replacements else admit_faults if faults else admit)(log.read_text(), hashes))
+        result.update((admit_generations if generations else admit_replacements if replacements else admit_faults if faults else admit)(log.read_text(), hashes))
         if reply.returncode:
             raise ValueError('owned supervisor failed')
         result['admitted'] = True
@@ -282,3 +282,80 @@ def admit_replacements(text, hashes):
         raise ValueError('replacement final cleanup mismatch')
     return {'receipts': values, 'generation': generation, 'phases': acks, 'phase_count': 7,
             'unsafe_exit2_forwarding_observed': True, 'missing_checker_down_observed': True}
+
+
+def admit_generations(text, hashes):
+    """Admit three fresh generations, including an intentionally interrupted child."""
+    values = receipts(text)
+    expected = {'syntax': 'accepted', 'cleanup': 'verified', 'daemon-continuity': 'verified',
+                'fixture-exit-1': '0', 'fixture-exit-3': '0',
+                'crash-owned-2': 'verified', 'crash-injection-2': 'SIGKILL', **hashes}
+    expected.update({'fixture-absence-' + str(g): 'verified' for g in (1, 2, 3)})
+    operations = {1: ('startup', 'ready', 'health-refused', 'stop'),
+                  2: ('startup', 'ready'), 3: ('startup', 'ready', 'stop')}
+    labels = {f'{g}-{p}': ('up' if p == 1 else 'down')
+              for g in operations for p in range(len(operations[g])) if operations[g][p] != 'stop'}
+    labels.update({'gap-1': 'down', 'gap-2': 'down'})
+    keys = set(expected) | {'uid', 'relayd', 'daemon-log', 'final-ack', 'crash-wait-2',
+                           'crash-victim-uid-2', 'before-crash-2', 'after-crash-2', 'gap-ack-1', 'gap-ack-2'}
+    keys |= {f'fixture-log-{g}' for g in operations}
+    keys |= {f'ack-{g}-{p}' for g, ops in operations.items() for p in range(len(ops))}
+    keys |= {f'{kind}-{label}' for label in labels for kind in ('state', 'polls', 'checker-exit', 'direct')}
+    keys |= {f'request-{label}-{name}' for label in labels
+             for name in (('benign', 'denied') if label.endswith('-1') and not label.startswith('gap') or label == '1-2' else ('benign',))}
+    if set(values) != keys or any(values.get(k) != v for k, v in expected.items()):
+        raise ValueError('missing/unknown/mismatched generation gates')
+    if (not re.fullmatch('[1-9][0-9]*', values['uid']) or values['crash-victim-uid-2'] != values['uid']
+            or any(not re.fullmatch('[0-9a-f]{64}', values[k]) for k in ('relayd', 'daemon-log', 'fixture-log-1', 'fixture-log-2', 'fixture-log-3'))):
+        raise ValueError('invalid generation identity/hash')
+    wait = values['crash-wait-2']
+    if not re.fullmatch('[1-9][0-9]{0,2}', wait) or int(wait) > 255 or int(wait) == 127:
+        raise ValueError('injected crash did not produce an admitted shell wait result')
+    phases = {}
+    generations = []
+    wanted_events = [{'Phase': 1, 'Request': 'benign', 'Role': 'sink', 'Status': 200},
+                     {'Phase': 1, 'Request': 'benign', 'Role': 'inspection', 'Status': 200},
+                     {'Phase': 1, 'Request': 'denied', 'Role': 'inspection', 'Status': 403}]
+    for g, ops in operations.items():
+        acks = [json.loads(values[f'ack-{g}-{p}']) for p in range(len(ops))]
+        generation = acks[0].get('generation', '')
+        if not re.fullmatch('[0-9a-f]{32}', generation) or generation in generations:
+            raise ValueError('invalid/reused fixture generation')
+        generations.append(generation)
+        for p, (ack, operation) in enumerate(zip(acks, ops)):
+            if set(ack) != {'schema', 'generation', 'uid', 'phase', 'operation', 'ready', 'terminal', 'cleaned', 'events'}:
+                raise ValueError('generation acknowledgement schema mismatch')
+            if (type(ack['schema']) is not int or ack['schema'] != 1 or ack['generation'] != generation
+                    or type(ack['uid']) is not int or ack['uid'] != int(values['uid'])
+                    or type(ack['phase']) is not int or ack['phase'] != p or ack['operation'] != operation
+                    or ack['ready'] is not (operation in ('ready', 'health-refused'))
+                    or ack['terminal'] is not (operation == 'stop') or ack['cleaned'] is not (operation == 'stop')):
+                raise ValueError('incorrect generation acknowledgement')
+            if (ack['events'] is not None and not isinstance(ack['events'], list)) or (ack['events'] or []) != ([] if p == 0 else wanted_events):
+                raise ValueError('generation counters were stale or forwarding delta mismatched')
+        phases[str(g)] = acks
+    for key, wanted in (('gap-ack-1', phases['1'][3]), ('before-crash-2', phases['2'][1]),
+                        ('after-crash-2', phases['2'][1]), ('gap-ack-2', phases['2'][1]), ('final-ack', phases['3'][2])):
+        if json.loads(values[key]) != wanted:
+            raise ValueError('stale crash/stop receipt unexpectedly changed')
+    for label, state in labels.items():
+        up = state == 'up'
+        if values['state-' + label] != state or not re.fullmatch('[0-9]|[12][0-9]', values['polls-' + label]) or values['checker-exit-' + label] != ('1' if up else '0'):
+            raise ValueError('generation state/checker mismatch')
+        status, headers, body = response(values['direct-' + label])
+        absent = label.startswith('gap') or label == '1-2'
+        if absent:
+            if values['direct-' + label]:
+                raise ValueError('closed health listener returned bytes')
+        elif status != (200 if up else 503) or body or headers.get(b'cache-control') != b'no-store':
+            raise ValueError('generation direct health mismatch')
+        for name in ('benign', 'denied') if up or label == '1-2' else ('benign',):
+            witness = values[f'request-{label}-{name}']
+            status, _, body = response(witness)
+            if up and (status != (200 if name == 'benign' else 403) or name == 'benign' and body != b'synthetic sink\n'):
+                raise ValueError('fresh generation forwarding/denial mismatch')
+            if not up and witness:
+                raise ValueError('startup/gap/down returned ingress bytes')
+    return {'receipts': values, 'generations': generations, 'phases': phases,
+            'generation_count': 3, 'graceful_generation_count': 2, 'injected_crash_count': 1,
+            'crash_shell_wait': int(wait)}

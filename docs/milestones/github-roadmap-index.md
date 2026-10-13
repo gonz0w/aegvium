@@ -52,3 +52,5 @@ Stable links, not a duplicate live queue. Use the [private Project](https://gith
 - [#69: M1: Classify relayd checker signal results and verify script identity](https://github.com/gonz0w/aegvium/issues/69)
 
 - [#73: M1: Qualify stock relayd checker readiness and forwarding transitions](https://github.com/gonz0w/aegvium/issues/73)
+
+- [#80 — Fixture generation recovery](https://github.com/gonz0w/aegvium/issues/80): M1/P1, graceful Stop and injected crash with a continuing relayd parent; implementation and native findings delivered together. Completed prerequisite #73 is Done. Broad native qualification remains open.
