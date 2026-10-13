@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "scope": "static relayctl host/table display layout; no installed-source attribution",
+  "authenticated_archive_reference": "release-source.json",
+  "archive_sha256": "fb305c553059b48e8ee64539f392b783cb38a67865823f6f6a94f3b220a1268b",
+  "archive_match": true,
+  "member": "usr.sbin/relayctl/relayctl.c",
+  "bytes": 14157,
+  "sha256": "fbd445db1233738607c00cbfc9e5ad64d3f46ead8579bf564d1dc97b29523a2d",
+  "rcs_header": "/*\t$OpenBSD: relayctl.c,v 1.63 2024/11/21 13:38:15 claudio Exp $\t*/",
+  "analysis_lines": [
+    "364-384",
+    "515-548"
+  ],
+  "finding": "table/host tab-separated rows and up/down/unknown host labels; table names carry configured port suffix",
+  "authentication": "inherited signed-manifest/key provenance; archive hash recomputed; no new signature verification",
+  "license": "ISC-style member notice inspected; no upstream code or dependency added"
+}
