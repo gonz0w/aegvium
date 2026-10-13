@@ -261,9 +261,9 @@ def parse_build(text, source_hash):
             if len(parts) != 3 or parts[1] in values:
                 raise ValueError('invalid native build receipt')
             values[parts[1]] = parts[2]
-    if (set(values) != {'compiler', 'source', 'uid', 'binary'}
+    if (set(values) != {'compiler', 'source', 'uid', 'binary', 'checker'}
             or not re.fullmatch(r'[1-9][0-9]*', values['uid'])
-            or any(not re.fullmatch('[0-9a-f]{64}', values[name]) for name in ('compiler', 'source', 'binary'))
+            or any(not re.fullmatch('[0-9a-f]{64}', values[name]) for name in ('compiler', 'source', 'binary', 'checker'))
             or values['source'] != source_hash):
         raise ValueError('native source build receipts incomplete')
     return values
@@ -288,15 +288,21 @@ def source_build_guest(guest, work, inputs):
     values = parse_build(log.read_text(), inputs['source_sha256'])
     guest.require('set -eu; mkdir /var/aegvium-lab; chmod 755 /var/aegvium-lab; '
                   'cp /var/aegvium-build/output/engine.test /var/aegvium-lab/engine.test; '
-                  'chmod 555 /var/aegvium-lab/engine.test')
+                  'chmod 555 /var/aegvium-lab/engine.test; '
+                  'cp /var/aegvium-build/output/readycheck /var/aegvium-lab-readycheck; '
+                  'chmod 555 /var/aegvium-lab-readycheck; '
+                  'test "$(sha256 -q /var/aegvium-lab/engine.test)" = "' + values['binary'] + '"; '
+                  'test "$(sha256 -q /var/aegvium-lab-readycheck)" = "' + values['checker'] + '"')
     repeat = (ROOT / 'tools/native/engine-repeat.sh').read_bytes().replace(b'BINARY_SHA256', values['binary'].encode())
     with (work / 'native.log').open('wb') as output:
         response = guest.call('sh -s', data=repeat, seconds=180, output=output)
     if response.returncode:
         raise RuntimeError('native-built test execution failed; see native.log')
+    native = parse_native((work / 'native.log').read_text(), values['binary'])
+    if native['receipts']['uid'] != values['uid']:
+        raise ValueError('native builder/execution UID mismatch')
     return {'build_receipts': values, 'build_log_sha256': digest(log),
-            **parse_native((work / 'native.log').read_text(), values['binary']),
-            'log_sha256': digest(work / 'native.log')}
+            **native, 'log_sha256': digest(work / 'native.log')}
 
 
 def relayd_inputs():
@@ -543,19 +549,22 @@ def run():
         if args.relayd_config or args.relayd_traffic:
             print('Validating stock relayd configuration without starting daemon...', flush=True)
             report['relayd_config'] = relayd_config_guest(guest, work)
-        checker = ROOT / '.tools/research/readycheck-openbsd-amd64'
-        checker_hash = digest(checker)
-        with checker.open('rb') as stream:
-            response = guest.call('set -eu; cat > /var/aegvium-lab-readycheck; chmod 555 /var/aegvium-lab-readycheck', stream=stream, seconds=120)
-        if response.returncode:
-            raise RuntimeError('checker transfer failed')
-        guest.require('test "$(sha256 -q /var/aegvium-lab-readycheck)" = "' + checker_hash + '"')
-        report['checker'] = {'sha256': checker_hash, 'transfer_verified': True, 'host_cross_built': True}
         if args.source_build:
             print('Offline unprivileged native compilation started.', flush=True)
             report['native'] = source_build_guest(guest, work, build_inputs)
             report['native_build'] = True
+            checker_hash = report['native']['build_receipts']['checker']
+            report['checker'] = {'sha256': checker_hash, 'installed_verified': True,
+                                 'host_cross_built': False, 'native_built': True}
         else:
+            checker = ROOT / '.tools/research/readycheck-openbsd-amd64'
+            checker_hash = digest(checker)
+            with checker.open('rb') as stream:
+                response = guest.call('set -eu; cat > /var/aegvium-lab-readycheck; chmod 555 /var/aegvium-lab-readycheck', stream=stream, seconds=120)
+            if response.returncode:
+                raise RuntimeError('checker transfer failed')
+            guest.require('test "$(sha256 -q /var/aegvium-lab-readycheck)" = "' + checker_hash + '"')
+            report['checker'] = {'sha256': checker_hash, 'transfer_verified': True, 'host_cross_built': True}
             report['native'] = engine_guest(guest, work, binary, binary_hash)
         if args.relayd_wiring or args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations:
             print('Running connected readiness/forwarding matrix...', flush=True)
