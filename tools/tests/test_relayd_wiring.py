@@ -48,3 +48,49 @@ class WiringTests(unittest.TestCase):
         for changed in (text(values)+'\nWIRING\tcleanup\tverified', text({k:v for k,v in values.items() if k!='ack-3'})):
             with self.assertRaises(ValueError):
                 LAB.admit(changed, hashes)
+
+    def test_fault_admission_keeps_window_forwarding_and_rejects_post_down_success(self):
+        hashes = {'profile': 'a'*64, 'engine': 'b'*64, 'checker': 'c'*64}
+        values = {'syntax': 'accepted', 'cleanup': 'verified', 'fixture-exit': '0', **hashes,
+                  'uid': '32767', 'relayd': 'd'*64, 'fixture-log': 'e'*64, 'daemon-log': 'f'*64}
+        events = []
+        wire = lambda status, body=b'', headers='': (f'HTTP/1.0 {status} fixture\r\n{headers}\r\n'.encode()+body).hex()
+        pair = lambda i, name: [{'Phase': i, 'Request': name, 'Role': role, 'Status': 200} for role in ('sink', 'inspection')]
+        for i, operation in enumerate(LAB.FAULT_OPERATIONS):
+            if 1 <= i <= 8:
+                up = i % 2 == 1
+                values[f'state-{i}'] = 'up' if up else 'down'
+                values[f'polls-{i}'] = '1'
+                values[f'checker-exit-{i}'] = '1' if up else '0'
+                values[f'direct-{i}'] = wire(200, headers='Cache-Control: no-store\r\n') if up else {2: wire(503), 4: b'malformed health\r\n\r\n'.hex(), 6: wire(302, headers='Location: http://127.0.0.1:18085/ready\r\n'), 8: ''}[i]
+                values[f'request-{i}-benign'] = wire(200, b'synthetic sink\n') if up else ''
+                if up:
+                    events += pair(i, 'benign')
+                else:
+                    values[f'window-before-{i}'] = 'up'
+                    values[f'window-after-{i}'] = 'down'
+                    values[f'request-{i}-window'] = wire(200, b'synthetic sink\n') if i == 2 else ''
+                    if i == 2:
+                        events += pair(i, 'window')
+                    values[f'request-{i}-witness'] = wire(200, b'synthetic sink\n')
+                    events += pair(i, 'witness')
+            values[f'ack-{i}'] = json.dumps({'schema': 1, 'generation': '1'*32, 'uid': 32767,
+                'phase': i, 'operation': operation, 'ready': 1 <= i <= 8, 'terminal': i == 9,
+                'cleaned': i == 9, 'events': copy.deepcopy(events)})
+        values['final-ack'] = values['ack-9']
+        text = lambda d: '\n'.join('WIRING\t'+k+'\t'+v for k, v in d.items())
+        admitted = LAB.admit_faults(text(values), hashes)
+        self.assertEqual(admitted['fault_count'], 4)
+        self.assertTrue(admitted['polling_windows'][0]['forwarded'])
+        for key, value in [('cleanup', 'assumed'), ('fixture-exit', '1'), ('uid', '0'),
+                           ('checker-exit-2', '1'), ('state-4', 'up'), ('request-2-witness', ''),
+                           ('request-2-benign', values['request-1-benign']), ('direct-4', ''),
+                           ('window-before-2', 'unknown')]:
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                LAB.admit_faults(text({**values, key: value}), hashes)
+        ack = json.loads(values['ack-2']); ack['events'].append(pair(2, 'benign')[0])
+        with self.assertRaises(ValueError):
+            LAB.admit_faults(text({**values, 'ack-2': json.dumps(ack)}), hashes)
+        for changed in (text(values)+'\nWIRING\tcleanup\tverified', text({k:v for k,v in values.items() if k!='ack-4'})):
+            with self.assertRaises(ValueError):
+                LAB.admit_faults(changed, hashes)

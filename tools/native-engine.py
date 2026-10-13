@@ -470,6 +470,7 @@ def run():
     parser.add_argument('--relayd-traffic', action='store_true')
     parser.add_argument('--relayd-contract', action='store_true')
     parser.add_argument('--relayd-signals', action='store_true')
+    parser.add_argument('--relayd-health-faults', action='store_true')
     parser.add_argument('--relayd-wiring', action='store_true')
     args = parser.parse_args()
     os.umask(0o077)
@@ -493,10 +494,10 @@ def run():
     work.mkdir(parents=True, mode=0o700)
     build_inputs = BUILD.package(work) if args.source_build else None
     source = {name: digest(ROOT / name) for name in git('ls-files').splitlines()}
-    duration = 1800 if args.source_build else (1200 if args.relayd_wiring else 900)
+    duration = 1800 if args.source_build else (1500 if args.relayd_health_faults else 1200 if args.relayd_wiring else 900)
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
-              'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
+              'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
@@ -552,9 +553,9 @@ def run():
             report['native_build'] = True
         else:
             report['native'] = engine_guest(guest, work, binary, binary_hash)
-        if args.relayd_wiring:
+        if args.relayd_wiring or args.relayd_health_faults:
             print('Running connected readiness/forwarding matrix...', flush=True)
-            report['relayd_wiring'] = WIRING.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash)
+            report['relayd_wiring'] = WIRING.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, faults=args.relayd_health_faults)
             if not report['relayd_wiring']['admitted']:
                 raise RuntimeError('connected wiring admission failed; partial receipts retained')
         if args.relayd_signals:
