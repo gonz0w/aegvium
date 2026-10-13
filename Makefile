@@ -48,6 +48,11 @@ research-readycheck-cross:
 	mkdir -p .tools/research
 	cd research/coraza && GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 ../../tools/run-research-go.sh build -o ../../.tools/research/readycheck-openbsd-amd64 ./cmd/readycheck
 
+.PHONY: research-signalobserve-cross
+research-signalobserve-cross:
+	mkdir -p .tools/research
+	cd research/coraza && GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 ../../tools/run-research-go.sh build -o ../../.tools/research/signalobserve-openbsd-amd64 ./cmd/signalobserve
+
 .PHONY: research-relayd-contract
 research-relayd-contract:
 	python3 tools/native-engine.py --relayd-contract

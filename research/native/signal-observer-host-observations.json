@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "scope": "fixed signal observer host tooling only; no native signal/account or relayd comparison admission",
+  "commit": "7bf9c7303dbc7b5ddf60d4977aa2d9d5cbc1ecaf",
+  "tree": "9db74cc77a13f36c97cd7d079c6647cede0b7866",
+  "host_go": "go1.27.2 darwin/arm64",
+  "cases": [
+    "TestArguments",
+    "TestChildWaitStatus/zero",
+    "TestChildWaitStatus/one",
+    "TestChildWaitStatus/two",
+    "TestChildWaitStatus/term",
+    "TestChildWaitStatus/kill",
+    "TestChildWaitStatus/launch-error",
+    "TestChildWaitStatus/deadline",
+    "TestRecord",
+    "TestPropagation/exited0",
+    "TestPropagation/exited1",
+    "TestPropagation/exited2",
+    "TestPropagation/signalled15",
+    "TestPropagation/signalled9"
+  ],
+  "case_count": 14,
+  "runtime_inputs": {
+    "Makefile": "1e4a16663ad03d09622192925bb9dc2e72af7b9044137b7080e2decbc1fbf185",
+    "tools/native-build.py": "b276abfdbf6300abc31274c959bc9f9cee1a3492a1f1ed063d9cff8fba38ecdd",
+    "research/coraza/cmd/signalobserve/main.go": "4f999b8c21610eef67def912862f75a70a39edb9b5349d9e1b3c9612beeec282",
+    "research/coraza/cmd/signalobserve/main_test.go": "d6201d7afe5e1453f544bb6a2983c541d31ed0aa8fbcd2ea7706817a634f84fd",
+    "research/coraza/go.mod": "ac86dd4ae5a1da1f3ef495b1c46294639a60c5c83664c9d9f64a9ca74b7c4e97",
+    "research/coraza/go.sum": "c25d17e3767e6be54a77544315504ebca194d7a2d99a042add630e51df9e3def"
+  },
+  "checks": {
+    "signal-observer-clean.log": {
+      "passed": true,
+      "log_sha256": "91151f2bed8eb49aeaf8b0320868d56c4ac672d2b3dc0bc139f5d075abeb4c95"
+    },
+    "signal-observer-clean-host.log": {
+      "passed": true,
+      "log_sha256": "a2c85fb5e027ddcf2d0d690b1c3d188f97261fe2166d22c3cc1464dd6c3cf917"
+    },
+    "signal-observer-clean-vet.log": {
+      "passed": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "signal-observer-clean-race.log": {
+      "passed": true,
+      "log_sha256": "a9bb534b0d15d3c5ecfd164fb76354f1040a56d53c145890c4587e31c9322d2a"
+    },
+    "signal-observer-clean-cross.log": {
+      "passed": true,
+      "log_sha256": "f32c20960771c6aa320e2f3d4d58a465e99123230228a65cbdecd08f1446877e"
+    },
+    "signal-observer-export.log": {
+      "passed": true,
+      "log_sha256": "8695ddfb7492176b7abbf43265e1e3e1ad5afe8f0b53a99a91cab14e8269cd8b"
+    },
+    "signal-observer-audit.log": {
+      "passed": true,
+      "log_sha256": "be12ed488f582797d6bde294e6ff5f2673ba111a30728bba0db5c878735085a9"
+    }
+  },
+  "make_verify_tests": 44,
+  "observer_cross_sha256": "f0a2c4a60729b9c652da3bc22668b7d7de23c2a37a8acecaf949b9c9c5be3d26",
+  "native_execution": false,
+  "ordinary_native_admission": 90,
+  "host_native_capabilities": "existing native groups skipped; not admitted as passing",
+  "prior_native_reference": "relayd-checker-contract-observations.json",
+  "limitations": [
+    "production fixed CLI not executed under native _relayd",
+    "host TERM control explicitly resets shell trap; differs from original relayd control",
+    "Go observer changes parentage and signal handling; plain-shell status unresolved",
+    "no child script installation, native UID receipt, relayd state or signal propagation admission",
+    "positive exits deliberately preserved; this is never a readiness utility",
+    "runtime fatal and missing receipts remain risks; native comparison must fail on missing evidence"
+  ]
+}
