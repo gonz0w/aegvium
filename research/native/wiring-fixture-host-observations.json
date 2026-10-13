@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "scope": "test-only readiness forwarding fixture host tooling; no relayd/checker or native connected admission",
+  "commit": "329f44f406c3957d8081984078ccaacc3ea3bb00",
+  "tree": "43c14b34228959d7c6b88b1c4f1529d7e8e83b2e",
+  "host_go": "go1.27.2 darwin/arm64",
+  "cases": [
+    "TestWiringFixture/initial-down",
+    "TestWiringFixture/ready-inspection-sink",
+    "TestWiringFixture/stale-duplicate-bare-rejected",
+    "TestWiringFixture/down-recovered",
+    "TestWiringFixture/terminal-close-and-cleanup",
+    "TestWiringBusyPhase"
+  ],
+  "case_count": 6,
+  "runtime_inputs": {
+    "tools/native-build.py": "35e257ec5ed29b3779f2781f7ce38b8baa9f2a28ff847fbcb69b124f237a822a",
+    "research/coraza/wiring_fixture_test.go": "a10134afb418209237240d1bcec20de9a7a9a048a24bfab26f67b57b9b5bdc3c",
+    "research/coraza/wiring_host_test.go": "55044772c63d492c369b78d1b2f54ccbb0c5161606a31f63a1eb39811805de47",
+    "research/coraza/engine_test.go": "0b204ff60105de40dbb09f8b1b8a45fbf4ba102f7c74c0e476862a2a1e24feb6",
+    "research/coraza/proxy_v1.go": "6c9b1f559a1d2e1131dcb7e4bcc092e39180f799ac3914e93c2683698041e5ab",
+    "research/coraza/proxy_conn.go": "f6358938b51d25879b2528fc8d6b7ea4d22dabe82a383f1c012df3f5742a1138",
+    "research/coraza/proxy_listener.go": "97a2c04f84f6d2d02b4463e1c6b65a2391d1b0468a61289e7bfe683e4e8cfcff",
+    "research/coraza/proxy_ready.go": "184f3a1403092a58163546454a5f9e00adbbb79e4ca0fc5ea0960541560df794",
+    "research/coraza/go.mod": "ac86dd4ae5a1da1f3ef495b1c46294639a60c5c83664c9d9f64a9ca74b7c4e97",
+    "research/coraza/go.sum": "c25d17e3767e6be54a77544315504ebca194d7a2d99a042add630e51df9e3def"
+  },
+  "checks": {
+    "wiring-fixture-clean.log": {
+      "passed": true,
+      "log_sha256": "17bcfe0c7990129efa70f43c6d2d041b3efeff90a35e0c5a8da3d0fddca07981"
+    },
+    "wiring-fixture-clean-host.log": {
+      "passed": true,
+      "log_sha256": "497a63341ab33e2f69de37c0001fab96c2f24439e2d7818da7f96d82bdd9b8d4"
+    },
+    "wiring-fixture-clean-vet.log": {
+      "passed": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "wiring-fixture-clean-race.log": {
+      "passed": true,
+      "log_sha256": "a736fdc3443a6e3f317fbe848c557611deae587ca3224f2d4a1b104ababb445a"
+    },
+    "wiring-fixture-clean-cross.log": {
+      "passed": true,
+      "log_sha256": "56ab4e6a84bfb9e43530d6ec566936cd8ba7afb836287f069b875098eebdb52e"
+    },
+    "wiring-fixture-clean-export.log": {
+      "passed": true,
+      "log_sha256": "66cca22dbc16c7881aa835468b22f7bc2d5932daa7ef63f2c7f330609a600866"
+    },
+    "wiring-fixture-clean-audit.log": {
+      "passed": true,
+      "log_sha256": "be12ed488f582797d6bde294e6ff5f2673ba111a30728bba0db5c878735085a9"
+    }
+  },
+  "initial_attempt": {
+    "source_state": "uncommitted working fixture; no signed candidate attribution",
+    "passed": false,
+    "failure": "sandbox prohibited TCP bind before fixture startup",
+    "log_sha256": "335851e2a125030df6149e2d0452b120e2985b8895bfda23822ce4ff4412a35e"
+  },
+  "make_verify_tests": 45,
+  "native_execution": false,
+  "ordinary_native_admission": 90,
+  "host_native_capabilities": "existing native groups skipped; not counted as passing",
+  "limitations": [
+    "host owned ephemeral loopback roles only; no stock daemon or table state",
+    "no unchanged readycheck invocation or direct checker UID evidence",
+    "control helpers are in-memory; root external control/acknowledgement not implemented",
+    "synthetic engine readiness and deterministic rules; no full CRS/rule readiness or OWASP coverage",
+    "fresh request phases and busy guard only; in-flight/keepalive/crash semantics unqualified",
+    "original failed contract and connected receipts unchanged"
+  ]
+}
