@@ -88,20 +88,31 @@ def admit(text, hashes):
     return {'receipts': values, 'generation': generation, 'phases': acks, 'phase_count': 5}
 
 
-def guest_run(guest, work, binary_hash, checker_hash, faults=False):
+def guest_run(guest, work, binary_hash, checker_hash, faults=False, replacements=False):
     profile = (ROOT / 'research/relayd/readiness-wiring.conf').read_bytes()
     hashes = {'profile': hashlib.sha256(profile).hexdigest(), 'engine': binary_hash, 'checker': checker_hash}
+    if faults and replacements:
+        raise ValueError('select one connected wiring study')
+    if replacements:
+        replacement = (ROOT / 'research/relayd/checker-exit2.sh').read_bytes()
+        hashes['replacement'] = hashlib.sha256(replacement).hexdigest()
     guest.require('set -eu; umask 022; mkdir /var/aegvium-wiring; chmod 755 /var/aegvium-wiring; cat > /var/aegvium-wiring/profile.conf', data=profile)
-    script = (ROOT / ('tools/native/relayd-health-faults.sh' if faults else 'tools/native/relayd-wiring.sh')).read_bytes()
-    for token, key in ((b'PROFILE_SHA256', 'profile'), (b'ENGINE_SHA256', 'engine'), (b'CHECKER_SHA256', 'checker')):
+    if replacements:
+        guest.require('set -eu; cat > /var/aegvium-wiring/exit2.sh; chmod 555 /var/aegvium-wiring/exit2.sh', data=replacement)
+    script = (ROOT / ('tools/native/relayd-checker-replacement.sh' if replacements else 'tools/native/relayd-health-faults.sh' if faults else 'tools/native/relayd-wiring.sh')).read_bytes()
+    tokens = [(b'PROFILE_SHA256', 'profile'), (b'ENGINE_SHA256', 'engine'), (b'CHECKER_SHA256', 'checker')]
+    if replacements:
+        tokens.append((b'REPLACEMENT_SHA256', 'replacement'))
+    for token, key in tokens:
         script = script.replace(token, hashes[key].encode())
     log = work / 'relayd-wiring.log'
     with log.open('wb') as output:
-        reply = guest.call('sh -s', data=script, seconds=420 if faults else 300, output=output)
+        reply = guest.call('sh -s', data=script, seconds=420 if faults or replacements else 300, output=output)
     result = {'hashes': hashes, 'supervisor_exit': reply.returncode, 'admitted': False,
-              'log_sha256': hashlib.sha256(log.read_bytes()).hexdigest(), 'partial_receipts': receipts(log.read_text())}
+              'log_sha256': hashlib.sha256(log.read_bytes()).hexdigest(), 'partial_receipts': {}}
     try:
-        result.update((admit_faults if faults else admit)(log.read_text(), hashes))
+        result['partial_receipts'] = receipts(log.read_text())
+        result.update((admit_replacements if replacements else admit_faults if faults else admit)(log.read_text(), hashes))
         if reply.returncode:
             raise ValueError('owned supervisor failed')
         result['admitted'] = True
@@ -193,3 +204,81 @@ def admit_faults(text, hashes):
         raise ValueError('fault cleanup acknowledgement mismatch')
     return {'receipts': values, 'generation': generation, 'phases': acks,
             'phase_count': 8, 'fault_count': 4, 'polling_windows': windows}
+
+
+REPLACEMENT_OPERATIONS = ('startup', 'ready', 'ready', 'ready', 'health-silent',
+                          'health-silent', 'health-silent', 'ready', 'stop')
+REPLACEMENT_MODES = {i: ('missing' if i == 2 else 'exit2' if i == 5 else 'original') for i in range(1, 8)}
+
+
+def admit_replacements(text, hashes):
+    values = receipts(text)
+    fixed = {'syntax': 'accepted', 'cleanup': 'verified', 'fixture-exit': '0',
+             'checker-restored': hashes['checker'], 'checker-restored-owner-mode': '0:555', **hashes}
+    keys = set(fixed) | {'uid', 'relayd', 'fixture-log', 'daemon-log', 'final-ack',
+                        'expected-script-uid', 'replacement-script-uid'}
+    keys |= {f'ack-{i}' for i in range(9)}
+    keys |= {f'{kind}-{i}' for kind in ('state', 'polls', 'direct', 'checker-exit', 'original-exit',
+                                      'checker-mode', 'checker-path', 'checker-output', 'checker-log') for i in range(1, 8)}
+    keys |= {f'request-{i}-benign' for i in range(1, 8)}
+    keys |= {f'request-{i}-witness' for i in (2, 4, 6)}
+    if set(values) != keys or any(values.get(k) != v for k, v in fixed.items()):
+        raise ValueError('missing/unknown/mismatched replacement gates')
+    if (any(not re.fullmatch('[1-9][0-9]*', values[k]) for k in ('uid', 'expected-script-uid'))
+            or values['replacement-script-uid'] != values['expected-script-uid']
+            or any(not re.fullmatch('[0-9a-f]{64}', values[k]) for k in ('relayd', 'fixture-log', 'daemon-log'))):
+        raise ValueError('replacement identity/hash mismatch')
+    acks = [json.loads(values[f'ack-{i}']) for i in range(9)]
+    generation = acks[0].get('generation', '')
+    if not re.fullmatch('[0-9a-f]{32}', generation):
+        raise ValueError('invalid replacement generation')
+    events = []
+    empty_hash = hashlib.sha256(b'').hexdigest()
+    for i, ack in enumerate(acks):
+        if set(ack) != {'schema', 'generation', 'uid', 'phase', 'operation', 'ready', 'terminal', 'cleaned', 'events'}:
+            raise ValueError('replacement acknowledgement schema mismatch')
+        if (type(ack['schema']) is not int or ack['schema'] != 1 or ack['generation'] != generation
+                or type(ack['uid']) is not int or ack['uid'] != int(values['uid'])
+                or type(ack['phase']) is not int or ack['phase'] != i or ack['operation'] != REPLACEMENT_OPERATIONS[i]
+                or ack['ready'] is not (1 <= i <= 7) or ack['terminal'] is not (i == 8)
+                or ack['cleaned'] is not (i == 8)):
+            raise ValueError('incorrect replacement phase acknowledgement')
+        if 1 <= i <= 7:
+            up = i in (1, 3, 5, 7)
+            healthy = i in (1, 2, 3, 7)
+            mode = REPLACEMENT_MODES[i]
+            path = 'absent' if mode == 'missing' else hashes['replacement' if mode == 'exit2' else 'checker']
+            if values[f'checker-mode-{i}'] != mode or values[f'checker-path-{i}'] != path:
+                raise ValueError('checker replacement provenance mismatch')
+            if values[f'state-{i}'] != ('up' if up else 'down') or not re.fullmatch('[0-9]|[12][0-9]', values[f'polls-{i}']):
+                raise ValueError('replacement table/poll mismatch')
+            expected_exit = '127' if mode == 'missing' else '2' if mode == 'exit2' else '1' if healthy else '0'
+            if values[f'checker-exit-{i}'] != expected_exit or values[f'original-exit-{i}'] != ('1' if healthy else '0'):
+                raise ValueError('checker launch/original exit mismatch')
+            log_hash = values[f'checker-log-{i}']
+            if (not re.fullmatch('[0-9a-f]{64}', log_hash)
+                    or values[f'checker-output-{i}'] != ('launch-error' if mode == 'missing' else 'silent')
+                    or (log_hash != empty_hash) is not (mode == 'missing')):
+                raise ValueError('checker output mismatch')
+            status, headers, body = response(values[f'direct-{i}'])
+            if status != (200 if healthy else 503) or body or (healthy and headers.get(b'cache-control') != b'no-store'):
+                raise ValueError('independent health response mismatch')
+            status, _, body = response(values[f'request-{i}-benign'])
+            if up:
+                if status != 200 or body != b'synthetic sink\n':
+                    raise ValueError('replacement forwarding witness mismatch')
+                name = 'benign'
+            else:
+                if status is not None or body:
+                    raise ValueError('post-DOWN replacement ingress produced bytes')
+                status, _, body = response(values[f'request-{i}-witness'])
+                if status != 200 or body != b'synthetic sink\n':
+                    raise ValueError('replacement data-ready control mismatch')
+                name = 'witness'
+            events += [{'Phase': i, 'Request': name, 'Role': role, 'Status': 200} for role in ('sink', 'inspection')]
+        if (ack['events'] or []) != events:
+            raise ValueError('replacement inspection/sink delta mismatch')
+    if json.loads(values['final-ack']) != acks[8]:
+        raise ValueError('replacement final cleanup mismatch')
+    return {'receipts': values, 'generation': generation, 'phases': acks, 'phase_count': 7,
+            'unsafe_exit2_forwarding_observed': True, 'missing_checker_down_observed': True}
