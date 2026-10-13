@@ -19,6 +19,8 @@ No delivery dates. Later phases are planning outcomes until scoped reviewed PRD/
 - Qualify a pinned CRS release against the selected native candidate
 - Review connector and privilege-boundary adoption ADR
 
+Bounded checker work: [readiness/forwarding study #73](https://github.com/gonz0w/aegvium/issues/73) has a [proposed packet](M1/READINESS-WIRING.md). The merged signal/account comparison does not adopt the checker or close the separate plain-process attribution issue #69. Broad native, parser, sender and lineage gates remain intact.
+
 ## M2 — Inline enforcement and backend isolation
 
 - Review the bounded enforcement implementation packet

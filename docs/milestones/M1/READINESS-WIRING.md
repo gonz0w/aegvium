@@ -2,6 +2,8 @@
 
 Status: proposed bounded research; implementation follows review. WAF-03/05/06. This extends the [readiness packet](PROXY-READINESS.md) after the merged native signal comparison, without adopting a connector or health policy.
 
+Tracking: [issue #73](https://github.com/gonz0w/aegvium/issues/73), native sub-issue of #15; M1/P1/Backlog pending design review. Signal attribution remains independently tracked in #69.
+
 ## PRD
 
 RW-01: determine whether the unchanged fixed readycheck executable can drive stock relayd's data table through synthetic engine down, ready, down and recovered states. Observe health response, table/host state, fresh ingress outcome, inspection and application-sink events separately. A table UP result alone does not prove inspection or application availability. A denied ingress outcome alone does not prove that relayd detected the outage.
