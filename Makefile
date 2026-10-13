@@ -76,3 +76,7 @@ research-relayd-checker-replacements:
 .PHONY: research-relayd-generations
 research-relayd-generations:
 	python3 tools/native-engine.py --relayd-generations
+
+.PHONY: research-native-generations
+research-native-generations:
+	python3 tools/native-engine.py --source-build --relayd-generations

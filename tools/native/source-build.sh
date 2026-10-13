@@ -22,5 +22,6 @@ printf 'BUILD\tcompiler\t%s\n' "$(sha256 -q go/bin/go)"
 printf 'BUILD\tsource\t%s\n' "$(sha256 -q source.tar.gz)"
 # Shell expansion and build identity checks run as the unprivileged user.
 # shellcheck disable=SC2016
-su -m nobody -c 'set -eu; umask 077; [ "$(id -u)" -ne 0 ]; cd /var/aegvium-build/src; export GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off CGO_ENABLED=0 GOMAXPROCS=2 GOOS=openbsd GOARCH=amd64 GOAMD64=v1; export GOFLAGS=""; export GOCACHE=/var/aegvium-build/output/cache GOPATH=/var/aegvium-build/output/gopath TMPDIR=/var/aegvium-build/output; printf "BUILD\tuid\t%s\n" "$(id -u)"; /var/aegvium-build/go/bin/go test -mod=vendor -p=2 -c -o /var/aegvium-build/output/engine.test'
+su -m nobody -c 'set -eu; umask 077; [ "$(id -u)" -ne 0 ]; cd /var/aegvium-build/src; export GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off CGO_ENABLED=0 GOMAXPROCS=2 GOOS=openbsd GOARCH=amd64 GOAMD64=v1; export GOFLAGS=""; export GOCACHE=/var/aegvium-build/output/cache GOPATH=/var/aegvium-build/output/gopath TMPDIR=/var/aegvium-build/output; printf "BUILD\tuid\t%s\n" "$(id -u)"; /var/aegvium-build/go/bin/go test -mod=vendor -p=2 -c -o /var/aegvium-build/output/engine.test; /var/aegvium-build/go/bin/go build -mod=vendor -p=2 -o /var/aegvium-build/output/readycheck ./cmd/readycheck'
 printf 'BUILD\tbinary\t%s\n' "$(sha256 -q output/engine.test)"
+printf 'BUILD\tchecker\t%s\n' "$(sha256 -q output/readycheck)"
