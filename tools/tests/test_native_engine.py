@@ -23,7 +23,7 @@ class NativeEngineTests(unittest.TestCase):
                          + ['PASS'])
 
     def test_complete_native_receipts_and_cases(self):
-        self.assertEqual(LAB.parse_native(self.valid(), 'a' * 64)['case_count'], 63)
+        self.assertEqual(LAB.parse_native(self.valid(), 'a' * 64)['case_count'], 73)
 
     def test_missing_duplicate_skipped_unknown_and_root_results_rejected(self):
         original = self.valid()
@@ -33,6 +33,8 @@ class NativeEngineTests(unittest.TestCase):
             original.replace('--- PASS: TestProxyV1TCP/timeout (0.01s)\n', ''),
             original.replace('--- PASS: TestProxyV1Listener/close-undelivered (0.01s)\n', ''),
             original.replace('--- PASS: TestProxyV1ListenerTCP/bare-head (0.01s)\n', ''),
+            original.replace('--- PASS: TestProxyReady/close (0.01s)\n', ''),
+            original.replace('--- PASS: TestProxyReadyTCP/accept-failure (0.01s)\n', ''),
             original.replace('--- PASS: TestExplicitInspectionError/partial-read-error (0.01s)\n', ''),
             original.replace('\nPASS', '\n--- PASS: TestBodyReadFailure (0.01s)\nPASS'),
             original.replace('\nPASS', '\n--- SKIP: future (0.00s)\nPASS'),

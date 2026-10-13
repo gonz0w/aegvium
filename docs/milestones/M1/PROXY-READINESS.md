@@ -41,3 +41,7 @@ Run make verify for this documentation/source study. Subsequent source additions
 This study adds no native run; ordinary native admission remains 63 passed from the listener slice. Stock-relayd connected evidence remains separately failed at 59/63 with four historical HTTP pipeline failures. No rule-health proof, full CRS/OWASP coverage, sender containment, identity-to-Coraza mapping, public health exposure, performance budget or reusable connector API is accepted.
 
 Next bounded work is the endpoint slice above, followed by separately identified checker/wiring receipts. Sender authentication and application routing remain independent. Rollback removes this proposed packet and static receipts; no VM, service, dependency or installer state changed.
+
+## Endpoint candidate admission
+
+The endpoint slice selects eight host/native leaves under TestProxyReady (transitions, head, route, method, nil, close, accept-failure, server-bounds), plus two owned-guest TestProxyReadyTCP leaves (lifecycle, accept-failure). Ordinary native admission is 73 (prior 63 plus 10); connected relayd admission remains separately 63. TCP tests require bodyless bare HTTP/1.0 HEAD on the distinct health port, data-port rejection, engine recovery, 503 while health survives receiver shutdown/failure, server/worker joins and failed reconnection on both ports. No checker or stock relayd wiring is included.
