@@ -1,0 +1,1361 @@
+{
+  "schema": 1,
+  "commit": "97aa3e5a9b465da203e73146327c3c37a82f6ae3",
+  "tree": "463abf79da6426503a96a9ef87b2431c175e4a93",
+  "started": "2026-10-13T03:37:53.027873+00:00",
+  "binary_sha256": "59c949f2d731820846d19254b077b192ebd2f04923f3d939d8227d5ca999f67d",
+  "native_build": false,
+  "native_build_requested": false,
+  "relayd_config_requested": false,
+  "relayd_traffic_requested": false,
+  "relayd_health_faults_requested": true,
+  "relayd_wiring_requested": false,
+  "relayd_signals_requested": false,
+  "relayd_contract_requested": false,
+  "passed": true,
+  "host_go": "go version go1.27.2 darwin/arm64",
+  "image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "injected_failure": null,
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 1500,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "qemu_version": "QEMU emulator version 11.1.1",
+  "qemu_sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f",
+  "bootstrap_revoked": true,
+  "patch_refresh": {
+    "signature_verified": true,
+    "installed": 34,
+    "pending": 0,
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+    "boot_before": "1791862688",
+    "boot_after": "1791863188"
+  },
+  "checker": {
+    "sha256": "3b23173aa8b9d8be07282f5058bcd234ed0975013381ca37e68d1f8f5274cff2",
+    "transfer_verified": true,
+    "host_cross_built": true
+  },
+  "native": {
+    "receipts": {
+      "os": "OpenBSD 7.9 amd64",
+      "binary": "59c949f2d731820846d19254b077b192ebd2f04923f3d939d8227d5ca999f67d",
+      "kernel": "GENERIC.MP#16",
+      "kernel_sha256": "69877d2e42a88954888f4948d242afbf2b87cd8e864adb08c6b1fcf9f509466c",
+      "patches": "001_xserver,002_smtpd,003_vmd,004_elf,005_sysv,006_nfs,007_ipsec,008_npppd,009_iked,010_ifioctl,011_nipledge,012_kernproc,013_ttyioctl,014_expat,015_smtpd,016_nfs,017_wscons,018_shmat,019_expat,020_xserver,021_ldapd,022_nsd,023_unbound,024_libressl,025_procargs,026_sysvipc,027_iked,028_wgbind,029_sysvsem,030_uidrange,031_isakmpd,032_xserver,033_expat,034_wsdisplay",
+      "uid": "32767"
+    },
+    "cases": [
+      "TestBodyReadFailure",
+      "TestExplicitInspectionError/benign-post",
+      "TestExplicitInspectionError/body-denied",
+      "TestExplicitInspectionError/detection-uri",
+      "TestExplicitInspectionError/empty-benign",
+      "TestExplicitInspectionError/partial-read-error",
+      "TestExplicitInspectionError/read-error",
+      "TestExplicitInspectionError/uri-denied",
+      "TestInvalidRulesRejected",
+      "TestPinnedCRSSmoke/benign-post",
+      "TestPinnedCRSSmoke/benign-query",
+      "TestPinnedCRSSmoke/script-injection",
+      "TestPinnedCRSSmoke/sql-injection",
+      "TestProxyReady/accept-failure",
+      "TestProxyReady/close",
+      "TestProxyReady/head",
+      "TestProxyReady/method",
+      "TestProxyReady/nil",
+      "TestProxyReady/route",
+      "TestProxyReady/server-bounds",
+      "TestProxyReady/transitions",
+      "TestProxyReadyTCP/accept-failure",
+      "TestProxyReadyTCP/lifecycle",
+      "TestProxyV1Accepted/coalesced",
+      "TestProxyV1Accepted/maximum",
+      "TestProxyV1Accepted/one-byte",
+      "TestProxyV1Accepted/two-requests",
+      "TestProxyV1Conn/clear-deadline-failure",
+      "TestProxyV1Conn/coalesced",
+      "TestProxyV1Conn/deadline-cleared",
+      "TestProxyV1Conn/initial-deadline-failure",
+      "TestProxyV1Conn/invalid-budget",
+      "TestProxyV1Conn/malformed",
+      "TestProxyV1Conn/timeout-partial",
+      "TestProxyV1Conn/timeout-silent",
+      "TestProxyV1Listener/accept-failure",
+      "TestProxyV1Listener/capacity",
+      "TestProxyV1Listener/close-pending",
+      "TestProxyV1Listener/close-undelivered",
+      "TestProxyV1Listener/engine-gate",
+      "TestProxyV1Listener/progress",
+      "TestProxyV1ListenerTCP/bare-head",
+      "TestProxyV1ListenerTCP/progress",
+      "TestProxyV1ReadFailure",
+      "TestProxyV1Rejected/bare-lf",
+      "TestProxyV1Rejected/destination",
+      "TestProxyV1Rejected/duplicate-space",
+      "TestProxyV1Rejected/extra-field",
+      "TestProxyV1Rejected/family",
+      "TestProxyV1Rejected/leading-zero-address",
+      "TestProxyV1Rejected/leading-zero-port",
+      "TestProxyV1Rejected/magic",
+      "TestProxyV1Rejected/mapped-ipv6",
+      "TestProxyV1Rejected/missing",
+      "TestProxyV1Rejected/overflow-port",
+      "TestProxyV1Rejected/overlong",
+      "TestProxyV1Rejected/signed-port",
+      "TestProxyV1Rejected/source",
+      "TestProxyV1Rejected/tab",
+      "TestProxyV1Rejected/truncated",
+      "TestProxyV1Rejected/unknown",
+      "TestProxyV1Rejected/v2",
+      "TestProxyV1Rejected/wrong-destination",
+      "TestProxyV1Rejected/zero-port",
+      "TestProxyV1TCP/handoff",
+      "TestProxyV1TCP/timeout",
+      "TestReadyCheckerTCP/invalid-argument",
+      "TestReadyCheckerTCP/malformed",
+      "TestReadyCheckerTCP/missing-executable",
+      "TestReadyCheckerTCP/refused",
+      "TestReadyCheckerTCP/silent",
+      "TestReadyCheckerTCP/transitions",
+      "TestReadyProbe/body",
+      "TestReadyProbe/dial-failure",
+      "TestReadyProbe/keepalive",
+      "TestReadyProbe/malformed",
+      "TestReadyProbe/missing-no-store",
+      "TestReadyProbe/oversized",
+      "TestReadyProbe/ready",
+      "TestReadyProbe/redirect",
+      "TestReadyProbe/silent-timeout",
+      "TestReadyProbe/unavailable",
+      "TestReadyProbe/validation",
+      "TestRequestInterruption/benign-get",
+      "TestRequestInterruption/benign-post",
+      "TestRequestInterruption/body-denied",
+      "TestRequestInterruption/body-limit",
+      "TestRequestInterruption/detection-body",
+      "TestRequestInterruption/detection-uri",
+      "TestRequestInterruption/uri-denied"
+    ],
+    "case_count": 90,
+    "log_sha256": "283e86ef404a58cf172779fd96a22aaed5c3dbbe9e34ed12b1626009d9b51034"
+  },
+  "relayd_wiring": {
+    "hashes": {
+      "profile": "4a50dfecaa497c87920d20660378190e7ad9b5296cc99af9c96899d6518c92ae",
+      "engine": "59c949f2d731820846d19254b077b192ebd2f04923f3d939d8227d5ca999f67d",
+      "checker": "3b23173aa8b9d8be07282f5058bcd234ed0975013381ca37e68d1f8f5274cff2"
+    },
+    "supervisor_exit": 0,
+    "admitted": true,
+    "log_sha256": "6a9e0b3afc479fbc250ffbcf3954b8a96b622276a1ba8abe7f2a7b57f16ca183",
+    "partial_receipts": {
+      "profile": "4a50dfecaa497c87920d20660378190e7ad9b5296cc99af9c96899d6518c92ae",
+      "engine": "59c949f2d731820846d19254b077b192ebd2f04923f3d939d8227d5ca999f67d",
+      "checker": "3b23173aa8b9d8be07282f5058bcd234ed0975013381ca37e68d1f8f5274cff2",
+      "uid": "32767",
+      "relayd": "18f66755fcd95225005da2784e8071a2e97eaf749c0c32a53b721c2151d0f010",
+      "syntax": "accepted",
+      "ack-0": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":0,\"operation\":\"startup\",\"ready\":false,\"terminal\":false,\"cleaned\":false,\"events\":null}",
+      "state-1": "up",
+      "polls-1": "1",
+      "checker-exit-1": "1",
+      "direct-1": "485454502f312e3020323030204f4b0d0a43616368652d436f6e74726f6c3a206e6f2d73746f72650d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a446174653a205475652c203133204f637420323032362030333a34383a323020474d540d0a0d0a",
+      "request-1-benign": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a323120474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-1": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":1,\"operation\":\"ready\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "window-before-2": "up",
+      "request-2-window": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a323320474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "window-after-2": "up",
+      "state-2": "down",
+      "polls-2": "0",
+      "checker-exit-2": "0",
+      "direct-2": "485454502f312e3020353033205365727669636520556e617661696c61626c650d0a446174653a205475652c203133204f637420323032362030333a34383a323520474d540d0a0d0a",
+      "request-2-benign": "",
+      "request-2-witness": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a323620474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-2": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":2,\"operation\":\"health-silent\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "state-3": "up",
+      "polls-3": "3",
+      "checker-exit-3": "1",
+      "direct-3": "485454502f312e3020323030204f4b0d0a43616368652d436f6e74726f6c3a206e6f2d73746f72650d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a446174653a205475652c203133204f637420323032362030333a34383a333120474d540d0a0d0a",
+      "request-3-benign": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a333220474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-3": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":3,\"operation\":\"ready\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "window-before-4": "up",
+      "request-4-window": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a333320474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "window-after-4": "up",
+      "state-4": "down",
+      "polls-4": "1",
+      "checker-exit-4": "0",
+      "direct-4": "6d616c666f726d6564206865616c74680d0a0d0a",
+      "request-4-benign": "",
+      "request-4-witness": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a333620474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-4": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":4,\"operation\":\"health-malformed\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "state-5": "up",
+      "polls-5": "2",
+      "checker-exit-5": "1",
+      "direct-5": "485454502f312e3020323030204f4b0d0a43616368652d436f6e74726f6c3a206e6f2d73746f72650d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a446174653a205475652c203133204f637420323032362030333a34383a343420474d540d0a0d0a",
+      "request-5-benign": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a343420474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-5": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":5,\"operation\":\"ready\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "window-before-6": "up",
+      "request-6-window": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a343620474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "window-after-6": "up",
+      "state-6": "down",
+      "polls-6": "1",
+      "checker-exit-6": "0",
+      "direct-6": "485454502f312e302033303220466f756e640d0a4c6f636174696f6e3a20687474703a2f2f3132372e302e302e313a31383038352f72656164790d0a446174653a205475652c203133204f637420323032362030333a34383a343820474d540d0a0d0a",
+      "request-6-benign": "",
+      "request-6-witness": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a343820474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-6": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":6,\"operation\":\"health-redirect\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "state-7": "up",
+      "polls-7": "1",
+      "checker-exit-7": "1",
+      "direct-7": "485454502f312e3020323030204f4b0d0a43616368652d436f6e74726f6c3a206e6f2d73746f72650d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a446174653a205475652c203133204f637420323032362030333a34383a353120474d540d0a0d0a",
+      "request-7-benign": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a353220474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-7": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":7,\"operation\":\"ready\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "window-before-8": "up",
+      "request-8-window": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a353320474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "window-after-8": "up",
+      "state-8": "down",
+      "polls-8": "2",
+      "checker-exit-8": "0",
+      "direct-8": "",
+      "request-8-benign": "",
+      "request-8-witness": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a353620474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-8": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":8,\"operation\":\"health-refused\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":8,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":8,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":8,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":8,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "ack-9": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":9,\"operation\":\"stop\",\"ready\":false,\"terminal\":true,\"cleaned\":true,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":8,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":8,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":8,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":8,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "fixture-exit": "0",
+      "final-ack": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":9,\"operation\":\"stop\",\"ready\":false,\"terminal\":true,\"cleaned\":true,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":8,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":8,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":8,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":8,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "fixture-log": "96bd6d12ece75ad5741ef2fc5de5fb073d18f003b3da5504674906f0260fb155",
+      "daemon-log": "4f44aa8e82aa10b2a99ae08c27374d5de10f7d93a158ad83260cd27a792f2ba0",
+      "cleanup": "verified"
+    },
+    "receipts": {
+      "profile": "4a50dfecaa497c87920d20660378190e7ad9b5296cc99af9c96899d6518c92ae",
+      "engine": "59c949f2d731820846d19254b077b192ebd2f04923f3d939d8227d5ca999f67d",
+      "checker": "3b23173aa8b9d8be07282f5058bcd234ed0975013381ca37e68d1f8f5274cff2",
+      "uid": "32767",
+      "relayd": "18f66755fcd95225005da2784e8071a2e97eaf749c0c32a53b721c2151d0f010",
+      "syntax": "accepted",
+      "ack-0": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":0,\"operation\":\"startup\",\"ready\":false,\"terminal\":false,\"cleaned\":false,\"events\":null}",
+      "state-1": "up",
+      "polls-1": "1",
+      "checker-exit-1": "1",
+      "direct-1": "485454502f312e3020323030204f4b0d0a43616368652d436f6e74726f6c3a206e6f2d73746f72650d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a446174653a205475652c203133204f637420323032362030333a34383a323020474d540d0a0d0a",
+      "request-1-benign": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a323120474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-1": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":1,\"operation\":\"ready\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "window-before-2": "up",
+      "request-2-window": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a323320474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "window-after-2": "up",
+      "state-2": "down",
+      "polls-2": "0",
+      "checker-exit-2": "0",
+      "direct-2": "485454502f312e3020353033205365727669636520556e617661696c61626c650d0a446174653a205475652c203133204f637420323032362030333a34383a323520474d540d0a0d0a",
+      "request-2-benign": "",
+      "request-2-witness": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a323620474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-2": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":2,\"operation\":\"health-silent\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "state-3": "up",
+      "polls-3": "3",
+      "checker-exit-3": "1",
+      "direct-3": "485454502f312e3020323030204f4b0d0a43616368652d436f6e74726f6c3a206e6f2d73746f72650d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a446174653a205475652c203133204f637420323032362030333a34383a333120474d540d0a0d0a",
+      "request-3-benign": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a333220474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-3": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":3,\"operation\":\"ready\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "window-before-4": "up",
+      "request-4-window": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a333320474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "window-after-4": "up",
+      "state-4": "down",
+      "polls-4": "1",
+      "checker-exit-4": "0",
+      "direct-4": "6d616c666f726d6564206865616c74680d0a0d0a",
+      "request-4-benign": "",
+      "request-4-witness": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a333620474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-4": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":4,\"operation\":\"health-malformed\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "state-5": "up",
+      "polls-5": "2",
+      "checker-exit-5": "1",
+      "direct-5": "485454502f312e3020323030204f4b0d0a43616368652d436f6e74726f6c3a206e6f2d73746f72650d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a446174653a205475652c203133204f637420323032362030333a34383a343420474d540d0a0d0a",
+      "request-5-benign": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a343420474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-5": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":5,\"operation\":\"ready\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "window-before-6": "up",
+      "request-6-window": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a343620474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "window-after-6": "up",
+      "state-6": "down",
+      "polls-6": "1",
+      "checker-exit-6": "0",
+      "direct-6": "485454502f312e302033303220466f756e640d0a4c6f636174696f6e3a20687474703a2f2f3132372e302e302e313a31383038352f72656164790d0a446174653a205475652c203133204f637420323032362030333a34383a343820474d540d0a0d0a",
+      "request-6-benign": "",
+      "request-6-witness": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a343820474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-6": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":6,\"operation\":\"health-redirect\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "state-7": "up",
+      "polls-7": "1",
+      "checker-exit-7": "1",
+      "direct-7": "485454502f312e3020323030204f4b0d0a43616368652d436f6e74726f6c3a206e6f2d73746f72650d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a446174653a205475652c203133204f637420323032362030333a34383a353120474d540d0a0d0a",
+      "request-7-benign": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a353220474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-7": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":7,\"operation\":\"ready\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "window-before-8": "up",
+      "request-8-window": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a353320474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "window-after-8": "up",
+      "state-8": "down",
+      "polls-8": "2",
+      "checker-exit-8": "0",
+      "direct-8": "",
+      "request-8-benign": "",
+      "request-8-witness": "485454502f312e3120323030204f4b0d0a436f6e6e656374696f6e3a20636c6f73650d0a446174653a205475652c203133204f637420323032362030333a34383a353620474d540d0a436f6e74656e742d4c656e6774683a2031350d0a436f6e74656e742d547970653a20746578742f706c61696e3b20636861727365743d7574662d380d0a0d0a73796e7468657469632073696e6b0a",
+      "ack-8": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":8,\"operation\":\"health-refused\",\"ready\":true,\"terminal\":false,\"cleaned\":false,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":8,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":8,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":8,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":8,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "ack-9": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":9,\"operation\":\"stop\",\"ready\":false,\"terminal\":true,\"cleaned\":true,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":8,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":8,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":8,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":8,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "fixture-exit": "0",
+      "final-ack": "{\"schema\":1,\"generation\":\"af0504309f6108bc21b1da5dbf51a40d\",\"uid\":32767,\"phase\":9,\"operation\":\"stop\",\"ready\":false,\"terminal\":true,\"cleaned\":true,\"events\":[{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":1,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":2,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":3,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":4,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":5,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":6,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":7,\"Request\":\"benign\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":8,\"Request\":\"window\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":8,\"Request\":\"window\",\"Role\":\"inspection\",\"Status\":200},{\"Phase\":8,\"Request\":\"witness\",\"Role\":\"sink\",\"Status\":200},{\"Phase\":8,\"Request\":\"witness\",\"Role\":\"inspection\",\"Status\":200}]}",
+      "fixture-log": "96bd6d12ece75ad5741ef2fc5de5fb073d18f003b3da5504674906f0260fb155",
+      "daemon-log": "4f44aa8e82aa10b2a99ae08c27374d5de10f7d93a158ad83260cd27a792f2ba0",
+      "cleanup": "verified"
+    },
+    "generation": "af0504309f6108bc21b1da5dbf51a40d",
+    "phases": [
+      {
+        "schema": 1,
+        "generation": "af0504309f6108bc21b1da5dbf51a40d",
+        "uid": 32767,
+        "phase": 0,
+        "operation": "startup",
+        "ready": false,
+        "terminal": false,
+        "cleaned": false,
+        "events": null
+      },
+      {
+        "schema": 1,
+        "generation": "af0504309f6108bc21b1da5dbf51a40d",
+        "uid": 32767,
+        "phase": 1,
+        "operation": "ready",
+        "ready": true,
+        "terminal": false,
+        "cleaned": false,
+        "events": [
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          }
+        ]
+      },
+      {
+        "schema": 1,
+        "generation": "af0504309f6108bc21b1da5dbf51a40d",
+        "uid": 32767,
+        "phase": 2,
+        "operation": "health-silent",
+        "ready": true,
+        "terminal": false,
+        "cleaned": false,
+        "events": [
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          }
+        ]
+      },
+      {
+        "schema": 1,
+        "generation": "af0504309f6108bc21b1da5dbf51a40d",
+        "uid": 32767,
+        "phase": 3,
+        "operation": "ready",
+        "ready": true,
+        "terminal": false,
+        "cleaned": false,
+        "events": [
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          }
+        ]
+      },
+      {
+        "schema": 1,
+        "generation": "af0504309f6108bc21b1da5dbf51a40d",
+        "uid": 32767,
+        "phase": 4,
+        "operation": "health-malformed",
+        "ready": true,
+        "terminal": false,
+        "cleaned": false,
+        "events": [
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          }
+        ]
+      },
+      {
+        "schema": 1,
+        "generation": "af0504309f6108bc21b1da5dbf51a40d",
+        "uid": 32767,
+        "phase": 5,
+        "operation": "ready",
+        "ready": true,
+        "terminal": false,
+        "cleaned": false,
+        "events": [
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 5,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 5,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          }
+        ]
+      },
+      {
+        "schema": 1,
+        "generation": "af0504309f6108bc21b1da5dbf51a40d",
+        "uid": 32767,
+        "phase": 6,
+        "operation": "health-redirect",
+        "ready": true,
+        "terminal": false,
+        "cleaned": false,
+        "events": [
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 5,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 5,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          }
+        ]
+      },
+      {
+        "schema": 1,
+        "generation": "af0504309f6108bc21b1da5dbf51a40d",
+        "uid": 32767,
+        "phase": 7,
+        "operation": "ready",
+        "ready": true,
+        "terminal": false,
+        "cleaned": false,
+        "events": [
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 5,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 5,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 7,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 7,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          }
+        ]
+      },
+      {
+        "schema": 1,
+        "generation": "af0504309f6108bc21b1da5dbf51a40d",
+        "uid": 32767,
+        "phase": 8,
+        "operation": "health-refused",
+        "ready": true,
+        "terminal": false,
+        "cleaned": false,
+        "events": [
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 5,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 5,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 7,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 7,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 8,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 8,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 8,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 8,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          }
+        ]
+      },
+      {
+        "schema": 1,
+        "generation": "af0504309f6108bc21b1da5dbf51a40d",
+        "uid": 32767,
+        "phase": 9,
+        "operation": "stop",
+        "ready": false,
+        "terminal": true,
+        "cleaned": true,
+        "events": [
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 1,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 2,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 3,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 4,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 5,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 5,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 6,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 7,
+            "Request": "benign",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 7,
+            "Request": "benign",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 8,
+            "Request": "window",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 8,
+            "Request": "window",
+            "Role": "inspection",
+            "Status": 200
+          },
+          {
+            "Phase": 8,
+            "Request": "witness",
+            "Role": "sink",
+            "Status": 200
+          },
+          {
+            "Phase": 8,
+            "Request": "witness",
+            "Role": "inspection",
+            "Status": 200
+          }
+        ]
+      }
+    ],
+    "phase_count": 8,
+    "fault_count": 4,
+    "polling_windows": [
+      {
+        "phase": 2,
+        "before": "up",
+        "after": "up",
+        "forwarded": true
+      },
+      {
+        "phase": 4,
+        "before": "up",
+        "after": "up",
+        "forwarded": true
+      },
+      {
+        "phase": 6,
+        "before": "up",
+        "after": "up",
+        "forwarded": true
+      },
+      {
+        "phase": 8,
+        "before": "up",
+        "after": "up",
+        "forwarded": true
+      }
+    ]
+  },
+  "native_subset_passed": true,
+  "teardown": {
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 1500,
+    "escalated": false,
+    "teardown_verified": true
+  },
+  "baseline_unchanged": true,
+  "source_unchanged": true,
+  "finished": "2026-10-13T03:49:03.239487+00:00",
+  "run_id": "d2e09e43-b194-4d6d-b53a-23d5bc63b0b5",
+  "runtime_inputs": {
+    ".go-version": "6c075150045fda9bac31bb93cf5a0a0bc91622a75c1f10fb2971e6f994c6d4d6",
+    "research/coraza/crs_test.go": "33df0a96989f7229d7f9868a5aeac81afdf003a96407e0e793ce1976e6a9f618",
+    "research/coraza/engine_test.go": "0b204ff60105de40dbb09f8b1b8a45fbf4ba102f7c74c0e476862a2a1e24feb6",
+    "research/coraza/go.mod": "ac86dd4ae5a1da1f3ef495b1c46294639a60c5c83664c9d9f64a9ca74b7c4e97",
+    "research/coraza/go.sum": "c25d17e3767e6be54a77544315504ebca194d7a2d99a042add630e51df9e3def",
+    "research/coraza/relayd_test.go": "75d41267f6ffd3d52bdc788d118014c056948a2ef9326dba9980e9b2d536fa9d",
+    "research/native/image-pin.json": "8b3c0b1961712f01f2fbc11532da3d4576845fffddc24856782a850da81d6f8b",
+    "research/relayd/ingress.conf": "d4ad8dedfb9dfcce07c09f32e8fc4e8f2ca474916d1d031cdbe71ac67a7a2174",
+    "research/relayd/traffic.conf": "96cc8c642be2b16148c6b0cc35e8c9020c453e493edab3e0f0773064be2feab0",
+    "tools/bootstrap-research.py": "01d65124fe4af8fe06d2b7ef67c81e69ae12271c60311770c94f810488e0f780",
+    "tools/lab-supervisor.py": "db15797036a830eb2c9a59c6b8a5e64990c69dfcef0edfca7e4cac50b17943a2",
+    "tools/native-build.py": "68088dc5ad2fef267f39dcf261867569c8af4ea535a88781a08576bb1faea3aa",
+    "tools/native-engine.py": "08b7e0b724ebb7dfc9abd1db6304e9295fbcba9e3b0a33cf9e2e14d256465846",
+    "tools/native-image.py": "4e286adac78b34e3172736f8cc78e64d2c7cae456d03426243a5378b8f953290",
+    "tools/native/engine-repeat.sh": "5e1eab901571e8ea23c29a33bd9a7635159eadd82aa9e9bb6d2426af0aaca401",
+    "tools/native/patch-openbsd.sh": "eae9d586161ed5f30c6d179ff55884b5a47ddad7c3b5a7a4637345219e8190e7",
+    "tools/native/relayd-config.sh": "cb859310476cfb56f33ca4e66d198034936f0f9f856b6f5d879abb5d489f81a4",
+    "tools/native/relayd-traffic.sh": "d85ccd13fa9da6a58622acaff5851c43de45d5cbb793024fe1fe0435810aeb55",
+    "tools/native/source-build.sh": "9230531994182aeec02eeb814b70aa11f070c00ee13e8fba29d0937ac57339a8",
+    "tools/openbsd-patches.json": "0cf5b352ea5d50d91d106abd42e65b8dac105b6c72fca3c83bfd1706bc891771",
+    "tools/openbsd-patches.py": "a7afe69f68a9ff7a80fe1f0c9a7dbf99ea594f535f68e79e848e706ba797fe6c",
+    "tools/research-pins.json": "7383179c02c51b05fc29776bfe538c1ee1f6438aa5b35065d1a44a3b06f02efe",
+    "tools/run-research-go.sh": "06d4587549d98741339751f7360dd9a1a4402a253cd280eee221d3c8f382094a",
+    "research/coraza/proxy_v1.go": "6c9b1f559a1d2e1131dcb7e4bcc092e39180f799ac3914e93c2683698041e5ab",
+    "research/coraza/proxy_v1_test.go": "0d6bec3257f816709551928d8c9387178b7ff68667cdfe66d0dd2aa1fba151aa",
+    "research/coraza/proxy_conn.go": "f6358938b51d25879b2528fc8d6b7ea4d22dabe82a383f1c012df3f5742a1138",
+    "research/coraza/proxy_conn_test.go": "d57665e541a0ac6a62210922e96e0766c3b0b8b69cdaf9275352d8cf36021a8b",
+    "research/coraza/proxy_listener.go": "97a2c04f84f6d2d02b4463e1c6b65a2391d1b0468a61289e7bfe683e4e8cfcff",
+    "research/coraza/proxy_listener_test.go": "b57e7b536ec7b25a51b1bf121e8bad4e77915ab7a16bdbfb215704a90087ed17",
+    "research/coraza/proxy_ready.go": "184f3a1403092a58163546454a5f9e00adbbb79e4ca0fc5ea0960541560df794",
+    "research/coraza/proxy_ready_test.go": "08ce691aaef39b144491cd9aff88a66ac65ebd89435e7cfd14004d341853bf26",
+    "Makefile": "a0eab944871ec23ed1b876f0050ae24b69a946faef9f2137d44845b74c62e2a8",
+    "research/coraza/ready_probe.go": "b38fa3c5656831902d1d04794852690a2efe4ecf6a9557d6dfa0dd99f0cfc21d",
+    "research/coraza/ready_probe_test.go": "e1496459992b38b84c06d120a73e546bd1a7223c4df3c0b92a51829360cd76b7",
+    "research/coraza/internal/readyprobe/probe.go": "596335c9103807c31c705b8f51b89cf9829216f203c6be3e5d99326c9f9aaf1f",
+    "research/coraza/cmd/readycheck/main.go": "e25613e6467ffefbbcddb175ccfac9e11986bce886c0f15c6f7222321f0616ee",
+    "research/coraza/cmd/readycheck/main_test.go": "63c70f71d2c40d76b82c1e91083f13df23d97cd096e712058dce459a84aaf193",
+    "research/coraza/ready_checker_tcp_test.go": "297eaf82050beef246d3cc9132c9f7ece2555e1396e6736f618928886144e1bf",
+    "research/relayd/checker-contract.conf": "bb9a5a9594c2f15e7bbe02cb6b15c1a39e9ddfaa1ddc9424f8976cf63453a07e",
+    "research/relayd/checker-contract-source.json": "7f80a922d9ea14fbdc90f055db3d33ed47175b012a81764b140b730cb4c13395",
+    "tools/native/relayd-checker-contract.sh": "8998f9bd2780dfbd015736ddcb46d1a17521f78116d83682e5a06f37bc75f2da",
+    "tools/tests/test_relayd_contract.py": "e50de20927500ecd6bda03daa9cea9b6ac0483e3d620f1849c2a5e353d2e1200",
+    "research/coraza/cmd/signalobserve/main.go": "4f999b8c21610eef67def912862f75a70a39edb9b5349d9e1b3c9612beeec282",
+    "research/coraza/cmd/signalobserve/main_test.go": "d6201d7afe5e1453f544bb6a2983c541d31ed0aa8fbcd2ea7706817a634f84fd",
+    "research/relayd/signal-comparison.conf": "9f50c90688ca6c4964b7ea9979c9f04d428054f07d4d70b420ce2243357ef769",
+    "tools/relayd-signals.py": "31f26c4a2580269ef56b999fa4b6390897b1fbb38c41ca1599489d138315cc75",
+    "tools/native/relayd-signals.sh": "8bebb3984e202ff1f90d06a68ac6f7c7d24153055bece4ab6e12a125fa237838",
+    "tools/tests/test_relayd_signals.py": "c17e5d96b2d658f2cc288911dc5b7592cf5d2a1a469d5f8689bb17424539a81b",
+    "research/coraza/wiring_fixture_test.go": "126ef16020a5096b9a77c8a37716fb9beb6fc639397eb15e6dab4dc7da1d736a",
+    "research/coraza/wiring_host_test.go": "55044772c63d492c369b78d1b2f54ccbb0c5161606a31f63a1eb39811805de47",
+    "research/coraza/wiring_control_test.go": "749294080b3fc50a6ca7e520ef15032e5c77ba0d6833404a00b5dd7d4f3c67bb",
+    "research/coraza/wiring_control_host_test.go": "dd3483eb2c41f074ceb3fc4d5dfc157ba2b92b6247e35b3562cfb4e7d643fcec",
+    "research/relayd/readiness-wiring.conf": "4a50dfecaa497c87920d20660378190e7ad9b5296cc99af9c96899d6518c92ae",
+    "tools/relayd-wiring.py": "e56d6e82af5faedff932133bb916c9f8fde1815227f99834a47e44afa6971a4b",
+    "tools/native/relayd-wiring.sh": "6acf0c8127ce09147fde024b0a8312495d5ae7420d4190a723fd664ac7584275",
+    "tools/tests/test_relayd_wiring.py": "8e4e85c4366197f36e552f6bb4eb0d1805ea1bd4623dc6a6af7dcf8554051f0c",
+    "research/coraza/wiring_fault_host_test.go": "36e4af25d52fca4f19bed31ab361b2db5d233111f5a7074a754c15a7f183e17c",
+    "tools/native/relayd-health-faults.sh": "3b0f04630ed1acfde0dd3972c8d3cab6fe96d938856afeafc7684bfafb41c017"
+  },
+  "checks": {
+    "health-fault-clean-verify.log": {
+      "passed": true,
+      "log_sha256": "8e0b3ea67848063f2b5c856103d683667428601ecfadbdb6e8ef7d25730ed70a"
+    },
+    "health-fault-host.log": {
+      "passed": true,
+      "log_sha256": "00b5abbd14d61febbaac09d9569aee14ea03b648dc6c63b99458431139ccd557"
+    },
+    "health-fault-vet.log": {
+      "passed": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "health-fault-race.log": {
+      "passed": true,
+      "log_sha256": "952757d120723940ba626fefb6ce6bd08e8caaa8f823814f5c290b112e2a3ccc"
+    },
+    "health-fault-audit.log": {
+      "passed": true,
+      "log_sha256": "be12ed488f582797d6bde294e6ff5f2673ba111a30728bba0db5c878735085a9"
+    },
+    "health-fault-export.log": {
+      "passed": true,
+      "log_sha256": "bd6d73c29aafb995253f5130391e8c43732c13ec7fa57b404e63740b9160fd50"
+    },
+    "health-fault-cross.log": {
+      "passed": true,
+      "log_sha256": "f93a99dc261b5a78c9339b6e928c9af55a3e2cf99b75f0e267666ecf1b1b481a"
+    }
+  },
+  "make_verify_tests": 47,
+  "raw_report_sha256": "0de6488a26ce68e3d524928bd9ce7a20dcb979dc2940f126975db42006b4df62",
+  "scope": "four native health faults with ready data path, observed polling windows, post-DOWN forwarding rejection and three health-mode recoveries",
+  "summary": {
+    "normal_ready_phases": 4,
+    "health_faults": 4,
+    "polling_window_forwarded": 4,
+    "post_down_ingress_events": 0,
+    "direct_data_ready_witnesses": 4,
+    "inspection_events": 12,
+    "sink_events": 12,
+    "ordinary_native_cases": 90,
+    "fixture_uid": 32767,
+    "closed_health_restart_qualified": false
+  },
+  "limitations": [
+    "unchanged checker implementation freshly cross-built; direct nobody invocation does not measure relayd-launched checker UID",
+    "synthetic engine readiness and deterministic rules; no loaded-rule readiness or full CRS",
+    "polling-window requests forwarded; before/after table snapshots are not atomic forwarding decisions or latency measurements",
+    "silent health sends no bytes within 200ms helper budget; longer direct probe receives bounded 503",
+    "refused health listener is terminal in this generation; restart, in-flight, keepalive and crash behavior remain unqualified",
+    "host-cross-built executables; installed image/daemon source lineage unresolved",
+    "owned direct PROXY data controls do not establish sender authentication or exposure policy",
+    "original failed script-contract and historical failed 59/63 traffic remain unchanged; broad M1 and runtime adoption gates remain open"
+  ]
+}
