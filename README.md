@@ -48,4 +48,4 @@ The [PROXY connection adapter](docs/milestones/M1/PROXY-ADAPTER.md) passed deadl
 
 The [PROXY listener lifecycle](docs/milestones/M1/PROXY-LISTENER.md) passed bounded pending-handshake, shutdown, readiness-gating and direct TCP controls (63 ordinary native cases). HTTP health wiring, actual relayd PROXY identity and sender containment remain pending.
 
-The [separate readiness study](docs/milestones/M1/PROXY-READINESS.md) traces stock relayd's shared table port and external-check exit semantics, and specifies endpoint/checker experiments. No HTTP endpoint or native health wiring is implemented yet.
+The [separate readiness endpoint](docs/milestones/M1/PROXY-READINESS.md) passed handler and two-port lifecycle controls on OpenBSD (73 ordinary native cases). It follows the receiver and a synthetic engine signal. Actual rule readiness, stock relayd checker wiring and sender authentication remain pending.

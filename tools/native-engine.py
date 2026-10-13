@@ -110,7 +110,9 @@ EXPECTED |= {'TestProxyV1Conn/' + name for name in ('coalesced', 'deadline-clear
 EXPECTED |= {'TestProxyV1Listener/' + name for name in ('progress', 'capacity', 'close-pending',
     'close-undelivered', 'engine-gate', 'accept-failure')} | {
     'TestProxyV1ListenerTCP/' + name for name in ('progress', 'bare-head')}
-GROUPS = {'TestPinnedCRSSmoke', 'TestRequestInterruption', 'TestExplicitInspectionError', 'TestProxyV1Accepted', 'TestProxyV1Rejected', 'TestProxyV1Conn', 'TestProxyV1TCP', 'TestProxyV1Listener', 'TestProxyV1ListenerTCP'}
+EXPECTED |= {'TestProxyReady/' + name for name in ('transitions', 'head', 'route', 'method', 'nil', 'close', 'accept-failure', 'server-bounds')} | {
+    'TestProxyReadyTCP/' + name for name in ('lifecycle', 'accept-failure')}
+GROUPS = {'TestPinnedCRSSmoke', 'TestRequestInterruption', 'TestExplicitInspectionError', 'TestProxyV1Accepted', 'TestProxyV1Rejected', 'TestProxyV1Conn', 'TestProxyV1TCP', 'TestProxyV1Listener', 'TestProxyV1ListenerTCP', 'TestProxyReady', 'TestProxyReadyTCP'}
 
 
 def digest(path):

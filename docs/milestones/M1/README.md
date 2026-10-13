@@ -4,4 +4,4 @@ Status: authorized bounded research; full native qualification pending. Read [PR
 
 Start with pinned engine semantics on the host, then dependency review and a disposable native lab, then build/connector/parser/CRS evidence and adoption ADR. The user authorized research on 2026-10-11. No native run, connector selection, product implementation or personal-use acceptance is implied.
 
-The [separate readiness packet](PROXY-READINESS.md) records source feasibility and staged endpoint/checker tests. Native health wiring and actual rule readiness remain unqualified.
+The [separate readiness packet](PROXY-READINESS.md) records source feasibility, staged tests and 73 passing ordinary native endpoint/lifecycle cases. Stock relayd checker wiring and actual rule readiness remain unqualified.
