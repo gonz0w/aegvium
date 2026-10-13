@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 """Fail closed on misleading guest results, auth failures and elapsed budgets."""
 import importlib.util
+import hashlib
+import json
 import subprocess
 import time
 import unittest
@@ -20,10 +22,32 @@ class NativeEngineTests(unittest.TestCase):
                                        for name in LAB.PATCHES.PINS['assets'])}
         return '\n'.join([f'RECEIPT\t{k}\t{v}' for k, v in receipts.items()]
                          + [f'--- PASS: {name} (0.01s)' for name in sorted(LAB.EXPECTED | LAB.GROUPS)]
-                         + ['PASS'])
+                         + ['    crs_corpus_test.go:1: CRS-INPUTS '+hashlib.sha256((LAB.ROOT / 'research/coraza/crs-inputs.json').read_bytes()).hexdigest()]
+                         + [self.corpus_line(*key) for key in sorted(LAB.CORPUS_KEYS)] + ['PASS'])
+
+    def corpus_line(self, mode, role, kind):
+        denied = kind != 'benign' and mode == 'On'
+        rules = [] if kind == 'benign' else [942100 if kind == 'sql' else 941100]
+        item = {'mode': mode, 'role': role, 'kind': kind, 'status': 403 if denied else 200,
+                'backend': 0 if denied else 1, 'rules': rules, 'phases': [2] if rules else []}
+        return '    crs_corpus_test.go:1: CRS-CORPUS ' + json.dumps(item)
+
+    def test_crs_receipts_reject_false_enforcement_missing_matches_and_stale_vectors(self):
+        original = self.valid()
+        line = self.corpus_line('On', 'json', 'sql')
+        item = json.loads(line.split('CRS-CORPUS ', 1)[1])
+        for field, value in [('status', 200), ('backend', 1), ('backend', False), ('rules', []),
+                             ('rules', [941100]), ('phases', [0]), ('phases', [True]), ('role', 'header')]:
+            changed = {**item, field: value}
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                LAB.parse_native(original.replace(line, '    crs_corpus_test.go:1: CRS-CORPUS '+json.dumps(changed)), 'a'*64)
+        pin = hashlib.sha256((LAB.ROOT / 'research/coraza/crs-inputs.json').read_bytes()).hexdigest()
+        for changed in (original.replace(line+'\n',''), original.replace(line,line+'\n'+line),
+                        original.replace(pin,'0'*64), original.replace('    crs_corpus_test.go:1: CRS-INPUTS '+pin+'\n','')):
+            with self.assertRaises(ValueError): LAB.parse_native(changed,'a'*64)
 
     def test_complete_native_receipts_and_cases(self):
-        self.assertEqual(LAB.parse_native(self.valid(), 'a' * 64)['case_count'], 90)
+        self.assertEqual(LAB.parse_native(self.valid(), 'a' * 64)['case_count'], 114)
 
     def test_missing_duplicate_skipped_unknown_and_root_results_rejected(self):
         original = self.valid()
