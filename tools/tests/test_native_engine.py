@@ -24,7 +24,8 @@ class NativeEngineTests(unittest.TestCase):
                          + [f'--- PASS: {name} (0.01s)' for name in sorted(LAB.EXPECTED | LAB.GROUPS)]
                          + ['    crs_corpus_test.go:1: CRS-INPUTS '+hashlib.sha256((LAB.ROOT / 'research/coraza/crs-inputs.json').read_bytes()).hexdigest()]
                          + [self.corpus_line(*key) for key in sorted(LAB.CORPUS_KEYS)]
-                         + [self.body_line(*key) for key in sorted(LAB.BODY_KEYS)] + ['PASS'])
+                         + [self.body_line(*key) for key in sorted(LAB.BODY_KEYS)]
+                         + [self.http_body_line(name) for name in sorted(LAB.HTTP_BODY_CASES)] + ['PASS'])
 
     def corpus_line(self, mode, role, kind):
         denied = kind != 'benign' and mode == 'On'
@@ -66,8 +67,33 @@ class NativeEngineTests(unittest.TestCase):
         for changed in (original.replace(line+'\n',''), original.replace(line,line+'\n'+line)):
             with self.assertRaises(ValueError): LAB.parse_native(changed,'a'*64)
 
+    def http_body_line(self, name):
+        status, handler, backend, length, read, error = LAB.HTTP_BODY_CASES[name]
+        rules = [941100] if name == 'json-script' else [942100] if name == 'form-sql' else [200002] if name == 'invalid-json' else []
+        item = {'case': name, 'status': status, 'handler': handler, 'backend': backend, 'content_length': length,
+                'transfer_encoding': (['chunked'] if length == -1 else []) if handler else None,
+                'header_lengths': ([] if length == -1 else [str(length)]) if handler else None,
+                'source_read': read, 'source_closed': handler, 'source_close_error': error,
+                'wire_read': 200, 'request_bytes': 400, 'request_sha256': 'a'*64,
+                'body_sha256': hashlib.sha256(b'{"payload":"ordinary"}').hexdigest() if backend else '',
+                'rules': rules, 'phases': [2] if rules else [],
+                'connection_closed': True, 'server_joined': True, 'listener_absent': True}
+        return '    body_http_test.go:1: BODY-HTTP '+json.dumps(item)
+
+    def test_http_body_admission_rejects_fake_normalization_close_and_cleanup(self):
+        original = self.valid();line = self.http_body_line('stalled-chunked')
+        item = json.loads(line.split('BODY-HTTP ',1)[1])
+        for field, value in [('status', 200), ('backend', 1), ('source_read', 130), ('source_close_error', 'none'),
+                             ('source_closed', 0), ('content_length', 999), ('header_lengths', ['999']),
+                             ('wire_read', 401), ('wire_read', True), ('connection_closed', False),
+                             ('server_joined', False), ('listener_absent', False), ('case', 'unknown')]:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                LAB.parse_native(original.replace(line,'    body_http_test.go:1: BODY-HTTP '+json.dumps({**item,field:value})),'a'*64)
+        for changed in (original.replace(line+'\n',''),original.replace(line,line+'\n'+line)):
+            with self.assertRaises(ValueError): LAB.parse_native(changed,'a'*64)
+
     def test_complete_native_receipts_and_cases(self):
-        self.assertEqual(LAB.parse_native(self.valid(), 'a' * 64)['case_count'], 148)
+        self.assertEqual(LAB.parse_native(self.valid(), 'a' * 64)['case_count'], 163)
 
     def test_missing_duplicate_skipped_unknown_and_root_results_rejected(self):
         original = self.valid()

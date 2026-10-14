@@ -65,3 +65,11 @@ Views copied from Nomvium: All work (table, is:issue), Current M1 (board, phase:
 ## Recoverable setup
 
 Initial issue bodies carry stable aegvium-roadmap markers. An ignored .tools setup journal stores IDs and sanitized read-backs. Reuse existing IDs and inspect every pagination page before retries; reject duplicate markers. Native sub-issues and blocked-by links are authoritative relationships, body links help readers. Never replay an old setup plan over human triage or duplicate/reparent other projects' work.
+
+## Outcome batching
+
+Before creating a work item, inspect existing outcomes and open PRs. Reuse an existing issue with acceptance subchecks for related experiments, fixes, native repeats and evidence. Create a new issue only for a distinct deliverable or an independently actionable blocker; phase gates and outcome trackers must not duplicate experiment tasks.
+
+Keep scoped design, implementation, meaningful tests, native execution, failure correction and final findings on one codex/ branch and PR until the agreed outcome is reviewable. A continue turn or individual experiment is not a PR boundary. Related source-build qualification belongs with the fixture it qualifies when review is still open. Do not create preparation-only or tracking-only PRs for routine follow-up; include those updates in the substantive outcome.
+
+Define the decision or capability the batch establishes and the concrete remaining blockers. Native failures remain immutable evidence; corrections and reruns stay on the same PR without weaker acceptance or a claim that research authorizes runtime adoption. Split a batch when it introduces a separate architecture decision, independently reviewable deliverable, dependency/approval boundary or excessive review complexity. Keep source-bound receipts for each signed candidate inside the batch.

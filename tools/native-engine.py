@@ -224,6 +224,68 @@ def parse_body_admission(text):
     return [items[key] for key in sorted(items)]
 
 
+HTTP_BODY_CASES = {
+    'fixed-json': (200, 1, 1, 22, 22, 'none'), 'json-script': (403, 1, 0, 39, 39, 'none'),
+    'form-sql': (403, 1, 0, 22, 22, 'none'), 'fixed-over': (413, 1, 0, 129, 0, 'none'),
+    'chunked-json': (200, 1, 1, -1, 22, 'none'), 'chunked-over': (413, 1, 0, -1, 129, 'none'),
+    'short-fixed': (500, 1, 0, 23, 22, 'none'), 'bad-chunk': (500, 1, 0, -1, 0, 'other'),
+    'invalid-json': (400, 1, 0, 11, 11, 'none'), 'text-media': (415, 1, 0, 8, 0, 'none'),
+    'conflicting-cl': (400, 0, 0, None, 0, 'none'), 'identical-cl': (200, 1, 1, 22, 22, 'none'),
+    'cl-te': (200, 1, 1, -1, 22, 'none'), 'unsupported-te': (501, 0, 0, None, 0, 'none'),
+    'stalled-chunked': (413, 1, 0, -1, 129, 'timeout'),
+}
+EXPECTED |= {'TestBodyAdmissionTCP/' + name for name in HTTP_BODY_CASES}
+GROUPS |= {'TestBodyAdmissionTCP'}
+
+
+def parse_http_body(text):
+    observations = {}
+    keys = {'case', 'status', 'handler', 'backend', 'content_length', 'transfer_encoding', 'header_lengths',
+            'source_read', 'source_closed', 'source_close_error', 'wire_read', 'request_bytes', 'request_sha256',
+            'body_sha256', 'rules', 'phases', 'connection_closed', 'server_joined', 'listener_absent'}
+    benign_hash = hashlib.sha256(b'{"payload":"ordinary"}').hexdigest()
+    for line in text.splitlines():
+        if 'BODY-HTTP ' not in line:
+            continue
+        match = re.fullmatch(r'\s*body_http_test.go:[0-9]+: BODY-HTTP (\{.*\})', line)
+        if not match:
+            raise ValueError('malformed HTTP body receipt')
+        item = json.loads(match[1]); name = item.get('case')
+        if set(item) != keys or name not in HTTP_BODY_CASES or name in observations:
+            raise ValueError('unknown/duplicate/missing HTTP body fields/case')
+        status, handler, backend, length, read, close_error = HTTP_BODY_CASES[name]
+        if (any(type(item[k]) is not int for k in ('status', 'handler', 'backend', 'source_read', 'source_closed', 'wire_read', 'request_bytes'))
+                or (item['status'], item['handler'], item['backend'], item['source_read'], item['source_closed'], item['source_close_error']) != (status, handler, backend, read, handler, close_error)
+                or item['content_length'] != length or length is not None and type(item['content_length']) is not int
+                or not 0 < item['wire_read'] <= item['request_bytes'] <= 4096
+                or not re.fullmatch('[0-9a-f]{64}', item['request_sha256'])
+                or item['body_sha256'] != (benign_hash if backend else '')
+                or any(item[k] is not True for k in ('connection_closed', 'server_joined', 'listener_absent'))):
+            raise ValueError('HTTP body status/normalization/byte/close/cleanup mismatch')
+        te = (['chunked'] if length == -1 else []) if handler else None
+        headers = ([] if length == -1 else [str(length)]) if handler else None
+        if item['transfer_encoding'] != te or item['header_lengths'] != headers:
+            raise ValueError('HTTP parser header normalization mismatch')
+        rules, phases = item['rules'], item['phases']
+        if (not isinstance(rules, list) or not isinstance(phases, list) or len(rules) != len(phases)
+                or any(type(i) is not int or not 100000 <= i <= 999999 for i in rules)
+                or rules != sorted(set(rules)) or any(type(p) is not int or not 1 <= p <= 5 for p in phases)):
+            raise ValueError('invalid HTTP body rule/phase receipt')
+        if name in ('json-script', 'form-sql'):
+            family = 941 if name == 'json-script' else 942
+            if not any(i // 1000 == family for i in rules):
+                raise ValueError('HTTP attack family match missing')
+        elif name == 'invalid-json':
+            if 200002 not in rules:
+                raise ValueError('HTTP malformed JSON rejection match missing')
+        elif rules:
+            raise ValueError('unexpected HTTP fixture matches')
+        observations[name] = item
+    if set(observations) != set(HTTP_BODY_CASES):
+        raise ValueError('missing HTTP body case')
+    return [observations[name] for name in sorted(observations)]
+
+
 def digest(path):
     with os.fdopen(IMAGE.regular_fd(path), 'rb') as stream:
         return hashlib.file_digest(stream, 'sha256').hexdigest()
@@ -254,7 +316,7 @@ def parse_native(text, binary_hash):
             or receipts['patches'].split(',') != [name.removeprefix('syspatch79-').removesuffix('.tgz')
                                                   for name in PATCHES.PINS['assets']]):
         raise ValueError('incomplete/mismatched native receipts or test set')
-    return {'receipts': receipts, 'cases': sorted(EXPECTED), 'case_count': len(EXPECTED), 'crs_corpus': parse_crs_corpus(text), 'body_admission': parse_body_admission(text)}
+    return {'receipts': receipts, 'cases': sorted(EXPECTED), 'case_count': len(EXPECTED), 'crs_corpus': parse_crs_corpus(text), 'body_admission': parse_body_admission(text), 'body_http': parse_http_body(text)}
 
 
 class Guest:
