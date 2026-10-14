@@ -15,3 +15,5 @@ Use base rc.d, syslog/newsyslog and acme-client where suitable after design. Man
 ## Management UI baseline
 
 The maintainer specified OpenBSD relayd/httpd for Nomvium and Arxwall management web serving. This is an intended sibling-project baseline, not evidence that their current implementations already use it. relayd can own TLS and ingress policy; httpd can serve static assets and FastCGI. The dynamic UI contract and privilege boundary still need project-specific design. This management path is separate from Aegvium application inspection and does not establish a relayd–Coraza connector.
+
+The [isolated existing-connector API study](../../research/connector/README.md) now has bounded OpenBSD request/error/response and rule-pool observations. It keeps Caddy dependencies out of the companion module and retains reachable advisory findings as adoption blockers. Full configured-server/relayd TLS/trust/resource parity remains separate from this standard-library harness.

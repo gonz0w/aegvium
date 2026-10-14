@@ -1,6 +1,6 @@
 # Existing connector execution comparison
 
-Status: authorized bounded research under #13/#14/#15/#16; adoption withheld.
+Status: bounded CE-01–04 host/native API outcome complete, pending PR review under #13/#14/#15/#16; adoption withheld.
 
 CE-01 (PRD): execute the already pinned existing connector alongside the public Coraza HTTP middleware with identical synthetic request/response/rules inputs. Resolve the source-only comparison gap with code, reviewed dependencies, native execution and documented decisions together. This is a connector API comparison, not full Caddy server or appliance qualification.
 
@@ -9,3 +9,5 @@ CE-02 (EDD): isolate Caddy in a separate Go module after [license/provenance rev
 CE-03 (Test Design): cover benign JSON/form, SQL/script denial, invalid JSON, fixed/chunked limits, malformed body reader, duplicate/conflicting framing, unsupported coding, spoofed metadata and response header/body denials. Real errors must not acquire an uninspected forwarding path; preserve existing middleware error characterization rather than relabeling it safe. Assert original body closure, exact backend body/authority and no listener/task leaks. Separately hold a connector generation across rule-file replacement, reprovision identical configuration, then alter the directive string and test old/new rules, rejection and rollback. This specifically tests content-blind pool keys; a reused instance is not evidence that changed rule bytes were loaded.
 
 CE-04 (evidence/compatibility/rollback): controller requires a clean signed source, exact output transfer hash, nonroot OpenBSD execution, complete typed observations and PASS set without skipped/failed cases, patched/rebooted disposable VM, source/base invariance and teardown. Retain failures and distinguish cross-build from native compile. Run make verify, host Go/vet/race/cross/advisory checks, signatures and DCO. Existing native/relayd reports are immutable. Keep original image/installed daemon lineage, full server TLS/authority/sender containment, real application false positives, authenticated rules updates and measured resource/performance/soak budgets open. Rollback removes the optional research module/controller and retains observations.
+
+Observed outcome: [native receipts](../../../research/native/connector-comparison-observations.json) pass forty exact wire rows, twenty-two reload observations and 163 unchanged ordinary cases, with 98 runtime fingerprints and verified teardown. The [guide](../../../research/connector/README.md) records initial host setup errors, loaded advisory blockers and excluded full-server/native-build scope. No existing expected status/backend/reload assertion was weakened.
