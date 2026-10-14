@@ -4,9 +4,9 @@ Lean, auditable HTTP/HTTPS inspection appliance for a separate homelab VM behind
 
 Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
 
-Status: a runnable fixed-route lab companion now has native relayd TLS → Coraza/CRS → owned-backend evidence. Architecture and appliance adoption remain proposed; an installable WAF and BootWeave integration are still ahead.
+Status: a runnable configurable lab companion now routes two owned hosts through relayd TLS → Coraza/CRS → HTTP or verified HTTPS backends. Architecture and appliance adoption remain proposed; an installable WAF and BootWeave integration are still ahead.
 
-Run the complete owned lab path with `make research-lab-proxy` after [native-profile preparation](docs/milestones/M1/NATIVE-ENGINE.md). The [lab guide](research/coraza/LAB-PROXY.md) describes the executable, fixed scope and cleanup; [native receipts](research/native/lab-proxy-observations.json) record 163 ordinary plus 15 real executable/TLS cases.
+Run the complete owned lab path with `make research-lab-proxy` after [native-profile preparation](docs/milestones/M1/NATIVE-ENGINE.md). The [lab guide](research/coraza/LAB-PROXY.md) describes the executable, fixed scope and cleanup; [current native receipts](research/native/lab-routing-observations.json) record 163 ordinary plus 28 real executable/TLS cases and seven invalid-startup config controls; the [original fixed-route result](research/native/lab-proxy-observations.json) retains its 15-case scope.
 
 Current recommendation: [proposed TCP/TLS ingress and inspection ADR](docs/architecture/adr-0001-ingress-inspection.md), with a [pinned existing-connector source comparison](docs/research/connector-comparison.md). Native Caddy comparison, trusted sender/TLS authority, supported protocol/resources and lineage remain adoption gates; no runtime mode is selected.
 

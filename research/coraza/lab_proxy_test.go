@@ -98,12 +98,12 @@ func TestLabProxyHandler(t *testing.T) {
 	}
 }
 func TestLabProxyLifecycle(t *testing.T) {
-	p := LabProfile{DataAddress: "127.0.0.1:0", HealthAddress: "127.0.0.1:0", BackendAddress: "127.0.0.1:1", Ingress: netip.MustParseAddrPort("127.0.0.1:18120")}
+	p := LabProfile{DataAddress: "127.0.0.1:0", HealthAddress: "127.0.0.1:0", Routes: []LabRoute{{Host: "app.test", Backend: "http://127.0.0.1:18086"}}, Ingress: netip.MustParseAddrPort("127.0.0.1:18120")}
 	if _, e := startLabProxy(p, "NotARealDirective on"); e == nil {
 		t.Fatal("invalid rules accepted")
 	}
 	bad := p
-	bad.BackendAddress = "example.com:80"
+	bad.Routes = []LabRoute{{Host: "app.test", Backend: "http://example.com:80"}}
 	if _, e := StartLabProxy(bad); e == nil {
 		t.Fatal("nonliteral backend accepted")
 	}

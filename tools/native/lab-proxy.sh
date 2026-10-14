@@ -10,7 +10,7 @@ cd /var/aegvium-lab-path
 [ "$(sha256 -q /var/aegvium-lab-readycheck)" = 'CHECKER_SHA256' ]
 if pgrep -x relayd >/dev/null; then exit 1; else [ "$?" -eq 1 ]; fi
 netstat -an -f inet > before.txt
-awk '$4 ~ /[.:](1808[456]|18120)$/ && $NF == "LISTEN" {found=1} END {exit found}' before.txt
+awk '$4 ~ /[.:](1808[4567]|18120)$/ && $NF == "LISTEN" {found=1} END {exit found}' before.txt
 [ ! -e control.sock ]
 [ ! -e /etc/ssl/private/aegvium-lab.key ]
 [ ! -e /etc/ssl/aegvium-lab.crt ]
@@ -31,7 +31,7 @@ cleanup() {
     [ ! -e /etc/ssl/private/aegvium-lab.key ] && [ ! -e /etc/ssl/aegvium-lab.crt ] && [ ! -e tls.cnf ] || exit 1
     if pgrep -x relayd >/dev/null; then exit 1; else [ "$?" -eq 1 ]; fi
     netstat -an -f inet > after.txt
-    awk '$4 ~ /[.:](1808[456]|18120)$/ && $NF == "LISTEN" {found=1} END {exit found}' after.txt || exit 1
+    awk '$4 ~ /[.:](1808[4567]|18120)$/ && $NF == "LISTEN" {found=1} END {exit found}' after.txt || exit 1
     rm -f control.sock
     [ ! -e control.sock ] || exit 1
     printf 'LAB\tcleanup\tverified\nLAB\ttls-cleanup\tverified\n'
