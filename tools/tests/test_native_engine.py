@@ -23,7 +23,8 @@ class NativeEngineTests(unittest.TestCase):
         return '\n'.join([f'RECEIPT\t{k}\t{v}' for k, v in receipts.items()]
                          + [f'--- PASS: {name} (0.01s)' for name in sorted(LAB.EXPECTED | LAB.GROUPS)]
                          + ['    crs_corpus_test.go:1: CRS-INPUTS '+hashlib.sha256((LAB.ROOT / 'research/coraza/crs-inputs.json').read_bytes()).hexdigest()]
-                         + [self.corpus_line(*key) for key in sorted(LAB.CORPUS_KEYS)] + ['PASS'])
+                         + [self.corpus_line(*key) for key in sorted(LAB.CORPUS_KEYS)]
+                         + [self.body_line(*key) for key in sorted(LAB.BODY_KEYS)] + ['PASS'])
 
     def corpus_line(self, mode, role, kind):
         denied = kind != 'benign' and mode == 'On'
@@ -46,8 +47,27 @@ class NativeEngineTests(unittest.TestCase):
                         original.replace(pin,'0'*64), original.replace('    crs_corpus_test.go:1: CRS-INPUTS '+pin+'\n','')):
             with self.assertRaises(ValueError): LAB.parse_native(changed,'a'*64)
 
+    def body_line(self, profile, name):
+        gated = profile == 'gated'
+        status, backend = LAB.BODY_CASES[name][int(gated)]
+        rules = [942100] if name == 'form-sql' else [941100] if name == 'json-script' else [200002] if name == 'invalid-json' else []
+        read = 129 if name in ('unknown-over', 'understated-over') else 16 if name == 'partial-read-error' else 0
+        item = {'profile': profile, 'case': name, 'status': status, 'backend': backend,
+                'read': read, 'closed': int(gated), 'rules': rules, 'phases': [2] if rules else []}
+        return '    body_admission_test.go:1: BODY-ADMISSION '+json.dumps(item)
+
+    def test_body_receipts_reject_false_limits_forwarding_and_ownership(self):
+        original = self.valid()
+        line = self.body_line('gated', 'unknown-over')
+        item = json.loads(line.split('BODY-ADMISSION ', 1)[1])
+        for field, value in [('status', 200), ('backend', 1), ('read', 130), ('read', 0), ('closed', 0), ('closed', True), ('rules', [942100]), ('case', 'unknown')]:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                LAB.parse_native(original.replace(line, '    body_admission_test.go:1: BODY-ADMISSION '+json.dumps({**item,field:value})), 'a'*64)
+        for changed in (original.replace(line+'\n',''), original.replace(line,line+'\n'+line)):
+            with self.assertRaises(ValueError): LAB.parse_native(changed,'a'*64)
+
     def test_complete_native_receipts_and_cases(self):
-        self.assertEqual(LAB.parse_native(self.valid(), 'a' * 64)['case_count'], 114)
+        self.assertEqual(LAB.parse_native(self.valid(), 'a' * 64)['case_count'], 148)
 
     def test_missing_duplicate_skipped_unknown_and_root_results_rejected(self):
         original = self.valid()
