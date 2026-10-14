@@ -1,0 +1,576 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "decision": "Pinned isolated fixture only. Reachable source findings block appliance adoption until reviewed remediation and fresh qualification. Static traces do not establish exploitation in the bounded HTTP/1.1 harness. No automatic graph update.",
+  "scans": [
+    {
+      "scope": "initial inadequate test-only scan; SBOM omitted dependency imports, not admitted",
+      "log_sha256": "52badc467eac511fcddc9d064fe75eb83d6fbca76a7dcca718a992124d5223e1",
+      "config": {
+        "protocol_version": "v1.0.0",
+        "scanner_name": "govulncheck",
+        "scanner_version": "v1.9.0",
+        "db": "https://vuln.go.dev",
+        "db_last_modified": "2026-10-08T22:31:09Z",
+        "go_version": "go1.27.2",
+        "scan_level": "symbol",
+        "scan_mode": "source"
+      },
+      "sbom_module_count": 2,
+      "unique_by_level": {
+        "module": 0,
+        "package": 0,
+        "symbol": 0
+      },
+      "findings": []
+    },
+    {
+      "scope": "host loaded adapter source, including tests",
+      "log_sha256": "a8678fb271486960e72e888b267ee3e2d76a8c3c5e9342eb68913456e7e922a8",
+      "config": {
+        "protocol_version": "v1.0.0",
+        "scanner_name": "govulncheck",
+        "scanner_version": "v1.9.0",
+        "db": "https://vuln.go.dev",
+        "db_last_modified": "2026-10-08T22:31:09Z",
+        "go_version": "go1.27.2",
+        "scan_level": "symbol",
+        "scan_mode": "source"
+      },
+      "sbom_module_count": 155,
+      "unique_by_level": {
+        "module": 9,
+        "package": 8,
+        "symbol": 7
+      },
+      "findings": [
+        {
+          "id": "GO-2026-5932",
+          "summary": "The golang.org/x/crypto/openpgp package is unmaintained, unsafe by design, and has known security issues",
+          "levels": [
+            "module"
+          ],
+          "inputs": [
+            {
+              "module": "golang.org/x/crypto",
+              "version": "v0.56.0",
+              "package": ""
+            }
+          ],
+          "reported_fixes": [
+            ""
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-5932"
+        },
+        {
+          "id": "GO-2026-6094",
+          "summary": "JSON private fields exposed via NativeTypes and ParseStructTag in github.com/google/cel-go",
+          "levels": [
+            "module",
+            "package"
+          ],
+          "inputs": [
+            {
+              "module": "github.com/google/cel-go",
+              "version": "v0.28.1",
+              "package": ""
+            },
+            {
+              "module": "github.com/google/cel-go",
+              "version": "v0.28.1",
+              "package": "github.com/google/cel-go/ext"
+            }
+          ],
+          "reported_fixes": [
+            "v0.30.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6094"
+        },
+        {
+          "id": "GO-2026-6508",
+          "summary": "OpenTelemetry-Go: Log gRPC exporter ignores env TLS certs, bypassing mTLS/pinning in go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": ""
+            },
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc/internal"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc/internal/observ"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc/internal/retry"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc/internal/transform"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc/internal/x"
+            }
+          ],
+          "reported_fixes": [
+            "v0.21.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6508"
+        },
+        {
+          "id": "GO-2026-6603",
+          "summary": "HTTP/2 server memory exhaustion due to Trailer headers in net/http",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": ""
+            },
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": "golang.org/x/net/http2"
+            }
+          ],
+          "reported_fixes": [
+            "v0.60.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6603"
+        },
+        {
+          "id": "GO-2026-6610",
+          "summary": "HTTP/2 transport accepts malformed framing-related headers in net/http",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": ""
+            },
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": "golang.org/x/net/http2"
+            }
+          ],
+          "reported_fixes": [
+            "v0.60.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6610"
+        },
+        {
+          "id": "GO-2026-6611",
+          "summary": "Excessive CPU consumption from repeated initial window changes in net/http",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": ""
+            },
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": "golang.org/x/net/http2"
+            }
+          ],
+          "reported_fixes": [
+            "v0.60.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6611"
+        },
+        {
+          "id": "GO-2026-6612",
+          "summary": "Double flow control refund on HTTP/2 server streams in net/http",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": ""
+            },
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": "golang.org/x/net/http2"
+            }
+          ],
+          "reported_fixes": [
+            "v0.60.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6612"
+        },
+        {
+          "id": "GO-2026-6615",
+          "summary": "OpenTelemetry-Go: BatchProcessor can busy-spin when export buffer is full in go.opentelemetry.io/otel/sdk/log",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "go.opentelemetry.io/otel/sdk/log",
+              "version": "v0.19.0",
+              "package": ""
+            },
+            {
+              "module": "go.opentelemetry.io/otel/sdk/log",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/sdk/log"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/sdk/log",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/sdk/log/internal/observ"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/sdk/log",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/sdk/log/internal/x"
+            }
+          ],
+          "reported_fixes": [
+            "v0.21.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6615"
+        },
+        {
+          "id": "GO-2026-6617",
+          "summary": "HTTP/2 server crash due to HPACK encoder race in net/http",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": ""
+            },
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": "golang.org/x/net/http2"
+            }
+          ],
+          "reported_fixes": [
+            "v0.60.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6617"
+        }
+      ]
+    },
+    {
+      "scope": "OpenBSD/amd64 target source, including tests; static tooling evidence",
+      "log_sha256": "1ff5d90193e976338dd653394892338964da18dcc46746f7113e7480b21411dd",
+      "config": {
+        "protocol_version": "v1.0.0",
+        "scanner_name": "govulncheck",
+        "scanner_version": "v1.9.0",
+        "db": "https://vuln.go.dev",
+        "db_last_modified": "2026-10-08T22:31:09Z",
+        "go_version": "go1.27.2",
+        "scan_level": "symbol",
+        "scan_mode": "source"
+      },
+      "sbom_module_count": 154,
+      "unique_by_level": {
+        "module": 9,
+        "package": 8,
+        "symbol": 7
+      },
+      "findings": [
+        {
+          "id": "GO-2026-5932",
+          "summary": "The golang.org/x/crypto/openpgp package is unmaintained, unsafe by design, and has known security issues",
+          "levels": [
+            "module"
+          ],
+          "inputs": [
+            {
+              "module": "golang.org/x/crypto",
+              "version": "v0.56.0",
+              "package": ""
+            }
+          ],
+          "reported_fixes": [
+            ""
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-5932"
+        },
+        {
+          "id": "GO-2026-6094",
+          "summary": "JSON private fields exposed via NativeTypes and ParseStructTag in github.com/google/cel-go",
+          "levels": [
+            "module",
+            "package"
+          ],
+          "inputs": [
+            {
+              "module": "github.com/google/cel-go",
+              "version": "v0.28.1",
+              "package": ""
+            },
+            {
+              "module": "github.com/google/cel-go",
+              "version": "v0.28.1",
+              "package": "github.com/google/cel-go/ext"
+            }
+          ],
+          "reported_fixes": [
+            "v0.30.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6094"
+        },
+        {
+          "id": "GO-2026-6508",
+          "summary": "OpenTelemetry-Go: Log gRPC exporter ignores env TLS certs, bypassing mTLS/pinning in go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": ""
+            },
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc/internal"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc/internal/observ"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc/internal/retry"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc/internal/transform"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc/internal/x"
+            }
+          ],
+          "reported_fixes": [
+            "v0.21.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6508"
+        },
+        {
+          "id": "GO-2026-6603",
+          "summary": "HTTP/2 server memory exhaustion due to Trailer headers in net/http",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": ""
+            },
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": "golang.org/x/net/http2"
+            }
+          ],
+          "reported_fixes": [
+            "v0.60.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6603"
+        },
+        {
+          "id": "GO-2026-6610",
+          "summary": "HTTP/2 transport accepts malformed framing-related headers in net/http",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": ""
+            },
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": "golang.org/x/net/http2"
+            }
+          ],
+          "reported_fixes": [
+            "v0.60.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6610"
+        },
+        {
+          "id": "GO-2026-6611",
+          "summary": "Excessive CPU consumption from repeated initial window changes in net/http",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": ""
+            },
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": "golang.org/x/net/http2"
+            }
+          ],
+          "reported_fixes": [
+            "v0.60.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6611"
+        },
+        {
+          "id": "GO-2026-6612",
+          "summary": "Double flow control refund on HTTP/2 server streams in net/http",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": ""
+            },
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": "golang.org/x/net/http2"
+            }
+          ],
+          "reported_fixes": [
+            "v0.60.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6612"
+        },
+        {
+          "id": "GO-2026-6615",
+          "summary": "OpenTelemetry-Go: BatchProcessor can busy-spin when export buffer is full in go.opentelemetry.io/otel/sdk/log",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "go.opentelemetry.io/otel/sdk/log",
+              "version": "v0.19.0",
+              "package": ""
+            },
+            {
+              "module": "go.opentelemetry.io/otel/sdk/log",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/sdk/log"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/sdk/log",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/sdk/log/internal/observ"
+            },
+            {
+              "module": "go.opentelemetry.io/otel/sdk/log",
+              "version": "v0.19.0",
+              "package": "go.opentelemetry.io/otel/sdk/log/internal/x"
+            }
+          ],
+          "reported_fixes": [
+            "v0.21.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6615"
+        },
+        {
+          "id": "GO-2026-6617",
+          "summary": "HTTP/2 server crash due to HPACK encoder race in net/http",
+          "levels": [
+            "module",
+            "package",
+            "symbol"
+          ],
+          "inputs": [
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": ""
+            },
+            {
+              "module": "golang.org/x/net",
+              "version": "v0.58.0",
+              "package": "golang.org/x/net/http2"
+            }
+          ],
+          "reported_fixes": [
+            "v0.60.0"
+          ],
+          "source": "https://pkg.go.dev/vuln/GO-2026-6617"
+        }
+      ]
+    }
+  ]
+}
