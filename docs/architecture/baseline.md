@@ -1,6 +1,6 @@
 # Candidate architecture
 
-Status: proposed, not deployed or qualified.
+Status: proposed, not deployed or qualified. The [connector/privilege ADR](adr-0001-ingress-inspection.md) consolidates the current recommendation and adoption gates; it supersedes the earlier HTTP-first research preference.
 
 EdgeWall → WAF VM relayd TLS listener → loopback inspection proxy embedding Coraza + CRS → allowlisted application backend.
 

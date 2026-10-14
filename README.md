@@ -6,6 +6,8 @@ Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
 
 Status: repository foundation, proposed architecture and authorized engine research, native execution repeats, an offline native source build and a bounded connected relayd fixture. No WAF appliance, full native qualification or installer exists yet.
 
+Current recommendation: [proposed TCP/TLS ingress and inspection ADR](docs/architecture/adr-0001-ingress-inspection.md), with a [pinned existing-connector source comparison](docs/research/connector-comparison.md). Native Caddy comparison, trusted sender/TLS authority, supported protocol/resources and lineage remain adoption gates; no runtime mode is selected.
+
 Candidate flow: client → EdgeWall → relayd (TLS) → local Coraza inspection proxy with OWASP CRS → explicitly configured backend. The connector and body handling require native evidence before adoption. CrowdSec is an optional later behavioral layer, not the inline WAF engine.
 
 BootWeave will build installation media when its generic extension contract is ready. This repository owns WAF payloads and runtime policy; no speculative installer schema is defined.

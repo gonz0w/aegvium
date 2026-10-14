@@ -1,0 +1,210 @@
+{
+  "schema": 1,
+  "review_date": "2026-10-14",
+  "repository": "corazawaf/coraza-caddy",
+  "tag": "v2.6.2",
+  "commit": "82b47274c867754b5c91285b2671dfb2f6e2690f",
+  "resolved_tag_matches_prior_pin": true,
+  "tag_signature_verified": false,
+  "source_identity": "GitHub API contents independently match Git blob SHA-1 and retained SHA-256; not a signed publisher release or installed-binary attribution",
+  "license": "Apache-2.0",
+  "files": [
+    {
+      "path": "LICENSE",
+      "bytes": 11345,
+      "sha256": "42e4b29037908c55795a0b6d8fbde370853c84eeec8d92c78cbbc436abb102e3",
+      "git_blob_sha1": "8190d17bc32aac26c701e46dfc8e7f8a35da38f2",
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/LICENSE"
+    },
+    {
+      "path": "README.md",
+      "bytes": 7388,
+      "sha256": "0823c80cae498b220495d9a58b6c4bd0af870078d5fd069c7c32bcb8a1f5bfe3",
+      "git_blob_sha1": "c7219df9e1495093c77ebfb8f08f289195d566fd",
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/README.md"
+    },
+    {
+      "path": "caddy/main.go",
+      "bytes": 292,
+      "sha256": "920fb03ec07255ae582b3f1fd155f34938283237ccbc4deff6beabab21ea2604",
+      "git_blob_sha1": "b7f0bfa96c723d94cad24216e59534227d4a3801",
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/caddy/main.go"
+    },
+    {
+      "path": "coraza.go",
+      "bytes": 9488,
+      "sha256": "ccf2375b987b255b482d5f9dba2ff5e3566b56774f870edecdea95c63bf69b02",
+      "git_blob_sha1": "441be608c5e09eb602a80992d3ee42b7d9b6c9d1",
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/coraza.go"
+    },
+    {
+      "path": "go.mod",
+      "bytes": 9844,
+      "sha256": "a7ab4f0f3a8f45e75b51c315db4fcf7800c999ab18d1f51a2d881285380a30e4",
+      "git_blob_sha1": "e4c54ba4738b7fef16106867986468f9275eca74",
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/go.mod"
+    },
+    {
+      "path": "http.go",
+      "bytes": 3367,
+      "sha256": "c5ef10d22a847ac664a20cdb152119f646a8254b3a305a4cf7457f17a129d518",
+      "git_blob_sha1": "92e036ee5a46a6f8684c4b794ef1186095df88da",
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/http.go"
+    },
+    {
+      "path": "http_test.go",
+      "bytes": 5303,
+      "sha256": "3cc8a25547149b2810018f5a562867d9f2601f16ded011eb1bf0954f4979de95",
+      "git_blob_sha1": "503862c3dc7b2af342a3e59f5c9b299cadf15b19",
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/http_test.go"
+    },
+    {
+      "path": "interceptor.go",
+      "bytes": 10536,
+      "sha256": "6d22490b9cb2ec337a7bf326d118de54b6fd1f7fff68124a086a57c7a5cb1516",
+      "git_blob_sha1": "de877cffdd7c3cc8677067e0237bfccc3a133a23",
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/interceptor.go"
+    },
+    {
+      "path": "interceptor_test.go",
+      "bytes": 25358,
+      "sha256": "b5cc43d1e78dee729272301a257ee69a706f2ca7126c2498104e0302413ef81f",
+      "git_blob_sha1": "99c44a66f1d61a539d16e9a2837be8a38b831f9b",
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/interceptor_test.go"
+    },
+    {
+      "path": "utils.go",
+      "bytes": 1988,
+      "sha256": "fe2a5fbacbc6b76328a55e8bd181732b7e2577ee4cec7e8c00cec544eef644fd",
+      "git_blob_sha1": "c5a016be5be020c95970714f927a5fd04c02b471",
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/utils.go"
+    }
+  ],
+  "declared_module_requirements": {
+    "total": 181,
+    "direct": 7,
+    "indirect": 174,
+    "classification": "Manifest declarations include test/build dependencies; not loaded package graph, runtime SBOM or memory measurement"
+  },
+  "anchors": [
+    {
+      "path": "coraza.go",
+      "symbol": "func (m *corazaModule) Provision",
+      "line": 80,
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/coraza.go#L80"
+    },
+    {
+      "path": "coraza.go",
+      "symbol": "func (p *pooledWAF) Destruct",
+      "line": 46,
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/coraza.go#L46"
+    },
+    {
+      "path": "coraza.go",
+      "symbol": "func (m corazaModule) ServeHTTP",
+      "line": 197,
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/coraza.go#L197"
+    },
+    {
+      "path": "coraza.go",
+      "symbol": "func (m *corazaModule) buildWAF",
+      "line": 103,
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/coraza.go#L103"
+    },
+    {
+      "path": "http.go",
+      "symbol": "func processRequest",
+      "line": 17,
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/http.go#L17"
+    },
+    {
+      "path": "http.go",
+      "symbol": "func parseServerName",
+      "line": 102,
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/http.go#L102"
+    },
+    {
+      "path": "interceptor.go",
+      "symbol": "func (h *hijackerTracker) Hijack",
+      "line": 25,
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/interceptor.go#L25"
+    },
+    {
+      "path": "interceptor.go",
+      "symbol": "func (i *rwInterceptor) Flush",
+      "line": 187,
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/interceptor.go#L187"
+    },
+    {
+      "path": "interceptor.go",
+      "symbol": "func wrap",
+      "line": 253,
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/interceptor.go#L253"
+    },
+    {
+      "path": "utils.go",
+      "symbol": "func getClientAddress",
+      "line": 54,
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/utils.go#L54"
+    },
+    {
+      "path": "coraza.go",
+      "symbol": "func (m *corazaModule) computePoolKey",
+      "line": 143,
+      "url": "https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/coraza.go#L143"
+    }
+  ],
+  "scope": "Source comparison only; no dependencies installed/imported, Caddy build/execution or native equivalence claim",
+  "runtime_adoption_approved": false,
+  "aegvium_evidence_basis": [
+    {
+      "path": "research/relayd/upload-lifecycle-observations.json",
+      "sha256": "59f5aca60f4fb7ed93ad54942e9d0e40516fafdce19792a99aefbdedef43082f",
+      "reported_passed": true,
+      "runtime_commit": "bd5798d21dc70ab0b8d93c90f50664fce4da8d97",
+      "scope": "Original report scope retained; individual components do not qualify their composition"
+    },
+    {
+      "path": "research/relayd/upload-lifecycle-initial-failure.json",
+      "sha256": "aecd4ff1e81ed264add18b0c6b1ec12d63b8d7be27075ad6052a8f3e4b2ed6cb",
+      "reported_passed": false,
+      "runtime_commit": "8af42552ac89aa35e9584e0eb1977d510f20afa9",
+      "scope": "Original report scope retained; individual components do not qualify their composition"
+    },
+    {
+      "path": "research/relayd/body-comparison-observations.json",
+      "sha256": "4c7166d00ac89336ba45005a2055b936fb2d69d1a0c909b48b21d138c6cc1b25",
+      "reported_passed": true,
+      "runtime_commit": "529e6970984592bd5ac01ceae549a71ecd7996fa",
+      "scope": "Original report scope retained; individual components do not qualify their composition"
+    },
+    {
+      "path": "research/native/body-http-native-build-observations.json",
+      "sha256": "c993767fa035d017e42f2507e51a2fd45d67438a62d4e47eb9c517be3bd53703",
+      "reported_passed": true,
+      "runtime_commit": "8832740a78860b062cf7b83159a3e685d181b2be",
+      "scope": "Original report scope retained; individual components do not qualify their composition"
+    },
+    {
+      "path": "research/native/generation-recovery-observations.json",
+      "sha256": "a645e8e311440f38de7699771ccf49f42fd6fb1ab61328258685aa1cb19c3f5c",
+      "reported_passed": true,
+      "runtime_commit": "9a717ff32de8b04c31837937af29df76208297d6",
+      "scope": "Original report scope retained; individual components do not qualify their composition"
+    },
+    {
+      "path": "research/native/checker-replacement-observations.json",
+      "sha256": "926e38395c2db1cbb67b1b44e02af44fae46b75c3fe7f292dfad0d84bb2fca3d",
+      "reported_passed": true,
+      "runtime_commit": "9cf6ef8772baa7d2e6e16849708bc3e9bc7ceb83",
+      "scope": "Original report scope retained; individual components do not qualify their composition"
+    },
+    {
+      "path": "research/native/proxy-readiness-observations.json",
+      "sha256": "b3de1c81b3d25fe00d50080a7a7afe2aa8cb3f08eb06ac7b15c178e5d835efcc",
+      "reported_passed": null,
+      "runtime_commit": null,
+      "scope": "Original report scope retained; individual components do not qualify their composition"
+    }
+  ]
+}

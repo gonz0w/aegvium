@@ -12,3 +12,7 @@ Do not claim complete OWASP Top 10 protection or stable OpenBSD support from ups
 Research pins observed 2026-10-11: [Coraza v3.8.1](https://github.com/corazawaf/coraza/releases/tag/v3.8.1) and [coraza-caddy v2.6.2](https://github.com/corazawaf/coraza-caddy/releases/tag/v2.6.2). The isolated engine spike uses v3.8.1; no Caddy dependency is adopted. [CRS engine notes](https://coreruleset.org/20260511/migrating-crs-3-to-4-part-7-engines/) describe Coraza compatibility, but Aegvium has not run a pinned CRS corpus.
 
 The maintainer requested relayd connector feasibility, including a possible separate reusable project, on 2026-10-11. Read the [integration study](relayd-connector.md) for sibling reality, concrete relayd roles, alternative boundaries and native adoption criteria.
+
+## Current assessment (2026-10-14)
+
+The statements above record the initial source-review baseline, not the current native result set. Subsequent source-bound engine/CRS, TCP/HTTP/TLS, body/lifecycle/readiness and native-build reports are linked from the [current connector comparison](connector-comparison.md) and [proposed ADR](../architecture/adr-0001-ingress-inspection.md). They establish scoped research only; full CRS/OWASP, existing-connector native parity, combined trust/limits and architecture adoption remain open. The proposed comparison direction is now TCP/TLS plus a companion rather than the initial HTTP-first preference. No Caddy dependency or runtime profile is adopted.
