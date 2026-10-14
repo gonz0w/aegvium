@@ -31,6 +31,7 @@ BUILD = load('native-build')
 SIGNALS = load('relayd-signals')
 WIRING = load('relayd-wiring')
 BODY = load('relayd-body')
+LAB_PROXY = load('lab-proxy')
 PINS = json.loads((ROOT / 'research/native/image-pin.json').read_text())
 
 SSH_HARDEN = b'''set -eu
@@ -641,6 +642,7 @@ def run():
     parser.add_argument('--inject-failure', choices=('boot', 'ssh', 'auth', 'transfer', 'test'))
     parser.add_argument('--source-build', action='store_true')
     parser.add_argument('--relayd-config', action='store_true')
+    parser.add_argument('--lab-proxy', action='store_true')
     parser.add_argument('--relayd-body', action='store_true')
     parser.add_argument('--relayd-traffic', action='store_true')
     parser.add_argument('--relayd-contract', action='store_true')
@@ -666,6 +668,8 @@ def run():
     binary = ROOT / '.tools/research/coraza-openbsd-amd64.test'
     # Always derive the executable from this clean candidate, never stale cache.
     subprocess.run(['make', 'research-cross', 'research-readycheck-cross'], cwd=ROOT, check=True, timeout=180)
+    if args.lab_proxy:
+        subprocess.run(['make', 'research-labproxy-cross'], cwd=ROOT, check=True, timeout=180)
     if args.relayd_signals:
         subprocess.run(['make', 'research-signalobserve-cross'], cwd=ROOT, check=True, timeout=180)
     binary_hash = digest(binary)
@@ -676,7 +680,7 @@ def run():
     duration = 1800 if args.source_build else (1500 if args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations else 1200 if args.relayd_wiring else 900)
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
-              'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
+              'lab_proxy_requested': args.lab_proxy, 'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
@@ -749,6 +753,10 @@ def run():
         if args.relayd_contract:
             print('Running isolated stock-relayd script contract controls...', flush=True)
             report['relayd_contract'] = relayd_contract_guest(guest, work, checker_hash)
+        if args.lab_proxy:
+            report['lab_proxy'] = LAB_PROXY.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash)
+            if not report['lab_proxy']['admitted']:
+                raise RuntimeError('lab proxy composition failed; partial receipts retained')
         if args.relayd_body:
             report['relayd_body'] = BODY.guest_run(guest, work, report['native']['receipts']['binary'])
             if not report['relayd_body']['admitted']:
