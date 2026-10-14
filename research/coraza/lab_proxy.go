@@ -218,7 +218,7 @@ func startLabProxy(p LabProfile, directives string) (*LabProxy, error) {
 		_ = generation.close()
 		return nil, e
 	}
-	for i, h := range []http.Handler{f.routes, proxyReadyHandler(f.receiver)} {
+	for i, h := range []http.Handler{labAdmission(f.routes), proxyReadyHandler(f.receiver)} {
 		server := &http.Server{Handler: h, ReadHeaderTimeout: time.Second, ReadTimeout: 2 * time.Second, WriteTimeout: 4 * time.Second, IdleTimeout: time.Second, MaxHeaderBytes: 4096, ErrorLog: log.New(io.Discard, "", 0)}
 		var listener net.Listener = f.receiver
 		if i == 1 {

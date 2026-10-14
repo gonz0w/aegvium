@@ -5,13 +5,35 @@ import json
 import re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-EXPECTED={'get':(200,1),'json':(200,1),'sql':(403,0),'script':(403,0),'unknown':(421,0),'oversize':(413,0),'media':(415,0),'upgrade':(501,0),'spoof':(200,1),'untrusted-cert':(0,0),'wrong-name':(0,0),'bare-data':(0,0),'backend-down':(502,0),'backend-recovery':(200,1),'companion-stop':(None,0),'api-get':(200,1),'api-json':(200,1),'api-port':(200,1),'api-wrong-port':(421,0),'api-sql':(403,0),'api-wrong-cert':(502,0),'api-untrusted-cert':(502,0),'api-tls-recovery':(200,1),'api-large':(502,1),'api-stall':(502,1),'api-after-stall':(200,1),'api-cleartext':(502,0),'api-cleartext-recovery':(200,1),'api-reload-version':(200,1),'api-reload-duplicate':(200,1),'api-reload-ca':(200,1),'alt-reload-get':(200,1),'alt-reload-json':(200,1),'alt-reload-sql':(403,0),'reload-removed-api':(421,0),'reload-app-during':(200,1),'api-reload-restored':(200,1),'reload-alt-removed':(421,0)}
+EXPECTED={'get':(200,1),'json':(200,1),'sql':(403,0),'script':(403,0),'unknown':(421,0),'oversize':(413,0),'media':(415,0),'upgrade':(501,0),'spoof':(200,1),'untrusted-cert':(0,0),'wrong-name':(0,0),'bare-data':(0,0),'backend-down':(502,0),'backend-recovery':(200,1),'companion-stop':(None,0),'api-get':(200,1),'api-json':(200,1),'api-port':(200,1),'api-wrong-port':(421,0),'api-sql':(403,0),'api-wrong-cert':(502,0),'api-untrusted-cert':(502,0),'api-tls-recovery':(200,1),'api-large':(502,1),'api-stall':(502,1),'api-after-stall':(200,1),'api-cleartext':(502,0),'api-cleartext-recovery':(200,1),'api-reload-version':(200,1),'api-reload-duplicate':(200,1),'api-reload-ca':(200,1),'alt-reload-get':(200,1),'alt-reload-json':(200,1),'alt-reload-sql':(403,0),'reload-removed-api':(421,0),'reload-app-during':(200,1),'api-reload-restored':(200,1),'reload-alt-removed':(421,0),'alt-load-available':(200,1),'load-api-removed':(421,0),'api-load-restored':(200,1),'load-alt-removed':(421,0)}
+
+LOAD_PHASES={'saturation','mixed','inflight-reload'}
+
+def admit_load(row):
+    if not isinstance(row,dict) or set(row)!={'phase','statuses','backend','peak','active_after','effects','health','reload_accepted','ack_before_release','limit'}:raise ValueError('load schema drift')
+    phase=row['phase']
+    statuses,count,peak,reload={'saturation':([200,200,200,200,503],4,4,0),'mixed':([200,200,403,403],2,2,0),'inflight-reload':([200],1,1,1)}[phase]
+    if not isinstance(row['statuses'],list) or any(type(x)is not int for x in row['statuses']) or sorted(row['statuses'])!=statuses or any(type(row[k])is not int for k in ('backend','peak','active_after','health','reload_accepted','limit')) or (row['backend'],row['peak'],row['active_after'],row['health'],row['reload_accepted'],row['limit'])!=(count,peak,0,200,reload,4) or row['ack_before_release'] is not False:raise ValueError('load outcome mismatch')
+    if not isinstance(row['effects'],list) or len(row['effects'])!=count:raise ValueError('load effects incomplete')
+    digest=hashlib.sha256(b'{"payload":"ordinary"}' if phase=='mixed' else b'').hexdigest()
+    targets=['app.test','app.test','api.test','api.test'] if phase=='saturation' else ['app.test','api.test'] if phase=='mixed' else ['api.test']
+    observed=[]
+    for effect in row['effects']:
+        if not isinstance(effect,dict) or set(effect)!={'backend_host','authority','body_sha256','headers_clean'} or effect['headers_clean'] is not True or effect['body_sha256']!=digest or effect['authority']!=effect['backend_host']:raise ValueError('load bytes/authority/metadata changed')
+        observed.append(effect['backend_host'])
+    if sorted(observed)!=sorted(targets):raise ValueError('load backend mismatch')
+    return row
 
 def admit(text,hashes):
     rows,receipts={},{}
+    loads={}
     config=None
     reload=None
     for line in text.splitlines():
+        if 'LAB-LOAD {' in line:
+            row=json.loads(line.split('LAB-LOAD ',1)[1]);phase=row['phase']
+            if phase not in LOAD_PHASES or phase in loads:raise ValueError('unknown/duplicate load phase')
+            loads[phase]=admit_load(row)
         if 'LAB-RELOAD {' in line:
             if reload is not None:raise ValueError('duplicate reload receipt')
             reload=json.loads(line.split('LAB-RELOAD ',1)[1])
@@ -26,6 +48,7 @@ def admit(text,hashes):
             _,name,value=line.split('\t')
             if name in receipts:raise ValueError('duplicate lab receipt')
             receipts[name]=value
+    if set(loads)!=LOAD_PHASES:raise ValueError('incomplete load phases')
     if set(rows)!=set(EXPECTED):raise ValueError('incomplete lab path')
     if not isinstance(config,dict) or set(config)!={'checked','invalid_rejected','listeners_absent','config_sha256','ca_sha256'} or config['checked'] is not True or config['listeners_absent'] is not True or type(config['invalid_rejected']) is not int or config['invalid_rejected']!=7 or any(not isinstance(config[k],str) or not re.fullmatch('[0-9a-f]{64}',config[k]) for k in ('config_sha256','ca_sha256')):raise ValueError('config startup gates incomplete')
     if not isinstance(reload,dict) or set(reload)!={'accepted','rejected','health_samples','health_connection_preserved','same_process','restored_config_sha256','replacement_config_sha256'} or type(reload['accepted']) is not int or reload['accepted']!=2 or type(reload['rejected']) is not int or reload['rejected']!=3 or type(reload['health_samples']) is not int or reload['health_samples']<5 or reload['health_connection_preserved'] is not True or reload['same_process'] is not True or reload['restored_config_sha256']!=config['config_sha256'] or not isinstance(reload['replacement_config_sha256'],str) or not re.fullmatch('[0-9a-f]{64}',reload['replacement_config_sha256']) or reload['replacement_config_sha256']==config['config_sha256']:raise ValueError('reload lifecycle gates incomplete')
@@ -33,7 +56,7 @@ def admit(text,hashes):
     if set(receipts)!=set(wanted)|{'relayd','daemon-log'} or any(receipts.get(k)!=v for k,v in wanted.items()):raise ValueError('identity/cleanup mismatch')
     if any(not re.fullmatch('[0-9a-f]{64}',receipts[k]) for k in (*hashes,'relayd','daemon-log')):raise ValueError('hash malformed')
     passed=re.findall(r'^\s*--- PASS: TestLabCompanionPath/([^ ]+) ',text,re.M)
-    if len(passed)!=len(EXPECTED) or set(passed)!=set(EXPECTED) or '\nPASS\n' not in text or '--- FAIL:' in text or 'LAB-FINAL companion-stopped backend-stopped listeners-absent' not in text:raise ValueError('Go/process gates incomplete')
+    if len(passed)!=len(EXPECTED)+len(LOAD_PHASES) or set(passed)!=set(EXPECTED)|LOAD_PHASES or '\nPASS\n' not in text or '--- FAIL:' in text or 'LAB-FINAL companion-stopped backend-stopped listeners-absent' not in text:raise ValueError('Go/process gates incomplete')
     for name,row in rows.items():
         if set(row)!={'case','status','backend','body_sha256','headers_clean','client_error','backend_host','backend_authority'}:raise ValueError('path schema drift')
         if type(row['status'])is not int or type(row['backend'])is not int or type(row['client_error'])is not bool or row['headers_clean'] is not True:raise ValueError('path type/header violation')
@@ -47,19 +70,24 @@ def admit(text,hashes):
         if row['backend_authority']!=expected_authority:raise ValueError('wrong backend authority')
         if row['backend_host']!=expected_host:raise ValueError('wrong backend route')
         if row['body_sha256']!=expected_hash:raise ValueError('backend bytes mismatch')
-    return {'admitted':True,'case_count':len(EXPECTED), 'config':config,'reload':reload,'cases':[rows[n] for n in sorted(rows)],'receipts':receipts}
+    return {'admitted':True,'case_count':len(EXPECTED), 'load_case_count':len(LOAD_PHASES),'loads':[loads[p] for p in sorted(loads)],'config':config,'reload':reload,'cases':[rows[n] for n in sorted(rows)],'receipts':receipts}
 
-def guest_run(guest,work,binary,checker):
+def guest_run(guest,work,binary,checker,native_program=None):
     program=ROOT/'.tools/research/labproxy-openbsd-amd64';profile=(ROOT/'research/relayd/lab-proxy.conf').read_bytes()
-    hashes={'program':hashlib.sha256(program.read_bytes()).hexdigest(),'profile':hashlib.sha256(profile).hexdigest(),'engine':binary,'checker':checker}
-    with program.open('rb') as stream:reply=guest.call('set -eu; cat > /var/aegvium-lab-proxy; chmod 555 /var/aegvium-lab-proxy',stream=stream,seconds=120)
-    if reply.returncode:raise RuntimeError('lab program transfer failed')
+    program_hash=native_program or hashlib.sha256(program.read_bytes()).hexdigest()
+    if not re.fullmatch('[0-9a-f]{64}',program_hash):raise ValueError('invalid lab program hash')
+    hashes={'program':program_hash,'profile':hashlib.sha256(profile).hexdigest(),'engine':binary,'checker':checker}
+    if native_program is None:
+        with program.open('rb') as stream:reply=guest.call('set -eu; cat > /var/aegvium-lab-proxy; chmod 555 /var/aegvium-lab-proxy',stream=stream,seconds=120)
+        if reply.returncode:raise RuntimeError('lab program transfer failed')
+    else:
+        guest.require('test "$(sha256 -q /var/aegvium-lab-proxy)" = "'+program_hash+'"')
     guest.require('set -eu; mkdir /var/aegvium-lab-path; chmod 755 /var/aegvium-lab-path; cat > /var/aegvium-lab-path/profile.conf',data=profile)
     script=(ROOT/'tools/native/lab-proxy.sh').read_bytes()
     for token,key in [('PROGRAM','program'),('PROFILE','profile'),('ENGINE','engine'),('CHECKER','checker')]:script=script.replace((token+'_SHA256').encode(),hashes[key].encode())
     log=work/'lab-proxy.log'
     with log.open('wb') as output:reply=guest.call('sh -s',data=script,seconds=180,output=output)
-    result={'hashes':hashes,'log_sha256':hashlib.sha256(log.read_bytes()).hexdigest(),'supervisor_exit':reply.returncode,'admitted':False}
+    result={'hashes':hashes,'log_sha256':hashlib.sha256(log.read_bytes()).hexdigest(),'supervisor_exit':reply.returncode,'admitted':False,'native_program':native_program is not None}
     try:result.update(admit(log.read_text(),hashes))
     except (ValueError,KeyError,TypeError) as error:result['admission_error']=str(error)
     if reply.returncode:result['admitted']=False

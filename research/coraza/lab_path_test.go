@@ -75,13 +75,8 @@ func TestLabCompanionPath(t *testing.T) {
 		t.Fatal("fixture UID")
 	}
 	var mu sync.Mutex
-	type receipt struct {
-		body      string
-		clean     bool
-		host      string
-		authority string
-	}
-	var receipts []receipt
+	var receipts []labBackendReceipt
+	control := &labBackendControl{}
 	startBackend := func() (*http.Server, chan error) {
 		listener, e := net.Listen("tcp4", "127.0.0.1:18086")
 		if e != nil {
@@ -102,8 +97,9 @@ func TestLabCompanionPath(t *testing.T) {
 				clean = clean && r.Header.Get(k) == ""
 			}
 			mu.Lock()
-			receipts = append(receipts, receipt{string(data), clean, "app.test", r.Host})
+			receipts = append(receipts, labBackendReceipt{string(data), clean, "app.test", r.Host})
 			mu.Unlock()
+			defer control.enter(r)()
 			_, _ = io.WriteString(w, "lab backend\n")
 		})}
 		done := make(chan error, 1)
@@ -154,8 +150,9 @@ func TestLabCompanionPath(t *testing.T) {
 			clean = clean && r.Header.Get(k) == ""
 		}
 		mu.Lock()
-		receipts = append(receipts, receipt{string(data), clean, "api.test", r.Host})
+		receipts = append(receipts, labBackendReceipt{string(data), clean, "api.test", r.Host})
 		mu.Unlock()
+		defer control.enter(r)()
 		switch r.URL.Path {
 		case "/large":
 			io.WriteString(w, strings.Repeat("x", LabBodyLimit+1))
@@ -308,6 +305,9 @@ func TestLabCompanionPath(t *testing.T) {
 		data, e := io.ReadAll(io.LimitReader(response.Body, LabBodyLimit+1))
 		if e != nil || len(data) > LabBodyLimit {
 			t.Fatal("client response bound")
+		}
+		if response.StatusCode == 503 && string(data) != "inspection busy\n" {
+			t.Fatal("admission response changed")
 		}
 		if response.StatusCode == 502 && string(data) != "backend unavailable\n" {
 			t.Fatal("upstream error leaked/changed")
@@ -577,6 +577,40 @@ func TestLabCompanionPath(t *testing.T) {
 		t.Fatal("insufficient persistent health samples")
 	}
 	t.Logf("LAB-RELOAD {\"accepted\":%d,\"rejected\":%d,\"health_samples\":%d,\"health_connection_preserved\":true,\"same_process\":true,\"restored_config_sha256\":\"%x\",\"replacement_config_sha256\":\"%x\"}", accepted, rejected, healthSamples.Load(), sha256.Sum256(configData), sha256.Sum256(replacementData))
+	signalReload := func(data []byte) {
+		path := configPath + ".load"
+		if e := os.WriteFile(path, data, 0600); e != nil {
+			t.Fatal(e)
+		}
+		if e := os.Rename(path, configPath); e != nil {
+			t.Fatal(e)
+		}
+		if e := command.Process.Signal(syscall.SIGHUP); e != nil {
+			t.Fatal(e)
+		}
+	}
+	healthOnce := func() int {
+		tr := &http.Transport{Proxy: nil, DisableKeepAlives: true}
+		defer tr.CloseIdleConnections()
+		client := &http.Client{Transport: tr, Timeout: time.Second}
+		r, _ := http.NewRequest("HEAD", "http://127.0.0.1:18085/ready", nil)
+		response, e := client.Do(r)
+		if e != nil {
+			t.Fatal(e)
+		}
+		response.Body.Close()
+		return response.StatusCode
+	}
+	runLabWorkloads(t, labLoadFixture{control: control, mu: &mu, receipts: &receipts, request: func(method, path, host, media, body string) int {
+		code, _ := request(client, method, path, host, media, body, nil)
+		return code
+	}, health: healthOnce, signalReload: signalReload, expectEvent: expectEvent, events: events, replacement: replacementData})
+	apiCase("alt-load-available", "/ok", "alt.test", "GET", "", 200, 1)
+	apiCase("load-api-removed", "/ok", "api.test", "GET", "", 421, 0)
+	signalReload(configData)
+	expectEvent("owned lab reload accepted")
+	apiCase("api-load-restored", "/ok", "api.test", "GET", "", 200, 1)
+	apiCase("load-alt-removed", "/ok", "alt.test", "GET", "", 421, 0)
 	t.Run("backend-down", func(t *testing.T) {
 		stopBackend()
 		mu.Lock()

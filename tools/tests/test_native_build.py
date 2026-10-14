@@ -109,3 +109,24 @@ class NativeBuildTests(unittest.TestCase):
             with patch.object(BUILD, 'CACHE', cache), self.assertRaises(FileExistsError):
                 BUILD.fetch()
             self.assertEqual(stage.read_bytes(), b'owned elsewhere')
+
+    def test_native_program_receipt_and_install_required_without_fallback(self):
+        valid='\n'.join(('BUILD\tuid\t32767','BUILD\tcompiler\t'+'a'*64,'BUILD\tsource\t'+'b'*64,'BUILD\tbinary\t'+'c'*64,'BUILD\tchecker\t'+'e'*64,'BUILD\tprogram\t'+'f'*64))
+        self.assertEqual(LAB.parse_build(valid,'b'*64,program=True)['program'],'f'*64)
+        for bad in (valid.rsplit('\n',1)[0],valid.replace('f'*64,'oops'),valid+'\nBUILD\tprogram\t'+'f'*64):
+            with self.assertRaises(ValueError):LAB.parse_build(bad,'b'*64,program=True)
+        with tempfile.TemporaryDirectory() as folder:
+            work=Path(folder).resolve();asset=work/'asset';asset.write_bytes(b'fixture')
+            inputs={'compiler':asset,'source':asset,'compiler_sha256':'a'*64,'source_sha256':'b'*64}
+            class Guest:
+                def __init__(self):self.commands=[];self.count=0
+                def require(self,command):self.commands.append(command)
+                def call(self,command,**kwargs):
+                    self.commands.append(command);self.count+=1
+                    if self.count==3:kwargs['output'].write(valid.encode())
+                    return subprocess.CompletedProcess([],0)
+            guest=Guest()
+            with patch.object(LAB,'parse_native',return_value={'receipts':{'binary':'c'*64,'uid':'32767'}}):result=LAB.source_build_guest(guest,work,inputs,program=True)
+            self.assertEqual(result['build_receipts']['program'],'f'*64)
+            install=next(c for c in guest.commands if 'cp /var/aegvium-build/output/labproxy' in c)
+            self.assertIn('sha256 -q /var/aegvium-lab-proxy',install);self.assertIn('f'*64,install)
