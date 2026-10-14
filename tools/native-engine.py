@@ -32,6 +32,7 @@ SIGNALS = load('relayd-signals')
 WIRING = load('relayd-wiring')
 BODY = load('relayd-body')
 LAB_PROXY = load('lab-proxy')
+CONNECTOR = load('connector-comparison')
 PINS = json.loads((ROOT / 'research/native/image-pin.json').read_text())
 
 SSH_HARDEN = b'''set -eu
@@ -647,6 +648,7 @@ def run():
     parser.add_argument('--source-build', action='store_true')
     parser.add_argument('--relayd-config', action='store_true')
     parser.add_argument('--lab-proxy', action='store_true')
+    parser.add_argument('--connector-comparison', action='store_true')
     parser.add_argument('--relayd-body', action='store_true')
     parser.add_argument('--relayd-traffic', action='store_true')
     parser.add_argument('--relayd-contract', action='store_true')
@@ -676,6 +678,8 @@ def run():
         subprocess.run(['make', 'research-labproxy-cross'], cwd=ROOT, check=True, timeout=180)
     if args.relayd_signals:
         subprocess.run(['make', 'research-signalobserve-cross'], cwd=ROOT, check=True, timeout=180)
+    if args.connector_comparison:
+        subprocess.run(['make', 'research-connector-cross'], cwd=ROOT, check=True, timeout=600)
     binary_hash = digest(binary)
     work = ROOT / '.tools/native-runs' / str(uuid.uuid4())
     work.mkdir(parents=True, mode=0o700)
@@ -684,7 +688,7 @@ def run():
     duration = 1800 if args.source_build else (1500 if args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations else 1200 if args.relayd_wiring else 900)
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
-              'lab_proxy_requested': args.lab_proxy, 'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
+              'connector_comparison_requested': args.connector_comparison, 'lab_proxy_requested': args.lab_proxy, 'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
@@ -769,6 +773,9 @@ def run():
             print('Running guest-loopback stock relayd / Coraza traffic comparison...', flush=True)
             report['relayd_traffic'] = relayd_traffic_guest(guest, work, report['native']['receipts']['binary'],
                                                            report['relayd_config']['receipts']['binary'])
+        if args.connector_comparison:
+            print('Running pinned connector request/response/rule-reuse comparison...', flush=True)
+            report['connector_comparison'] = CONNECTOR.guest_run(guest, work)
         if args.inject_failure == 'test':
             raise RuntimeError('injected test-stage failure')
         report['native_subset_passed'] = True
