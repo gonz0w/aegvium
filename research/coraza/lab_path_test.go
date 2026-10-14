@@ -2,12 +2,14 @@
 package spike
 
 import (
+	"bufio"
 	"context"
 	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -26,13 +28,43 @@ import (
 )
 
 type labPathReceipt struct {
-	Case         string `json:"case"`
-	Status       int    `json:"status"`
-	Backend      int    `json:"backend"`
-	BodySHA      string `json:"body_sha256"`
-	HeadersClean bool   `json:"headers_clean"`
-	ClientError  bool   `json:"client_error"`
-	BackendHost  string `json:"backend_host"`
+	Case             string `json:"case"`
+	Status           int    `json:"status"`
+	Backend          int    `json:"backend"`
+	BodySHA          string `json:"body_sha256"`
+	HeadersClean     bool   `json:"headers_clean"`
+	ClientError      bool   `json:"client_error"`
+	BackendHost      string `json:"backend_host"`
+	BackendAuthority string `json:"backend_authority"`
+}
+
+type labAckWriter struct {
+	pending string
+	events  chan string
+}
+
+func (w *labAckWriter) Write(data []byte) (int, error) {
+	w.pending += string(data)
+	if len(w.pending) > 1024 {
+		return 0, errors.New("lab ack bound")
+	}
+	for {
+		index := strings.IndexByte(w.pending, '\n')
+		if index < 0 {
+			break
+		}
+		line := w.pending[:index]
+		w.pending = w.pending[index+1:]
+		if line != "owned lab companion ready" && line != "owned lab reload accepted" && line != "owned lab reload rejected" {
+			return 0, errors.New("unexpected lab diagnostic")
+		}
+		select {
+		case w.events <- line:
+		default:
+			return 0, errors.New("lab ack queue bound")
+		}
+	}
+	return len(data), nil
 }
 
 func TestLabCompanionPath(t *testing.T) {
@@ -44,9 +76,10 @@ func TestLabCompanionPath(t *testing.T) {
 	}
 	var mu sync.Mutex
 	type receipt struct {
-		body  string
-		clean bool
-		host  string
+		body      string
+		clean     bool
+		host      string
+		authority string
 	}
 	var receipts []receipt
 	startBackend := func() (*http.Server, chan error) {
@@ -69,7 +102,7 @@ func TestLabCompanionPath(t *testing.T) {
 				clean = clean && r.Header.Get(k) == ""
 			}
 			mu.Lock()
-			receipts = append(receipts, receipt{string(data), clean, "app.test"})
+			receipts = append(receipts, receipt{string(data), clean, "app.test", r.Host})
 			mu.Unlock()
 			_, _ = io.WriteString(w, "lab backend\n")
 		})}
@@ -116,12 +149,12 @@ func TestLabCompanionPath(t *testing.T) {
 			http.Error(w, "read failed", 500)
 			return
 		}
-		clean := r.Host == "api.test"
+		clean := true
 		for _, k := range []string{"Forwarded", "X-Forwarded-For", "X-Real-IP", "X-Original-URL", "Proxy-Authorization"} {
 			clean = clean && r.Header.Get(k) == ""
 		}
 		mu.Lock()
-		receipts = append(receipts, receipt{string(data), clean, "api.test"})
+		receipts = append(receipts, receipt{string(data), clean, "api.test", r.Host})
 		mu.Unlock()
 		switch r.URL.Path {
 		case "/large":
@@ -202,7 +235,8 @@ func TestLabCompanionPath(t *testing.T) {
 	t.Logf("LAB-CONFIG {\"checked\":true,\"invalid_rejected\":%d,\"listeners_absent\":true,\"config_sha256\":\"%x\",\"ca_sha256\":\"%x\"}", len(invalid), sha256.Sum256(configData), sha256.Sum256(caData))
 	command := exec.Command("/var/aegvium-lab-proxy", "-config", configPath)
 	command.Env = []string{"PATH=/usr/bin:/bin", "AEGVIUM_LAB_PROXY=owned-guest"}
-	command.Stdout = io.Discard
+	events := make(chan string, 16)
+	command.Stdout = &labAckWriter{events: events}
 	command.Stderr = io.Discard
 	if e := command.Start(); e != nil {
 		t.Fatal(e)
@@ -230,6 +264,17 @@ func TestLabCompanionPath(t *testing.T) {
 		}
 	}
 	defer stopCompanion()
+	expectEvent := func(want string) {
+		select {
+		case got := <-events:
+			if got != want {
+				t.Fatalf("lab completion got%q want%q", got, want)
+			}
+		case <-time.After(8 * time.Second):
+			t.Fatal("lab completion deadline")
+		}
+	}
+	expectEvent("owned lab companion ready")
 	cert, e := os.ReadFile("/etc/ssl/aegvium-lab.crt")
 	if e != nil {
 		t.Fatal(e)
@@ -291,12 +336,20 @@ func TestLabCompanionPath(t *testing.T) {
 			r.BodySHA = hex.EncodeToString(sum[:])
 			r.HeadersClean = receipts[before].clean
 			r.BackendHost = receipts[before].host
+			r.BackendAuthority = receipts[before].authority
 			wantHost := "app.test"
-			if strings.HasPrefix(name, "api-") {
+			if strings.HasPrefix(name, "api-") || strings.HasPrefix(name, "alt-") {
 				wantHost = "api.test"
 			}
 			if r.BackendHost != wantHost {
 				t.Error("wrong backend route")
+			}
+			wantAuthority := wantHost
+			if strings.HasPrefix(name, "alt-") {
+				wantAuthority = "alt.test"
+			}
+			if r.BackendAuthority != wantAuthority {
+				t.Error("backend authority changed")
 			}
 			if receipts[before].body != wantBody {
 				t.Error("backend bytes changed")
@@ -418,6 +471,112 @@ func TestLabCompanionPath(t *testing.T) {
 	apiRunning = true
 	go func() { apiDone <- apiServer.Serve(tls.NewListener(apiListener, apiServer.TLSConfig)) }()
 	apiCase("api-cleartext-recovery", "/ok", "api.test", "GET", "", 200, 1)
+	// One continuously reused health connection, without reconnects. Keeping it
+	// active avoids confusing the existing one-second idle guard with a rebind.
+	healthConn, e := net.DialTimeout("tcp4", "127.0.0.1:18085", time.Second)
+	if e != nil {
+		t.Fatal(e)
+	}
+	healthStop := make(chan struct{})
+	healthDone := make(chan error, 1)
+	var healthSamples atomic.Int32
+	go func() {
+		reader := bufio.NewReader(healthConn)
+		for {
+			healthConn.SetDeadline(time.Now().Add(time.Second))
+			if _, e := fmt.Fprint(healthConn, "HEAD /ready HTTP/1.1\r\nHost: health.test\r\n\r\n"); e != nil {
+				healthDone <- e
+				return
+			}
+			response, e := http.ReadResponse(reader, &http.Request{Method: "HEAD"})
+			if e != nil {
+				healthDone <- e
+				return
+			}
+			response.Body.Close()
+			if response.StatusCode != 200 || response.Close {
+				healthDone <- errors.New("health generation interrupted")
+				return
+			}
+			healthSamples.Add(1)
+			select {
+			case <-healthStop:
+				healthDone <- nil
+				return
+			case <-time.After(100 * time.Millisecond):
+			}
+		}
+	}()
+	healthRunning := true
+	stopHealth := func() {
+		if !healthRunning {
+			return
+		}
+		healthRunning = false
+		close(healthStop)
+		select {
+		case e := <-healthDone:
+			if e != nil {
+				t.Error(e)
+			}
+		case <-time.After(2 * time.Second):
+			t.Error("health observer did not join")
+		}
+		healthConn.Close()
+	}
+	defer stopHealth()
+	accepted, rejected := 0, 0
+	reload := func(data []byte, accept bool) {
+		replacement := configPath + ".new"
+		if e := os.WriteFile(replacement, data, 0600); e != nil {
+			t.Fatal(e)
+		}
+		if e := os.Rename(replacement, configPath); e != nil {
+			t.Fatal(e)
+		}
+		if e := command.Process.Signal(syscall.SIGHUP); e != nil {
+			t.Fatal(e)
+		}
+		if accept {
+			expectEvent("owned lab reload accepted")
+			accepted++
+		} else {
+			expectEvent("owned lab reload rejected")
+			rejected++
+		}
+		if e := command.Process.Signal(syscall.Signal(0)); e != nil {
+			t.Fatal("companion process replaced/lost", e)
+		}
+	}
+	reload([]byte(strings.Replace(string(configData), `"version":1`, `"version":2`, 1)), false)
+	apiCase("api-reload-version", "/ok", "api.test", "GET", "", 200, 1)
+	reload([]byte(strings.Replace(string(configData), "app.test", "api.test", 1)), false)
+	apiCase("api-reload-duplicate", "/ok", "api.test", "GET", "", 200, 1)
+	reload([]byte(strings.Replace(string(configData), ca, ca+"missing", 1)), false)
+	apiCase("api-reload-ca", "/ok", "api.test", "GET", "", 200, 1)
+	replacement := LabConfig{Version: 1, Routes: []LabRoute{config.Routes[0], {Host: "alt.test", Backend: "https://127.0.0.1:18087", TLSServerName: "api.test", TLSCAFile: ca}}}
+	replacementData, e := json.Marshal(replacement)
+	if e != nil {
+		t.Fatal(e)
+	}
+	reload(replacementData, true)
+	apiCase("alt-reload-get", "/ok", "alt.test", "GET", "", 200, 1)
+	apiCase("alt-reload-json", "/body", "alt.test", "POST", `{"payload":"ordinary"}`, 200, 1)
+	apiCase("alt-reload-sql", "/?payload=%27+OR+1%3D1--", "alt.test", "GET", "", 403, 0)
+	apiCase("reload-removed-api", "/ok", "api.test", "GET", "", 421, 0)
+	apiCase("reload-app-during", "/ok", "app.test", "GET", "", 200, 1)
+	reload(configData, true)
+	apiCase("api-reload-restored", "/ok", "api.test", "GET", "", 200, 1)
+	apiCase("reload-alt-removed", "/ok", "alt.test", "GET", "", 421, 0)
+	stopHealth()
+	restored, e := os.ReadFile(configPath)
+	if e != nil || string(restored) != string(configData) {
+		t.Fatal("known-good file not restored")
+	}
+	if healthSamples.Load() < 5 {
+		t.Fatal("insufficient persistent health samples")
+	}
+	t.Logf("LAB-RELOAD {\"accepted\":%d,\"rejected\":%d,\"health_samples\":%d,\"health_connection_preserved\":true,\"same_process\":true,\"restored_config_sha256\":\"%x\",\"replacement_config_sha256\":\"%x\"}", accepted, rejected, healthSamples.Load(), sha256.Sum256(configData), sha256.Sum256(replacementData))
 	t.Run("backend-down", func(t *testing.T) {
 		stopBackend()
 		mu.Lock()
