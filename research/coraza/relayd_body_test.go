@@ -60,6 +60,13 @@ func TestRelaydBodyComparison(t *testing.T) {
 		{"cl-te", "Content-Length: 999\r\nTransfer-Encoding: chunked\r\n", "application/json", chunk(benign), false, 200, 1, 1},
 		{"unsupported-te", "Transfer-Encoding: gzip\r\n", "application/json", benign, false, 501, 0, 0},
 		{"stalled-chunked", "Transfer-Encoding: chunked\r\n", "application/json", "c8\r\n" + over, true, 413, 1, 0},
+		{"fixed-json-halfclose", fixed(benign), "application/json", benign, false, 200, 1, 1},
+		{"chunked-json-halfclose", "Transfer-Encoding: chunked\r\n", "application/json", chunk(benign), false, 200, 1, 1},
+		{"json-script-halfclose", fixed(script), "application/json", script, false, 403, 1, 0},
+		{"fixed-over-halfclose", fixed(over), "application/json", over, false, 413, 1, 0},
+		{"chunked-over-halfclose", "Transfer-Encoding: chunked\r\n", "application/json", chunk(over), false, 413, 1, 0},
+		{"conflicting-cl-halfclose", "Content-Length: 22\r\nContent-Length: 23\r\n", "application/json", benign, false, 400, 0, 0},
+		{"short-open", fmt.Sprintf("Content-Length: %d\r\n", len(benign)+1), "application/json", benign, false, 500, 1, 0},
 	}
 	for _, arm := range arms {
 		for _, tc := range cases {
@@ -165,7 +172,8 @@ func TestRelaydBodyComparison(t *testing.T) {
 				if err != nil || n != len(raw) {
 					t.Fatalf("fixture write: %d %v", n, err)
 				}
-				if tc.name == "short-fixed" {
+				writeShutdown := tc.name == "short-fixed" || strings.HasSuffix(tc.name, "-halfclose")
+				if writeShutdown {
 					if e := client.(*net.TCPConn).CloseWrite(); e != nil {
 						t.Fatal(e)
 					}
@@ -231,6 +239,15 @@ func TestRelaydBodyComparison(t *testing.T) {
 				}
 				t.Logf("RELAYD-BODY %s", data)
 				t.Logf("RELAYD-BODY-ERROR %s %s", observation.Case, responseError)
+				lifecycle, e := json.Marshal(struct {
+					Case          string `json:"case"`
+					WriteShutdown bool   `json:"write_shutdown"`
+					BytesSent     int    `json:"bytes_sent"`
+				}{observation.Case, writeShutdown, n})
+				if e != nil {
+					t.Fatal(e)
+				}
+				t.Logf("RELAYD-BODY-LIFECYCLE %s", lifecycle)
 				if arm == "direct" && (observation.Status != tc.status || observation.Handler != tc.handler || observation.Backend != tc.backend) {
 					t.Errorf("direct baseline changed: %s", data)
 				}
@@ -250,7 +267,7 @@ func TestRelaydBodyComparison(t *testing.T) {
 						t.Fatalf("admitted body mismatch: %s", data)
 					}
 				}
-				if observation.Handler > 0 && (tc.name == "json-script" || tc.name == "form-sql") {
+				if observation.Handler > 0 && (tc.name == "json-script" || tc.name == "json-script-halfclose" || tc.name == "form-sql") {
 					family := 941
 					if tc.name == "form-sql" {
 						family = 942

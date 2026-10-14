@@ -6,16 +6,20 @@ import re
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ARMS = ('direct', 'http', 'tcp')
-CASES = ('fixed-json', 'json-script', 'form-sql', 'fixed-over', 'chunked-json', 'chunked-over', 'short-fixed', 'bad-chunk', 'invalid-json', 'text-media', 'conflicting-cl', 'identical-cl', 'cl-te', 'unsupported-te', 'stalled-chunked')
+CASES = ('fixed-json', 'json-script', 'form-sql', 'fixed-over', 'chunked-json', 'chunked-over', 'short-fixed', 'bad-chunk', 'invalid-json', 'text-media', 'conflicting-cl', 'identical-cl', 'cl-te', 'unsupported-te', 'stalled-chunked', 'fixed-json-halfclose', 'chunked-json-halfclose', 'json-script-halfclose', 'fixed-over-halfclose', 'chunked-over-halfclose', 'conflicting-cl-halfclose', 'short-open')
 
 
 def admit(text, binary, profile):
-    rows, errors, receipts = {}, {}, {}
+    rows, errors, receipts, lifecycle = {}, {}, {}, {}
     for line in text.splitlines():
         if 'RELAYD-BODY {' in line:
             row = json.loads(line.split('RELAYD-BODY ', 1)[1]); name = row['case']
             if name in rows: raise ValueError('duplicate body row')
             rows[name] = row
+        if 'RELAYD-BODY-LIFECYCLE {' in line:
+            value=json.loads(line.split('RELAYD-BODY-LIFECYCLE ',1)[1]); name=value['case']
+            if name in lifecycle: raise ValueError('duplicate lifecycle row')
+            lifecycle[name]=value
         if 'RELAYD-BODY-ERROR ' in line:
             name, error = line.split('RELAYD-BODY-ERROR ', 1)[1].split()
             if name in errors: raise ValueError('duplicate response error')
@@ -25,17 +29,20 @@ def admit(text, binary, profile):
             if name in receipts: raise ValueError('duplicate daemon receipt')
             receipts[name] = value
     names = {arm+'/'+case for arm in ARMS for case in CASES}
-    if set(rows)!=names or set(errors)!=names: raise ValueError('incomplete body matrix')
+    if set(rows)!=names or set(errors)!=names or set(lifecycle)!=names: raise ValueError('incomplete body matrix')
     if receipts.keys()!= {'binary','profile','relayd','uid','cleanup','daemon-log'} or receipts['binary']!=binary or receipts['profile']!=profile or receipts['uid']!='32767' or receipts['cleanup']!='verified': raise ValueError('daemon identity/cleanup missing')
     if any(not re.fullmatch('[0-9a-f]{64}',receipts[k]) for k in ('binary','profile','relayd','daemon-log')): raise ValueError('receipt hash malformed')
     passed = re.findall(r'^\s*--- PASS: TestRelaydBodyComparison/([^ ]+) ',text,re.M)
-    if set(passed)!=names or len(passed)!=45 or '\nPASS\n' not in text or '--- FAIL:' in text: raise ValueError('Go leaves incomplete/failed')
+    if set(passed)!=names or len(passed)!=66 or '\nPASS\n' not in text or '--- FAIL:' in text: raise ValueError('Go leaves incomplete/failed')
     keys={'case','status','handler','backend','content_length','transfer_encoding','header_lengths','source_read','source_closed','source_close_error','wire_read','request_bytes','request_sha256','body_sha256','rules','phases','connection_closed','server_joined','listener_absent'}
     body_hash=hashlib.sha256(b'{"payload":"ordinary"}').hexdigest()
     for name,row in rows.items():
         arm,case=name.split('/')
         baseline={'fixed-json':(200,1,1,22),'json-script':(403,1,0,39),'form-sql':(403,1,0,22),'fixed-over':(413,1,0,0),'chunked-json':(200,1,1,22),'chunked-over':(413,1,0,129),'short-fixed':(500,1,0,22),'bad-chunk':(500,1,0,0),'invalid-json':(400,1,0,11),'text-media':(415,1,0,0),'conflicting-cl':(400,0,0,0),'identical-cl':(200,1,1,22),'cl-te':(200,1,1,22),'unsupported-te':(501,0,0,0),'stalled-chunked':(413,1,0,129)}
-        if arm=='direct' and tuple(row[k] for k in ('status','handler','backend','source_read'))!=baseline[case]: raise ValueError('direct baseline drift')
+        base_case=case.removesuffix('-halfclose') if case.endswith('-halfclose') else 'short-fixed' if case=='short-open' else case
+        life=lifecycle[name]
+        if set(life)!={'case','write_shutdown','bytes_sent'} or type(life['write_shutdown'])is not bool or life['write_shutdown']!=(case=='short-fixed' or case.endswith('-halfclose')) or type(life['bytes_sent'])is not int or life['bytes_sent']!=row['request_bytes']: raise ValueError('lifecycle witness drift')
+        if arm=='direct' and tuple(row[k] for k in ('status','handler','backend','source_read'))!=baseline[base_case]: raise ValueError('direct baseline drift')
         if set(row)!=keys: raise ValueError('body schema drift')
         for k in ('status','handler','backend','source_read','source_closed','wire_read','request_bytes'):
             if type(row[k]) is not int or row[k]<0: raise ValueError('body integer type')
@@ -57,14 +64,19 @@ def admit(text, binary, profile):
         if any(not 100000<=v<=999999 for v in row['rules']) or any(not 1<=v<=5 for v in row['phases']): raise ValueError('rule/phase range')
         if case in ('fixed-json','chunked-json') and (row['status'],row['backend'])!=(200,1): raise ValueError('benign forwarding missing')
         if row['backend']:
-            if case not in ('fixed-json','chunked-json','identical-cl','cl-te') or row['status']!=200 or row['body_sha256']!=body_hash: raise ValueError('uninspected/bad body forwarded')
+            if case not in ('fixed-json','chunked-json','identical-cl','cl-te','fixed-json-halfclose','chunked-json-halfclose') or (row['status']!=200 and not (case in ('fixed-json-halfclose','chunked-json-halfclose') and row['status']==0)) or row['body_sha256']!=body_hash: raise ValueError('uninspected/bad body forwarded')
         elif row['body_sha256'] or 200<=row['status']<300: raise ValueError('false rejection receipt')
-        if case in ('json-script','form-sql') and row['handler']:
-            family=941 if case=='json-script' else 942
+        if case in ('json-script','json-script-halfclose','form-sql') and row['handler']:
+            family=941 if case.startswith('json-script') else 942
             if not any(v//1000==family for v in row['rules']) or row['status']!=403: raise ValueError('attack denial missing')
     for case in CASES:
         if len({rows[a+'/'+case]['request_sha256'] for a in ARMS})!=1: raise ValueError('arms sent different inputs')
-    return {'cases':[rows[n] for n in sorted(rows)],'response_errors':errors,'receipts':receipts,'case_count':45,'admitted':True}
+    for arm in ARMS:
+        for case in CASES:
+            if case.endswith('-halfclose') or case=='short-open':
+                base=case.removesuffix('-halfclose') if case.endswith('-halfclose') else 'short-fixed'
+                if any(rows[arm+'/'+case][k]!=rows[arm+'/'+base][k] for k in ('request_sha256','request_bytes')): raise ValueError('lifecycle pair input drift')
+    return {'cases':[rows[n] for n in sorted(rows)],'response_errors':errors,'receipts':receipts,'case_count':66,'lifecycle':lifecycle,'admitted':True}
 
 
 def guest_run(guest, work, binary):

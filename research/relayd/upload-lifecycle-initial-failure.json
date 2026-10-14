@@ -1,0 +1,3342 @@
+{
+  "schema": 1,
+  "commit": "8af42552ac89aa35e9584e0eb1977d510f20afa9",
+  "tree": "52cebd7a9d1c707e5835fc8d6c5edf02c6ded2c9",
+  "started": "2026-10-14T02:29:32.595159+00:00",
+  "relayd_body_requested": true,
+  "native_build": true,
+  "native_build_requested": true,
+  "relayd_config_requested": false,
+  "relayd_traffic_requested": false,
+  "relayd_generations_requested": false,
+  "relayd_checker_replacements_requested": false,
+  "relayd_health_faults_requested": false,
+  "relayd_wiring_requested": false,
+  "relayd_signals_requested": false,
+  "relayd_contract_requested": false,
+  "passed": false,
+  "host_go": "go version go1.27.2 darwin/arm64",
+  "image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "injected_failure": null,
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 1800,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "native_build_inputs": {
+    "compiler_sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+    "source_sha256": "2bc152e984ee2f37736cd3b9fc63e7e1a60c4726814a65910112c4e6555730c0",
+    "source_file_count": 773,
+    "source_manifest_sha256": "f5337f12dd0327c45ee1d79e9c6b2db71d11711bfa32169a297d8f675e9e0b59",
+    "source_manifest_hash_encoding": "SHA-256 of source_files JSON sorted keys, compact separators, UTF-8"
+  },
+  "qemu_version": "QEMU emulator version 11.1.1",
+  "qemu_sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f",
+  "bootstrap_revoked": true,
+  "patch_refresh": {
+    "signature_verified": true,
+    "installed": 34,
+    "pending": 0,
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+    "boot_before": "1791944986",
+    "boot_after": "1791945223"
+  },
+  "native": {
+    "build_receipts": {
+      "compiler": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+      "source": "2bc152e984ee2f37736cd3b9fc63e7e1a60c4726814a65910112c4e6555730c0",
+      "uid": "32767",
+      "binary": "fc926ddf9f1402beb27a25d9221ed6f8b2458af17c78767379b683b3a084eb44",
+      "checker": "52932419021d857d0eda4e818e11a564d29cb617c75b1a1937f7fb076ffb8dd9"
+    },
+    "build_log_sha256": "a28ec44f61d3bd101a84d604aaec810999784f58f687b04be8ac5ffa374a0e77",
+    "receipts": {
+      "os": "OpenBSD 7.9 amd64",
+      "binary": "fc926ddf9f1402beb27a25d9221ed6f8b2458af17c78767379b683b3a084eb44",
+      "kernel": "GENERIC.MP#16",
+      "kernel_sha256": "894bb61656f04e256ecfc5c269410af3cd0fc024b40105bbfb22a6c806fd362b",
+      "patches": "001_xserver,002_smtpd,003_vmd,004_elf,005_sysv,006_nfs,007_ipsec,008_npppd,009_iked,010_ifioctl,011_nipledge,012_kernproc,013_ttyioctl,014_expat,015_smtpd,016_nfs,017_wscons,018_shmat,019_expat,020_xserver,021_ldapd,022_nsd,023_unbound,024_libressl,025_procargs,026_sysvipc,027_iked,028_wgbind,029_sysvsem,030_uidrange,031_isakmpd,032_xserver,033_expat,034_wsdisplay",
+      "uid": "32767"
+    },
+    "cases": [
+      "TestBodyAdmissionHeaders/duplicate-encoding",
+      "TestBodyAdmissionHeaders/duplicate-media",
+      "TestBodyAdmissionHeaders/identity-json",
+      "TestBodyAdmissionHeaders/long-declared",
+      "TestBodyAdmissionHeaders/malformed-media",
+      "TestBodyAdmissionHeaders/short-declared",
+      "TestBodyAdmissionHeaders/unsupported-charset",
+      "TestBodyAdmissionHeaders/utf8-json",
+      "TestBodyAdmissionTCP/bad-chunk",
+      "TestBodyAdmissionTCP/chunked-json",
+      "TestBodyAdmissionTCP/chunked-over",
+      "TestBodyAdmissionTCP/cl-te",
+      "TestBodyAdmissionTCP/conflicting-cl",
+      "TestBodyAdmissionTCP/fixed-json",
+      "TestBodyAdmissionTCP/fixed-over",
+      "TestBodyAdmissionTCP/form-sql",
+      "TestBodyAdmissionTCP/identical-cl",
+      "TestBodyAdmissionTCP/invalid-json",
+      "TestBodyAdmissionTCP/json-script",
+      "TestBodyAdmissionTCP/short-fixed",
+      "TestBodyAdmissionTCP/stalled-chunked",
+      "TestBodyAdmissionTCP/text-media",
+      "TestBodyAdmissionTCP/unsupported-te",
+      "TestBodyReadFailure",
+      "TestBoundedBodyAdmission/baseline/declared-over",
+      "TestBoundedBodyAdmission/baseline/encoded-json",
+      "TestBoundedBodyAdmission/baseline/exact-cap",
+      "TestBoundedBodyAdmission/baseline/form-benign",
+      "TestBoundedBodyAdmission/baseline/form-sql",
+      "TestBoundedBodyAdmission/baseline/invalid-json",
+      "TestBoundedBodyAdmission/baseline/json-benign",
+      "TestBoundedBodyAdmission/baseline/json-script",
+      "TestBoundedBodyAdmission/baseline/partial-read-error",
+      "TestBoundedBodyAdmission/baseline/read-error",
+      "TestBoundedBodyAdmission/baseline/text-media",
+      "TestBoundedBodyAdmission/baseline/understated-over",
+      "TestBoundedBodyAdmission/baseline/unknown-over",
+      "TestBoundedBodyAdmission/gated/declared-over",
+      "TestBoundedBodyAdmission/gated/encoded-json",
+      "TestBoundedBodyAdmission/gated/exact-cap",
+      "TestBoundedBodyAdmission/gated/form-benign",
+      "TestBoundedBodyAdmission/gated/form-sql",
+      "TestBoundedBodyAdmission/gated/invalid-json",
+      "TestBoundedBodyAdmission/gated/json-benign",
+      "TestBoundedBodyAdmission/gated/json-script",
+      "TestBoundedBodyAdmission/gated/partial-read-error",
+      "TestBoundedBodyAdmission/gated/read-error",
+      "TestBoundedBodyAdmission/gated/text-media",
+      "TestBoundedBodyAdmission/gated/understated-over",
+      "TestBoundedBodyAdmission/gated/unknown-over",
+      "TestExplicitInspectionError/benign-post",
+      "TestExplicitInspectionError/body-denied",
+      "TestExplicitInspectionError/detection-uri",
+      "TestExplicitInspectionError/empty-benign",
+      "TestExplicitInspectionError/partial-read-error",
+      "TestExplicitInspectionError/read-error",
+      "TestExplicitInspectionError/uri-denied",
+      "TestInvalidRulesRejected",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/cookie-benign",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/cookie-script",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/cookie-sql",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/form-benign",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/form-script",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/form-sql",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/json-benign",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/json-script",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/json-sql",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/query-benign",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/query-script",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/query-sql",
+      "TestPinnedCRSRequestCorpus/On/cookie-benign",
+      "TestPinnedCRSRequestCorpus/On/cookie-script",
+      "TestPinnedCRSRequestCorpus/On/cookie-sql",
+      "TestPinnedCRSRequestCorpus/On/form-benign",
+      "TestPinnedCRSRequestCorpus/On/form-script",
+      "TestPinnedCRSRequestCorpus/On/form-sql",
+      "TestPinnedCRSRequestCorpus/On/json-benign",
+      "TestPinnedCRSRequestCorpus/On/json-script",
+      "TestPinnedCRSRequestCorpus/On/json-sql",
+      "TestPinnedCRSRequestCorpus/On/query-benign",
+      "TestPinnedCRSRequestCorpus/On/query-script",
+      "TestPinnedCRSRequestCorpus/On/query-sql",
+      "TestPinnedCRSSmoke/benign-post",
+      "TestPinnedCRSSmoke/benign-query",
+      "TestPinnedCRSSmoke/script-injection",
+      "TestPinnedCRSSmoke/sql-injection",
+      "TestProxyReady/accept-failure",
+      "TestProxyReady/close",
+      "TestProxyReady/head",
+      "TestProxyReady/method",
+      "TestProxyReady/nil",
+      "TestProxyReady/route",
+      "TestProxyReady/server-bounds",
+      "TestProxyReady/transitions",
+      "TestProxyReadyTCP/accept-failure",
+      "TestProxyReadyTCP/lifecycle",
+      "TestProxyV1Accepted/coalesced",
+      "TestProxyV1Accepted/maximum",
+      "TestProxyV1Accepted/one-byte",
+      "TestProxyV1Accepted/two-requests",
+      "TestProxyV1Conn/clear-deadline-failure",
+      "TestProxyV1Conn/coalesced",
+      "TestProxyV1Conn/deadline-cleared",
+      "TestProxyV1Conn/initial-deadline-failure",
+      "TestProxyV1Conn/invalid-budget",
+      "TestProxyV1Conn/malformed",
+      "TestProxyV1Conn/timeout-partial",
+      "TestProxyV1Conn/timeout-silent",
+      "TestProxyV1Listener/accept-failure",
+      "TestProxyV1Listener/capacity",
+      "TestProxyV1Listener/close-pending",
+      "TestProxyV1Listener/close-undelivered",
+      "TestProxyV1Listener/engine-gate",
+      "TestProxyV1Listener/progress",
+      "TestProxyV1ListenerTCP/bare-head",
+      "TestProxyV1ListenerTCP/progress",
+      "TestProxyV1ReadFailure",
+      "TestProxyV1Rejected/bare-lf",
+      "TestProxyV1Rejected/destination",
+      "TestProxyV1Rejected/duplicate-space",
+      "TestProxyV1Rejected/extra-field",
+      "TestProxyV1Rejected/family",
+      "TestProxyV1Rejected/leading-zero-address",
+      "TestProxyV1Rejected/leading-zero-port",
+      "TestProxyV1Rejected/magic",
+      "TestProxyV1Rejected/mapped-ipv6",
+      "TestProxyV1Rejected/missing",
+      "TestProxyV1Rejected/overflow-port",
+      "TestProxyV1Rejected/overlong",
+      "TestProxyV1Rejected/signed-port",
+      "TestProxyV1Rejected/source",
+      "TestProxyV1Rejected/tab",
+      "TestProxyV1Rejected/truncated",
+      "TestProxyV1Rejected/unknown",
+      "TestProxyV1Rejected/v2",
+      "TestProxyV1Rejected/wrong-destination",
+      "TestProxyV1Rejected/zero-port",
+      "TestProxyV1TCP/handoff",
+      "TestProxyV1TCP/timeout",
+      "TestReadyCheckerTCP/invalid-argument",
+      "TestReadyCheckerTCP/malformed",
+      "TestReadyCheckerTCP/missing-executable",
+      "TestReadyCheckerTCP/refused",
+      "TestReadyCheckerTCP/silent",
+      "TestReadyCheckerTCP/transitions",
+      "TestReadyProbe/body",
+      "TestReadyProbe/dial-failure",
+      "TestReadyProbe/keepalive",
+      "TestReadyProbe/malformed",
+      "TestReadyProbe/missing-no-store",
+      "TestReadyProbe/oversized",
+      "TestReadyProbe/ready",
+      "TestReadyProbe/redirect",
+      "TestReadyProbe/silent-timeout",
+      "TestReadyProbe/unavailable",
+      "TestReadyProbe/validation",
+      "TestRequestInterruption/benign-get",
+      "TestRequestInterruption/benign-post",
+      "TestRequestInterruption/body-denied",
+      "TestRequestInterruption/body-limit",
+      "TestRequestInterruption/detection-body",
+      "TestRequestInterruption/detection-uri",
+      "TestRequestInterruption/uri-denied"
+    ],
+    "case_count": 163,
+    "crs_corpus": [
+      {
+        "mode": "DetectionOnly",
+        "role": "cookie",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "cookie",
+        "kind": "script",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "cookie",
+        "kind": "sql",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "form",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "form",
+        "kind": "script",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "form",
+        "kind": "sql",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "json",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "json",
+        "kind": "script",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "json",
+        "kind": "sql",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "query",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "query",
+        "kind": "script",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "query",
+        "kind": "sql",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "cookie",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "On",
+        "role": "cookie",
+        "kind": "script",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "cookie",
+        "kind": "sql",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "form",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "On",
+        "role": "form",
+        "kind": "script",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "form",
+        "kind": "sql",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "json",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "On",
+        "role": "json",
+        "kind": "script",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "json",
+        "kind": "sql",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "query",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "On",
+        "role": "query",
+        "kind": "script",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "query",
+        "kind": "sql",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      }
+    ],
+    "body_admission": [
+      {
+        "profile": "baseline",
+        "case": "declared-over",
+        "status": 200,
+        "backend": 1,
+        "read": 129,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "encoded-json",
+        "status": 403,
+        "backend": 0,
+        "read": 22,
+        "closed": 0,
+        "rules": [
+          920450,
+          949110
+        ],
+        "phases": [
+          1,
+          2
+        ]
+      },
+      {
+        "profile": "baseline",
+        "case": "exact-cap",
+        "status": 200,
+        "backend": 1,
+        "read": 128,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "form-benign",
+        "status": 200,
+        "backend": 1,
+        "read": 16,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "form-sql",
+        "status": 403,
+        "backend": 0,
+        "read": 22,
+        "closed": 0,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "profile": "baseline",
+        "case": "invalid-json",
+        "status": 400,
+        "backend": 0,
+        "read": 11,
+        "closed": 0,
+        "rules": [
+          200002
+        ],
+        "phases": [
+          2
+        ]
+      },
+      {
+        "profile": "baseline",
+        "case": "json-benign",
+        "status": 200,
+        "backend": 1,
+        "read": 22,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "json-script",
+        "status": 403,
+        "backend": 0,
+        "read": 39,
+        "closed": 0,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "profile": "baseline",
+        "case": "partial-read-error",
+        "status": 200,
+        "backend": 0,
+        "read": 16,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "read-error",
+        "status": 200,
+        "backend": 0,
+        "read": 0,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "text-media",
+        "status": 403,
+        "backend": 0,
+        "read": 8,
+        "closed": 0,
+        "rules": [
+          920420,
+          949110
+        ],
+        "phases": [
+          1,
+          2
+        ]
+      },
+      {
+        "profile": "baseline",
+        "case": "understated-over",
+        "status": 200,
+        "backend": 1,
+        "read": 129,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "unknown-over",
+        "status": 200,
+        "backend": 1,
+        "read": 129,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "declared-over",
+        "status": 413,
+        "backend": 0,
+        "read": 0,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "encoded-json",
+        "status": 415,
+        "backend": 0,
+        "read": 0,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "exact-cap",
+        "status": 200,
+        "backend": 1,
+        "read": 128,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "form-benign",
+        "status": 200,
+        "backend": 1,
+        "read": 16,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "form-sql",
+        "status": 403,
+        "backend": 0,
+        "read": 22,
+        "closed": 1,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "profile": "gated",
+        "case": "invalid-json",
+        "status": 400,
+        "backend": 0,
+        "read": 11,
+        "closed": 1,
+        "rules": [
+          200002
+        ],
+        "phases": [
+          2
+        ]
+      },
+      {
+        "profile": "gated",
+        "case": "json-benign",
+        "status": 200,
+        "backend": 1,
+        "read": 22,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "json-script",
+        "status": 403,
+        "backend": 0,
+        "read": 39,
+        "closed": 1,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "profile": "gated",
+        "case": "partial-read-error",
+        "status": 500,
+        "backend": 0,
+        "read": 16,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "read-error",
+        "status": 500,
+        "backend": 0,
+        "read": 0,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "text-media",
+        "status": 415,
+        "backend": 0,
+        "read": 0,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "understated-over",
+        "status": 413,
+        "backend": 0,
+        "read": 129,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "unknown-over",
+        "status": 413,
+        "backend": 0,
+        "read": 129,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      }
+    ],
+    "body_http": [
+      {
+        "case": "bad-chunk",
+        "status": 500,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "other",
+        "wire_read": 179,
+        "request_bytes": 179,
+        "request_sha256": "8cfd767a426d04573c5f16ee964774fa089426f55d1024d9db4776e87c485899",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "chunked-json",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 208,
+        "request_bytes": 208,
+        "request_sha256": "05c53f495ad3c49266af69e386a7f5c3a7106ff8727063070014a689f3956e32",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "chunked-over",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 129,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 315,
+        "request_bytes": 315,
+        "request_sha256": "37ea7ea67842f29a2b5a76629b7a575443ce930f6066d594307e190885770804",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "cl-te",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 229,
+        "request_bytes": 229,
+        "request_sha256": "3435e83820d5079e050d99980389050675664b16ee315a134b6c968bd4b978f2",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "conflicting-cl",
+        "status": 400,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 209,
+        "request_bytes": 209,
+        "request_sha256": "1a8afaa62149e6d3b21fd8384e323190385ad79b0a8cc1e1dc4fb1146b2b7be4",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "fixed-json",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "429f11968c483a0387d1be7973e1fdfe68c77f72a28b91b714d56306ec2dbf81",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "fixed-over",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 129,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "129"
+        ],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 297,
+        "request_bytes": 297,
+        "request_sha256": "cba84022cb80bf3adb60f06dcb8e069f498689e225d53a95743c21e7c8b8f44e",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "form-sql",
+        "status": 403,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 206,
+        "request_bytes": 206,
+        "request_sha256": "3356d2c6ec6581d323d7ca2dc7399742c7bdcbc3768cbcb5dfb2b4f087a967d1",
+        "body_sha256": "",
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "identical-cl",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 209,
+        "request_bytes": 209,
+        "request_sha256": "78c9549155cd1964bb16a6a58d8ce8409a5dc0f72b3b55717a3b53ccdb44ec35",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "invalid-json",
+        "status": 400,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 11,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "11"
+        ],
+        "source_read": 11,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 178,
+        "request_bytes": 178,
+        "request_sha256": "519c5504cc2876f400e524b915f0af9a9ddbab916eebfc5ead2cbf1e74e41f5b",
+        "body_sha256": "",
+        "rules": [
+          200002
+        ],
+        "phases": [
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "json-script",
+        "status": 403,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 39,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "39"
+        ],
+        "source_read": 39,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 206,
+        "request_bytes": 206,
+        "request_sha256": "d60d5141cd485e656b32bf48ee12c4c80813d74df08ad57ec1aadbc8858fe378",
+        "body_sha256": "",
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "short-fixed",
+        "status": 500,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 23,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "23"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "dffda0e804a777077b5d11e0f052ee95cfcd519adff7aae40695cd485d550d3a",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "stalled-chunked",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 129,
+        "source_closed": 1,
+        "source_close_error": "timeout",
+        "wire_read": 308,
+        "request_bytes": 308,
+        "request_sha256": "480efaa6696f53364e10aab16e88f3f4a972f87b3b685a93d7941c1886945ea5",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "text-media",
+        "status": 415,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 8,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "8"
+        ],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 168,
+        "request_bytes": 168,
+        "request_sha256": "810eb570a76d716d526bda05f5870a5bd214fc93e29904b05d267cddb2fec108",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "unsupported-te",
+        "status": 501,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 194,
+        "request_bytes": 194,
+        "request_sha256": "7ae1af7461a4cbd552d73e036e98226189e22157c9b0298f491c47bcf03a0206",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      }
+    ],
+    "log_sha256": "25f6c17248216f248c2f8039c2f41af5e6bbaf283402b1b7263e7c8c5504c888"
+  },
+  "checker": {
+    "sha256": "52932419021d857d0eda4e818e11a564d29cb617c75b1a1937f7fb076ffb8dd9",
+    "installed_verified": true,
+    "host_cross_built": false,
+    "native_built": true
+  },
+  "relayd_body": {
+    "log_sha256": "977d203e955fe5af728acbae3fc4e73cb67dc3e5a5af5ad5a29e5f5775f19466",
+    "exit_code": 0,
+    "admitted": false,
+    "admission_error": "uninspected/bad body forwarded"
+  },
+  "error": "relayd body comparison failed; partial receipts retained",
+  "teardown": {
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 1800,
+    "escalated": false,
+    "teardown_verified": true
+  },
+  "baseline_unchanged": true,
+  "source_unchanged": true,
+  "finished": "2026-10-14T02:43:23.871105+00:00",
+  "runtime_inputs": {
+    ".go-version": "6c075150045fda9bac31bb93cf5a0a0bc91622a75c1f10fb2971e6f994c6d4d6",
+    "Makefile": "3e1f0664bbfe5f72047229847998c9ec80353f27d0873414350364d73d70b42e",
+    "research/coraza/body_admission_test.go": "00b4eb8aa88410b44461ce3674b31d8da3a47f2f2d05f17a98a19372357daeb3",
+    "research/coraza/body_http_test.go": "11d8e148626f41e1865e9ad7c419b5e828cd8ed84389211c6cc509fd85632fa4",
+    "research/coraza/cmd/readycheck/main.go": "e25613e6467ffefbbcddb175ccfac9e11986bce886c0f15c6f7222321f0616ee",
+    "research/coraza/cmd/readycheck/main_test.go": "63c70f71d2c40d76b82c1e91083f13df23d97cd096e712058dce459a84aaf193",
+    "research/coraza/cmd/signalobserve/main.go": "4f999b8c21610eef67def912862f75a70a39edb9b5349d9e1b3c9612beeec282",
+    "research/coraza/cmd/signalobserve/main_test.go": "d6201d7afe5e1453f544bb6a2983c541d31ed0aa8fbcd2ea7706817a634f84fd",
+    "research/coraza/crs-inputs.json": "975858efd9111265a53ce3c9c6db0ca6af63ff3ded181cb8f13c1d72d3383c7d",
+    "research/coraza/crs_corpus_test.go": "08652515a34cc27f834cfead1c4c674c03d9b2cddad7745c50740708fa66c4c0",
+    "research/coraza/crs_test.go": "33df0a96989f7229d7f9868a5aeac81afdf003a96407e0e793ce1976e6a9f618",
+    "research/coraza/engine_test.go": "0b204ff60105de40dbb09f8b1b8a45fbf4ba102f7c74c0e476862a2a1e24feb6",
+    "research/coraza/go.mod": "ac86dd4ae5a1da1f3ef495b1c46294639a60c5c83664c9d9f64a9ca74b7c4e97",
+    "research/coraza/go.sum": "c25d17e3767e6be54a77544315504ebca194d7a2d99a042add630e51df9e3def",
+    "research/coraza/internal/readyprobe/probe.go": "596335c9103807c31c705b8f51b89cf9829216f203c6be3e5d99326c9f9aaf1f",
+    "research/coraza/proxy_conn.go": "f6358938b51d25879b2528fc8d6b7ea4d22dabe82a383f1c012df3f5742a1138",
+    "research/coraza/proxy_conn_test.go": "d57665e541a0ac6a62210922e96e0766c3b0b8b69cdaf9275352d8cf36021a8b",
+    "research/coraza/proxy_listener.go": "97a2c04f84f6d2d02b4463e1c6b65a2391d1b0468a61289e7bfe683e4e8cfcff",
+    "research/coraza/proxy_listener_test.go": "b57e7b536ec7b25a51b1bf121e8bad4e77915ab7a16bdbfb215704a90087ed17",
+    "research/coraza/proxy_ready.go": "184f3a1403092a58163546454a5f9e00adbbb79e4ca0fc5ea0960541560df794",
+    "research/coraza/proxy_ready_test.go": "08ce691aaef39b144491cd9aff88a66ac65ebd89435e7cfd14004d341853bf26",
+    "research/coraza/proxy_v1.go": "6c9b1f559a1d2e1131dcb7e4bcc092e39180f799ac3914e93c2683698041e5ab",
+    "research/coraza/proxy_v1_test.go": "0d6bec3257f816709551928d8c9387178b7ff68667cdfe66d0dd2aa1fba151aa",
+    "research/coraza/ready_checker_tcp_test.go": "297eaf82050beef246d3cc9132c9f7ece2555e1396e6736f618928886144e1bf",
+    "research/coraza/ready_probe.go": "b38fa3c5656831902d1d04794852690a2efe4ecf6a9557d6dfa0dd99f0cfc21d",
+    "research/coraza/ready_probe_test.go": "e1496459992b38b84c06d120a73e546bd1a7223c4df3c0b92a51829360cd76b7",
+    "research/coraza/relayd_body_test.go": "86c5f2a95928dc73e3a5850dcd6fecedf3e23c52c54c307b464894c5bf85275f",
+    "research/coraza/relayd_test.go": "75d41267f6ffd3d52bdc788d118014c056948a2ef9326dba9980e9b2d536fa9d",
+    "research/coraza/wiring_control_host_test.go": "dd3483eb2c41f074ceb3fc4d5dfc157ba2b92b6247e35b3562cfb4e7d643fcec",
+    "research/coraza/wiring_control_test.go": "749294080b3fc50a6ca7e520ef15032e5c77ba0d6833404a00b5dd7d4f3c67bb",
+    "research/coraza/wiring_fault_host_test.go": "36e4af25d52fca4f19bed31ab361b2db5d233111f5a7074a754c15a7f183e17c",
+    "research/coraza/wiring_fixture_test.go": "126ef16020a5096b9a77c8a37716fb9beb6fc639397eb15e6dab4dc7da1d736a",
+    "research/coraza/wiring_generation_host_test.go": "7a779df0bcc94150776b6a676ef4c5cf38cc317c673258ec30b8a39d998217f1",
+    "research/coraza/wiring_host_test.go": "55044772c63d492c369b78d1b2f54ccbb0c5161606a31f63a1eb39811805de47",
+    "research/native/image-pin.json": "8b3c0b1961712f01f2fbc11532da3d4576845fffddc24856782a850da81d6f8b",
+    "research/relayd/body-comparison.conf": "05e6deee91c91b1eb08463866cd2b83f28fc24c344312be2a0ebedcdc7a5e98f",
+    "research/relayd/checker-contract-source.json": "7f80a922d9ea14fbdc90f055db3d33ed47175b012a81764b140b730cb4c13395",
+    "research/relayd/checker-contract.conf": "bb9a5a9594c2f15e7bbe02cb6b15c1a39e9ddfaa1ddc9424f8976cf63453a07e",
+    "research/relayd/checker-exit2.sh": "94b42d8723bcb52133789831e6817356f06f69f2c4ed0baa04fbb1daebb4450b",
+    "research/relayd/ingress.conf": "d4ad8dedfb9dfcce07c09f32e8fc4e8f2ca474916d1d031cdbe71ac67a7a2174",
+    "research/relayd/readiness-wiring.conf": "4a50dfecaa497c87920d20660378190e7ad9b5296cc99af9c96899d6518c92ae",
+    "research/relayd/signal-comparison.conf": "9f50c90688ca6c4964b7ea9979c9f04d428054f07d4d70b420ce2243357ef769",
+    "research/relayd/traffic.conf": "96cc8c642be2b16148c6b0cc35e8c9020c453e493edab3e0f0773064be2feab0",
+    "tools/bootstrap-research.py": "01d65124fe4af8fe06d2b7ef67c81e69ae12271c60311770c94f810488e0f780",
+    "tools/lab-supervisor.py": "db15797036a830eb2c9a59c6b8a5e64990c69dfcef0edfca7e4cac50b17943a2",
+    "tools/native-build.py": "eacc765c53674f3c8d3bb412e7a3cd835e82f751e7783d65d1194e4f3104e18c",
+    "tools/native-engine.py": "2d52225569ee2ea946a2e6e960dda236961e113c6522a1db1ea45a2a619afc14",
+    "tools/native-image.py": "4e286adac78b34e3172736f8cc78e64d2c7cae456d03426243a5378b8f953290",
+    "tools/native/engine-repeat.sh": "cb081c021c953e4b1914c4ef3507dd3a89319c4f6e19cf9f3c5b3476fadb387e",
+    "tools/native/patch-openbsd.sh": "eae9d586161ed5f30c6d179ff55884b5a47ddad7c3b5a7a4637345219e8190e7",
+    "tools/native/relayd-body.sh": "c533419ac5818428d309ead08c58e6589a3ee2237ce70632ad7be26b5d5f8e73",
+    "tools/native/relayd-checker-contract.sh": "8998f9bd2780dfbd015736ddcb46d1a17521f78116d83682e5a06f37bc75f2da",
+    "tools/native/relayd-checker-replacement.sh": "93b337e88154a04a0b738c332a5a6c4f44bca2f4e093961de868f23fe7d97d4d",
+    "tools/native/relayd-config.sh": "cb859310476cfb56f33ca4e66d198034936f0f9f856b6f5d879abb5d489f81a4",
+    "tools/native/relayd-generations.sh": "4571073828ce31d85da5fe6fab1a0821fb28ac210fe79a10990bdf40bd07d541",
+    "tools/native/relayd-health-faults.sh": "3b0f04630ed1acfde0dd3972c8d3cab6fe96d938856afeafc7684bfafb41c017",
+    "tools/native/relayd-signals.sh": "8bebb3984e202ff1f90d06a68ac6f7c7d24153055bece4ab6e12a125fa237838",
+    "tools/native/relayd-traffic.sh": "d85ccd13fa9da6a58622acaff5851c43de45d5cbb793024fe1fe0435810aeb55",
+    "tools/native/relayd-wiring.sh": "6acf0c8127ce09147fde024b0a8312495d5ae7420d4190a723fd664ac7584275",
+    "tools/native/source-build.sh": "ab1f28de57f4f0330fb10cbbb2d1fe971d523cbf4c34b303ce8b2aafb39671d0",
+    "tools/openbsd-patches.json": "0cf5b352ea5d50d91d106abd42e65b8dac105b6c72fca3c83bfd1706bc891771",
+    "tools/openbsd-patches.py": "a7afe69f68a9ff7a80fe1f0c9a7dbf99ea594f535f68e79e848e706ba797fe6c",
+    "tools/relayd-body.py": "9961e65c822efd20ae82756cf65ac56c6e235f8f3d5a31276cc25cef3901d6d6",
+    "tools/relayd-signals.py": "31f26c4a2580269ef56b999fa4b6390897b1fbb38c41ca1599489d138315cc75",
+    "tools/relayd-wiring.py": "5b1985a9797aac10676ec004b5707865b8933abecab25e8f1c581c7fe766949b",
+    "tools/research-pins.json": "7383179c02c51b05fc29776bfe538c1ee1f6438aa5b35065d1a44a3b06f02efe",
+    "tools/run-research-go.sh": "06d4587549d98741339751f7360dd9a1a4402a253cd280eee221d3c8f382094a",
+    "tools/tests/test_native_build.py": "454a28e1f1db35d7feeaf856bf3eb91bad3badd67b290a682815967766102ea4",
+    "tools/tests/test_native_engine.py": "a4bb1217dd9ea85a941d2709fbf8dc937de8ad77f701f65f1e19d1f6bf5513de",
+    "tools/tests/test_relayd_body.py": "0224c6f5d2e5452360fc7fb93e14ccd1ec4e35a80475668f0d34af9488df84b8",
+    "tools/tests/test_relayd_contract.py": "e50de20927500ecd6bda03daa9cea9b6ac0483e3d620f1849c2a5e353d2e1200",
+    "tools/tests/test_relayd_signals.py": "c17e5d96b2d658f2cc288911dc5b7592cf5d2a1a469d5f8689bb17424539a81b",
+    "tools/tests/test_relayd_wiring.py": "bfb500d697f378ab61356e5871d7eae2d1a9e3e1675ffc22cb08aa86c8c3d6dc"
+  },
+  "host_cross_build_control_sha256": "f49fa37b75664a9d6321d6002ae277eade68237fc73053991aaa6df22d037d38",
+  "run_id": "6a457e3e-ca5d-40ac-bc22-cd1c7b453ea3",
+  "raw_report_sha256": "715dc00c9e2215c8a5f478690d1513603ff4dedcac29a4c2270e10064e827f25",
+  "unadmitted_connected_observations": {
+    "case_count": 66,
+    "rows": [
+      {
+        "case": "direct/bad-chunk",
+        "status": 500,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "other",
+        "wire_read": 179,
+        "request_bytes": 179,
+        "request_sha256": "8cfd767a426d04573c5f16ee964774fa089426f55d1024d9db4776e87c485899",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/chunked-json",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 208,
+        "request_bytes": 208,
+        "request_sha256": "05c53f495ad3c49266af69e386a7f5c3a7106ff8727063070014a689f3956e32",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/chunked-json-halfclose",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 208,
+        "request_bytes": 208,
+        "request_sha256": "05c53f495ad3c49266af69e386a7f5c3a7106ff8727063070014a689f3956e32",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/chunked-over",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 129,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 315,
+        "request_bytes": 315,
+        "request_sha256": "37ea7ea67842f29a2b5a76629b7a575443ce930f6066d594307e190885770804",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/chunked-over-halfclose",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 129,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 315,
+        "request_bytes": 315,
+        "request_sha256": "37ea7ea67842f29a2b5a76629b7a575443ce930f6066d594307e190885770804",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/cl-te",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 229,
+        "request_bytes": 229,
+        "request_sha256": "3435e83820d5079e050d99980389050675664b16ee315a134b6c968bd4b978f2",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/conflicting-cl",
+        "status": 400,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 209,
+        "request_bytes": 209,
+        "request_sha256": "1a8afaa62149e6d3b21fd8384e323190385ad79b0a8cc1e1dc4fb1146b2b7be4",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/conflicting-cl-halfclose",
+        "status": 400,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 209,
+        "request_bytes": 209,
+        "request_sha256": "1a8afaa62149e6d3b21fd8384e323190385ad79b0a8cc1e1dc4fb1146b2b7be4",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/fixed-json",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "429f11968c483a0387d1be7973e1fdfe68c77f72a28b91b714d56306ec2dbf81",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/fixed-json-halfclose",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "429f11968c483a0387d1be7973e1fdfe68c77f72a28b91b714d56306ec2dbf81",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/fixed-over",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 129,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "129"
+        ],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 297,
+        "request_bytes": 297,
+        "request_sha256": "cba84022cb80bf3adb60f06dcb8e069f498689e225d53a95743c21e7c8b8f44e",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/fixed-over-halfclose",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 129,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "129"
+        ],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 297,
+        "request_bytes": 297,
+        "request_sha256": "cba84022cb80bf3adb60f06dcb8e069f498689e225d53a95743c21e7c8b8f44e",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/form-sql",
+        "status": 403,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 206,
+        "request_bytes": 206,
+        "request_sha256": "3356d2c6ec6581d323d7ca2dc7399742c7bdcbc3768cbcb5dfb2b4f087a967d1",
+        "body_sha256": "",
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/identical-cl",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 209,
+        "request_bytes": 209,
+        "request_sha256": "78c9549155cd1964bb16a6a58d8ce8409a5dc0f72b3b55717a3b53ccdb44ec35",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/invalid-json",
+        "status": 400,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 11,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "11"
+        ],
+        "source_read": 11,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 178,
+        "request_bytes": 178,
+        "request_sha256": "519c5504cc2876f400e524b915f0af9a9ddbab916eebfc5ead2cbf1e74e41f5b",
+        "body_sha256": "",
+        "rules": [
+          200002
+        ],
+        "phases": [
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/json-script",
+        "status": 403,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 39,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "39"
+        ],
+        "source_read": 39,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 206,
+        "request_bytes": 206,
+        "request_sha256": "d60d5141cd485e656b32bf48ee12c4c80813d74df08ad57ec1aadbc8858fe378",
+        "body_sha256": "",
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/json-script-halfclose",
+        "status": 403,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 39,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "39"
+        ],
+        "source_read": 39,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 206,
+        "request_bytes": 206,
+        "request_sha256": "d60d5141cd485e656b32bf48ee12c4c80813d74df08ad57ec1aadbc8858fe378",
+        "body_sha256": "",
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/short-fixed",
+        "status": 500,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 23,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "23"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "dffda0e804a777077b5d11e0f052ee95cfcd519adff7aae40695cd485d550d3a",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/short-open",
+        "status": 500,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 23,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "23"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "dffda0e804a777077b5d11e0f052ee95cfcd519adff7aae40695cd485d550d3a",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/stalled-chunked",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 129,
+        "source_closed": 1,
+        "source_close_error": "timeout",
+        "wire_read": 308,
+        "request_bytes": 308,
+        "request_sha256": "480efaa6696f53364e10aab16e88f3f4a972f87b3b685a93d7941c1886945ea5",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/text-media",
+        "status": 415,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 8,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "8"
+        ],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 168,
+        "request_bytes": 168,
+        "request_sha256": "810eb570a76d716d526bda05f5870a5bd214fc93e29904b05d267cddb2fec108",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "direct/unsupported-te",
+        "status": 501,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 194,
+        "request_bytes": 194,
+        "request_sha256": "7ae1af7461a4cbd552d73e036e98226189e22157c9b0298f491c47bcf03a0206",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/bad-chunk",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 0,
+        "request_bytes": 179,
+        "request_sha256": "8cfd767a426d04573c5f16ee964774fa089426f55d1024d9db4776e87c485899",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/chunked-json",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 208,
+        "request_bytes": 208,
+        "request_sha256": "05c53f495ad3c49266af69e386a7f5c3a7106ff8727063070014a689f3956e32",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/chunked-json-halfclose",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 0,
+        "request_bytes": 208,
+        "request_sha256": "05c53f495ad3c49266af69e386a7f5c3a7106ff8727063070014a689f3956e32",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/chunked-over",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 129,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 315,
+        "request_bytes": 315,
+        "request_sha256": "37ea7ea67842f29a2b5a76629b7a575443ce930f6066d594307e190885770804",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/chunked-over-halfclose",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 0,
+        "request_bytes": 315,
+        "request_sha256": "37ea7ea67842f29a2b5a76629b7a575443ce930f6066d594307e190885770804",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/cl-te",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 229,
+        "request_bytes": 229,
+        "request_sha256": "3435e83820d5079e050d99980389050675664b16ee315a134b6c968bd4b978f2",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/conflicting-cl",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 0,
+        "request_bytes": 209,
+        "request_sha256": "1a8afaa62149e6d3b21fd8384e323190385ad79b0a8cc1e1dc4fb1146b2b7be4",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/conflicting-cl-halfclose",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 0,
+        "request_bytes": 209,
+        "request_sha256": "1a8afaa62149e6d3b21fd8384e323190385ad79b0a8cc1e1dc4fb1146b2b7be4",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/fixed-json",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "429f11968c483a0387d1be7973e1fdfe68c77f72a28b91b714d56306ec2dbf81",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/fixed-json-halfclose",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 0,
+        "request_bytes": 189,
+        "request_sha256": "429f11968c483a0387d1be7973e1fdfe68c77f72a28b91b714d56306ec2dbf81",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/fixed-over",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 129,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "129"
+        ],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 297,
+        "request_bytes": 297,
+        "request_sha256": "cba84022cb80bf3adb60f06dcb8e069f498689e225d53a95743c21e7c8b8f44e",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/fixed-over-halfclose",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 0,
+        "request_bytes": 297,
+        "request_sha256": "cba84022cb80bf3adb60f06dcb8e069f498689e225d53a95743c21e7c8b8f44e",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/form-sql",
+        "status": 403,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 206,
+        "request_bytes": 206,
+        "request_sha256": "3356d2c6ec6581d323d7ca2dc7399742c7bdcbc3768cbcb5dfb2b4f087a967d1",
+        "body_sha256": "",
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/identical-cl",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 209,
+        "request_bytes": 209,
+        "request_sha256": "78c9549155cd1964bb16a6a58d8ce8409a5dc0f72b3b55717a3b53ccdb44ec35",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/invalid-json",
+        "status": 400,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 11,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "11"
+        ],
+        "source_read": 11,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 178,
+        "request_bytes": 178,
+        "request_sha256": "519c5504cc2876f400e524b915f0af9a9ddbab916eebfc5ead2cbf1e74e41f5b",
+        "body_sha256": "",
+        "rules": [
+          200002
+        ],
+        "phases": [
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/json-script",
+        "status": 403,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 39,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "39"
+        ],
+        "source_read": 39,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 206,
+        "request_bytes": 206,
+        "request_sha256": "d60d5141cd485e656b32bf48ee12c4c80813d74df08ad57ec1aadbc8858fe378",
+        "body_sha256": "",
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/json-script-halfclose",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 0,
+        "request_bytes": 206,
+        "request_sha256": "d60d5141cd485e656b32bf48ee12c4c80813d74df08ad57ec1aadbc8858fe378",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/short-fixed",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 0,
+        "request_bytes": 189,
+        "request_sha256": "dffda0e804a777077b5d11e0f052ee95cfcd519adff7aae40695cd485d550d3a",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/short-open",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 0,
+        "request_bytes": 189,
+        "request_sha256": "dffda0e804a777077b5d11e0f052ee95cfcd519adff7aae40695cd485d550d3a",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/stalled-chunked",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 129,
+        "source_closed": 1,
+        "source_close_error": "timeout",
+        "wire_read": 308,
+        "request_bytes": 308,
+        "request_sha256": "480efaa6696f53364e10aab16e88f3f4a972f87b3b685a93d7941c1886945ea5",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/text-media",
+        "status": 415,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 8,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "8"
+        ],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 168,
+        "request_bytes": 168,
+        "request_sha256": "810eb570a76d716d526bda05f5870a5bd214fc93e29904b05d267cddb2fec108",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "http/unsupported-te",
+        "status": 400,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 0,
+        "request_bytes": 194,
+        "request_sha256": "7ae1af7461a4cbd552d73e036e98226189e22157c9b0298f491c47bcf03a0206",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/bad-chunk",
+        "status": 500,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "other",
+        "wire_read": 179,
+        "request_bytes": 179,
+        "request_sha256": "8cfd767a426d04573c5f16ee964774fa089426f55d1024d9db4776e87c485899",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/chunked-json",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 208,
+        "request_bytes": 208,
+        "request_sha256": "05c53f495ad3c49266af69e386a7f5c3a7106ff8727063070014a689f3956e32",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/chunked-json-halfclose",
+        "status": 0,
+        "handler": 1,
+        "backend": 1,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 208,
+        "request_bytes": 208,
+        "request_sha256": "05c53f495ad3c49266af69e386a7f5c3a7106ff8727063070014a689f3956e32",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/chunked-over",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 129,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 315,
+        "request_bytes": 315,
+        "request_sha256": "37ea7ea67842f29a2b5a76629b7a575443ce930f6066d594307e190885770804",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/chunked-over-halfclose",
+        "status": 0,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 129,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 315,
+        "request_bytes": 315,
+        "request_sha256": "37ea7ea67842f29a2b5a76629b7a575443ce930f6066d594307e190885770804",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/cl-te",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 229,
+        "request_bytes": 229,
+        "request_sha256": "3435e83820d5079e050d99980389050675664b16ee315a134b6c968bd4b978f2",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/conflicting-cl",
+        "status": 400,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 209,
+        "request_bytes": 209,
+        "request_sha256": "1a8afaa62149e6d3b21fd8384e323190385ad79b0a8cc1e1dc4fb1146b2b7be4",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/conflicting-cl-halfclose",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 209,
+        "request_bytes": 209,
+        "request_sha256": "1a8afaa62149e6d3b21fd8384e323190385ad79b0a8cc1e1dc4fb1146b2b7be4",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/fixed-json",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "429f11968c483a0387d1be7973e1fdfe68c77f72a28b91b714d56306ec2dbf81",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/fixed-json-halfclose",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "429f11968c483a0387d1be7973e1fdfe68c77f72a28b91b714d56306ec2dbf81",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/fixed-over",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 129,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "129"
+        ],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 297,
+        "request_bytes": 297,
+        "request_sha256": "cba84022cb80bf3adb60f06dcb8e069f498689e225d53a95743c21e7c8b8f44e",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/fixed-over-halfclose",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 297,
+        "request_bytes": 297,
+        "request_sha256": "cba84022cb80bf3adb60f06dcb8e069f498689e225d53a95743c21e7c8b8f44e",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/form-sql",
+        "status": 403,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 206,
+        "request_bytes": 206,
+        "request_sha256": "3356d2c6ec6581d323d7ca2dc7399742c7bdcbc3768cbcb5dfb2b4f087a967d1",
+        "body_sha256": "",
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/identical-cl",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 209,
+        "request_bytes": 209,
+        "request_sha256": "78c9549155cd1964bb16a6a58d8ce8409a5dc0f72b3b55717a3b53ccdb44ec35",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/invalid-json",
+        "status": 400,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 11,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "11"
+        ],
+        "source_read": 11,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 178,
+        "request_bytes": 178,
+        "request_sha256": "519c5504cc2876f400e524b915f0af9a9ddbab916eebfc5ead2cbf1e74e41f5b",
+        "body_sha256": "",
+        "rules": [
+          200002
+        ],
+        "phases": [
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/json-script",
+        "status": 403,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 39,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "39"
+        ],
+        "source_read": 39,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 206,
+        "request_bytes": 206,
+        "request_sha256": "d60d5141cd485e656b32bf48ee12c4c80813d74df08ad57ec1aadbc8858fe378",
+        "body_sha256": "",
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/json-script-halfclose",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 206,
+        "request_bytes": 206,
+        "request_sha256": "d60d5141cd485e656b32bf48ee12c4c80813d74df08ad57ec1aadbc8858fe378",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/short-fixed",
+        "status": 0,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "dffda0e804a777077b5d11e0f052ee95cfcd519adff7aae40695cd485d550d3a",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/short-open",
+        "status": 500,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 23,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "23"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "dffda0e804a777077b5d11e0f052ee95cfcd519adff7aae40695cd485d550d3a",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/stalled-chunked",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 129,
+        "source_closed": 1,
+        "source_close_error": "timeout",
+        "wire_read": 308,
+        "request_bytes": 308,
+        "request_sha256": "480efaa6696f53364e10aab16e88f3f4a972f87b3b685a93d7941c1886945ea5",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/text-media",
+        "status": 415,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 8,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "8"
+        ],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 168,
+        "request_bytes": 168,
+        "request_sha256": "810eb570a76d716d526bda05f5870a5bd214fc93e29904b05d267cddb2fec108",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "tcp/unsupported-te",
+        "status": 501,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 194,
+        "request_bytes": 194,
+        "request_sha256": "7ae1af7461a4cbd552d73e036e98226189e22157c9b0298f491c47bcf03a0206",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      }
+    ],
+    "response_errors": {
+      "direct/fixed-json": "none",
+      "direct/json-script": "none",
+      "direct/form-sql": "none",
+      "direct/fixed-over": "none",
+      "direct/chunked-json": "none",
+      "direct/chunked-over": "none",
+      "direct/short-fixed": "none",
+      "direct/bad-chunk": "none",
+      "direct/invalid-json": "none",
+      "direct/text-media": "none",
+      "direct/conflicting-cl": "none",
+      "direct/identical-cl": "none",
+      "direct/cl-te": "none",
+      "direct/unsupported-te": "none",
+      "direct/stalled-chunked": "none",
+      "direct/fixed-json-halfclose": "none",
+      "direct/chunked-json-halfclose": "none",
+      "direct/json-script-halfclose": "none",
+      "direct/fixed-over-halfclose": "none",
+      "direct/chunked-over-halfclose": "none",
+      "direct/conflicting-cl-halfclose": "none",
+      "direct/short-open": "none",
+      "http/fixed-json": "none",
+      "http/json-script": "none",
+      "http/form-sql": "none",
+      "http/fixed-over": "none",
+      "http/chunked-json": "none",
+      "http/chunked-over": "none",
+      "http/short-fixed": "other",
+      "http/bad-chunk": "other",
+      "http/invalid-json": "none",
+      "http/text-media": "none",
+      "http/conflicting-cl": "timeout",
+      "http/identical-cl": "none",
+      "http/cl-te": "none",
+      "http/unsupported-te": "none",
+      "http/stalled-chunked": "none",
+      "http/fixed-json-halfclose": "other",
+      "http/chunked-json-halfclose": "other",
+      "http/json-script-halfclose": "other",
+      "http/fixed-over-halfclose": "other",
+      "http/chunked-over-halfclose": "other",
+      "http/conflicting-cl-halfclose": "other",
+      "http/short-open": "timeout",
+      "tcp/fixed-json": "none",
+      "tcp/json-script": "none",
+      "tcp/form-sql": "none",
+      "tcp/fixed-over": "none",
+      "tcp/chunked-json": "none",
+      "tcp/chunked-over": "none",
+      "tcp/short-fixed": "other",
+      "tcp/bad-chunk": "none",
+      "tcp/invalid-json": "none",
+      "tcp/text-media": "none",
+      "tcp/conflicting-cl": "none",
+      "tcp/identical-cl": "none",
+      "tcp/cl-te": "none",
+      "tcp/unsupported-te": "none",
+      "tcp/stalled-chunked": "none",
+      "tcp/fixed-json-halfclose": "other",
+      "tcp/chunked-json-halfclose": "other",
+      "tcp/json-script-halfclose": "other",
+      "tcp/fixed-over-halfclose": "other",
+      "tcp/chunked-over-halfclose": "other",
+      "tcp/conflicting-cl-halfclose": "other",
+      "tcp/short-open": "none"
+    },
+    "lifecycle": {
+      "direct/fixed-json": {
+        "case": "direct/fixed-json",
+        "write_shutdown": false,
+        "bytes_sent": 189
+      },
+      "direct/json-script": {
+        "case": "direct/json-script",
+        "write_shutdown": false,
+        "bytes_sent": 206
+      },
+      "direct/form-sql": {
+        "case": "direct/form-sql",
+        "write_shutdown": false,
+        "bytes_sent": 206
+      },
+      "direct/fixed-over": {
+        "case": "direct/fixed-over",
+        "write_shutdown": false,
+        "bytes_sent": 297
+      },
+      "direct/chunked-json": {
+        "case": "direct/chunked-json",
+        "write_shutdown": false,
+        "bytes_sent": 208
+      },
+      "direct/chunked-over": {
+        "case": "direct/chunked-over",
+        "write_shutdown": false,
+        "bytes_sent": 315
+      },
+      "direct/short-fixed": {
+        "case": "direct/short-fixed",
+        "write_shutdown": true,
+        "bytes_sent": 189
+      },
+      "direct/bad-chunk": {
+        "case": "direct/bad-chunk",
+        "write_shutdown": false,
+        "bytes_sent": 179
+      },
+      "direct/invalid-json": {
+        "case": "direct/invalid-json",
+        "write_shutdown": false,
+        "bytes_sent": 178
+      },
+      "direct/text-media": {
+        "case": "direct/text-media",
+        "write_shutdown": false,
+        "bytes_sent": 168
+      },
+      "direct/conflicting-cl": {
+        "case": "direct/conflicting-cl",
+        "write_shutdown": false,
+        "bytes_sent": 209
+      },
+      "direct/identical-cl": {
+        "case": "direct/identical-cl",
+        "write_shutdown": false,
+        "bytes_sent": 209
+      },
+      "direct/cl-te": {
+        "case": "direct/cl-te",
+        "write_shutdown": false,
+        "bytes_sent": 229
+      },
+      "direct/unsupported-te": {
+        "case": "direct/unsupported-te",
+        "write_shutdown": false,
+        "bytes_sent": 194
+      },
+      "direct/stalled-chunked": {
+        "case": "direct/stalled-chunked",
+        "write_shutdown": false,
+        "bytes_sent": 308
+      },
+      "direct/fixed-json-halfclose": {
+        "case": "direct/fixed-json-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 189
+      },
+      "direct/chunked-json-halfclose": {
+        "case": "direct/chunked-json-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 208
+      },
+      "direct/json-script-halfclose": {
+        "case": "direct/json-script-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 206
+      },
+      "direct/fixed-over-halfclose": {
+        "case": "direct/fixed-over-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 297
+      },
+      "direct/chunked-over-halfclose": {
+        "case": "direct/chunked-over-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 315
+      },
+      "direct/conflicting-cl-halfclose": {
+        "case": "direct/conflicting-cl-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 209
+      },
+      "direct/short-open": {
+        "case": "direct/short-open",
+        "write_shutdown": false,
+        "bytes_sent": 189
+      },
+      "http/fixed-json": {
+        "case": "http/fixed-json",
+        "write_shutdown": false,
+        "bytes_sent": 189
+      },
+      "http/json-script": {
+        "case": "http/json-script",
+        "write_shutdown": false,
+        "bytes_sent": 206
+      },
+      "http/form-sql": {
+        "case": "http/form-sql",
+        "write_shutdown": false,
+        "bytes_sent": 206
+      },
+      "http/fixed-over": {
+        "case": "http/fixed-over",
+        "write_shutdown": false,
+        "bytes_sent": 297
+      },
+      "http/chunked-json": {
+        "case": "http/chunked-json",
+        "write_shutdown": false,
+        "bytes_sent": 208
+      },
+      "http/chunked-over": {
+        "case": "http/chunked-over",
+        "write_shutdown": false,
+        "bytes_sent": 315
+      },
+      "http/short-fixed": {
+        "case": "http/short-fixed",
+        "write_shutdown": true,
+        "bytes_sent": 189
+      },
+      "http/bad-chunk": {
+        "case": "http/bad-chunk",
+        "write_shutdown": false,
+        "bytes_sent": 179
+      },
+      "http/invalid-json": {
+        "case": "http/invalid-json",
+        "write_shutdown": false,
+        "bytes_sent": 178
+      },
+      "http/text-media": {
+        "case": "http/text-media",
+        "write_shutdown": false,
+        "bytes_sent": 168
+      },
+      "http/conflicting-cl": {
+        "case": "http/conflicting-cl",
+        "write_shutdown": false,
+        "bytes_sent": 209
+      },
+      "http/identical-cl": {
+        "case": "http/identical-cl",
+        "write_shutdown": false,
+        "bytes_sent": 209
+      },
+      "http/cl-te": {
+        "case": "http/cl-te",
+        "write_shutdown": false,
+        "bytes_sent": 229
+      },
+      "http/unsupported-te": {
+        "case": "http/unsupported-te",
+        "write_shutdown": false,
+        "bytes_sent": 194
+      },
+      "http/stalled-chunked": {
+        "case": "http/stalled-chunked",
+        "write_shutdown": false,
+        "bytes_sent": 308
+      },
+      "http/fixed-json-halfclose": {
+        "case": "http/fixed-json-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 189
+      },
+      "http/chunked-json-halfclose": {
+        "case": "http/chunked-json-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 208
+      },
+      "http/json-script-halfclose": {
+        "case": "http/json-script-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 206
+      },
+      "http/fixed-over-halfclose": {
+        "case": "http/fixed-over-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 297
+      },
+      "http/chunked-over-halfclose": {
+        "case": "http/chunked-over-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 315
+      },
+      "http/conflicting-cl-halfclose": {
+        "case": "http/conflicting-cl-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 209
+      },
+      "http/short-open": {
+        "case": "http/short-open",
+        "write_shutdown": false,
+        "bytes_sent": 189
+      },
+      "tcp/fixed-json": {
+        "case": "tcp/fixed-json",
+        "write_shutdown": false,
+        "bytes_sent": 189
+      },
+      "tcp/json-script": {
+        "case": "tcp/json-script",
+        "write_shutdown": false,
+        "bytes_sent": 206
+      },
+      "tcp/form-sql": {
+        "case": "tcp/form-sql",
+        "write_shutdown": false,
+        "bytes_sent": 206
+      },
+      "tcp/fixed-over": {
+        "case": "tcp/fixed-over",
+        "write_shutdown": false,
+        "bytes_sent": 297
+      },
+      "tcp/chunked-json": {
+        "case": "tcp/chunked-json",
+        "write_shutdown": false,
+        "bytes_sent": 208
+      },
+      "tcp/chunked-over": {
+        "case": "tcp/chunked-over",
+        "write_shutdown": false,
+        "bytes_sent": 315
+      },
+      "tcp/short-fixed": {
+        "case": "tcp/short-fixed",
+        "write_shutdown": true,
+        "bytes_sent": 189
+      },
+      "tcp/bad-chunk": {
+        "case": "tcp/bad-chunk",
+        "write_shutdown": false,
+        "bytes_sent": 179
+      },
+      "tcp/invalid-json": {
+        "case": "tcp/invalid-json",
+        "write_shutdown": false,
+        "bytes_sent": 178
+      },
+      "tcp/text-media": {
+        "case": "tcp/text-media",
+        "write_shutdown": false,
+        "bytes_sent": 168
+      },
+      "tcp/conflicting-cl": {
+        "case": "tcp/conflicting-cl",
+        "write_shutdown": false,
+        "bytes_sent": 209
+      },
+      "tcp/identical-cl": {
+        "case": "tcp/identical-cl",
+        "write_shutdown": false,
+        "bytes_sent": 209
+      },
+      "tcp/cl-te": {
+        "case": "tcp/cl-te",
+        "write_shutdown": false,
+        "bytes_sent": 229
+      },
+      "tcp/unsupported-te": {
+        "case": "tcp/unsupported-te",
+        "write_shutdown": false,
+        "bytes_sent": 194
+      },
+      "tcp/stalled-chunked": {
+        "case": "tcp/stalled-chunked",
+        "write_shutdown": false,
+        "bytes_sent": 308
+      },
+      "tcp/fixed-json-halfclose": {
+        "case": "tcp/fixed-json-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 189
+      },
+      "tcp/chunked-json-halfclose": {
+        "case": "tcp/chunked-json-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 208
+      },
+      "tcp/json-script-halfclose": {
+        "case": "tcp/json-script-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 206
+      },
+      "tcp/fixed-over-halfclose": {
+        "case": "tcp/fixed-over-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 297
+      },
+      "tcp/chunked-over-halfclose": {
+        "case": "tcp/chunked-over-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 315
+      },
+      "tcp/conflicting-cl-halfclose": {
+        "case": "tcp/conflicting-cl-halfclose",
+        "write_shutdown": true,
+        "bytes_sent": 209
+      },
+      "tcp/short-open": {
+        "case": "tcp/short-open",
+        "write_shutdown": false,
+        "bytes_sent": 189
+      }
+    },
+    "Go_exit_code": 0,
+    "strict_admission_passed": false
+  },
+  "failure_analysis": "Controller required status200 whenever a benign half-close case had an exact inspected backend receipt. New lifecycle design permits absent client responses independently of exact benign backend effects. Native build/163 ordinary/66 Go leaves and cleanup completed, but original controller admission remains failed.",
+  "scope": "Retained failed controller admission from a native-built lifecycle study; unadmitted connected observations are not a passing full qualification."
+}
