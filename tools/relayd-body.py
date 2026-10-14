@@ -64,7 +64,7 @@ def admit(text, binary, profile):
         if any(not 100000<=v<=999999 for v in row['rules']) or any(not 1<=v<=5 for v in row['phases']): raise ValueError('rule/phase range')
         if case in ('fixed-json','chunked-json') and (row['status'],row['backend'])!=(200,1): raise ValueError('benign forwarding missing')
         if row['backend']:
-            if case not in ('fixed-json','chunked-json','identical-cl','cl-te','fixed-json-halfclose','chunked-json-halfclose') or row['status']!=200 or row['body_sha256']!=body_hash: raise ValueError('uninspected/bad body forwarded')
+            if case not in ('fixed-json','chunked-json','identical-cl','cl-te','fixed-json-halfclose','chunked-json-halfclose') or (row['status']!=200 and not (case in ('fixed-json-halfclose','chunked-json-halfclose') and row['status']==0)) or row['body_sha256']!=body_hash: raise ValueError('uninspected/bad body forwarded')
         elif row['body_sha256'] or 200<=row['status']<300: raise ValueError('false rejection receipt')
         if case in ('json-script','json-script-halfclose','form-sql') and row['handler']:
             family=941 if case.startswith('json-script') else 942

@@ -50,3 +50,10 @@ class RelaydBodyTests(unittest.TestCase):
         for r in rows:
             if r['case'].endswith('/fixed-json-halfclose'):r['request_sha256']='0'*64
         with self.assertRaises(ValueError):BODY.admit(self.log(rows),'a'*64,'b'*64)
+
+    def test_halfclosed_benign_effects_are_independent_of_response(self):
+        rows=self.rows();row=next(r for r in rows if r['case']=='tcp/chunked-json-halfclose');row['status']=0
+        text=self.log(rows).replace('RELAYD-BODY-ERROR tcp/chunked-json-halfclose none','RELAYD-BODY-ERROR tcp/chunked-json-halfclose other')
+        self.assertTrue(BODY.admit(text,'a'*64,'b'*64)['admitted'])
+        row['body_sha256']='0'*64
+        with self.assertRaises(ValueError):BODY.admit(self.log(rows).replace('RELAYD-BODY-ERROR tcp/chunked-json-halfclose none','RELAYD-BODY-ERROR tcp/chunked-json-halfclose other'),'a'*64,'b'*64)
