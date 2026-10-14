@@ -10,13 +10,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"testing"
 	"time"
@@ -29,6 +32,7 @@ type labPathReceipt struct {
 	BodySHA      string `json:"body_sha256"`
 	HeadersClean bool   `json:"headers_clean"`
 	ClientError  bool   `json:"client_error"`
+	BackendHost  string `json:"backend_host"`
 }
 
 func TestLabCompanionPath(t *testing.T) {
@@ -42,6 +46,7 @@ func TestLabCompanionPath(t *testing.T) {
 	type receipt struct {
 		body  string
 		clean bool
+		host  string
 	}
 	var receipts []receipt
 	startBackend := func() (*http.Server, chan error) {
@@ -64,7 +69,7 @@ func TestLabCompanionPath(t *testing.T) {
 				clean = clean && r.Header.Get(k) == ""
 			}
 			mu.Lock()
-			receipts = append(receipts, receipt{string(data), clean})
+			receipts = append(receipts, receipt{string(data), clean, "app.test"})
 			mu.Unlock()
 			_, _ = io.WriteString(w, "lab backend\n")
 		})}
@@ -90,7 +95,112 @@ func TestLabCompanionPath(t *testing.T) {
 		}
 	}
 	defer stopBackend()
-	command := exec.Command("/var/aegvium-lab-proxy")
+	ca, validCert, wrongCert, untrustedCert := labTLSMaterial(t)
+	var certMode atomic.Int32
+	apiDone := make(chan error, 1)
+	apiListener, e := net.Listen("tcp4", "127.0.0.1:18087")
+	if e != nil {
+		t.Fatal(e)
+	}
+	apiServer := &http.Server{ReadHeaderTimeout: time.Second, ErrorLog: log.New(io.Discard, "", 0), TLSConfig: &tls.Config{MinVersion: tls.VersionTLS12, GetCertificate: func(*tls.ClientHelloInfo) (*tls.Certificate, error) {
+		switch certMode.Load() {
+		case 1:
+			return &wrongCert, nil
+		case 2:
+			return &untrustedCert, nil
+		}
+		return &validCert, nil
+	}}, Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		data, e := io.ReadAll(io.LimitReader(r.Body, LabBodyLimit+1))
+		if e != nil {
+			http.Error(w, "read failed", 500)
+			return
+		}
+		clean := r.Host == "api.test"
+		for _, k := range []string{"Forwarded", "X-Forwarded-For", "X-Real-IP", "X-Original-URL", "Proxy-Authorization"} {
+			clean = clean && r.Header.Get(k) == ""
+		}
+		mu.Lock()
+		receipts = append(receipts, receipt{string(data), clean, "api.test"})
+		mu.Unlock()
+		switch r.URL.Path {
+		case "/large":
+			io.WriteString(w, strings.Repeat("x", LabBodyLimit+1))
+		case "/stall":
+			w.WriteHeader(200)
+			w.(http.Flusher).Flush()
+			<-r.Context().Done()
+		default:
+			io.WriteString(w, "lab backend\n")
+		}
+	})}
+	go func() { apiDone <- apiServer.Serve(tls.NewListener(apiListener, apiServer.TLSConfig)) }()
+	apiRunning := true
+	stopAPI := func() {
+		if !apiRunning {
+			return
+		}
+		apiRunning = false
+		if e := apiServer.Close(); e != nil {
+			t.Error(e)
+		}
+		if e := <-apiDone; e != http.ErrServerClosed {
+			t.Error(e)
+		}
+	}
+	defer stopAPI()
+	config := LabConfig{Version: 1, Routes: []LabRoute{{Host: "app.test", Backend: "http://127.0.0.1:18086"}, {Host: "api.test", Backend: "https://127.0.0.1:18087", TLSServerName: "api.test", TLSCAFile: ca}}}
+	configData, e := json.Marshal(config)
+	if e != nil {
+		t.Fatal(e)
+	}
+	configPath := filepath.Join(t.TempDir(), "routes.json")
+	if e = os.WriteFile(configPath, configData, 0600); e != nil {
+		t.Fatal(e)
+	}
+	runConfig := func(path string, check bool) error {
+		args := []string{"-config", path}
+		if check {
+			args = append(args, "-check")
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		command := exec.CommandContext(ctx, "/var/aegvium-lab-proxy", args...)
+		command.Env = []string{"PATH=/usr/bin:/bin", "AEGVIUM_LAB_PROXY=owned-guest"}
+		return command.Run()
+	}
+	listenersAbsent := func() {
+		for _, address := range []string{"127.0.0.1:18084", "127.0.0.1:18085"} {
+			c, e := net.DialTimeout("tcp4", address, 100*time.Millisecond)
+			if e == nil {
+				c.Close()
+				t.Fatal("config validation bound listener")
+			}
+		}
+	}
+	if e = runConfig(configPath, true); e != nil {
+		t.Fatal("valid config check failed", e)
+	}
+	listenersAbsent()
+	invalid := []string{strings.Replace(string(configData), `"version":1`, `"version":2`, 1), strings.Replace(string(configData), `"version":1`, `"version":1,"version":1`, 1), string(configData) + `{}`, strings.Replace(string(configData), "127.0.0.1:18086", "192.0.2.1:18086", 1), strings.Replace(string(configData), "app.test", "api.test", 1), strings.Replace(string(configData), "tls_ca_file", "unrecognized", 1), strings.Replace(string(configData), ca, ca+"missing", 1)}
+	for i, data := range invalid {
+		path := filepath.Join(filepath.Dir(configPath), fmt.Sprintf("bad-%d.json", i))
+		if e = os.WriteFile(path, []byte(data), 0600); e != nil {
+			t.Fatal(e)
+		}
+		e = runConfig(path, false)
+		exit, ok := e.(*exec.ExitError)
+		if !ok || exit.ExitCode() != 2 {
+			t.Fatal("invalid config did not reject before startup", i, e)
+		}
+		listenersAbsent()
+	}
+	caData, e := os.ReadFile(ca)
+	if e != nil {
+		t.Fatal(e)
+	}
+	t.Logf("LAB-CONFIG {\"checked\":true,\"invalid_rejected\":%d,\"listeners_absent\":true,\"config_sha256\":\"%x\",\"ca_sha256\":\"%x\"}", len(invalid), sha256.Sum256(configData), sha256.Sum256(caData))
+	command := exec.Command("/var/aegvium-lab-proxy", "-config", configPath)
 	command.Env = []string{"PATH=/usr/bin:/bin", "AEGVIUM_LAB_PROXY=owned-guest"}
 	command.Stdout = io.Discard
 	command.Stderr = io.Discard
@@ -154,10 +264,13 @@ func TestLabCompanionPath(t *testing.T) {
 		if e != nil || len(data) > LabBodyLimit {
 			t.Fatal("client response bound")
 		}
+		if response.StatusCode == 502 && string(data) != "backend unavailable\n" {
+			t.Fatal("upstream error leaked/changed")
+		}
 		return response.StatusCode, false
 	}
 	ready := false
-	for i := 0; i < 40; i++ {
+	for deadline := time.Now().Add(15 * time.Second); time.Now().Before(deadline); {
 		code, _ := request(client, "GET", "/probe", "unknown.test", "", "", nil)
 		if code == 421 {
 			ready = true
@@ -177,6 +290,14 @@ func TestLabCompanionPath(t *testing.T) {
 			sum := sha256.Sum256([]byte(receipts[before].body))
 			r.BodySHA = hex.EncodeToString(sum[:])
 			r.HeadersClean = receipts[before].clean
+			r.BackendHost = receipts[before].host
+			wantHost := "app.test"
+			if strings.HasPrefix(name, "api-") {
+				wantHost = "api.test"
+			}
+			if r.BackendHost != wantHost {
+				t.Error("wrong backend route")
+			}
 			if receipts[before].body != wantBody {
 				t.Error("backend bytes changed")
 			}
@@ -246,6 +367,57 @@ func TestLabCompanionPath(t *testing.T) {
 		}
 		emit("bare-data", 0, true, before, 0, 0, "")
 	})
+	apiCase := func(name, path, host, method, body string, status, delta int) {
+		t.Run(name, func(t *testing.T) {
+			mu.Lock()
+			before := len(receipts)
+			mu.Unlock()
+			media := ""
+			if method == "POST" {
+				media = "application/json"
+			}
+			code, err := request(client, method, path, host, media, body, nil)
+			emit(name, code, err, before, status, delta, body)
+		})
+	}
+	apiCase("api-get", "/ok", "api.test", "GET", "", 200, 1)
+	apiCase("api-json", "/body", "api.test", "POST", `{"payload":"ordinary"}`, 200, 1)
+	apiCase("api-port", "/ok", "api.test:18120", "GET", "", 200, 1)
+	apiCase("api-wrong-port", "/ok", "api.test:18087", "GET", "", 421, 0)
+	apiCase("api-sql", "/?payload=%27+OR+1%3D1--", "api.test", "GET", "", 403, 0)
+	certMode.Store(1)
+	apiCase("api-wrong-cert", "/ok", "api.test", "GET", "", 502, 0)
+	certMode.Store(2)
+	apiCase("api-untrusted-cert", "/ok", "api.test", "GET", "", 502, 0)
+	certMode.Store(0)
+	apiCase("api-tls-recovery", "/ok", "api.test", "GET", "", 200, 1)
+	apiCase("api-large", "/large", "api.test", "GET", "", 502, 1)
+	apiCase("api-stall", "/stall", "api.test", "GET", "", 502, 1)
+	apiCase("api-after-stall", "/ok", "api.test", "GET", "", 200, 1)
+	stopAPI()
+	plaintext, e := net.Listen("tcp4", "127.0.0.1:18087")
+	if e != nil {
+		t.Fatal(e)
+	}
+	plaintextServer := &http.Server{ReadHeaderTimeout: time.Second, Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t.Error("TLS route forwarded to cleartext handler")
+		w.WriteHeader(200)
+	})}
+	plainDone := make(chan error, 1)
+	go func() { plainDone <- plaintextServer.Serve(plaintext) }()
+	apiCase("api-cleartext", "/ok", "api.test", "GET", "", 502, 0)
+	plaintextServer.Close()
+	if e := <-plainDone; e != http.ErrServerClosed {
+		t.Fatal(e)
+	}
+	apiServer = &http.Server{ReadHeaderTimeout: time.Second, ErrorLog: log.New(io.Discard, "", 0), TLSConfig: apiServer.TLSConfig, Handler: apiServer.Handler}
+	apiListener, e = net.Listen("tcp4", "127.0.0.1:18087")
+	if e != nil {
+		t.Fatal(e)
+	}
+	apiRunning = true
+	go func() { apiDone <- apiServer.Serve(tls.NewListener(apiListener, apiServer.TLSConfig)) }()
+	apiCase("api-cleartext-recovery", "/ok", "api.test", "GET", "", 200, 1)
 	t.Run("backend-down", func(t *testing.T) {
 		stopBackend()
 		mu.Lock()
@@ -291,5 +463,13 @@ func TestLabCompanionPath(t *testing.T) {
 		}
 	})
 	stopBackend()
+	stopAPI()
+	for _, address := range []string{"127.0.0.1:18086", "127.0.0.1:18087"} {
+		c, e := net.DialTimeout("tcp4", address, 100*time.Millisecond)
+		if e == nil {
+			c.Close()
+			t.Error("backend listener survived")
+		}
+	}
 	t.Log("LAB-FINAL companion-stopped backend-stopped listeners-absent")
 }

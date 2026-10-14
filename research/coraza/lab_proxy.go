@@ -15,7 +15,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/netip"
-	"net/url"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -27,15 +26,16 @@ const LabBodyLimit = 4096
 
 // LabProfile is test instrumentation, not a supported product configuration API.
 type LabProfile struct {
-	DataAddress, HealthAddress, BackendAddress string
-	Ingress                                    netip.AddrPort
+	DataAddress, HealthAddress string
+	Routes                     []LabRoute
+	Ingress                    netip.AddrPort
 }
 type LabProxy struct {
 	DataAddr, HealthAddr string
 	receiver             *proxyV1Listener
 	servers              []*http.Server
 	done                 []chan error
-	transport            *http.Transport
+	transports           []*http.Transport
 	waf                  io.Closer
 	engine               atomic.Bool
 	once                 sync.Once
@@ -55,32 +55,69 @@ func stripLabHeaders(h http.Header) {
 	}
 }
 func labHandler(backend string, directives string) (http.Handler, *http.Transport, io.Closer, error) {
-	if !labAddress(backend, false) {
-		return nil, nil, nil, errors.New("lab backend must be literal loopback")
-	}
-	waf, e := coraza.NewWAF(coraza.NewWAFConfig().WithRootFS(crs.FS).WithDirectives(directives))
+	h, transports, closer, e := labConfiguredHandler([]LabRoute{{Host: "app.test", Backend: "http://" + backend}}, directives)
 	if e != nil {
 		return nil, nil, nil, e
 	}
-	transport := &http.Transport{Proxy: nil, DisableKeepAlives: true, MaxConnsPerHost: 4, DialContext: (&net.Dialer{Timeout: time.Second}).DialContext, ResponseHeaderTimeout: time.Second}
-	target := &url.URL{Scheme: "http", Host: backend}
-	proxy := &httputil.ReverseProxy{Rewrite: func(p *httputil.ProxyRequest) {
-		p.SetURL(target)
-		p.Out.Host = "app.test"
-		stripLabHeaders(p.Out.Header)
-	}, Transport: transport, ErrorLog: log.New(io.Discard, "", 0), ErrorHandler: func(w http.ResponseWriter, _ *http.Request, _ error) { http.Error(w, "backend unavailable", 502) }, ModifyResponse: func(r *http.Response) error {
-		defer r.Body.Close()
-		data, e := io.ReadAll(io.LimitReader(r.Body, LabBodyLimit+1))
-		if e != nil || len(data) > LabBodyLimit {
-			return errors.New("lab response bound")
+	return h, transports[0], closer, nil
+}
+func labConfiguredHandler(routes []LabRoute, directives string) (http.Handler, []*http.Transport, io.Closer, error) {
+	if len(routes) < 1 || len(routes) > 8 {
+		return nil, nil, nil, errors.New("lab route bound")
+	}
+	type prepared struct{ proxy *httputil.ReverseProxy }
+	var transports []*http.Transport
+	table := map[string]prepared{}
+	cleanup := func() {
+		for _, tr := range transports {
+			tr.CloseIdleConnections()
 		}
-		r.Body = io.NopCloser(bytes.NewReader(data))
-		return nil
-	}}
-	inspect := corazahttp.WrapHandler(waf, proxy)
+	}
+	for _, route := range routes {
+		if !labName(route.Host) {
+			cleanup()
+			return nil, nil, nil, errors.New("invalid lab host")
+		}
+		if _, ok := table[route.Host]; ok {
+			cleanup()
+			return nil, nil, nil, errors.New("duplicate lab host")
+		}
+		target, tlsConfig, e := labRouteTarget(route)
+		if e != nil {
+			cleanup()
+			return nil, nil, nil, e
+		}
+		tr := &http.Transport{Proxy: nil, DisableKeepAlives: true, MaxConnsPerHost: 4, DialContext: (&net.Dialer{Timeout: time.Second}).DialContext, ResponseHeaderTimeout: time.Second, TLSHandshakeTimeout: time.Second, TLSClientConfig: tlsConfig}
+		transports = append(transports, tr)
+		proxy := &httputil.ReverseProxy{Rewrite: func(p *httputil.ProxyRequest) {
+			p.SetURL(target)
+			p.Out.Host = route.Host
+			stripLabHeaders(p.Out.Header)
+		}, Transport: tr, ErrorLog: log.New(io.Discard, "", 0), ErrorHandler: func(w http.ResponseWriter, _ *http.Request, _ error) { http.Error(w, "backend unavailable", 502) }, ModifyResponse: func(r *http.Response) error {
+			defer r.Body.Close()
+			data, e := io.ReadAll(io.LimitReader(r.Body, LabBodyLimit+1))
+			if e != nil || len(data) > LabBodyLimit {
+				return errors.New("lab response bound")
+			}
+			r.Body = io.NopCloser(bytes.NewReader(data))
+			return nil
+		}}
+		table[route.Host] = prepared{proxy}
+	}
+	waf, e := coraza.NewWAF(coraza.NewWAFConfig().WithRootFS(crs.FS).WithDirectives(directives))
+	if e != nil {
+		cleanup()
+		return nil, nil, nil, e
+	}
+	handlers := map[string]http.Handler{}
+	for host, route := range table {
+		handlers[host] = corazahttp.WrapHandler(waf, route.proxy)
+		handlers[host+":18120"] = handlers[host]
+	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Connection", "close")
-		if r.Host != "app.test" && r.Host != "app.test:18120" {
+		inspect, ok := handlers[r.Host]
+		if !ok {
 			http.Error(w, "unknown host", 421)
 			return
 		}
@@ -150,7 +187,7 @@ func labHandler(backend string, directives string) (http.Handler, *http.Transpor
 		ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
 		defer cancel()
 		inspect.ServeHTTP(w, r.WithContext(ctx))
-	}), transport, waf.(io.Closer), nil
+	}), transports, waf.(io.Closer), nil
 }
 
 func StartLabProxy(p LabProfile) (*LabProxy, error) { return startLabProxy(p, labDirectives) }
@@ -158,30 +195,35 @@ func startLabProxy(p LabProfile, directives string) (*LabProxy, error) {
 	if !labAddress(p.DataAddress, true) || !labAddress(p.HealthAddress, true) || !p.Ingress.IsValid() || p.Ingress.Addr() != netip.MustParseAddr("127.0.0.1") || p.Ingress.Port() == 0 {
 		return nil, errors.New("invalid owned lab endpoints")
 	}
-	handler, transport, closer, e := labHandler(p.BackendAddress, directives)
+	handler, transports, closer, e := labConfiguredHandler(p.Routes, directives)
+	closeTransports := func() {
+		for _, tr := range transports {
+			tr.CloseIdleConnections()
+		}
+	}
 	if e != nil {
 		return nil, e
 	}
 	data, e := net.Listen("tcp4", p.DataAddress)
 	if e != nil {
-		transport.CloseIdleConnections()
+		closeTransports()
 		_ = closer.Close()
 		return nil, e
 	}
 	health, e := net.Listen("tcp4", p.HealthAddress)
 	if e != nil {
 		data.Close()
-		transport.CloseIdleConnections()
+		closeTransports()
 		_ = closer.Close()
 		return nil, e
 	}
-	f := &LabProxy{DataAddr: data.Addr().String(), HealthAddr: health.Addr().String(), transport: transport, waf: closer}
+	f := &LabProxy{DataAddr: data.Addr().String(), HealthAddr: health.Addr().String(), transports: transports, waf: closer}
 	f.engine.Store(true)
 	f.receiver, e = newProxyV1Listener(&labLimitedListener{Listener: data}, p.Ingress, time.Second, 2, &f.engine)
 	if e != nil {
 		data.Close()
 		health.Close()
-		transport.CloseIdleConnections()
+		closeTransports()
 		_ = closer.Close()
 		return nil, e
 	}
@@ -220,7 +262,9 @@ func (f *LabProxy) Close() error {
 				f.closeErr = errors.New("lab server did not join")
 			}
 		}
-		f.transport.CloseIdleConnections()
+		for _, tr := range f.transports {
+			tr.CloseIdleConnections()
+		}
 		if f.closeErr == nil {
 			f.closeErr = f.waf.Close()
 		}
