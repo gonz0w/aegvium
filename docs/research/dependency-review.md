@@ -42,3 +42,7 @@ Primary sources: the immutable links in the pin manifest; [official Go download 
 ## Existing connector source comparison (2026-10-14)
 
 The [behavior/maintenance review](connector-comparison.md) extends inspection to ten immutable coraza-caddy source blobs; [fingerprints](../../research/coraza/connector-source-comparison.json) verify the unchanged pinned LICENSE/go.mod and retain function anchors. The 181 declared requirements are 181 module-manifest entries, including test/build inputs, not loaded runtime dependencies or footprint evidence. No Caddy module is installed/imported or added to the research graph; its native comparison and complete dependency/NOTICE review remain gates in the [proposed ADR](../architecture/adr-0001-ingress-inspection.md).
+
+## Runnable lab companion advisory snapshot (2026-10-14)
+
+The signed-source scan for [LP-01–04](../milestones/M1/LAB-COMPANION.md) reports zero affected reachable symbols/imported packages, but five module-only `golang.org/x/net` HTTP/2 advisories at v0.58.0 (fixes reported v0.60.0). [Receipts](../../research/native/lab-proxy-observations.json) retain exact IDs and raw scan hash. No dependency pin changed or package was added. This is a scoped call-graph result, not a clean-graph claim; selected-graph update/provenance review and fresh scanning remain required before runtime adoption or Caddy integration.

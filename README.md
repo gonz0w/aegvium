@@ -4,7 +4,9 @@ Lean, auditable HTTP/HTTPS inspection appliance for a separate homelab VM behind
 
 Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
 
-Status: repository foundation, proposed architecture and authorized engine research, native execution repeats, an offline native source build and a bounded connected relayd fixture. No WAF appliance, full native qualification or installer exists yet.
+Status: a runnable fixed-route lab companion now has native relayd TLS → Coraza/CRS → owned-backend evidence. Architecture and appliance adoption remain proposed; an installable WAF and BootWeave integration are still ahead.
+
+Run the complete owned lab path with `make research-lab-proxy` after [native-profile preparation](docs/milestones/M1/NATIVE-ENGINE.md). The [lab guide](research/coraza/LAB-PROXY.md) describes the executable, fixed scope and cleanup; [native receipts](research/native/lab-proxy-observations.json) record 163 ordinary plus 15 real executable/TLS cases.
 
 Current recommendation: [proposed TCP/TLS ingress and inspection ADR](docs/architecture/adr-0001-ingress-inspection.md), with a [pinned existing-connector source comparison](docs/research/connector-comparison.md). Native Caddy comparison, trusted sender/TLS authority, supported protocol/resources and lineage remain adoption gates; no runtime mode is selected.
 
