@@ -15,3 +15,7 @@ The 2026-10-11 request to begin research authorizes the isolated research/coraza
 ## relayd integration direction
 
 The maintainer requested a reusable relayd–Coraza connector on 2026-10-11 if relayd has a justified role. Study stock relayd TLS/HTTP ingress to a companion inspection proxy first, against a single-process control. Direct library embedding/callout patches remain distinct alternatives with toolchain/upstream costs. See [feasibility and acceptance boundaries](../../research/relayd-connector.md); no connector or separate repository is adopted yet.
+
+## Consolidated recommendation review
+
+The [connector assessment](CONNECTOR-ASSESSMENT.md) and [proposed ingress/inspection ADR](../../architecture/adr-0001-ingress-inspection.md) consolidate the measured component results, pinned existing-connector source responsibilities and explicit adoption gates. The next candidate direction is stock TCP/TLS ingress plus a companion, compared with coraza-caddy; the earlier HTTP-first research preference is superseded. This is a recommendation, not an adopted runtime/configuration or permission to skip combined native comparison, trust, limits or lineage.

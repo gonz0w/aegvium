@@ -1,0 +1,30 @@
+# Existing connector comparison
+
+Source review dated 2026-10-14; native comparison incomplete. [Scoped assessment](../milestones/M1/CONNECTOR-ASSESSMENT.md), [source fingerprints/anchors](../../research/coraza/connector-source-comparison.json) and [proposed ADR](../architecture/adr-0001-ingress-inspection.md).
+
+The reviewed coraza-caddy v2.6.2 tag resolves to the existing pinned commit `82b47274c867754b5c91285b2671dfb2f6e2690f`. Ten selected blobs match their Git object identities; LICENSE/go.mod SHA-256 values match the earlier dependency review. This is GitHub source provenance, not signed-release or installed-binary attribution. No upstream source is vendored or executed, and no Caddy dependency is added.
+
+## Behavioral and maintenance boundary
+
+| Concern | Pinned existing connector source | Measured Aegvium position / custom ownership |
+|---|---|---|
+| Request errors | `ServeHTTP` returns a structured Caddy 500 error when request processing reports an error. | Raw engine middleware previously produced implicit-200/no-backend reader-error outcomes; the research gate explicitly returns 500. Equivalent complete error mapping remains companion work. |
+| Body replay | Request processing feeds inspected bytes and the remaining original body through a combined reader, preserving the original closer. | Aegvium's test gate admits a bounded replay and counts original Close/errors; the 128-byte cap is a fixture choice. Neither source pattern proves general wire/concurrency safety. |
+| HTTP metadata | Adds promoted Host and normalized TransferEncoding values to Coraza; server name derives from Host. | Go normalization and relayd's extra HTTP parser are measured; this cannot recover rejected or normalized raw headers. Host-derived server name is not verified TLS SNI. |
+| Client identity | Uses Caddy's client-IP context value when available, otherwise RemoteAddr. | Trusted-prefix parsing and readiness are separate fixtures; sender containment and TLS/authority metadata are still unqualified. Connector code alone does not authenticate proxy headers. |
+| Transaction lifecycle | Defers logging/Close, records Close errors, and uses a Caddy usage pool to share WAF instances across compatible reloads. | Fresh WAFs per research case do not qualify production reload, concurrent drain or memory reuse. Custom integration must explicitly own these behaviors. The source pool key hashes configured directive/include strings and the CRS flag; this is not a rule-file-content hash. File-update/reload semantics require native tests in both candidates. |
+| Response phases | Interceptor processes response headers/body, buffers where configured, and maps response processing errors/interruptions. | Current CRS corpus is request-focused; equivalent response behavior is unqualified. A custom request-only service must expose an explicit narrower profile, not imply full connector parity. |
+| Flush and upgrades | Conditional flushing; successful hijack skips subsequent HTTP response processing. | This source path does not establish WAF inspection of upgraded frames. Upgrade/streaming rejection or support requires explicit native policy/tests. |
+| Framework boundary | Example executable imports Caddy's standard modules and connector; module declares 181 requirements (7 direct, 174 indirect). | Two direct engine/bundle dependencies in Aegvium's research module do not establish a smaller runtime footprint. The Caddy declaration includes test/build modules; loaded packages, native binaries, RSS and throughput must be measured. |
+
+Immutable source anchors: [request/transaction handling](https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/coraza.go#L197), [request replay/metadata](https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/http.go#L17), [response interception](https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/interceptor.go#L253), [identity helper](https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/utils.go#L54), [module declarations](https://github.com/corazawaf/coraza-caddy/blob/82b47274c867754b5c91285b2671dfb2f6e2690f/go.mod). Exact reviewed anchors are also machine-readable in the fingerprint manifest.
+
+## Evidence already available
+
+Aegvium has measured separate direct/HTTP/TCP body parsing, size/error handling, health/forwarding transitions and native engine/checker builds. The latest fresh run passed 163 ordinary and 66 connected characterization cases. Its first native-built run remains failed controller admission; native compilation and corrected offline replay are separately attributable. Half-close backend effects varied between runs even without a client response. Existing HTTP pipeline failures remain failed. These results do not describe Caddy behavior: its connector has not been built or exercised by this assessment.
+
+The existing connector has meaningful lifecycle/response integration; a custom companion trades framework integration for explicit maintenance obligations. No speed, memory, security-superiority or native-portability conclusion follows from dependency counts or source inspection. Apache-2.0 source and prior license hashes are reviewed; full Caddy loaded dependency/NOTICE/distribution review is incomplete and must precede adding it as a build/runtime dependency.
+
+## Comparative work still required under #15
+
+One future comparative qualification batch should build both candidates from reviewed dependency graphs and execute identical owned-guest request/error/body/response, TLS/authority/trusted-identity, lifecycle/reload and resource cases. Preserve build failures and unsupported capabilities. Compare actual privileges, package/module inputs, peak memory/file/socket bounds and backend effects under the same inputs and budgets. Caddy's configured trust/TLS/routing semantics must be explicit; framework defaults are not a substitute for matched policy. Until then the recommendation remains proposed and #15 stays open.

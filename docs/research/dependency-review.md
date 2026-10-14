@@ -38,3 +38,7 @@ Use a reviewed PR to refresh exact engine/bundle/connector/toolchain pins; rerun
 The isolated research module and research-only tools can be removed without changing an appliance because none exists. If adopted, connector/rules replacement must preserve the no-bypass and fail-closed contracts; uninstall/recovery requires its own scoped design. OpenBSD native build, TLS/backend policy, regex/body/resource behavior, package availability and least privilege remain #12/#14/#15/#17/#18 gates. CrowdSec remains optional separate work.
 
 Primary sources: the immutable links in the pin manifest; [official Go download manifest](https://go.dev/dl/?mode=json), [govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck), and [Go vulnerability database](https://vuln.go.dev/). Aegvium's native repeat preparation is in the [native packet](../milestones/M1/NATIVE-ENGINE.md).
+
+## Existing connector source comparison (2026-10-14)
+
+The [behavior/maintenance review](connector-comparison.md) extends inspection to ten immutable coraza-caddy source blobs; [fingerprints](../../research/coraza/connector-source-comparison.json) verify the unchanged pinned LICENSE/go.mod and retain function anchors. The 181 declared requirements are 181 module-manifest entries, including test/build inputs, not loaded runtime dependencies or footprint evidence. No Caddy module is installed/imported or added to the research graph; its native comparison and complete dependency/NOTICE review remain gates in the [proposed ADR](../architecture/adr-0001-ingress-inspection.md).
