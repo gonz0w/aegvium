@@ -479,6 +479,46 @@ def source_build_guest(guest, work, inputs, program=False):
             **native, 'log_sha256': digest(work / 'native.log')}
 
 
+def parse_connector_build(text, source_hash, compiler_hash):
+    values = {}
+    for line in text.splitlines():
+        if line.startswith('CBUILD\t'):
+            parts = line.split('\t')
+            if len(parts) != 3 or parts[1] in values:
+                raise ValueError('malformed/duplicate connector build receipt')
+            values[parts[1]] = parts[2]
+    if (set(values) != {'os', 'version', 'compiler', 'source', 'uid', 'binary'}
+            or values.get('os') != 'OpenBSD 7.9 amd64' or values.get('version') != 'go1.27.2'
+            or values.get('uid') != '32767' or values.get('source') != source_hash or values.get('compiler') != compiler_hash
+            or any(not re.fullmatch('[0-9a-f]{64}', values.get(k, '')) for k in ('compiler', 'source', 'binary'))):
+        raise ValueError('incomplete/mismatched connector native build')
+    return values
+
+
+def connector_build_guest(guest, work, inputs):
+    guest.require('set -eu; mkdir /var/aegvium-connector-build; chmod 755 /var/aegvium-connector-build')
+    for name, asset in (('go.tar.gz', inputs['compiler']), ('source.tar.gz', inputs['source'])):
+        with asset.open('rb') as stream:
+            response = guest.call('set -eu; cat > /var/aegvium-connector-build/' + name, stream=stream, seconds=180)
+        if response.returncode:
+            raise RuntimeError('connector native source transfer failed')
+    script = (ROOT / 'tools/native/connector-build.sh').read_bytes()
+    script = script.replace(b'COMPILER_SHA256', inputs['compiler_sha256'].encode()).replace(b'SOURCE_SHA256', inputs['source_sha256'].encode())
+    log = work / 'connector-build.log'
+    started = time.monotonic()
+    with log.open('wb') as output:
+        response = guest.call('sh -s', data=script, seconds=3000, output=output)
+    if response.returncode:
+        raise RuntimeError('connector native compilation failed; partial build log retained')
+    values = parse_connector_build(log.read_text(), inputs['source_sha256'], inputs['compiler_executable_sha256'])
+    guest.require('set -eu; mkdir /var/aegvium-connector; chmod 755 /var/aegvium-connector; '
+                  'cp /var/aegvium-connector-build/output/compare.test /var/aegvium-connector/compare.test; '
+                  'chmod 555 /var/aegvium-connector/compare.test; '
+                  'test "$(sha256 -q /var/aegvium-connector/compare.test)" = "' + values['binary'] + '"')
+    return {'receipts': values, 'installed_verified': True, 'seconds': round(time.monotonic() - started, 3),
+            'build_log_sha256': digest(log)}
+
+
 def relayd_inputs():
     profile = (ROOT / 'research/relayd/ingress.conf').read_bytes()
     reference = b'    protocol "inspection_ingress"'
@@ -649,6 +689,7 @@ def run():
     parser.add_argument('--relayd-config', action='store_true')
     parser.add_argument('--lab-proxy', action='store_true')
     parser.add_argument('--connector-comparison', action='store_true')
+    parser.add_argument('--connector-source-build', action='store_true')
     parser.add_argument('--relayd-body', action='store_true')
     parser.add_argument('--relayd-traffic', action='store_true')
     parser.add_argument('--relayd-contract', action='store_true')
@@ -660,6 +701,8 @@ def run():
     args = parser.parse_args()
     if sum((args.relayd_wiring, args.relayd_health_faults, args.relayd_checker_replacements, args.relayd_generations)) > 1:
         parser.error('select one connected wiring study')
+    if args.connector_source_build and (not args.connector_comparison or args.source_build):
+        parser.error('connector-source-build requires connector-comparison and excludes engine source-build')
     os.umask(0o077)
     if git('status', '--porcelain'):
         raise ValueError('native evidence requires a clean committed candidate')
@@ -684,17 +727,20 @@ def run():
     work = ROOT / '.tools/native-runs' / str(uuid.uuid4())
     work.mkdir(parents=True, mode=0o700)
     build_inputs = BUILD.package(work) if args.source_build else None
+    connector_inputs = BUILD.connector_package(work) if args.connector_source_build else None
     source = {name: digest(ROOT / name) for name in git('ls-files').splitlines()}
-    duration = 1800 if args.source_build else (1500 if args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations else 1200 if args.relayd_wiring else 900)
+    duration = 3600 if args.connector_source_build else 1800 if args.source_build else (1500 if args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations else 1200 if args.relayd_wiring else 900)
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
-              'connector_comparison_requested': args.connector_comparison, 'lab_proxy_requested': args.lab_proxy, 'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
+              'connector_native_build_requested': args.connector_source_build, 'connector_comparison_requested': args.connector_comparison, 'lab_proxy_requested': args.lab_proxy, 'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
                           'network': 'restrict=on; dynamic loopback-only SSH; no guest egress'}}
     if build_inputs:
         report['native_build_inputs'] = {key: value for key, value in build_inputs.items() if key not in ('compiler', 'source')}
+    if connector_inputs:
+        report['connector_build_inputs'] = {key: value for key, value in connector_inputs.items() if key not in ('compiler', 'source')}
     supervisor = None
     expires = time.monotonic() + duration
     try:
@@ -773,9 +819,15 @@ def run():
             print('Running guest-loopback stock relayd / Coraza traffic comparison...', flush=True)
             report['relayd_traffic'] = relayd_traffic_guest(guest, work, report['native']['receipts']['binary'],
                                                            report['relayd_config']['receipts']['binary'])
+        if args.connector_source_build:
+            print('Offline unprivileged native connector compilation started.', flush=True)
+            report['connector_native_build'] = connector_build_guest(guest, work, connector_inputs)
         if args.connector_comparison:
             print('Running pinned connector request/response/rule-reuse comparison...', flush=True)
-            report['connector_comparison'] = CONNECTOR.guest_run(guest, work)
+            report['connector_comparison'] = CONNECTOR.guest_run(guest, work, native_binary=report.get('connector_native_build', {}).get('receipts', {}).get('binary'), require_native=args.connector_source_build)
+            if args.connector_source_build:
+                if not report['connector_comparison']['native_binary'] or report['connector_comparison']['receipts']['uid'] != report['connector_native_build']['receipts']['uid']:
+                    raise ValueError('native connector build/execution identity mismatch')
         if args.inject_failure == 'test':
             raise RuntimeError('injected test-stage failure')
         report['native_subset_passed'] = True

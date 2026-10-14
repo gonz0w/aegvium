@@ -67,9 +67,14 @@ class SupervisorTests(unittest.TestCase):
         self.assertEqual(receipt['reason'], 'child-exit')
         self.assertEqual(receipt['returncode'], 0)
 
+    def test_connector_profile_maximum_is_bounded_and_reaped(self):
+        receipt = self.exercise('pass', duration=3600)
+        self.assertEqual(receipt['deadline_seconds'], 3600)
+        self.assertFalse(receipt['escalated'])
+
     def test_unbounded_deadline_rejected(self):
         result = subprocess.run([sys.executable, str(SUPERVISOR), '/tmp/unused',
-                                 '1801', '--', sys.executable, '-c', 'pass'],
+                                 '3601', '--', sys.executable, '-c', 'pass'],
                                 capture_output=True)
         self.assertNotEqual(result.returncode, 0)
 

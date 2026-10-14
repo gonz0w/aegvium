@@ -23,6 +23,7 @@ def objects(text):
 
 def verify_graph():
     env = {**os.environ, 'GOOS': 'openbsd', 'GOARCH': 'amd64', 'CGO_ENABLED': '0', 'GOPROXY': 'off', 'GOSUMDB': 'off'}
+    subprocess.run([str(ROOT / 'tools/run-research-go.sh'), 'mod', 'verify'], cwd=MODULE, env=env, check=True, timeout=120)
     output = subprocess.check_output([str(ROOT / 'tools/run-research-go.sh'), 'list', '-mod=readonly', '-test', '-deps', '-json', '.'], cwd=MODULE, env=env, text=True, timeout=120)
     loaded = {p['Module']['Path']: p['Module'] for p in objects(output) if p.get('Module') and not p['Module'].get('Main')}
     reviewed = json.loads((ROOT / 'research/coraza/connector-dependencies.json').read_text())
@@ -38,6 +39,7 @@ def verify_graph():
             if path.is_symlink() or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != item['sha256']:
                 raise ValueError('connector legal file differs from review: ' + name)
     print(f'Reviewed target graph and legal-file hashes verified: {len(loaded)} third-party modules')
+    return loaded
 
 
 def expected_wire():
@@ -105,21 +107,31 @@ def admit(text, binary_hash, uid='32767'):
             'wire': [rows[k] for k in sorted(rows)], 'reload': [reloads[k] for k in sorted(reloads)]}
 
 
-def guest_run(guest, work):
-    binary = ROOT / '.tools/research/connector-openbsd-amd64.test'
-    binary_hash = hashlib.sha256(binary.read_bytes()).hexdigest()
-    guest.require('set -eu; umask 022; mkdir /var/aegvium-connector; chmod 755 /var/aegvium-connector')
-    with binary.open('rb') as stream:
-        result = guest.call('set -eu; cat > /var/aegvium-connector/compare.test; chmod 555 /var/aegvium-connector/compare.test', stream=stream, seconds=120)
-    if result.returncode:
-        raise RuntimeError('connector binary transfer failed')
+def guest_run(guest, work, native_binary=None, require_native=False):
+    if require_native and native_binary is None:
+        raise ValueError('native connector output required; host fallback prohibited')
+    if native_binary is None:
+        binary = ROOT / '.tools/research/connector-openbsd-amd64.test'
+        binary_hash = hashlib.sha256(binary.read_bytes()).hexdigest()
+        guest.require('set -eu; umask 022; mkdir /var/aegvium-connector; chmod 755 /var/aegvium-connector')
+        with binary.open('rb') as stream:
+            result = guest.call('set -eu; cat > /var/aegvium-connector/compare.test; chmod 555 /var/aegvium-connector/compare.test', stream=stream, seconds=120)
+        if result.returncode:
+            raise RuntimeError('connector binary transfer failed')
+    else:
+        if not re.fullmatch('[0-9a-f]{64}', native_binary):
+            raise ValueError('invalid native connector output hash')
+        binary_hash = native_binary
+        guest.require('test "$(sha256 -q /var/aegvium-connector/compare.test)" = "' + binary_hash + '"')
     script = (ROOT / 'tools/native/connector-comparison.sh').read_bytes().replace(b'BINARY_SHA256', binary_hash.encode())
     log = work / 'connector-comparison.log'
     with log.open('wb') as output:
         result = guest.call('sh -s', data=script, seconds=180, output=output)
     if result.returncode:
         raise RuntimeError('connector comparison failed; partial native log retained')
-    return {**admit(log.read_text(), binary_hash), 'log_sha256': hashlib.sha256(log.read_bytes()).hexdigest()}
+    result = admit(log.read_text(), binary_hash)
+    result['build'] = 'offline native source build' if native_binary is not None else result['build']
+    return {**result, 'native_binary': native_binary is not None, 'log_sha256': hashlib.sha256(log.read_bytes()).hexdigest()}
 
 
 if __name__ == '__main__':

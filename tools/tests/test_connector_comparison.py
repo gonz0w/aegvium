@@ -56,3 +56,23 @@ class ConnectorAdmissionTests(unittest.TestCase):
                     text.replace('COMPARISON\tbinary\t' + 'a' * 64, 'COMPARISON\tbinary\t' + 'b' * 64)]:
             with self.assertRaises(ValueError):
                 C.admit(bad, 'a' * 64)
+
+    def test_native_mode_never_transfers_host_binary_or_allows_missing_hash(self):
+        import subprocess
+        import tempfile
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as folder:
+            class Guest:
+                def __init__(self):self.commands=[]
+                def require(self,c,**kw):self.commands.append(c)
+                def call(self,c,**kw):self.commands.append(c);kw['output'].write(b'native log');return subprocess.CompletedProcess([],0)
+            for bad in (None,'oops'):
+                guest=Guest()
+                with self.assertRaises(ValueError):C.guest_run(guest,Path(folder),native_binary=bad,require_native=True)
+                self.assertEqual(guest.commands,[])
+            guest=Guest()
+            with patch.object(C,'admit',return_value={'admitted':True,'build':'host control'}):
+                result=C.guest_run(guest,Path(folder),native_binary='a'*64,require_native=True)
+            self.assertTrue(result['native_binary']);self.assertEqual(result['build'],'offline native source build')
+            self.assertTrue(any('sha256 -q /var/aegvium-connector/compare.test' in c for c in guest.commands))
+            self.assertFalse(any('cat >' in c for c in guest.commands))

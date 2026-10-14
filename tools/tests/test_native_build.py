@@ -130,3 +130,63 @@ class NativeBuildTests(unittest.TestCase):
             self.assertEqual(result['build_receipts']['program'],'f'*64)
             install=next(c for c in guest.commands if 'cp /var/aegvium-build/output/labproxy' in c)
             self.assertIn('sha256 -q /var/aegvium-lab-proxy',install);self.assertIn('f'*64,install)
+
+    def test_connector_receipts_bind_source_compiler_target_and_identity(self):
+        valid = '\n'.join(('CBUILD\tos\tOpenBSD 7.9 amd64', 'CBUILD\tversion\tgo1.27.2',
+                           'CBUILD\tcompiler\t'+'a'*64, 'CBUILD\tsource\t'+'b'*64,
+                           'CBUILD\tuid\t32767', 'CBUILD\tbinary\t'+'c'*64))
+        self.assertEqual(LAB.parse_connector_build(valid, 'b'*64, 'a'*64)['binary'], 'c'*64)
+        for bad in (valid.replace('32767','0'),valid.replace('32767','88'),valid.replace('amd64','arm64'),
+                    valid.replace('go1.27.2','go1.27.0'),valid.replace('a'*64,'d'*64),valid.replace('b'*64,'d'*64),
+                    valid.replace('c'*64,'oops'),valid.rsplit('\n',1)[0],valid+'\nCBUILD\tuid\t32767'):
+            with self.assertRaises(ValueError):LAB.parse_connector_build(bad,'b'*64,'a'*64)
+
+    def test_connector_transfer_compile_and_missing_output_fail_before_install(self):
+        with tempfile.TemporaryDirectory() as folder:
+            work=Path(folder).resolve();asset=work/'asset';asset.write_bytes(b'fixture')
+            inputs={'compiler':asset,'source':asset,'compiler_sha256':'a'*64,'source_sha256':'b'*64,'compiler_executable_sha256':'a'*64}
+            for codes in ((1,), (0,0,1), (0,0,0)):
+                class Guest:
+                    def __init__(self):self.commands=[];self.codes=iter(codes)
+                    def require(self,c,**kw):self.commands.append(c)
+                    def call(self,c,**kw):self.commands.append(c);return subprocess.CompletedProcess([],next(self.codes))
+                guest=Guest()
+                with self.assertRaises((ValueError,RuntimeError)):LAB.connector_build_guest(guest,work,inputs)
+                self.assertFalse(any('cp /var/' in c for c in guest.commands))
+
+    def test_connector_install_uses_only_admitted_native_output(self):
+        valid='\n'.join(('CBUILD\tos\tOpenBSD 7.9 amd64','CBUILD\tversion\tgo1.27.2','CBUILD\tcompiler\t'+'a'*64,'CBUILD\tsource\t'+'b'*64,'CBUILD\tuid\t32767','CBUILD\tbinary\t'+'c'*64))
+        with tempfile.TemporaryDirectory() as folder:
+            work=Path(folder).resolve();asset=work/'asset';asset.write_bytes(b'fixture')
+            inputs={'compiler':asset,'source':asset,'compiler_sha256':'a'*64,'source_sha256':'b'*64,'compiler_executable_sha256':'a'*64}
+            class Guest:
+                def __init__(self):self.commands=[];self.calls=0
+                def require(self,c,**kw):self.commands.append(c)
+                def call(self,c,**kw):
+                    self.commands.append(c);self.calls+=1
+                    if self.calls==3:kw['output'].write(valid.encode())
+                    return subprocess.CompletedProcess([],0)
+            guest=Guest();result=LAB.connector_build_guest(guest,work,inputs)
+            self.assertTrue(result['installed_verified']);self.assertEqual(result['receipts']['binary'],'c'*64)
+            self.assertIn('seconds',result)
+            install=next(c for c in guest.commands if 'cp /var/' in c)
+            self.assertIn('/var/aegvium-connector-build/output/compare.test',install)
+            self.assertIn('sha256 -q /var/aegvium-connector/compare.test',install);self.assertIn('c'*64,install)
+
+    def test_source_archive_manifest_rejects_changed_missing_duplicate_and_link_members(self):
+        import io
+        import tarfile
+        with tempfile.TemporaryDirectory() as folder:
+            bundle=Path(folder)/'source.tar.gz'
+            manifest={'go.mod':hashlib.sha256(b'fixture').hexdigest()}
+            for mode in ('valid','changed','missing','duplicate','symlink','outside'):
+                with tarfile.open(bundle,'w:gz') as archive:
+                    if mode!='missing':
+                        item=tarfile.TarInfo('src/go.mod' if mode!='outside' else '../go.mod')
+                        if mode=='symlink':item.type=tarfile.SYMTYPE;item.linkname='/tmp/other';archive.addfile(item)
+                        else:
+                            data=b'bad' if mode=='changed' else b'fixture';item.size=len(data);archive.addfile(item,io.BytesIO(data))
+                            if mode=='duplicate':archive.addfile(item,io.BytesIO(data))
+                if mode=='valid':BUILD.verify_source_bundle(bundle,manifest)
+                else:
+                    with self.subTest(mode=mode),self.assertRaises(ValueError):BUILD.verify_source_bundle(bundle,manifest)

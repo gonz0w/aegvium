@@ -104,6 +104,86 @@ def package(work):
                 'source_files': hashes}
 
 
+def verify_source_bundle(bundle, manifest):
+    """Bind the exported regular-file inventory to actual archive member bytes."""
+    seen = set()
+    with tarfile.open(bundle, 'r:gz') as archive:
+        for item in archive:
+            if not item.isfile() or not item.name.startswith('src/'):
+                raise ValueError('nonregular/out-of-root source archive member')
+            name = item.name[4:]
+            if name in seen or name not in manifest:
+                raise ValueError('unknown/duplicate source archive member')
+            with archive.extractfile(item) as stream:
+                if hashlib.file_digest(stream, 'sha256').hexdigest() != manifest[name]:
+                    raise ValueError('source archive manifest hash mismatch')
+            seen.add(name)
+    if seen != set(manifest):
+        raise ValueError('source archive missing manifest members')
+
+
+def connector_package(work):
+    """Independent private connector source/vendor/notice export; no engine graph change."""
+    archive = compiler()
+    spec = importlib.util.spec_from_file_location('connector_comparison', ROOT / 'tools/connector-comparison.py')
+    connector = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(connector)
+    loaded = connector.verify_graph()
+    with tarfile.open(archive, 'r:gz') as sdk:
+        member = sdk.getmember('go/bin/go')
+        if not member.isfile():
+            raise ValueError('native compiler executable is not regular')
+        with sdk.extractfile(member) as executable:
+            compiler_executable_hash = hashlib.file_digest(executable, 'sha256').hexdigest()
+    reviewed = json.loads((ROOT / 'research/coraza/connector-dependencies.json').read_text())
+    env = {**os.environ, 'GOPROXY': 'off', 'GOSUMDB': 'off', 'GOTOOLCHAIN': 'local',
+           'GOOS': 'openbsd', 'GOARCH': 'amd64', 'CGO_ENABLED': '0'}
+    module = ROOT / 'research/connector'
+    names = ('go.mod', 'go.sum', 'comparison.go', 'comparison_test.go', 'wire-expectations.json')
+    with tempfile.TemporaryDirectory(prefix='connector-source-', dir=work) as temporary:
+        stage = Path(temporary)
+        for name in names:
+            IMAGE.copy_verified(module / name, stage / name, digest(module / name))
+            (stage / name).chmod(0o600)
+        subprocess.run([str(ROOT / 'tools/run-research-go.sh'), 'mod', 'vendor'],
+                       cwd=stage, env=env, check=True, timeout=180)
+        if any(digest(stage / name) != digest(module / name) for name in names):
+            raise ValueError('connector vendoring changed admitted source')
+        output = subprocess.check_output([str(ROOT / 'tools/run-research-go.sh'), 'list', '-mod=vendor', '-test', '-deps', '-json', '.'],
+                                         cwd=stage, env=env, text=True, timeout=120)
+        graph = {p['Module']['Path']: p['Module']['Version'] for p in connector.objects(output)
+                 if p.get('Module') and not p['Module'].get('Main')}
+        if graph != {r['path']: r['version'] for r in reviewed['modules']}:
+            raise ValueError('vendored target graph differs from reviewed connector')
+        notices = {}
+        for row in reviewed['modules']:
+            key = hashlib.sha256((row['path'] + '@' + row['version']).encode()).hexdigest()
+            notices[key] = {'module': row['path'], 'version': row['version'], 'files': row['legal_files']}
+            for item in row['legal_files']:
+                source = Path(loaded[row['path']]['Dir']) / item['path']
+                target = stage / 'notices' / key / item['path']
+                target.parent.mkdir(parents=True, exist_ok=True)
+                IMAGE.copy_verified(source, target, item['sha256'])
+        (stage / 'notices/index.json').write_text(json.dumps(notices, sort_keys=True) + '\n')
+        files = sorted(path for path in stage.rglob('*') if not path.is_dir())
+        hashes = {str(path.relative_to(stage)): digest(path) for path in files}
+        bundle = work / 'connector-source.tar.gz'
+        with tarfile.open(bundle, 'w:gz') as output:
+            for path in files:
+                item = output.gettarinfo(path, arcname='src/' + str(path.relative_to(stage)))
+                if not item.isfile():
+                    raise ValueError('nonregular connector export refused')
+                item.mode = 0o444
+                with path.open('rb') as stream:
+                    output.addfile(item, stream)
+        verify_source_bundle(bundle, hashes)
+        return {'compiler': archive, 'source': bundle,
+                'compiler_sha256': digest(archive), 'source_sha256': digest(bundle),
+                'source_files': hashes, 'reviewed_target_modules': len(graph),
+                'reviewed_notice_files': sum(len(r['legal_files']) for r in reviewed['modules']),
+                'compiler_executable_sha256': compiler_executable_hash}
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', choices=('fetch', 'verify'))
