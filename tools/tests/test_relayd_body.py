@@ -12,15 +12,23 @@ BODY=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(BODY)
 class RelaydBodyTests(unittest.TestCase):
     def rows(self):
         prior=json.loads((ROOT/'research/native/body-http-observations.json').read_text())['native']['body_http']
-        return [{**copy.deepcopy(row),'case':arm+'/'+row['case']} for arm in BODY.ARMS for row in prior]
+        by_case={r['case']:r for r in prior}
+        result=[]
+        for arm in BODY.ARMS:
+            for name in BODY.CASES:
+                base=name.removesuffix('-halfclose') if name.endswith('-halfclose') else 'short-fixed' if name=='short-open' else name
+                result.append({**copy.deepcopy(by_case[base]),'case':arm+'/'+name})
+        return result
 
     def log(self,rows):
+        lifecycle=[{'case':r['case'],'write_shutdown':r['case'].endswith('-halfclose') or r['case'].endswith('/short-fixed'),'bytes_sent':r['request_bytes']} for r in rows]
         text='\n'.join('RELAYD-BODY '+json.dumps(r)+'\nRELAYD-BODY-ERROR '+r['case']+' none\n--- PASS: TestRelaydBodyComparison/'+r['case']+' (0.01s)' for r in rows)
+        text+='\n'+'\n'.join('RELAYD-BODY-LIFECYCLE '+json.dumps(v) for v in lifecycle)
         receipts={'binary':'a'*64,'profile':'b'*64,'relayd':'c'*64,'daemon-log':'d'*64,'uid':'32767','cleanup':'verified'}
         return text+'\n'+'\n'.join('BODY\t'+k+'\t'+v for k,v in receipts.items())+'\nPASS\n'
 
     def test_complete_comparison_and_safe_normalization_rejection(self):
-        rows=self.rows();self.assertEqual(BODY.admit(self.log(rows),'a'*64,'b'*64)['case_count'],45)
+        rows=self.rows();self.assertEqual(BODY.admit(self.log(rows),'a'*64,'b'*64)['case_count'],66)
         row=next(r for r in rows if r['case']=='http/cl-te')
         row.update(status=400,backend=0,handler=0,content_length=None,transfer_encoding=None,header_lengths=None,source_closed=0,source_read=0,wire_read=0,body_sha256='')
         self.assertTrue(BODY.admit(self.log(rows),'a'*64,'b'*64)['admitted'])
@@ -32,3 +40,13 @@ class RelaydBodyTests(unittest.TestCase):
         rows=self.rows()
         for text in [self.log(rows[:-1]),self.log(rows+[rows[0]]),self.log(rows).replace('BODY\tcleanup\tverified','BODY\tcleanup\tfailed'),self.log(rows).replace('BODY\tuid\t32767','BODY\tuid\t0'),self.log(rows).replace('--- PASS: TestRelaydBodyComparison/tcp/fixed-json','--- FAIL: TestRelaydBodyComparison/tcp/fixed-json'),self.log(rows).replace('RELAYD-BODY-ERROR tcp/fixed-json none','RELAYD-BODY-ERROR tcp/fixed-json timeout')]:
             with self.assertRaises(ValueError):BODY.admit(text,'a'*64,'b'*64)
+
+    def test_lifecycle_witnesses_and_paired_inputs_are_mandatory(self):
+        text=self.log(self.rows())
+        for modified in [text.replace('"write_shutdown": true','"write_shutdown": false',1),text.replace('"write_shutdown": false','"write_shutdown": 0',1),text.replace('RELAYD-BODY-LIFECYCLE {','MISSING-LIFECYCLE {',1),text.replace('"bytes_sent": 188','"bytes_sent": 0',1)]:
+            if modified==text: continue
+            with self.assertRaises(ValueError):BODY.admit(modified,'a'*64,'b'*64)
+        rows=self.rows()
+        for r in rows:
+            if r['case'].endswith('/fixed-json-halfclose'):r['request_sha256']='0'*64
+        with self.assertRaises(ValueError):BODY.admit(self.log(rows),'a'*64,'b'*64)
