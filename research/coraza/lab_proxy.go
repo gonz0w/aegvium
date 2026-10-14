@@ -35,8 +35,7 @@ type LabProxy struct {
 	receiver             *proxyV1Listener
 	servers              []*http.Server
 	done                 []chan error
-	transports           []*http.Transport
-	waf                  io.Closer
+	routes               *labRouteOwner
 	engine               atomic.Bool
 	once                 sync.Once
 	closeErr             error
@@ -195,39 +194,31 @@ func startLabProxy(p LabProfile, directives string) (*LabProxy, error) {
 	if !labAddress(p.DataAddress, true) || !labAddress(p.HealthAddress, true) || !p.Ingress.IsValid() || p.Ingress.Addr() != netip.MustParseAddr("127.0.0.1") || p.Ingress.Port() == 0 {
 		return nil, errors.New("invalid owned lab endpoints")
 	}
-	handler, transports, closer, e := labConfiguredHandler(p.Routes, directives)
-	closeTransports := func() {
-		for _, tr := range transports {
-			tr.CloseIdleConnections()
-		}
-	}
+	generation, e := prepareLabRoutes(p.Routes, directives)
 	if e != nil {
 		return nil, e
 	}
 	data, e := net.Listen("tcp4", p.DataAddress)
 	if e != nil {
-		closeTransports()
-		_ = closer.Close()
+		_ = generation.close()
 		return nil, e
 	}
 	health, e := net.Listen("tcp4", p.HealthAddress)
 	if e != nil {
 		data.Close()
-		closeTransports()
-		_ = closer.Close()
+		_ = generation.close()
 		return nil, e
 	}
-	f := &LabProxy{DataAddr: data.Addr().String(), HealthAddr: health.Addr().String(), transports: transports, waf: closer}
+	f := &LabProxy{DataAddr: data.Addr().String(), HealthAddr: health.Addr().String(), routes: &labRouteOwner{active: generation}}
 	f.engine.Store(true)
 	f.receiver, e = newProxyV1Listener(&labLimitedListener{Listener: data}, p.Ingress, time.Second, 2, &f.engine)
 	if e != nil {
 		data.Close()
 		health.Close()
-		closeTransports()
-		_ = closer.Close()
+		_ = generation.close()
 		return nil, e
 	}
-	for i, h := range []http.Handler{handler, proxyReadyHandler(f.receiver)} {
+	for i, h := range []http.Handler{f.routes, proxyReadyHandler(f.receiver)} {
 		server := &http.Server{Handler: h, ReadHeaderTimeout: time.Second, ReadTimeout: 2 * time.Second, WriteTimeout: 4 * time.Second, IdleTimeout: time.Second, MaxHeaderBytes: 4096, ErrorLog: log.New(io.Discard, "", 0)}
 		var listener net.Listener = f.receiver
 		if i == 1 {
@@ -244,6 +235,7 @@ func (f *LabProxy) Close() error {
 	f.once.Do(func() {
 		f.engine.Store(false)
 		_ = f.receiver.Close()
+		f.routes.stopReloads()
 		for _, s := range f.servers {
 			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 			if e := s.Shutdown(ctx); e != nil {
@@ -262,11 +254,8 @@ func (f *LabProxy) Close() error {
 				f.closeErr = errors.New("lab server did not join")
 			}
 		}
-		for _, tr := range f.transports {
-			tr.CloseIdleConnections()
-		}
 		if f.closeErr == nil {
-			f.closeErr = f.waf.Close()
+			f.closeErr = f.routes.close()
 		}
 	})
 	return f.closeErr
