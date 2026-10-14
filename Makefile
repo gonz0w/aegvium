@@ -87,3 +87,7 @@ research-labproxy-cross:
 	cd research/coraza && GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 ../../tools/run-research-go.sh build -o ../../.tools/research/labproxy-openbsd-amd64 ./cmd/labproxy
 research-lab-proxy:
 	python3 tools/native-engine.py --lab-proxy
+
+.PHONY: research-native-lab
+research-native-lab:
+	python3 tools/native-engine.py --source-build --lab-proxy

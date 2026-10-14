@@ -422,7 +422,7 @@ def engine_guest(guest, work, binary, binary_hash):
 
 
 
-def parse_build(text, source_hash):
+def parse_build(text, source_hash, program=False):
     values = {}
     for line in text.splitlines():
         if line.startswith('BUILD\t'):
@@ -430,15 +430,16 @@ def parse_build(text, source_hash):
             if len(parts) != 3 or parts[1] in values:
                 raise ValueError('invalid native build receipt')
             values[parts[1]] = parts[2]
-    if (set(values) != {'compiler', 'source', 'uid', 'binary', 'checker'}
+    required={'compiler','source','uid','binary','checker'} | ({'program'} if program else set())
+    if (set(values) != required
             or not re.fullmatch(r'[1-9][0-9]*', values['uid'])
-            or any(not re.fullmatch('[0-9a-f]{64}', values[name]) for name in ('compiler', 'source', 'binary', 'checker'))
+            or any(not re.fullmatch('[0-9a-f]{64}', values[name]) for name in required-{'uid'})
             or values['source'] != source_hash):
         raise ValueError('native source build receipts incomplete')
     return values
 
 
-def source_build_guest(guest, work, inputs):
+def source_build_guest(guest, work, inputs, program=False):
     guest.require('set -eu; mkdir /var/aegvium-build; chmod 755 /var/aegvium-build')
     for name, asset in (('go.tar.gz', inputs['compiler']), ('source.tar.gz', inputs['source'])):
         with asset.open('rb') as stream:
@@ -449,12 +450,13 @@ def source_build_guest(guest, work, inputs):
     script = (ROOT / 'tools/native/source-build.sh').read_bytes()
     script = script.replace(b'COMPILER_SHA256', inputs['compiler_sha256'].encode())
     script = script.replace(b'SOURCE_SHA256', inputs['source_sha256'].encode())
+    script = script.replace(b'BUILD_LAB_PROGRAM', b'1' if program else b'0')
     log = work / 'build.log'
     with log.open('wb') as output:
         response = guest.call('sh -s', data=script, seconds=1200, output=output)
     if response.returncode:
         raise RuntimeError(f'native source build failed ({response.returncode}); see build.log')
-    values = parse_build(log.read_text(), inputs['source_sha256'])
+    values = parse_build(log.read_text(), inputs['source_sha256'], program)
     guest.require('set -eu; mkdir /var/aegvium-lab; chmod 755 /var/aegvium-lab; '
                   'cp /var/aegvium-build/output/engine.test /var/aegvium-lab/engine.test; '
                   'chmod 555 /var/aegvium-lab/engine.test; '
@@ -462,6 +464,8 @@ def source_build_guest(guest, work, inputs):
                   'chmod 555 /var/aegvium-lab-readycheck; '
                   'test "$(sha256 -q /var/aegvium-lab/engine.test)" = "' + values['binary'] + '"; '
                   'test "$(sha256 -q /var/aegvium-lab-readycheck)" = "' + values['checker'] + '"')
+    if program:
+        guest.require('set -eu; cp /var/aegvium-build/output/labproxy /var/aegvium-lab-proxy; chmod 555 /var/aegvium-lab-proxy; test "$(sha256 -q /var/aegvium-lab-proxy)" = "' + values['program'] + '"')
     repeat = (ROOT / 'tools/native/engine-repeat.sh').read_bytes().replace(b'BINARY_SHA256', values['binary'].encode())
     with (work / 'native.log').open('wb') as output:
         response = guest.call('sh -s', data=repeat, seconds=180, output=output)
@@ -724,7 +728,7 @@ def run():
             report['relayd_config'] = relayd_config_guest(guest, work)
         if args.source_build:
             print('Offline unprivileged native compilation started.', flush=True)
-            report['native'] = source_build_guest(guest, work, build_inputs)
+            report['native'] = source_build_guest(guest, work, build_inputs, program=args.lab_proxy)
             report['native_build'] = True
             checker_hash = report['native']['build_receipts']['checker']
             report['checker'] = {'sha256': checker_hash, 'installed_verified': True,
@@ -754,7 +758,7 @@ def run():
             print('Running isolated stock-relayd script contract controls...', flush=True)
             report['relayd_contract'] = relayd_contract_guest(guest, work, checker_hash)
         if args.lab_proxy:
-            report['lab_proxy'] = LAB_PROXY.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash)
+            report['lab_proxy'] = LAB_PROXY.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, native_program=report['native'].get('build_receipts',{}).get('program'))
             if not report['lab_proxy']['admitted']:
                 raise RuntimeError('lab proxy composition failed; partial receipts retained')
         if args.relayd_body:
