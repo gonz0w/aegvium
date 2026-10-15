@@ -33,6 +33,7 @@ WIRING = load('relayd-wiring')
 BODY = load('relayd-body')
 LAB_PROXY = load('lab-proxy')
 CONNECTOR = load('connector-comparison')
+CONFIGURED = load('configured-caddy')
 PINS = json.loads((ROOT / 'research/native/image-pin.json').read_text())
 
 SSH_HARDEN = b'''set -eu
@@ -689,6 +690,7 @@ def run():
     parser.add_argument('--relayd-config', action='store_true')
     parser.add_argument('--lab-proxy', action='store_true')
     parser.add_argument('--connector-comparison', action='store_true')
+    parser.add_argument('--configured-caddy', action='store_true')
     parser.add_argument('--connector-source-build', action='store_true')
     parser.add_argument('--relayd-body', action='store_true')
     parser.add_argument('--relayd-traffic', action='store_true')
@@ -703,6 +705,8 @@ def run():
         parser.error('select one connected wiring study')
     if args.connector_source_build and (not args.connector_comparison or args.source_build):
         parser.error('connector-source-build requires connector-comparison and excludes engine source-build')
+    if args.configured_caddy and not args.connector_comparison:
+        parser.error('configured-caddy requires connector-comparison')
     os.umask(0o077)
     if git('status', '--porcelain'):
         raise ValueError('native evidence requires a clean committed candidate')
@@ -732,7 +736,7 @@ def run():
     duration = 3600 if args.connector_source_build else 1800 if args.source_build else (1500 if args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations else 1200 if args.relayd_wiring else 900)
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
-              'connector_native_build_requested': args.connector_source_build, 'connector_comparison_requested': args.connector_comparison, 'lab_proxy_requested': args.lab_proxy, 'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
+              'configured_caddy_requested': args.configured_caddy, 'connector_native_build_requested': args.connector_source_build, 'connector_comparison_requested': args.connector_comparison, 'lab_proxy_requested': args.lab_proxy, 'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
@@ -828,6 +832,8 @@ def run():
             if args.connector_source_build:
                 if not report['connector_comparison']['native_binary'] or report['connector_comparison']['receipts']['uid'] != report['connector_native_build']['receipts']['uid']:
                     raise ValueError('native connector build/execution identity mismatch')
+        if args.configured_caddy:
+            report['configured_caddy'] = CONFIGURED.guest_run(guest, work, report['connector_comparison']['receipts']['binary'], report['connector_comparison']['native_binary'])
         if args.inject_failure == 'test':
             raise RuntimeError('injected test-stage failure')
         report['native_subset_passed'] = True

@@ -3,11 +3,11 @@
   "reviewed": "2026-10-14",
   "scope": "Pinned connector import graph, OpenBSD/amd64 CGO_ENABLED=0; private bounded comparison only, no binary/source redistribution approval",
   "connector_commit": "82b47274c867754b5c91285b2671dfb2f6e2690f",
-  "host_packages": 980,
-  "host_modules": 153,
-  "target_packages": 981,
-  "target_modules": 152,
-  "legal_file_count": 203,
+  "host_packages": 985,
+  "host_modules": 154,
+  "target_packages": 987,
+  "target_modules": 153,
+  "legal_file_count": 204,
   "provenance": "Go checksum database verified module archive/go.mod sums plus VCS origin metadata; not signed upstream release attribution",
   "modules": [
     {
@@ -344,7 +344,7 @@
       "version": "v2.11.4",
       "sum": "h1:XKxkMTgNSizEvKG6QHue6cAsFOteU2qA61w2tKkCWi0=",
       "go_mod_sum": "h1:zXCl032uTaF5/TpgU38axqFD41jqzxomTDNqK7BzMeI=",
-      "packages": 13,
+      "packages": 18,
       "legal_files": [
         {
           "path": "AUTHORS",
@@ -1811,6 +1811,29 @@
         "VCS": "git",
         "URL": "https://github.com/petar-dambovaliev/aho-corasick",
         "Hash": "463d218d4745bf13c5de1c65ba10e07139955652"
+      }
+    },
+    {
+      "path": "github.com/pires/go-proxyproto",
+      "version": "v0.12.0",
+      "sum": "h1:TTCxD66dU898tahivkqc3hoceZp7P44FnorWyo9d5vM=",
+      "go_mod_sum": "h1:qUvfqUMEoX7T8g0q7TQLDnhMjdTrxnG0hvpMn+7ePNI=",
+      "packages": 1,
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "666f1951be1d543e744818d232bb311a4a310fd1d344288642c796fca39af3c7",
+          "size": 11341,
+          "licenses": [
+            "Apache-2.0"
+          ]
+        }
+      ],
+      "origin": {
+        "VCS": "git",
+        "URL": "https://github.com/pires/go-proxyproto",
+        "Hash": "0cee3e4e1c33d9cad14cde1837d454656cd348d9",
+        "Ref": "refs/tags/v0.12.0"
       }
     },
     {
@@ -3797,6 +3820,7 @@
     "Apache/MIT/BSD/CC0 terms and nested notices reviewed for private unmodified execution. Root licenses are not a complete per-symbol distribution SBOM.",
     "CoreOS/Prometheus/grpc/yaml NOTICE, Go PATENTS/AUTHORS, nested crypto/compression/parser licenses must accompany any future applicable source distribution.",
     "quic-go brand assets and Windows wintun distribution assets are not imported/embedded target inputs; their separate non-code terms are not reclassified as MIT.",
-    "No dependency source is copied into Git; module cache/binaries/raw inventories remain ignored. Companion graph receives the separately reviewed x/net/x/sync/x/text refresh."
+    "No dependency source is copied into Git; module cache/binaries/raw inventories remain ignored. Companion graph receives the separately reviewed x/net/x/sync/x/text refresh.",
+    "Configured Caddy reverse-proxy import adds the already selected go-proxyproto v0.12.0 loaded module, Apache-2.0; reviewed under ADR-0004. Upstream PROXY output is not enabled by this fixture."
   ]
 }
