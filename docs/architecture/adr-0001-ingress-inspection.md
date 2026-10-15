@@ -49,3 +49,7 @@ The [bounded passthrough ADR](adr-0005-tls-passthrough-research.md) adds a secon
 ## Local sender follow-up
 
 The [bounded PF ADR](adr-0006-owned-pf-sender-containment.md) and [native receipts](../../research/native/sender-containment-observations.json) add conditional local socket-UID containment to the TCP passthrough research path. Four phases retain open forged-prefix effects, demonstrate protected denial with positive relayd ingress/counters, reject an invalid replacement without changing known good, and restore selected static PF views. The companion and dependency inputs are unchanged; no product firewall, service identity, startup ordering, trusted client-IP propagation or architecture adoption is selected.
+
+## Explicit client identity follow-up
+
+[ADR 0007](adr-0007-proxy-client-identity-research.md) and [native evidence](../../research/native/client-identity-observations.json) add default-off PROXY source selection for Coraza behind the externally maintained sender boundary. Test-only direct component rules prove address/port decisions; a separate normal-CRS actual CLI/PF matrix verifies the option and containment controls. The process does not establish that boundary. A diagnosed inspected-body lifetime race is repaired by bounded detachment before backend transport; its original host failure remains retained. Production identity/startup/privilege/certificate/audit policy, backend isolation, full compatibility/resources and architecture adoption remain proposed.

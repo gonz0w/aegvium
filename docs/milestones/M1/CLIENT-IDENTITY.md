@@ -1,6 +1,6 @@
 # Bounded PROXY client identity
 
-Status: authorized bounded research; native evidence pending. Refs #15/#16/#18/#21, WAF-05/06. Product trust policy remains proposed.
+Status: observed bounded native research; product adoption pending. Refs #15/#16/#18/#21, WAF-05/06. Product trust policy remains proposed.
 
 ## PRD
 
@@ -38,10 +38,16 @@ Require a deterministic delayed-writer regression that reads only after the sour
 
 The component native call requires ten wire rows, six context, five body-lifetime/fault and six response-boundary subtests, plus both CLI check-only outcomes and independent cleanup. Normal-CRS CLI/PF cases remain a separately admitted 44-case/four-phase matrix.
 
-The initial host failure's source fingerprints match signed candidate `ec1bca4cd4cb4ea45469418166e3fe05aac8957d`. The repaired working tree passes twenty focused race repetitions, the full lab race suite, full Go regression/vet/cross builds, 95 repository checks and four source-advisory scans. Companion scans have no findings; Caddy's existing non-symbol residuals remain. These are host/tooling outcomes; native qualification is still pending.
+The initial host failure's source fingerprints match signed candidate `ec1bca4cd4cb4ea45469418166e3fe05aac8957d`. The repaired working tree passes twenty focused race repetitions, the full lab race suite, full Go regression/vet/cross builds, 95 repository checks and four source-advisory scans. Companion scans have no findings; Caddy's existing non-symbol residuals remain. These host/tooling outcomes remain separate from the native result below.
 
 ## Native stalled-response rejection finding
 
 The first native attempt compiled all three outputs and passed 163 ordinary cases, then failed legacy api-stall: the owned HTTPS backend produced one inspected effect and the client received empty 200 instead of the required 502. No later TLS/PF/identity matrices ran; source/base invariance and teardown passed. Retain this failed result independently.
 
-The response-buffer gate currently accepts clean EOF without independently checking the request context/deadline. Reject cancelled or expired context after bounded response buffering even if the body reader returns clean EOF. Keep the existing two-second request deadline and 502/one-effect expectation. Deterministic tests must cover EOF following cancellation, expired deadline before timer notification, missing request context, response read error/limit and healthy response preservation. Repeat all prior native semantics; do not promote a retry as proof of the first attempt.
+The initial response-buffer gate accepted clean EOF without independently checking the request context/deadline. Reject cancelled or expired context after bounded response buffering even if the body reader returns clean EOF. Keep the existing two-second request deadline and 502/one-effect expectation. Deterministic tests must cover EOF following cancellation, expired deadline before timer notification, missing request context, response read error/limit and healthy response preservation. Repeat all prior native semantics; do not promote a retry as proof of the first attempt.
+
+## Observed result
+
+[Native receipts](../../../research/native/client-identity-observations.json) bind `c7a967057d08dda707f50aa86a51a9cba8b26869` and run `b12f0c89-bcc0-4d39-b25d-45c58dd1a299`. CI-01–03 pass within the explicitly separate ten-wire/six-context/five-body/six-response component and actual normal-CRS CLI/PF 44-case scopes, including two CLI check-only outcomes. The prior sender-study matrices repeat with unchanged semantics. Native build/install/execution identities, authenticated 34 patches/reboot/access, both eight-view PF restorations, source/base invariance and complete teardown pass under unchanged limits. All 95 local checks, host Go/vet/cross/full lab race and twenty focused race repetitions pass.
+
+The original [host failure](../../../research/native/client-identity-host-failure.json) remains failed evidence. Source advisory scans do not establish race/lifecycle safety; native execution has no race instrumentation. The process still depends on an external sender boundary. No backend isolation, production identity/startup/privilege/certificate/audit policy, broad protocol/resource acceptance or product adoption follows.
