@@ -35,6 +35,7 @@ LAB_PROXY = load('lab-proxy')
 LAB_TLS = load('lab-tls')
 SENDER = load('sender-containment')
 CLIENT_IDENTITY = load('client-identity')
+BACKEND_ISOLATION = load('backend-isolation')
 CONNECTOR = load('connector-comparison')
 CONFIGURED = load('configured-caddy')
 PINS = json.loads((ROOT / 'research/native/image-pin.json').read_text())
@@ -699,6 +700,7 @@ def run():
     parser.add_argument('--lab-tls', action='store_true')
     parser.add_argument('--sender-containment', action='store_true')
     parser.add_argument('--client-identity', action='store_true')
+    parser.add_argument('--backend-isolation', action='store_true')
     parser.add_argument('--connector-comparison', action='store_true')
     parser.add_argument('--configured-caddy', action='store_true')
     parser.add_argument('--connector-source-build', action='store_true')
@@ -723,6 +725,8 @@ def run():
         parser.error('sender-containment requires the native lab-tls profile')
     if args.client_identity and not args.sender_containment:
         parser.error('client-identity requires sender-containment')
+    if args.backend_isolation and not args.client_identity:
+        parser.error('backend-isolation requires client-identity')
     os.umask(0o077)
     if git('status', '--porcelain'):
         raise ValueError('native evidence requires a clean committed candidate')
@@ -752,7 +756,7 @@ def run():
     duration = 3600 if args.connector_source_build or args.lab_tls else 1800 if args.source_build else (1500 if args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations else 1200 if args.relayd_wiring else 900)
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
-              'configured_caddy_requested': args.configured_caddy, 'connector_native_build_requested': args.connector_source_build, 'connector_comparison_requested': args.connector_comparison, 'client_identity_requested': args.client_identity, 'sender_containment_requested': args.sender_containment, 'lab_tls_requested': args.lab_tls, 'lab_proxy_requested': args.lab_proxy, 'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
+              'configured_caddy_requested': args.configured_caddy, 'connector_native_build_requested': args.connector_source_build, 'connector_comparison_requested': args.connector_comparison, 'backend_isolation_requested': args.backend_isolation, 'client_identity_requested': args.client_identity, 'sender_containment_requested': args.sender_containment, 'lab_tls_requested': args.lab_tls, 'lab_proxy_requested': args.lab_proxy, 'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
@@ -801,6 +805,9 @@ def run():
         if args.sender_containment:
             print('Parsing owned sender PF policies and recording restoration inputs...', flush=True)
             report['sender_preparation'] = SENDER.prepare_guest(guest, work)
+        if args.backend_isolation:
+            print('Parsing separate backend policies and foreign principal...', flush=True)
+            report['backend_preparation'] = BACKEND_ISOLATION.prepare_guest(guest, work)
         if args.source_build:
             print('Offline unprivileged native compilation started.', flush=True)
             report['native'] = source_build_guest(guest, work, build_inputs, program=args.lab_proxy, build_seconds=2400 if args.lab_tls else 1200)
@@ -852,6 +859,11 @@ def run():
             report['client_identity_pf'] = SENDER.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, report['native']['build_receipts']['program'], report['sender_preparation'], client_identity=True)
             if not report['client_identity_pf']['admitted']:
                 raise RuntimeError('client identity CLI/PF admission failed; partial receipts retained')
+        if args.backend_isolation:
+            print('Running foreign-user backend isolation and inspected CLI controls...', flush=True)
+            report['backend_isolation'] = BACKEND_ISOLATION.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, report['native']['build_receipts']['program'], report['backend_preparation'])
+            if not report['backend_isolation']['admitted']:
+                raise RuntimeError('backend isolation admission failed; partial receipts retained')
         if args.relayd_body:
             report['relayd_body'] = BODY.guest_run(guest, work, report['native']['receipts']['binary'])
             if not report['relayd_body']['admitted']:
