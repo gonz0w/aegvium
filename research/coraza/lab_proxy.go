@@ -4,6 +4,7 @@ package spike
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"errors"
 	crs "github.com/corazawaf/coraza-coreruleset/v4"
 	"github.com/corazawaf/coraza/v3"
@@ -29,6 +30,7 @@ type LabProfile struct {
 	DataAddress, HealthAddress string
 	Routes                     []LabRoute
 	Ingress                    netip.AddrPort
+	FrontendCertificate        *tls.Certificate
 }
 type LabProxy struct {
 	DataAddr, HealthAddr string
@@ -39,6 +41,7 @@ type LabProxy struct {
 	engine               atomic.Bool
 	once                 sync.Once
 	closeErr             error
+	frontend             *tls.Certificate
 }
 
 func labAddress(value string, zero bool) bool {
@@ -194,6 +197,10 @@ func startLabProxy(p LabProfile, directives string) (*LabProxy, error) {
 	if !labAddress(p.DataAddress, true) || !labAddress(p.HealthAddress, true) || !p.Ingress.IsValid() || p.Ingress.Addr() != netip.MustParseAddr("127.0.0.1") || p.Ingress.Port() == 0 {
 		return nil, errors.New("invalid owned lab endpoints")
 	}
+	frontend, e := labFrontendCertificate(p.FrontendCertificate, p.Routes)
+	if e != nil {
+		return nil, e
+	}
 	generation, e := prepareLabRoutes(p.Routes, directives)
 	if e != nil {
 		return nil, e
@@ -209,7 +216,7 @@ func startLabProxy(p LabProfile, directives string) (*LabProxy, error) {
 		_ = generation.close()
 		return nil, e
 	}
-	f := &LabProxy{DataAddr: data.Addr().String(), HealthAddr: health.Addr().String(), routes: &labRouteOwner{active: generation}}
+	f := &LabProxy{DataAddr: data.Addr().String(), HealthAddr: health.Addr().String(), routes: &labRouteOwner{active: generation}, frontend: frontend}
 	f.engine.Store(true)
 	f.receiver, e = newProxyV1Listener(&labLimitedListener{Listener: data}, p.Ingress, time.Second, 2, &f.engine)
 	if e != nil {
@@ -218,9 +225,16 @@ func startLabProxy(p LabProfile, directives string) (*LabProxy, error) {
 		_ = generation.close()
 		return nil, e
 	}
-	for i, h := range []http.Handler{labAdmission(f.routes), proxyReadyHandler(f.receiver)} {
+	var application http.Handler = labAdmission(f.routes)
+	if frontend != nil {
+		application = labTLSAuthority(application)
+	}
+	for i, h := range []http.Handler{application, proxyReadyHandler(f.receiver)} {
 		server := &http.Server{Handler: h, ReadHeaderTimeout: time.Second, ReadTimeout: 2 * time.Second, WriteTimeout: 4 * time.Second, IdleTimeout: time.Second, MaxHeaderBytes: 4096, ErrorLog: log.New(io.Discard, "", 0)}
 		var listener net.Listener = f.receiver
+		if i == 0 && frontend != nil {
+			listener = tls.NewListener(listener, f.frontendTLS())
+		}
 		if i == 1 {
 			listener = health
 		}
