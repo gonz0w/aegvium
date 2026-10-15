@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -123,7 +124,7 @@ func TestLabClientIdentityWire(t *testing.T) {
 	var mu sync.Mutex
 	var bodies []string
 	clean := true
-	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	backend := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		body, e := io.ReadAll(io.LimitReader(r.Body, LabBodyLimit+1))
 		if e != nil {
 			http.Error(w, "read", 500)
@@ -140,6 +141,16 @@ func TestLabClientIdentityWire(t *testing.T) {
 		}
 		io.WriteString(w, "owned identity backend\n")
 	}))
+	backend.Config.ErrorLog = log.New(io.Discard, "", 0)
+	if runtime.GOOS == "openbsd" {
+		backend.Listener.Close()
+		listener, e := net.Listen("tcp4", "127.0.0.1:18086")
+		if e != nil {
+			t.Fatal(e)
+		}
+		backend.Listener = listener
+	}
+	backend.Start()
 	defer backend.Close()
 	routes := []LabRoute{{Host: "app.test", Backend: backend.URL}, {Host: "api.test", Backend: backend.URL}}
 	if runtime.GOOS == "openbsd" {
