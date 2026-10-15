@@ -31,3 +31,9 @@ Retain any failed native attempt independently. Native tooling keeps the existin
 Opt-in owned VM experiment only; uncontained modes remain unchanged. Restore saved main rules plus original lo0 skip flag and enabled state, compare static PF configuration, then destroy the VM with source/base invariance. This does not implement product startup ordering, production service accounts, certificate rotation, remote sender authentication, IPv6/v2 or persistent-session revocation. BootWeave remains responsible for its generic installer; no schema or deployed policy is added.
 
 References: [PF user/skip semantics](https://man.openbsd.org/OpenBSD-7.9/pf.conf.5), [PF rule counters, label-specific state removal and replacement](https://man.openbsd.org/OpenBSD-7.9/pfctl.8), [retained uncontained TLS result](../../../research/native/tls-passthrough-observations.json).
+
+## Initial preparation failure and scoped patch budget
+
+The [first signed attempt](../../../research/native/sender-containment-initial-failure.json) exhausted the existing 600-second patch call before PF preflight, native compilation or traffic admission. Partial signature evidence is not complete patch/reboot admission. Source/base invariance and full VM teardown passed.
+
+A fresh sender-only run permits 1200 patch-call seconds inside the unchanged 3600-second guest and 2400-second build ceilings. Legacy patch calls stay at 600 seconds. Manifest/signature, exact 34 installed/no pending patches, reboot/fresh access, all traffic assertions and teardown remain mandatory. This is a predeclared tooling budget for a fresh signed candidate, not a live deadline extension or fallback.

@@ -378,7 +378,9 @@ def rotate(guest, port, work, bootstrap):
     return True
 
 
-def patch_guest(guest, work):
+def patch_guest(guest, work, patch_seconds=600):
+    if type(patch_seconds) is not int or patch_seconds not in (600, 1200):
+        raise ValueError("unreviewed native patch budget")
     cache = PATCHES.verify()
     archive = work / 'patch-mirror.tar'
     with tarfile.open(archive, 'w') as bundle:
@@ -394,7 +396,7 @@ def patch_guest(guest, work):
     archive.unlink()
     with (work / 'patch.log').open('wb') as output:
         response = guest.call('sh -s', data=(ROOT / 'tools/native/patch-openbsd.sh').read_bytes(),
-                              seconds=600, output=output)
+                              seconds=patch_seconds, output=output)
     if response.returncode or any(marker not in (work / 'patch.log').read_bytes() for marker in (
             b'PATCH\tsignature\tVERIFIED', b'PATCH\tinstalled\t34', b'PATCH\tpending\t0')):
         raise RuntimeError('native patch authentication/installation failed; see patch.log')
@@ -750,6 +752,7 @@ def run():
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
+                          'patch_deadline_seconds': 1200 if args.sender_containment else 600,
                           'native_build_deadline_seconds': 2400 if args.lab_tls else 1200 if args.source_build else None,
                           'network': 'restrict=on; dynamic loopback-only SSH; no guest egress'}}
     if build_inputs:
@@ -785,7 +788,7 @@ def run():
         if args.inject_failure == 'auth':
             raise RuntimeError('injected authentication-stage failure')
         print('Authenticating and applying reviewed patch set in owned guest...', flush=True)
-        report['patch_refresh'] = patch_guest(guest, work)
+        report['patch_refresh'] = patch_guest(guest, work, patch_seconds=1200 if args.sender_containment else 600)
         if args.inject_failure == 'transfer':
             raise RuntimeError('injected transfer-stage failure')
         if args.relayd_config or args.relayd_traffic:
