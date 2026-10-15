@@ -45,3 +45,7 @@ The decision remains proposed until the maintainer explicitly accepts a candidat
 ## TLS ownership follow-up
 
 The [bounded passthrough ADR](adr-0005-tls-passthrough-research.md) adds a second research candidate: relayd performs stock health-checked TCP forwarding; the companion parses PROXY then terminates TLS and binds HTTP authority to actual SNI. [Native receipts](../../research/native/tls-passthrough-observations.json) pass 29 cases with unchanged legacy controls and offline fixture/checker/CLI compilation. This addresses the tested cross-host gap without a relayd patch, at the cost of companion key ownership and future certificate operations. A local forged-prefix request still reaches inspected service. The TLS-at-relayd control and strict Caddy results remain separate; no topology, product privilege policy or separate connector repository is adopted.
+
+## Local sender follow-up
+
+The [bounded PF ADR](adr-0006-owned-pf-sender-containment.md) and [native receipts](../../research/native/sender-containment-observations.json) add conditional local socket-UID containment to the TCP passthrough research path. Four phases retain open forged-prefix effects, demonstrate protected denial with positive relayd ingress/counters, reject an invalid replacement without changing known good, and restore selected static PF views. The companion and dependency inputs are unchanged; no product firewall, service identity, startup ordering, trusted client-IP propagation or architecture adoption is selected.

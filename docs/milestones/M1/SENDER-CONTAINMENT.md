@@ -1,6 +1,6 @@
 # Bounded local sender containment
 
-Status: authorized bounded research; native execution pending. Refs #15/#16/#21, WAF-03/05/06. No product policy or privilege identity adoption.
+Status: observed bounded native research; product adoption pending. Refs #15/#16/#21, WAF-03/05/06. No product policy or privilege identity adoption.
 
 ## PRD
 
@@ -41,3 +41,9 @@ A fresh sender-only run permits 1200 patch-call seconds inside the unchanged 360
 The fresh patch-budget attempt admitted the authenticated 34-patch/no-pending/reboot gates, then failed the non-mutating PF preflight before compilation or traffic. Its empty preflight log does not identify the failing guard. Static source review found canonical rules were read from stderr, while pfctl prints them to stdout. The corrected controller reads stdout and emits only a literal stage/exit diagnostic on preflight failure. Policies, rule counts, loaded-rule comparison and all traffic/restoration assertions remain mandatory; retain the failed receipt separately.
 
 The next attempt's literal diagnostic rejected initial PF-state admission, still before syntax parsing, compilation or policy application. Source review found `ifconfig -g lo` returns group attributes, not members. Read the member interface headers from `ifconfig lo` instead and continue to require exactly `lo0`; no additional interface or group becomes admissible. Keep both preflight failures independently and add finer initial-state diagnostics.
+
+## Observed result
+
+[Source-bound receipts](../../../research/native/sender-containment-observations.json) bind `fa7fd41eb7cf064803cad73872fb81a504fbbd58` and pass SC-01–03 in this scoped four-phase/44-case matrix, including actual invalid replacement, positive filter counters and eight matching static PF views after restoration. All unchanged prior native matrices, offline fixture/checker/CLI compilation, 91 local checks and Go/vet/race/cross/advisories pass. Patch/reboot/access, source/base invariance and full teardown pass. Three failed attempts remain separately recorded: patch timeout, empty-log preflight rejection and diagnosed initial-state rejection. Corrections read parsed PF rules from stdout and actual loopback members from `ifconfig lo`, retaining the sole-lo0 guard and adding safe stage diagnostics. Policies and traffic/restoration assertions stay unchanged. The fresh sender-only patch allowance is predeclared at 1200 seconds inside unchanged 3600/2400 guest/build ceilings; legacy patch and all traffic/authentication/install/reboot gates remain unchanged, with no fallback.
+
+The result qualifies conditional fresh-socket UID restriction only. Direct backend TCP probes remain reachable even in the protected phase, by design; no backend-isolation or general appliance PF acceptance follows. Certificate operations, trusted-address propagation, production identities/startup ordering and full compatibility/resource acceptance remain open.
