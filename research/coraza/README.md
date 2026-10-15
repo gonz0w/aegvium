@@ -21,3 +21,7 @@ The [idle diagnostic packet](../../docs/milestones/M1/RELAYD-IDLE.md) expands cu
 The [stream diagnostic packet](../../docs/milestones/M1/RELAYD-STREAM.md) retains thirty connected leaves and adds bounded inspection Read metrics. Two host recorder subcases prove split-read preservation and capped overflow recording; they do not add native engine acceptance or qualify connected behavior.
 
 The [buffer wake packet](../../docs/milestones/M1/RELAYD-BUFFER.md) adds four diagnostic controls (current connected admission: thirty-four). Passing wake samples do not erase baseline pipeline failures or approve a workaround; host connected skips remain skips.
+
+## Compatible dependency refresh
+
+[ADR-0003](../../docs/architecture/adr-0003-research-advisory-refresh.md) reviews x/net v0.60.0 and its selected companions without changing Coraza/CRS/Go pins or module paths. [Fresh evidence](../native/dependency-remediation-observations.json) removes the earlier five module-only x/net IDs: complete host/OpenBSD-target scans now report zero findings for this research module. Native execution repeats all 163 ordinary controls and actual relayd companion paths; those executables are fresh host cross-builds in this run. Earlier native compilation keeps its original graph/scope. `make research-advisories` also checks the separate connector graph, whose two residual findings still block adoption.

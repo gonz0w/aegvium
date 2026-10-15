@@ -3,9 +3,9 @@
   "reviewed": "2026-10-14",
   "scope": "Pinned connector import graph, OpenBSD/amd64 CGO_ENABLED=0; private bounded comparison only, no binary/source redistribution approval",
   "connector_commit": "82b47274c867754b5c91285b2671dfb2f6e2690f",
-  "host_packages": 971,
+  "host_packages": 980,
   "host_modules": 153,
-  "target_packages": 972,
+  "target_packages": 981,
   "target_modules": 152,
   "legal_file_count": 203,
   "provenance": "Go checksum database verified module archive/go.mod sums plus VCS origin metadata; not signed upstream release attribution",
@@ -609,7 +609,7 @@
       "version": "v3.8.1",
       "sum": "h1:dMV55FbMR2vOks/acrT43RShR+VkzU6jwp+XPdxay8o=",
       "go_mod_sum": "h1:nPVk2JqADYBcKLYvo9cRsr+z4JhanU0WniGhZZBZD6c=",
-      "packages": 25,
+      "packages": 27,
       "legal_files": [
         {
           "path": "LICENSE",
@@ -2697,9 +2697,9 @@
     },
     {
       "path": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
-      "version": "v0.19.0",
-      "sum": "h1:Dn8rkudDzY6KV9dr/D/bTUuWgqDf9xe0rr4G2elrn0Y=",
-      "go_mod_sum": "h1:gMk9F0xDgyN9M/3Ed5Y1wKcx/9mlU91NXY2SNq7RQuU=",
+      "version": "v0.21.0",
+      "sum": "h1:WseeVYf5dJZTsyPiyW5L14k5qsSibqXAMTSiFEDiWr0=",
+      "go_mod_sum": "h1:SiLZnQS6Qk2eCpvr2CH/XMAOa64TWGXxEZJZCpD2Lmc=",
       "packages": 6,
       "legal_files": [
         {
@@ -2716,15 +2716,15 @@
         "VCS": "git",
         "URL": "https://github.com/open-telemetry/opentelemetry-go",
         "Subdir": "exporters/otlp/otlplog/otlploggrpc",
-        "Hash": "9276201a64b623606e3eaa0d61ae8ee6d62756c0",
-        "Ref": "refs/tags/exporters/otlp/otlplog/otlploggrpc/v0.19.0"
+        "Hash": "93a693edeed0e07ce5ebd1dfe67af42d1e2055d8",
+        "Ref": "refs/tags/exporters/otlp/otlplog/otlploggrpc/v0.21.0"
       }
     },
     {
       "path": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp",
-      "version": "v0.19.0",
-      "sum": "h1:HIBTQ3VO5aupLKjC90JgMqpezVXwFuq6Ryjn0/izoag=",
-      "go_mod_sum": "h1:ji9vId85hMxqfvICA0Jt8JqEdrXaAkcpkI9HPXya0ro=",
+      "version": "v0.21.0",
+      "sum": "h1:fvNHGyo3CdRv/DQveXqhqBxnKTDyRaC5sMSQxilX/A0=",
+      "go_mod_sum": "h1:zyGrjRKL2B/6+Jc/m4/otPoZqV2MY9ZjC/aBraRO7zc=",
       "packages": 6,
       "legal_files": [
         {
@@ -2741,8 +2741,8 @@
         "VCS": "git",
         "URL": "https://github.com/open-telemetry/opentelemetry-go",
         "Subdir": "exporters/otlp/otlplog/otlploghttp",
-        "Hash": "9276201a64b623606e3eaa0d61ae8ee6d62756c0",
-        "Ref": "refs/tags/exporters/otlp/otlplog/otlploghttp/v0.19.0"
+        "Hash": "93a693edeed0e07ce5ebd1dfe67af42d1e2055d8",
+        "Ref": "refs/tags/exporters/otlp/otlplog/otlploghttp/v0.21.0"
       }
     },
     {
@@ -2897,10 +2897,10 @@
     },
     {
       "path": "go.opentelemetry.io/otel/exporters/stdout/stdoutlog",
-      "version": "v0.19.0",
-      "sum": "h1:GJkybS+crDMdExT/BUNCEgfrmfboztcS6PhvSo88HKM=",
-      "go_mod_sum": "h1:NuAyxRYIG2lKX3YQkB+83StTxM7s52PUUkRRiC0wnYI=",
-      "packages": 1,
+      "version": "v0.21.0",
+      "sum": "h1:2lpf4hnrasYIsUyEXwnTZq5lsxrMm4T2Bwb06IctAZQ=",
+      "go_mod_sum": "h1:YWOW6h7jwApz9Pl76ie/izUsSPj0s2MdIlpqbPqaf3U=",
+      "packages": 5,
       "legal_files": [
         {
           "path": "LICENSE",
@@ -2916,8 +2916,8 @@
         "VCS": "git",
         "URL": "https://github.com/open-telemetry/opentelemetry-go",
         "Subdir": "exporters/stdout/stdoutlog",
-        "Hash": "9276201a64b623606e3eaa0d61ae8ee6d62756c0",
-        "Ref": "refs/tags/exporters/stdout/stdoutlog/v0.19.0"
+        "Hash": "93a693edeed0e07ce5ebd1dfe67af42d1e2055d8",
+        "Ref": "refs/tags/exporters/stdout/stdoutlog/v0.21.0"
       }
     },
     {
@@ -2972,9 +2972,9 @@
     },
     {
       "path": "go.opentelemetry.io/otel/log",
-      "version": "v0.19.0",
-      "sum": "h1:KUZs/GOsw79TBBMfDWsXS+KZ4g2Ckzksd1ymzsIEbo4=",
-      "go_mod_sum": "h1:5DQYeGmxVIr4n0/BcJvF4upsraHjg6vudJJpnkL6Ipk=",
+      "version": "v0.21.0",
+      "sum": "h1:SLsVDGmtyBrdw8/a2Z0bOIxou/+bN4z56GebH7T0LvA=",
+      "go_mod_sum": "h1:iReetQrZL9Wyg84cCkOoCmqDHS5RCFfyxC7J+r8fn8g=",
       "packages": 3,
       "legal_files": [
         {
@@ -2991,8 +2991,8 @@
         "VCS": "git",
         "URL": "https://github.com/open-telemetry/opentelemetry-go",
         "Subdir": "log",
-        "Hash": "9276201a64b623606e3eaa0d61ae8ee6d62756c0",
-        "Ref": "refs/tags/log/v0.19.0"
+        "Hash": "93a693edeed0e07ce5ebd1dfe67af42d1e2055d8",
+        "Ref": "refs/tags/log/v0.21.0"
       }
     },
     {
@@ -3047,10 +3047,10 @@
     },
     {
       "path": "go.opentelemetry.io/otel/sdk/log",
-      "version": "v0.19.0",
-      "sum": "h1:scYVLqT22D2gqXItnWiocLUKGH9yvkkeql5dBDiXyko=",
-      "go_mod_sum": "h1:vFBowwXGLlW9AvpuF7bMgnNI95LiW10szrOdvzBHlAg=",
-      "packages": 3,
+      "version": "v0.21.0",
+      "sum": "h1:QsE7XSR0ktQdKmRKGnR+f1ObGF32WG+7MER/P9KgmYc=",
+      "go_mod_sum": "h1:m9mApjCoD2/1QuKCAptjv+BrG9WKOvQLVdNx+iBldTo=",
+      "packages": 5,
       "legal_files": [
         {
           "path": "LICENSE",
@@ -3066,8 +3066,8 @@
         "VCS": "git",
         "URL": "https://github.com/open-telemetry/opentelemetry-go",
         "Subdir": "sdk/log",
-        "Hash": "9276201a64b623606e3eaa0d61ae8ee6d62756c0",
-        "Ref": "refs/tags/sdk/log/v0.19.0"
+        "Hash": "93a693edeed0e07ce5ebd1dfe67af42d1e2055d8",
+        "Ref": "refs/tags/sdk/log/v0.21.0"
       }
     },
     {
@@ -3349,9 +3349,9 @@
     },
     {
       "path": "golang.org/x/crypto",
-      "version": "v0.56.0",
-      "sum": "h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=",
-      "go_mod_sum": "h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=",
+      "version": "v0.57.0",
+      "sum": "h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=",
+      "go_mod_sum": "h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=",
       "packages": 21,
       "legal_files": [
         {
@@ -3372,8 +3372,8 @@
       "origin": {
         "VCS": "git",
         "URL": "https://go.googlesource.com/crypto",
-        "Hash": "86efde54dc7069251a8b007026c500d28e4239ce",
-        "Ref": "refs/tags/v0.56.0"
+        "Hash": "3f62bf119e84c6e35e8518a2958089ade622d1a3",
+        "Ref": "refs/tags/v0.57.0"
       }
     },
     {
@@ -3429,9 +3429,9 @@
     },
     {
       "path": "golang.org/x/net",
-      "version": "v0.58.0",
-      "sum": "h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=",
-      "go_mod_sum": "h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=",
+      "version": "v0.60.0",
+      "sum": "h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=",
+      "go_mod_sum": "h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=",
       "packages": 15,
       "legal_files": [
         {
@@ -3452,8 +3452,8 @@
       "origin": {
         "VCS": "git",
         "URL": "https://go.googlesource.com/net",
-        "Hash": "acc78e0d2b2c855c0c4fbdcfe5f42a9e3d0f9778",
-        "Ref": "refs/tags/v0.58.0"
+        "Hash": "18ece0ce30bc35fa81fe72028bf309bb3ff3f4a5",
+        "Ref": "refs/tags/v0.60.0"
       }
     },
     {
@@ -3481,9 +3481,9 @@
     },
     {
       "path": "golang.org/x/sync",
-      "version": "v0.22.0",
-      "sum": "h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=",
-      "go_mod_sum": "h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=",
+      "version": "v0.23.0",
+      "sum": "h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=",
+      "go_mod_sum": "h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=",
       "packages": 2,
       "legal_files": [
         {
@@ -3504,15 +3504,15 @@
       "origin": {
         "VCS": "git",
         "URL": "https://go.googlesource.com/sync",
-        "Hash": "1eb64d4bc0cde6da1bb8ebc7f178bb577508e5d0",
-        "Ref": "refs/tags/v0.22.0"
+        "Hash": "f75267d8412fc1dfd12b343644a7ea46e4d9c85d",
+        "Ref": "refs/tags/v0.23.0"
       }
     },
     {
       "path": "golang.org/x/sys",
-      "version": "v0.47.0",
-      "sum": "h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=",
-      "go_mod_sum": "h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=",
+      "version": "v0.48.0",
+      "sum": "h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=",
+      "go_mod_sum": "h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=",
       "packages": 2,
       "legal_files": [
         {
@@ -3533,15 +3533,15 @@
       "origin": {
         "VCS": "git",
         "URL": "https://go.googlesource.com/sys",
-        "Hash": "9e7e939dcafac07e8ab4cffa6e5fc74908413f00",
-        "Ref": "refs/tags/v0.47.0"
+        "Hash": "613e2570718ecde85c04e69ebd5585c3881c442c",
+        "Ref": "refs/tags/v0.48.0"
       }
     },
     {
       "path": "golang.org/x/term",
-      "version": "v0.45.0",
-      "sum": "h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=",
-      "go_mod_sum": "h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=",
+      "version": "v0.46.0",
+      "sum": "h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=",
+      "go_mod_sum": "h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=",
       "packages": 1,
       "legal_files": [
         {
@@ -3562,15 +3562,15 @@
       "origin": {
         "VCS": "git",
         "URL": "https://go.googlesource.com/term",
-        "Hash": "9f69229da31ca6a34b522f59dbe07cad5ea21587",
-        "Ref": "refs/tags/v0.45.0"
+        "Hash": "6226200ed12cba417a9d9e799c2a7179d3fc0e27",
+        "Ref": "refs/tags/v0.46.0"
       }
     },
     {
       "path": "golang.org/x/text",
-      "version": "v0.41.0",
-      "sum": "h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=",
-      "go_mod_sum": "h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=",
+      "version": "v0.42.0",
+      "sum": "h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=",
+      "go_mod_sum": "h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=",
       "packages": 20,
       "legal_files": [
         {
@@ -3591,8 +3591,8 @@
       "origin": {
         "VCS": "git",
         "URL": "https://go.googlesource.com/text",
-        "Hash": "acdba6655fd45cdb5ab73c9d6a8981333bd65a39",
-        "Ref": "refs/tags/v0.41.0"
+        "Hash": "fafe4a06967e06550e69ee42787d9902845d2a3f",
+        "Ref": "refs/tags/v0.42.0"
       }
     },
     {
@@ -3797,6 +3797,6 @@
     "Apache/MIT/BSD/CC0 terms and nested notices reviewed for private unmodified execution. Root licenses are not a complete per-symbol distribution SBOM.",
     "CoreOS/Prometheus/grpc/yaml NOTICE, Go PATENTS/AUTHORS, nested crypto/compression/parser licenses must accompany any future applicable source distribution.",
     "quic-go brand assets and Windows wintun distribution assets are not imported/embedded target inputs; their separate non-code terms are not reclassified as MIT.",
-    "No dependency source is copied into Git; module cache/binaries/raw inventories remain ignored. Engine research graph stays unchanged."
+    "No dependency source is copied into Git; module cache/binaries/raw inventories remain ignored. Companion graph receives the separately reviewed x/net/x/sync/x/text refresh."
   ]
 }

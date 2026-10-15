@@ -1,0 +1,471 @@
+{
+  "schema": 1,
+  "date": "2026-10-14",
+  "base": "de9f93eeb5a4584f663a20420d4129cbe37872dc",
+  "scope": "Private bounded M1 research only; existing module paths, unmodified upstream archives; no distribution/appliance adoption.",
+  "changes": [
+    {
+      "path": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+      "previous": "v0.19.0",
+      "version": "v0.21.0",
+      "sum": "h1:WseeVYf5dJZTsyPiyW5L14k5qsSibqXAMTSiFEDiWr0=",
+      "go_mod_sum": "h1:SiLZnQS6Qk2eCpvr2CH/XMAOa64TWGXxEZJZCpD2Lmc=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://github.com/open-telemetry/opentelemetry-go",
+        "Subdir": "exporters/otlp/otlplog/otlploggrpc",
+        "Hash": "93a693edeed0e07ce5ebd1dfe67af42d1e2055d8",
+        "Ref": "refs/tags/exporters/otlp/otlplog/otlploggrpc/v0.21.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "1ae07514be1d7bb33f0698f8d91fb51b8b9fe1463157ec1c72081a49b9bc6f40",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": true
+    },
+    {
+      "path": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp",
+      "previous": "v0.19.0",
+      "version": "v0.21.0",
+      "sum": "h1:fvNHGyo3CdRv/DQveXqhqBxnKTDyRaC5sMSQxilX/A0=",
+      "go_mod_sum": "h1:zyGrjRKL2B/6+Jc/m4/otPoZqV2MY9ZjC/aBraRO7zc=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://github.com/open-telemetry/opentelemetry-go",
+        "Subdir": "exporters/otlp/otlplog/otlploghttp",
+        "Hash": "93a693edeed0e07ce5ebd1dfe67af42d1e2055d8",
+        "Ref": "refs/tags/exporters/otlp/otlplog/otlploghttp/v0.21.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "1ae07514be1d7bb33f0698f8d91fb51b8b9fe1463157ec1c72081a49b9bc6f40",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": true
+    },
+    {
+      "path": "go.opentelemetry.io/otel/exporters/stdout/stdoutlog",
+      "previous": "v0.19.0",
+      "version": "v0.21.0",
+      "sum": "h1:2lpf4hnrasYIsUyEXwnTZq5lsxrMm4T2Bwb06IctAZQ=",
+      "go_mod_sum": "h1:YWOW6h7jwApz9Pl76ie/izUsSPj0s2MdIlpqbPqaf3U=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://github.com/open-telemetry/opentelemetry-go",
+        "Subdir": "exporters/stdout/stdoutlog",
+        "Hash": "93a693edeed0e07ce5ebd1dfe67af42d1e2055d8",
+        "Ref": "refs/tags/exporters/stdout/stdoutlog/v0.21.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "1ae07514be1d7bb33f0698f8d91fb51b8b9fe1463157ec1c72081a49b9bc6f40",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": true
+    },
+    {
+      "path": "go.opentelemetry.io/otel/log",
+      "previous": "v0.19.0",
+      "version": "v0.21.0",
+      "sum": "h1:SLsVDGmtyBrdw8/a2Z0bOIxou/+bN4z56GebH7T0LvA=",
+      "go_mod_sum": "h1:iReetQrZL9Wyg84cCkOoCmqDHS5RCFfyxC7J+r8fn8g=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://github.com/open-telemetry/opentelemetry-go",
+        "Subdir": "log",
+        "Hash": "93a693edeed0e07ce5ebd1dfe67af42d1e2055d8",
+        "Ref": "refs/tags/log/v0.21.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "1ae07514be1d7bb33f0698f8d91fb51b8b9fe1463157ec1c72081a49b9bc6f40",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": true
+    },
+    {
+      "path": "go.opentelemetry.io/otel/sdk/log",
+      "previous": "v0.19.0",
+      "version": "v0.21.0",
+      "sum": "h1:QsE7XSR0ktQdKmRKGnR+f1ObGF32WG+7MER/P9KgmYc=",
+      "go_mod_sum": "h1:m9mApjCoD2/1QuKCAptjv+BrG9WKOvQLVdNx+iBldTo=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://github.com/open-telemetry/opentelemetry-go",
+        "Subdir": "sdk/log",
+        "Hash": "93a693edeed0e07ce5ebd1dfe67af42d1e2055d8",
+        "Ref": "refs/tags/sdk/log/v0.21.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "1ae07514be1d7bb33f0698f8d91fb51b8b9fe1463157ec1c72081a49b9bc6f40",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": true
+    },
+    {
+      "path": "go.opentelemetry.io/otel/sdk/log/logtest",
+      "previous": "v0.19.0",
+      "version": "v0.21.0",
+      "sum": "h1:X+JBBgKlswCGYsmgL0CnoUUtlE//VB345c84jYAYkdQ=",
+      "go_mod_sum": "h1:HD1575K8e6sIFBBDd5tZB3t9DlMytWXq9FuR+Y4rfjE=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://github.com/open-telemetry/opentelemetry-go",
+        "Subdir": "sdk/log/logtest",
+        "Hash": "93a693edeed0e07ce5ebd1dfe67af42d1e2055d8",
+        "Ref": "refs/tags/sdk/log/logtest/v0.21.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "1ae07514be1d7bb33f0698f8d91fb51b8b9fe1463157ec1c72081a49b9bc6f40",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": false,
+      "scope": "Selected upstream test-only module; not imported by this fixture."
+    },
+    {
+      "path": "golang.org/x/crypto",
+      "previous": "v0.56.0",
+      "version": "v0.57.0",
+      "sum": "h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=",
+      "go_mod_sum": "h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://go.googlesource.com/crypto",
+        "Hash": "3f62bf119e84c6e35e8518a2958089ade622d1a3",
+        "Ref": "refs/tags/v0.57.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+          "unchanged_from_previous_pin": true
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": true
+    },
+    {
+      "path": "golang.org/x/mod",
+      "previous": "v0.40.0",
+      "version": "v0.41.0",
+      "sum": "h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=",
+      "go_mod_sum": "h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://go.googlesource.com/mod",
+        "Hash": "d0a27b2d4a48460806692bf5c87fc157c3c65292",
+        "Ref": "refs/tags/v0.41.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+          "unchanged_from_previous_pin": true
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": false
+    },
+    {
+      "path": "golang.org/x/net",
+      "previous": "v0.58.0",
+      "version": "v0.60.0",
+      "sum": "h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=",
+      "go_mod_sum": "h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://go.googlesource.com/net",
+        "Hash": "18ece0ce30bc35fa81fe72028bf309bb3ff3f4a5",
+        "Ref": "refs/tags/v0.60.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+          "unchanged_from_previous_pin": true
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": true
+    },
+    {
+      "path": "golang.org/x/sync",
+      "previous": "v0.22.0",
+      "version": "v0.23.0",
+      "sum": "h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=",
+      "go_mod_sum": "h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://go.googlesource.com/sync",
+        "Hash": "f75267d8412fc1dfd12b343644a7ea46e4d9c85d",
+        "Ref": "refs/tags/v0.23.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+          "unchanged_from_previous_pin": true
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": true
+    },
+    {
+      "path": "golang.org/x/sys",
+      "previous": "v0.47.0",
+      "version": "v0.48.0",
+      "sum": "h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=",
+      "go_mod_sum": "h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://go.googlesource.com/sys",
+        "Hash": "613e2570718ecde85c04e69ebd5585c3881c442c",
+        "Ref": "refs/tags/v0.48.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+          "unchanged_from_previous_pin": true
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": true
+    },
+    {
+      "path": "golang.org/x/term",
+      "previous": "v0.45.0",
+      "version": "v0.46.0",
+      "sum": "h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=",
+      "go_mod_sum": "h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://go.googlesource.com/term",
+        "Hash": "6226200ed12cba417a9d9e799c2a7179d3fc0e27",
+        "Ref": "refs/tags/v0.46.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+          "unchanged_from_previous_pin": true
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": true
+    },
+    {
+      "path": "golang.org/x/text",
+      "previous": "v0.41.0",
+      "version": "v0.42.0",
+      "sum": "h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=",
+      "go_mod_sum": "h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=",
+      "origin": {
+        "VCS": "git",
+        "URL": "https://go.googlesource.com/text",
+        "Hash": "fafe4a06967e06550e69ee42787d9902845d2a3f",
+        "Ref": "refs/tags/v0.42.0"
+      },
+      "legal_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+          "unchanged_from_previous_pin": true
+        },
+        {
+          "path": "PATENTS",
+          "sha256": "96f408bfae65bf137fc2525d3ecb030271c50c1e90799f87abf8846d8dd505cc",
+          "unchanged_from_previous_pin": true
+        }
+      ],
+      "loaded_target": true
+    }
+  ],
+  "unchanged_direct_pins": {
+    "coraza": "v3.8.1",
+    "crs": "v4.25.0",
+    "coraza-caddy": "v2.6.2",
+    "caddy": "v2.11.4",
+    "go": "1.27.2"
+  },
+  "target_modules": 152,
+  "legal_files": 203,
+  "all_target_legal_file_bytes_unchanged": true,
+  "compatibility_attempt": {
+    "result": "Rejected in ignored staging before tracked pin adoption; package-loading failure is not an advisory scan.",
+    "cel_candidate": "v0.30.0",
+    "cel_retained": "v0.28.1",
+    "reason": "Caddy v2.11.4 calls interpreter.NewCall with []Interpretable; CEL v0.30.0 requires []InterpretableV2. OpenTelemetry log v0.21.0 also requires matching HTTP/stdout log exporters after api.Value/KeyValue removals.",
+    "stdout_sha256": "4f357ad95bf39401d96d9a9531cb6b9a5208a5fa139a9111345bf42521361226",
+    "stderr_sha256": "0f48273cb4dde3b45980b783d50d9c425aac2a2b90c022272116abcf1dbef49f"
+  },
+  "residuals": [
+    {
+      "id": "GO-2026-6094",
+      "module": "github.com/google/cel-go",
+      "version": "v0.28.1",
+      "scope": "imported package; no reachable-symbol finding in current fixture",
+      "fix": "v0.30.0 requires a separate compatible Caddy/connector upgrade review; do not patch vendor or suppress scanner."
+    },
+    {
+      "id": "GO-2026-5932",
+      "module": "golang.org/x/crypto",
+      "version": "v0.57.0",
+      "scope": "module only; deprecated openpgp is not imported",
+      "fix": "No reported version fix; review elimination if a future selected graph imports it."
+    }
+  ],
+  "connector_selection": {
+    "selected_modules_including_main": 520,
+    "added_paths": [],
+    "removed_paths": [],
+    "changes": [
+      {
+        "path": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc",
+        "previous": "v0.19.0",
+        "version": "v0.21.0"
+      },
+      {
+        "path": "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp",
+        "previous": "v0.19.0",
+        "version": "v0.21.0"
+      },
+      {
+        "path": "go.opentelemetry.io/otel/exporters/stdout/stdoutlog",
+        "previous": "v0.19.0",
+        "version": "v0.21.0"
+      },
+      {
+        "path": "go.opentelemetry.io/otel/log",
+        "previous": "v0.19.0",
+        "version": "v0.21.0"
+      },
+      {
+        "path": "go.opentelemetry.io/otel/sdk/log",
+        "previous": "v0.19.0",
+        "version": "v0.21.0"
+      },
+      {
+        "path": "go.opentelemetry.io/otel/sdk/log/logtest",
+        "previous": "v0.19.0",
+        "version": "v0.21.0"
+      },
+      {
+        "path": "golang.org/x/crypto",
+        "previous": "v0.56.0",
+        "version": "v0.57.0"
+      },
+      {
+        "path": "golang.org/x/mod",
+        "previous": "v0.40.0",
+        "version": "v0.41.0"
+      },
+      {
+        "path": "golang.org/x/net",
+        "previous": "v0.58.0",
+        "version": "v0.60.0"
+      },
+      {
+        "path": "golang.org/x/sync",
+        "previous": "v0.22.0",
+        "version": "v0.23.0"
+      },
+      {
+        "path": "golang.org/x/sys",
+        "previous": "v0.47.0",
+        "version": "v0.48.0"
+      },
+      {
+        "path": "golang.org/x/term",
+        "previous": "v0.45.0",
+        "version": "v0.46.0"
+      },
+      {
+        "path": "golang.org/x/text",
+        "previous": "v0.41.0",
+        "version": "v0.42.0"
+      }
+    ]
+  },
+  "coraza_selection": {
+    "selected_modules_including_main": 41,
+    "added_paths": [],
+    "removed_paths": [],
+    "changes": [
+      {
+        "path": "golang.org/x/crypto",
+        "previous": "v0.55.0",
+        "version": "v0.57.0"
+      },
+      {
+        "path": "golang.org/x/mod",
+        "previous": "v0.40.0",
+        "version": "v0.41.0"
+      },
+      {
+        "path": "golang.org/x/net",
+        "previous": "v0.58.0",
+        "version": "v0.60.0"
+      },
+      {
+        "path": "golang.org/x/sync",
+        "previous": "v0.22.0",
+        "version": "v0.23.0"
+      },
+      {
+        "path": "golang.org/x/sys",
+        "previous": "v0.47.0",
+        "version": "v0.48.0"
+      },
+      {
+        "path": "golang.org/x/term",
+        "previous": "v0.45.0",
+        "version": "v0.46.0"
+      },
+      {
+        "path": "golang.org/x/text",
+        "previous": "v0.41.0",
+        "version": "v0.42.0"
+      }
+    ]
+  }
+}
