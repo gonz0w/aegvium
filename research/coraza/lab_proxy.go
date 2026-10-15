@@ -31,6 +31,7 @@ type LabProfile struct {
 	Routes                     []LabRoute
 	Ingress                    netip.AddrPort
 	FrontendCertificate        *tls.Certificate
+	ProxyClientIP              bool
 }
 type LabProxy struct {
 	DataAddr, HealthAddr string
@@ -95,15 +96,8 @@ func labConfiguredHandler(routes []LabRoute, directives string) (http.Handler, [
 			p.SetURL(target)
 			p.Out.Host = route.Host
 			stripLabHeaders(p.Out.Header)
-		}, Transport: tr, ErrorLog: log.New(io.Discard, "", 0), ErrorHandler: func(w http.ResponseWriter, _ *http.Request, _ error) { http.Error(w, "backend unavailable", 502) }, ModifyResponse: func(r *http.Response) error {
-			defer r.Body.Close()
-			data, e := io.ReadAll(io.LimitReader(r.Body, LabBodyLimit+1))
-			if e != nil || len(data) > LabBodyLimit {
-				return errors.New("lab response bound")
-			}
-			r.Body = io.NopCloser(bytes.NewReader(data))
-			return nil
-		}}
+		}, Transport: labBodyTransport{base: tr}, ErrorLog: log.New(io.Discard, "", 0), ErrorHandler: func(w http.ResponseWriter, _ *http.Request, _ error) { http.Error(w, "backend unavailable", 502) }, ModifyResponse: labBufferedResponse}
+
 		table[route.Host] = prepared{proxy}
 	}
 	waf, e := coraza.NewWAF(coraza.NewWAFConfig().WithRootFS(crs.FS).WithDirectives(directives))
@@ -197,6 +191,9 @@ func startLabProxy(p LabProfile, directives string) (*LabProxy, error) {
 	if !labAddress(p.DataAddress, true) || !labAddress(p.HealthAddress, true) || !p.Ingress.IsValid() || p.Ingress.Addr() != netip.MustParseAddr("127.0.0.1") || p.Ingress.Port() == 0 {
 		return nil, errors.New("invalid owned lab endpoints")
 	}
+	if p.ProxyClientIP && p.FrontendCertificate == nil {
+		return nil, errors.New("PROXY client identity requires frontend TLS")
+	}
 	frontend, e := labFrontendCertificate(p.FrontendCertificate, p.Routes)
 	if e != nil {
 		return nil, e
@@ -226,12 +223,18 @@ func startLabProxy(p LabProfile, directives string) (*LabProxy, error) {
 		return nil, e
 	}
 	var application http.Handler = labAdmission(f.routes)
+	if p.ProxyClientIP {
+		application = labClientIdentity(p.Ingress, application)
+	}
 	if frontend != nil {
 		application = labTLSAuthority(application)
 	}
 	for i, h := range []http.Handler{application, proxyReadyHandler(f.receiver)} {
 		server := &http.Server{Handler: h, ReadHeaderTimeout: time.Second, ReadTimeout: 2 * time.Second, WriteTimeout: 4 * time.Second, IdleTimeout: time.Second, MaxHeaderBytes: 4096, ErrorLog: log.New(io.Discard, "", 0)}
 		var listener net.Listener = f.receiver
+		if i == 0 && p.ProxyClientIP {
+			server.ConnContext = labClientContext(p.Ingress)
+		}
 		if i == 0 && frontend != nil {
 			listener = tls.NewListener(listener, f.frontendTLS())
 		}

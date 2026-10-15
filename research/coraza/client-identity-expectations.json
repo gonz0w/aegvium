@@ -1,0 +1,122 @@
+[
+  {
+    "case": "off-asserted-ip",
+    "enabled": false,
+    "source": "192.0.2.9:45000",
+    "input_sha256": "7d43f0039ee993fdf1254e47012740be10ba6f3d7ddf01cf11aa8fd856f26c01",
+    "rules_sha256": "3ca6eed41d79d2e74d7898239a67acc20019d78574b4b1b589106576beb95987",
+    "status": 200,
+    "backend": 1,
+    "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "headers_clean": true,
+    "verified_tls": true
+  },
+  {
+    "case": "on-asserted-ip",
+    "enabled": true,
+    "source": "192.0.2.9:45000",
+    "input_sha256": "1149c370f143c35e8cafb85dd764d8600a3dad15cb678c8862cdb62d6b41b44f",
+    "rules_sha256": "3ca6eed41d79d2e74d7898239a67acc20019d78574b4b1b589106576beb95987",
+    "status": 451,
+    "backend": 0,
+    "body_sha256": "",
+    "headers_clean": true,
+    "verified_tls": true
+  },
+  {
+    "case": "on-asserted-port",
+    "enabled": true,
+    "source": "192.0.2.10:45001",
+    "input_sha256": "2d2f4610f5e4314d2c2157c9222865c615a49ced3dce200a9f57f5a0d5bcd05e",
+    "rules_sha256": "3ca6eed41d79d2e74d7898239a67acc20019d78574b4b1b589106576beb95987",
+    "status": 452,
+    "backend": 0,
+    "body_sha256": "",
+    "headers_clean": true,
+    "verified_tls": true
+  },
+  {
+    "case": "on-spoof-headers",
+    "enabled": true,
+    "source": "192.0.2.10:45002",
+    "input_sha256": "4530d951a991c468f958b070a4e0a5199e09f06c4c7e1470ff3c8d703064246f",
+    "rules_sha256": "3ca6eed41d79d2e74d7898239a67acc20019d78574b4b1b589106576beb95987",
+    "status": 200,
+    "backend": 1,
+    "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "headers_clean": true,
+    "verified_tls": true
+  },
+  {
+    "case": "on-json",
+    "enabled": true,
+    "source": "192.0.2.10:45002",
+    "input_sha256": "f93e73b04dec6fdd5eb9ef3e20a436dd850cddd892bdcae484885c0a9dcf995c",
+    "rules_sha256": "3ca6eed41d79d2e74d7898239a67acc20019d78574b4b1b589106576beb95987",
+    "status": 200,
+    "backend": 1,
+    "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+    "headers_clean": true,
+    "verified_tls": true
+  },
+  {
+    "case": "on-script",
+    "enabled": true,
+    "source": "192.0.2.10:45002",
+    "input_sha256": "c0ee4a0389f52deffdd46c0686e309909cd0b7e0ae713b6e956c8dc28724126e",
+    "rules_sha256": "3ca6eed41d79d2e74d7898239a67acc20019d78574b4b1b589106576beb95987",
+    "status": 403,
+    "backend": 0,
+    "body_sha256": "",
+    "headers_clean": true,
+    "verified_tls": true
+  },
+  {
+    "case": "on-cross-host",
+    "enabled": true,
+    "source": "192.0.2.10:45002",
+    "input_sha256": "75f87640441155a6d07c48a8e13b2a31a6b0b577611e2d08cb71a53493831d92",
+    "rules_sha256": "3ca6eed41d79d2e74d7898239a67acc20019d78574b4b1b589106576beb95987",
+    "status": 421,
+    "backend": 0,
+    "body_sha256": "",
+    "headers_clean": true,
+    "verified_tls": true
+  },
+  {
+    "case": "on-reload-alt",
+    "enabled": true,
+    "source": "192.0.2.9:45000",
+    "input_sha256": "a477d3615dbba33776fbfd6a832aaa90ca3400196931cd7a92d81f6127866de1",
+    "rules_sha256": "3ca6eed41d79d2e74d7898239a67acc20019d78574b4b1b589106576beb95987",
+    "status": 451,
+    "backend": 0,
+    "body_sha256": "",
+    "headers_clean": true,
+    "verified_tls": true
+  },
+  {
+    "case": "on-rollback",
+    "enabled": true,
+    "source": "192.0.2.9:45000",
+    "input_sha256": "1149c370f143c35e8cafb85dd764d8600a3dad15cb678c8862cdb62d6b41b44f",
+    "rules_sha256": "3ca6eed41d79d2e74d7898239a67acc20019d78574b4b1b589106576beb95987",
+    "status": 451,
+    "backend": 0,
+    "body_sha256": "",
+    "headers_clean": true,
+    "verified_tls": true
+  },
+  {
+    "case": "on-recovery",
+    "enabled": true,
+    "source": "192.0.2.10:45002",
+    "input_sha256": "4530d951a991c468f958b070a4e0a5199e09f06c4c7e1470ff3c8d703064246f",
+    "rules_sha256": "3ca6eed41d79d2e74d7898239a67acc20019d78574b4b1b589106576beb95987",
+    "status": 200,
+    "backend": 1,
+    "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "headers_clean": true,
+    "verified_tls": true
+  }
+]

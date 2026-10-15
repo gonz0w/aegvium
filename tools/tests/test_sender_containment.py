@@ -95,3 +95,17 @@ class SenderTests(unittest.TestCase):
                 path.write_text(text)
                 reply=subprocess.run(['sh','-c','sole_loopback() {'+function+'\n}\nsole_loopback "$1"','guard',str(path)],capture_output=True)
                 self.assertEqual(reply.returncode==0,accepted,text)
+
+    def test_client_identity_requires_named_test_and_one_ordered_mode_per_phase(self):
+        original=self.log()
+        changed=original.replace('TestLabSenderContainment','TestLabSenderClientIdentity')
+        for phase in S.PHASES:
+            changed=changed.replace('SENDER-ASSETS phase='+phase,'SENDER-CLIENT-IDENTITY phase='+phase+' enabled=true\nSENDER-ASSETS phase='+phase)
+        self.assertEqual(S.admit(changed,self.hashes,self.prepared(),True)['case_count'],44)
+        bad=[original,changed.replace('enabled=true','enabled=false'),changed.replace('TestLabSenderClientIdentity','TestLabSenderContainment'),changed.replace('SENDER-CLIENT-IDENTITY phase=protected enabled=true\n',''),changed+'SENDER-CLIENT-IDENTITY phase=protected enabled=true\n']
+        marker='SENDER-CLIENT-IDENTITY phase=protected enabled=true\n'
+        bad.append(changed.replace(marker,'')+marker)
+        for text in bad:
+            with self.assertRaises(ValueError):S.admit(text,self.hashes,self.prepared(),True)
+        with self.assertRaises(ValueError):S.admit(changed,self.hashes,self.prepared())
+        with self.assertRaises(ValueError):S.admit(changed,self.hashes,self.prepared(),'yes')

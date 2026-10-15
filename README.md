@@ -11,6 +11,7 @@ The optional sender-containment experiment uses stock PF to restrict fresh conne
 | Actual companion, CRS, HTTP/verified HTTPS routing | [Lab guide](research/coraza/LAB-PROXY.md); [163 ordinary /42 path/three load/seven startup controls](research/native/lab-concurrency-observations.json). Small synthetic corpus, not full OWASP coverage. |
 | TLS passthrough and SNI/Host binding | [29-case native matrix](research/native/tls-passthrough-observations.json), [scoped design](docs/milestones/M1/TLS-PASSTHROUGH.md). Close-only HTTP/1.1; startup-only certificate inputs. |
 | Local sender containment | [44-case/four-phase native matrix](research/native/sender-containment-observations.json), [PF design and rollback](docs/milestones/M1/SENDER-CONTAINMENT.md). Conditional on active PF and loopback filtering; fresh IPv4 data connections only. |
+| Explicit client identity and body ownership | [Native component/CLI receipts](research/native/client-identity-observations.json), [scoped design](docs/milestones/M1/CLIENT-IDENTITY.md). Default-off PROXY source selection requires companion TLS and an external PF sender boundary; inspected bodies are detached before asynchronous forwarding and expired responses reject with 502. |
 | Existing connector comparison | [Configured Caddy TLS/server/reverse-proxy](research/native/configured-caddy-observations.json), [API/rule-pool findings](research/connector/README.md), [comparison](docs/research/connector-comparison.md). No complete parity or runtime selection. |
 | Dependencies and advisories | [Review](docs/research/dependency-review.md), [compatible remediation](research/native/dependency-remediation-observations.json). Companion source scans have no findings; Caddy retains CEL package-only and deprecated OpenPGP module-only adoption blockers. |
 
@@ -33,13 +34,14 @@ Host checks and cross-builds are tooling evidence only. Disposable native experi
 | `make research-native-lab` | Offline native fixture/checker/CLI compilation and legacy TLS-at-relayd routing/reload/load controls. |
 | `make research-native-tls` | Native compilation, legacy controls and companion TLS passthrough/authority matrix. |
 | `make research-native-sender` | All TLS controls plus PF UID containment, invalid replacement, rollback and verified static PF restoration. |
+| `make research-native-identity` | Prior controls plus actual Coraza identity/context/body components and a separate enabled CLI/PF matrix. |
 | `make research-configured-caddy` | Separate native connector compilation and configured Caddy comparison. |
 
 Each experiment owns and tears down its VM, sockets, daemons and synthetic TLS assets. Never point it at a live gateway, storage or application. Raw keys, source/vendor inventories and logs stay ignored; shared observations retain source/tree/input/output hashes. [Native evidence index](research/native/README.md) preserves earlier scopes, failed HTTP pipelines, half-close effects, unsafe checker behavior and the initial cold-build timeout. Later passing profiles do not reclassify those results; plain-TERM attribution remains [#69](https://github.com/gonz0w/aegvium/issues/69).
 
 ## Adoption and project structure
 
-Still open: selected trust/privilege/startup policy, propagation of trusted client identity, certificate distribution/rotation, supported persistent/streaming protocols, full CRS/application tuning, measured resource/soak budgets, original image/daemon lineage and distribution obligations. Local UID containment excludes root/PF administrators and compromised allowed-UID processes. No live deployment, service enablement or release is implied by research.
+Still open: selected trust/privilege/startup policy, product client-identity policy, certificate distribution/rotation, supported persistent/streaming protocols, full CRS/application tuning, measured resource/soak budgets, original image/daemon lineage and distribution obligations. Local UID containment excludes root/PF administrators and compromised allowed-UID processes. No live deployment, service enablement or release is implied by research.
 
 [Proposed ingress ADR](docs/architecture/adr-0001-ingress-inspection.md) keeps relayd plus a companion and coraza-caddy under comparison. A future Traefik/Caddy-like relayd control plane may reuse the boundary; no reusable API or separate connector repository is selected. CrowdSec remains an optional later behavioral layer.
 

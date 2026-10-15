@@ -54,7 +54,21 @@ func TestLabSenderContainment(t *testing.T) {
 	runSenderPath(t, phase, true)
 }
 
-func runSenderPath(t *testing.T, phase string, guest bool) {
+func TestLabSenderClientIdentity(t *testing.T) {
+	if runtime.GOOS != "openbsd" || os.Getenv("AEGVIUM_LAB_SENDER") != "owned-guest" {
+		t.Skip("owned OpenBSD PF/relayd path required")
+	}
+	if os.Geteuid() != 32767 {
+		t.Fatal("fixture UID")
+	}
+	phase := os.Getenv("AEGVIUM_SENDER_PHASE")
+	if phase != "baseline" && phase != "protected" && phase != "rollback" && phase != "reprotected" {
+		t.Fatal("sender phase")
+	}
+	runSenderPathMode(t, phase, true, true)
+}
+func runSenderPath(t *testing.T, phase string, guest bool) { runSenderPathMode(t, phase, guest, false) }
+func runSenderPathMode(t *testing.T, phase string, guest, clientIP bool) {
 	certPath, keyPath, cert, roots := tlsPathMaterial(t)
 	var mu sync.Mutex
 	type effect struct {
@@ -143,6 +157,9 @@ func runSenderPath(t *testing.T, phase string, guest bool) {
 	if guest {
 		ack := &labAckWriter{events: make(chan string, 4)}
 		command = exec.Command("/var/aegvium-lab-proxy", "-config", configPath, "-tls-cert", certPath, "-tls-key", keyPath)
+		if clientIP {
+			command.Args = append(command.Args, "-proxy-client-ip")
+		}
 		command.Env = []string{"PATH=/usr/bin:/bin", "AEGVIUM_LAB_PROXY=owned-guest"}
 		command.Stdout = ack
 		command.Stderr = ack
@@ -177,6 +194,9 @@ func runSenderPath(t *testing.T, phase string, guest bool) {
 	}
 	publicHash := sha256.Sum256(public)
 	configHash := sha256.Sum256(raw)
+	if clientIP {
+		t.Logf("SENDER-CLIENT-IDENTITY phase=%s enabled=true", phase)
+	}
 	t.Logf("SENDER-ASSETS phase=%s cert_sha256=%x config_sha256=%x", phase, publicHash, configHash)
 	tlsConfig := func(sni string) *tls.Config {
 		return &tls.Config{RootCAs: roots, ServerName: sni, MinVersion: tls.VersionTLS12, NextProtos: []string{"http/1.1"}}

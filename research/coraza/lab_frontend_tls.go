@@ -79,6 +79,9 @@ func labTLSAuthority(next http.Handler) http.Handler {
 
 // CheckLabFrontend performs the same certificate coverage admission without bind.
 func CheckLabFrontend(p LabProfile) error {
+	if p.ProxyClientIP && p.FrontendCertificate == nil {
+		return errors.New("PROXY client identity requires frontend TLS")
+	}
 	_, e := labFrontendCertificate(p.FrontendCertificate, p.Routes)
 	return e
 }

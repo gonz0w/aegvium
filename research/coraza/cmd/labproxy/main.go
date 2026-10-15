@@ -24,8 +24,9 @@ func main() {
 	path := flags.String("config", "", "owned route file")
 	check := flags.Bool("check", false, "validate without binding")
 	certFile := flags.String("tls-cert", "", "startup-only owned public certificate")
+	clientIP := flags.Bool("proxy-client-ip", false, "use validated PROXY source; requires external PF sender boundary and frontend TLS")
 	keyFile := flags.String("tls-key", "", "startup-only owned private key")
-	if flags.Parse(os.Args[1:]) != nil || flags.NArg() != 0 || *path == "" || (*certFile == "") != (*keyFile == "") {
+	if flags.Parse(os.Args[1:]) != nil || flags.NArg() != 0 || *path == "" || (*certFile == "") != (*keyFile == "") || (*clientIP && *certFile == "") {
 		fmt.Fprintln(os.Stderr, "lab arguments invalid")
 		os.Exit(2)
 	}
@@ -42,6 +43,7 @@ func main() {
 		os.Exit(2)
 	}
 	profile := config.Profile()
+	profile.ProxyClientIP = *clientIP
 	if *certFile != "" {
 		profile.FrontendCertificate, e = spike.ReadLabCertificate(*certFile, *keyFile)
 		if e == nil {
