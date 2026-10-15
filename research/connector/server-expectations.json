@@ -1,0 +1,575 @@
+{
+  "scope": "Logical input and exact host-characterized outcome rows for configured Caddy TLS; native admission must match. Not raw TLS ciphertext or a product profile.",
+  "rows": [
+    {
+      "kind": "case",
+      "case": "get",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "app.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "7417d9234dc672d497c99f4bc4cefcbed7ef45acf0ad71f7417b44ccf5a24cc7",
+      "sni": "app.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "json",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+      "authority": "app.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "9eb030d51fb46176896250ddb864a632a98a446af984024864c107fa0eb5fa5e",
+      "sni": "app.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "sql",
+      "status": 403,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "27738cb0ab4f8c5a4907f858c212cce3baea7f95a09c4484bae252e6b8321911",
+      "sni": "app.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "script",
+      "status": 403,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "8e4f873aa2202eace57eebe65ff5ad03804477e1ea00edcebe80e9dffcbd2373",
+      "sni": "app.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "oversize",
+      "status": 413,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "2db2799a4c427074e55dd438d6aa99f7b3bed376efaeec9f01f35f1890422f8d",
+      "sni": "app.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "media",
+      "status": 403,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "cabe1694585d72b707276732086a20461d0e9fe56cf53e8daecc6b9eb086a33f",
+      "sni": "app.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "upgrade",
+      "status": 501,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "cc192a755aca3eb255cee786d3df3901db89e3788fed815e4e521b9bd2088281",
+      "sni": "app.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "unknown",
+      "status": 421,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "01c47b66e22cd7047352cf7a58fd0e6b136ce35d1b6d1eca6b09ca564464333c",
+      "sni": "app.test",
+      "http_host": "other.test"
+    },
+    {
+      "kind": "case",
+      "case": "spoof",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "app.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "3a73fdaf2d8a68eacea144176e697f000fbb6394b96d7bc271faeeb00a25e45e",
+      "sni": "app.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "response-header",
+      "status": 406,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "app.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "8b53d5de363f0370997fdcc68e5e34c333263d5fe3dfb5109c98b86a539f0e64",
+      "sni": "app.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "response-body",
+      "status": 406,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "app.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "69650229ff1f9aa9971bf8ab5e4db3e63b16171201a9353b9117ab8b2ece205c",
+      "sni": "app.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "untrusted-cert",
+      "status": 0,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": true,
+      "response_leaked": false,
+      "input_sha256": "7417d9234dc672d497c99f4bc4cefcbed7ef45acf0ad71f7417b44ccf5a24cc7",
+      "sni": "app.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "wrong-name",
+      "status": 0,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": true,
+      "response_leaked": false,
+      "input_sha256": "7772840f8294fd7f2ee4cd4ce6f51fd3204fa79a438f54433df278f9a0d5d43a",
+      "sni": "wrong.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "api-get",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "api.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "e8da1b96afe72cf7ef0189e8fcee6b6622ed6c94aac04774e5c30fd3cfa195de",
+      "sni": "app.test",
+      "http_host": "api.test"
+    },
+    {
+      "kind": "case",
+      "case": "api-json",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+      "authority": "api.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "be138ff0ac44f5baae602b379529885fd10283303c401c7d3a29ad352fbae7d6",
+      "sni": "app.test",
+      "http_host": "api.test"
+    },
+    {
+      "kind": "case",
+      "case": "api-wrong-port",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "api.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "d25de5a360435d6c817341abec3fa21107b2a37cabc30be71853c42a88b3a842",
+      "sni": "app.test",
+      "http_host": "api.test:18087"
+    },
+    {
+      "kind": "case",
+      "case": "api-wrong-cert",
+      "status": 502,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "e8da1b96afe72cf7ef0189e8fcee6b6622ed6c94aac04774e5c30fd3cfa195de",
+      "sni": "app.test",
+      "http_host": "api.test"
+    },
+    {
+      "kind": "case",
+      "case": "api-untrusted-cert",
+      "status": 502,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "e8da1b96afe72cf7ef0189e8fcee6b6622ed6c94aac04774e5c30fd3cfa195de",
+      "sni": "app.test",
+      "http_host": "api.test"
+    },
+    {
+      "kind": "case",
+      "case": "api-tls-recovery",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "api.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "e8da1b96afe72cf7ef0189e8fcee6b6622ed6c94aac04774e5c30fd3cfa195de",
+      "sni": "app.test",
+      "http_host": "api.test"
+    },
+    {
+      "kind": "case",
+      "case": "api-cleartext",
+      "status": 502,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "e8da1b96afe72cf7ef0189e8fcee6b6622ed6c94aac04774e5c30fd3cfa195de",
+      "sni": "app.test",
+      "http_host": "api.test"
+    },
+    {
+      "kind": "case",
+      "case": "api-cleartext-recovery",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "api.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "e8da1b96afe72cf7ef0189e8fcee6b6622ed6c94aac04774e5c30fd3cfa195de",
+      "sni": "app.test",
+      "http_host": "api.test"
+    },
+    {
+      "kind": "case",
+      "case": "api-after-invalid",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "api.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "e8da1b96afe72cf7ef0189e8fcee6b6622ed6c94aac04774e5c30fd3cfa195de",
+      "sni": "app.test",
+      "http_host": "api.test"
+    },
+    {
+      "kind": "case",
+      "case": "alt-get",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "alt.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "73c2d59e6862ae64a04242c15ce9d99487f4632c97dd047c485176cc9f4ebc88",
+      "sni": "app.test",
+      "http_host": "alt.test"
+    },
+    {
+      "kind": "case",
+      "case": "removed-api",
+      "status": 421,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "e8da1b96afe72cf7ef0189e8fcee6b6622ed6c94aac04774e5c30fd3cfa195de",
+      "sni": "app.test",
+      "http_host": "api.test"
+    },
+    {
+      "kind": "case",
+      "case": "api-restored",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "api.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "e8da1b96afe72cf7ef0189e8fcee6b6622ed6c94aac04774e5c30fd3cfa195de",
+      "sni": "app.test",
+      "http_host": "api.test"
+    },
+    {
+      "kind": "case",
+      "case": "removed-alt",
+      "status": 421,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "73c2d59e6862ae64a04242c15ce9d99487f4632c97dd047c485176cc9f4ebc88",
+      "sni": "app.test",
+      "http_host": "alt.test"
+    },
+    {
+      "kind": "case",
+      "case": "strict-matched-app",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "app.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "7417d9234dc672d497c99f4bc4cefcbed7ef45acf0ad71f7417b44ccf5a24cc7",
+      "sni": "app.test",
+      "http_host": "app.test"
+    },
+    {
+      "kind": "case",
+      "case": "strict-matched-api",
+      "status": 200,
+      "backend": 1,
+      "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "authority": "api.test",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "b900c703b4b435c9b65b840320c6c427793c04e585732579710ea6c41d07220b",
+      "sni": "api.test",
+      "http_host": "api.test"
+    },
+    {
+      "kind": "case",
+      "case": "strict-cross-host",
+      "status": 421,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": false,
+      "response_leaked": false,
+      "input_sha256": "e8da1b96afe72cf7ef0189e8fcee6b6622ed6c94aac04774e5c30fd3cfa195de",
+      "sni": "app.test",
+      "http_host": "api.test"
+    },
+    {
+      "kind": "case",
+      "case": "server-stop",
+      "status": 0,
+      "backend": 0,
+      "body_sha256": "",
+      "authority": "",
+      "headers_clean": true,
+      "client_error": true,
+      "response_leaked": false,
+      "input_sha256": "7417d9234dc672d497c99f4bc4cefcbed7ef45acf0ad71f7417b44ccf5a24cc7",
+      "sni": "app.test",
+      "http_host": "app.test"
+    }
+  ],
+  "event_order": [
+    [
+      "config",
+      "initial"
+    ],
+    [
+      "case",
+      "get"
+    ],
+    [
+      "case",
+      "json"
+    ],
+    [
+      "case",
+      "sql"
+    ],
+    [
+      "case",
+      "script"
+    ],
+    [
+      "case",
+      "oversize"
+    ],
+    [
+      "case",
+      "media"
+    ],
+    [
+      "case",
+      "upgrade"
+    ],
+    [
+      "case",
+      "unknown"
+    ],
+    [
+      "case",
+      "spoof"
+    ],
+    [
+      "case",
+      "response-header"
+    ],
+    [
+      "case",
+      "response-body"
+    ],
+    [
+      "case",
+      "untrusted-cert"
+    ],
+    [
+      "case",
+      "wrong-name"
+    ],
+    [
+      "case",
+      "api-get"
+    ],
+    [
+      "case",
+      "api-json"
+    ],
+    [
+      "case",
+      "api-wrong-port"
+    ],
+    [
+      "case",
+      "api-wrong-cert"
+    ],
+    [
+      "case",
+      "api-untrusted-cert"
+    ],
+    [
+      "case",
+      "api-tls-recovery"
+    ],
+    [
+      "case",
+      "api-cleartext"
+    ],
+    [
+      "case",
+      "api-cleartext-recovery"
+    ],
+    [
+      "config",
+      "invalid-rejected"
+    ],
+    [
+      "case",
+      "api-after-invalid"
+    ],
+    [
+      "config",
+      "replaced"
+    ],
+    [
+      "case",
+      "alt-get"
+    ],
+    [
+      "case",
+      "removed-api"
+    ],
+    [
+      "config",
+      "rollback"
+    ],
+    [
+      "case",
+      "api-restored"
+    ],
+    [
+      "case",
+      "removed-alt"
+    ],
+    [
+      "config",
+      "strict-enabled"
+    ],
+    [
+      "case",
+      "strict-matched-app"
+    ],
+    [
+      "case",
+      "strict-matched-api"
+    ],
+    [
+      "case",
+      "strict-cross-host"
+    ],
+    [
+      "case",
+      "server-stop"
+    ],
+    [
+      "server-cleanup",
+      ""
+    ],
+    [
+      "process-cleanup",
+      ""
+    ]
+  ]
+}

@@ -7,3 +7,5 @@ Start with pinned engine semantics on the host, then dependency review and a dis
 The [separate readiness packet](PROXY-READINESS.md) records source feasibility, staged tests and 73 passing ordinary native endpoint/lifecycle cases. Stock relayd checker wiring and actual rule readiness remain unqualified.
 
 Current [compatible advisory remediation](DEPENDENCY-REMEDIATION.md) removes seven prior symbol-level IDs and repeats native engine/companion/connector matrices in one owned run. [Receipts](../../../research/native/dependency-remediation-observations.json) retain two explicit connector residuals and separate native connector compilation from host-cross-built engine/companion execution; no adoption gate closes.
+
+The [configured Caddy server/TLS comparison](CONFIGURED-CADDY.md) adds thirty native cases and real configuration replacement/rollback. It resolves the bounded API-only gap and exposes concrete SNI/Host, port and media policy differences; full trust/resource/protocol/CRS/lineage/adoption gates remain open.

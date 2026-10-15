@@ -4,6 +4,8 @@ Status: observed research execution, not lab/stack/appliance acceptance. The [re
 
 Current [compatible dependency remediation](dependency-remediation-observations.json) binds signed runtime `aa1b78379210ff96af238bb808f796b8e241e868`: thirteen selected-version updates, zero symbol-level findings, complete four-scan graph coverage, 163 ordinary cases, forty-two companion paths, three load/reload phases, seven startup rejects and forty connector wire/twenty-two reload rows. The connector compiles offline natively as UID 32767; other executables are fresh host cross-builds in this run. Outcomes match prior matrices. Two explicit connector residuals and full topology/trust/lineage/resource/distribution gates remain. Historical observations below retain their original graphs, build modes and failures.
 
+The [configured Caddy study](configured-caddy-observations.json) now binds runtime `fd1882d07e24dff7939863a2a789f076f5849cd8`: thirty actual TLS/server/WAF/reverse-proxy cases, five Load/configuration observations, isolated child/storage/asset cleanup and an offline native-built extended fixture. Strict SNI/Host rejects cross-authority forwarding observed in both permissive baselines; port/media differences remain. Unchanged ordinary/companion/API matrices and native teardown pass. Earlier observations below keep their original graphs, build modes and scope.
+
 The image pin is inherited from Nomvium’s `tools/openbsd-image.json`; this research uses an independently verified copy, never its active image or process.
 
 | Runtime candidate | Actual observation |

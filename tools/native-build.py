@@ -139,7 +139,7 @@ def connector_package(work):
     env = {**os.environ, 'GOPROXY': 'off', 'GOSUMDB': 'off', 'GOTOOLCHAIN': 'local',
            'GOOS': 'openbsd', 'GOARCH': 'amd64', 'CGO_ENABLED': '0'}
     module = ROOT / 'research/connector'
-    names = ('go.mod', 'go.sum', 'comparison.go', 'comparison_test.go', 'wire-expectations.json')
+    names = ('go.mod', 'go.sum', 'comparison.go', 'comparison_test.go', 'wire-expectations.json', 'server.go', 'server_test.go', 'server-expectations.json')
     with tempfile.TemporaryDirectory(prefix='connector-source-', dir=work) as temporary:
         stage = Path(temporary)
         for name in names:

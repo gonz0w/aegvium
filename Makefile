@@ -6,7 +6,7 @@ hooks:
 check:
 	sh tools/check-repo.sh
 lint:
-	.tools/bin/shellcheck tools/native/connector-build.sh tools/native/connector-comparison.sh tools/native/lab-proxy.sh tools/native/relayd-body.sh tools/native/relayd-traffic.sh tools/native/relayd-checker-contract.sh tools/native/relayd-signals.sh tools/native/relayd-wiring.sh tools/native/relayd-health-faults.sh tools/native/relayd-checker-replacement.sh tools/native/relayd-generations.sh research/relayd/checker-exit2.sh tools/native/relayd-config.sh tools/native/source-build.sh tools/native/engine-repeat.sh tools/native/patch-openbsd.sh tools/run-research-go.sh tools/check-repo.sh .githooks/pre-commit .githooks/commit-msg
+	.tools/bin/shellcheck tools/native/configured-caddy.sh tools/native/connector-build.sh tools/native/connector-comparison.sh tools/native/lab-proxy.sh tools/native/relayd-body.sh tools/native/relayd-traffic.sh tools/native/relayd-checker-contract.sh tools/native/relayd-signals.sh tools/native/relayd-wiring.sh tools/native/relayd-health-faults.sh tools/native/relayd-checker-replacement.sh tools/native/relayd-generations.sh research/relayd/checker-exit2.sh tools/native/relayd-config.sh tools/native/source-build.sh tools/native/engine-repeat.sh tools/native/patch-openbsd.sh tools/run-research-go.sh tools/check-repo.sh .githooks/pre-commit .githooks/commit-msg
 test:
 	.tools/venv/bin/python3 -m unittest discover -s tools/tests -v
 secrets:
@@ -98,7 +98,7 @@ research-native-lab:
 
 .PHONY: research-connector-test research-connector-cross research-native-connector
 research-connector-test:
-	cd research/connector && ../../tools/run-research-go.sh test -mod=readonly -count=1 -v ./...
+	cd research/connector && AEGVIUM_CADDY_LOG_DIR=$(CURDIR)/.tools/configured-caddy/logs ../../tools/run-research-go.sh test -mod=readonly -count=1 -v ./...
 research-connector-cross:
 	python3 tools/connector-comparison.py
 	cd research/connector && GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 ../../tools/run-research-go.sh test -mod=readonly -p=2 -c -o ../../.tools/research/connector-openbsd-amd64.test
@@ -108,3 +108,7 @@ research-native-connector:
 .PHONY: research-native-connector-build
 research-native-connector-build:
 	python3 tools/native-engine.py --connector-comparison --connector-source-build
+
+.PHONY: research-configured-caddy
+research-configured-caddy:
+	python3 tools/native-engine.py --lab-proxy --connector-comparison --connector-source-build --configured-caddy
