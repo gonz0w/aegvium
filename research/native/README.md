@@ -2,6 +2,8 @@
 
 Status: observed research execution, not lab/stack/appliance acceptance. The [receipts](engine-observations.json) preserve exact candidate/tree, runtime input hashes, host Go/QEMU identity, binary/base/patch hashes, nonroot UID, named cases and cleanup. Raw private logs/reports remain in ignored `.tools/native-runs`; their hashes bind the shared observations.
 
+Current [compatible dependency remediation](dependency-remediation-observations.json) binds signed runtime `aa1b78379210ff96af238bb808f796b8e241e868`: thirteen selected-version updates, zero symbol-level findings, complete four-scan graph coverage, 163 ordinary cases, forty-two companion paths, three load/reload phases, seven startup rejects and forty connector wire/twenty-two reload rows. The connector compiles offline natively as UID 32767; other executables are fresh host cross-builds in this run. Outcomes match prior matrices. Two explicit connector residuals and full topology/trust/lineage/resource/distribution gates remain. Historical observations below retain their original graphs, build modes and failures.
+
 The image pin is inherited from Nomvium’s `tools/openbsd-image.json`; this research uses an independently verified copy, never its active image or process.
 
 | Runtime candidate | Actual observation |
