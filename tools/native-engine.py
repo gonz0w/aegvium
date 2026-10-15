@@ -442,7 +442,9 @@ def parse_build(text, source_hash, program=False):
     return values
 
 
-def source_build_guest(guest, work, inputs, program=False):
+def source_build_guest(guest, work, inputs, program=False, build_seconds=1200):
+    if type(build_seconds) is not int or build_seconds not in (1200, 2400):
+        raise ValueError("unreviewed native build budget")
     guest.require('set -eu; mkdir /var/aegvium-build; chmod 755 /var/aegvium-build')
     for name, asset in (('go.tar.gz', inputs['compiler']), ('source.tar.gz', inputs['source'])):
         with asset.open('rb') as stream:
@@ -456,7 +458,7 @@ def source_build_guest(guest, work, inputs, program=False):
     script = script.replace(b'BUILD_LAB_PROGRAM', b'1' if program else b'0')
     log = work / 'build.log'
     with log.open('wb') as output:
-        response = guest.call('sh -s', data=script, seconds=1200, output=output)
+        response = guest.call('sh -s', data=script, seconds=build_seconds, output=output)
     if response.returncode:
         raise RuntimeError(f'native source build failed ({response.returncode}); see build.log')
     values = parse_build(log.read_text(), inputs['source_sha256'], program)
@@ -737,13 +739,14 @@ def run():
     build_inputs = BUILD.package(work) if args.source_build else None
     connector_inputs = BUILD.connector_package(work) if args.connector_source_build else None
     source = {name: digest(ROOT / name) for name in git('ls-files').splitlines()}
-    duration = 3600 if args.connector_source_build else 1800 if args.source_build else (1500 if args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations else 1200 if args.relayd_wiring else 900)
+    duration = 3600 if args.connector_source_build or args.lab_tls else 1800 if args.source_build else (1500 if args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations else 1200 if args.relayd_wiring else 900)
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
               'configured_caddy_requested': args.configured_caddy, 'connector_native_build_requested': args.connector_source_build, 'connector_comparison_requested': args.connector_comparison, 'lab_tls_requested': args.lab_tls, 'lab_proxy_requested': args.lab_proxy, 'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
+                          'native_build_deadline_seconds': 2400 if args.lab_tls else 1200 if args.source_build else None,
                           'network': 'restrict=on; dynamic loopback-only SSH; no guest egress'}}
     if build_inputs:
         report['native_build_inputs'] = {key: value for key, value in build_inputs.items() if key not in ('compiler', 'source')}
@@ -786,7 +789,7 @@ def run():
             report['relayd_config'] = relayd_config_guest(guest, work)
         if args.source_build:
             print('Offline unprivileged native compilation started.', flush=True)
-            report['native'] = source_build_guest(guest, work, build_inputs, program=args.lab_proxy)
+            report['native'] = source_build_guest(guest, work, build_inputs, program=args.lab_proxy, build_seconds=2400 if args.lab_tls else 1200)
             report['native_build'] = True
             checker_hash = report['native']['build_receipts']['checker']
             report['checker'] = {'sha256': checker_hash, 'installed_verified': True,

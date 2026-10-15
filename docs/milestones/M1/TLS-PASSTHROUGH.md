@@ -23,3 +23,9 @@ Host tests exercise actual prefixed TLS, verified certificates, matched app/api 
 ## Compatibility and rollback
 
 Separate opt-in profile; no dependency version changes. Only close-only HTTP/1.1, IPv4 PROXY v1 and owned loopback addresses are qualified. Stop the owned pair and restore the previous profile to return to TLS-at-relayd; no product configuration migration. Earlier Caddy strict results remain immutable comparison evidence. Certificate distribution/rotation, local sender containment, broader protocols/streaming, hard resource budgets and image/daemon lineage remain adoption gates.
+
+## Tooling budget after the initial cold-build failure
+
+The [first signed attempt](../../../research/native/tls-passthrough-initial-failure.json) exhausted the 1800-second guest ceiling during cold native compilation before any traffic admission. Partial compiler/source/nonroot receipts, unchanged source/base and successful teardown remain failed evidence.
+
+A fresh TLS-only tooling profile permits 3600 guest seconds and 2400 native build seconds, with the same two CPUs, 2 GiB RAM, 4 GiB file ceiling, isolated network and complete teardown. Existing ordinary/native-lab budgets remain 1800/1200; no traffic, handshake, body or shutdown deadline changes. The fresh source must be signed/frozen before launch. A failed or incomplete native build still cannot use host outputs.

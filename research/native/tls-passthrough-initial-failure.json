@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "commit": "2769f5d33433c51deabe9c94a8a8ee83d8d6641e",
+  "tree": "18f64c57f20ca20a06e2064de1c2f4d8a742c73f",
+  "started": "2026-10-15T13:35:01.170356+00:00",
+  "finished": "2026-10-15T14:05:02.919244+00:00",
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 1800,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "patch_refresh": {
+    "signature_verified": true,
+    "installed": 34,
+    "pending": 0,
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+    "boot_before": "1792071322",
+    "boot_after": "1792072039"
+  },
+  "bootstrap_revoked": true,
+  "source_unchanged": true,
+  "baseline_unchanged": true,
+  "run_id": "4488dcf3-82b0-4e30-82f7-bc051bea59e5",
+  "passed": false,
+  "stage": "cold native compilation before ordinary or connected tests",
+  "failure": "Overall 1800-second guest deadline capped the remaining build call at 964.035 seconds. No native test admission or output binary receipt.",
+  "raw_report_sha256": "43ff1831b265e2fd595d3a7ff135620aac4f5c0d78bd7fe4544eb7c9d12b9592",
+  "build_log_sha256": "9915a0064032608331adbbfb50704a08ff814b0fe881b1356de15a531e2c33c1",
+  "partial_build_receipts": [
+    [
+      "compiler",
+      "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66"
+    ],
+    [
+      "source",
+      "f2e4b9ccf2f324ff92b2e7b63dac34f038f9dc014fa2bbb2e3a02b05915d5cf6"
+    ],
+    [
+      "uid",
+      "32767"
+    ]
+  ],
+  "source_sha256": "f2e4b9ccf2f324ff92b2e7b63dac34f038f9dc014fa2bbb2e3a02b05915d5cf6",
+  "compiler_archive_sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+  "teardown": {
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 1800,
+    "escalated": false,
+    "teardown_verified": true
+  },
+  "compiler_progress_sha256": "cd2c346c278402398d82f7f3d4346d262447cd582e919de42619dc7b86ddea4d",
+  "disposition": "Retain failed attempt. Predeclare a separate TLS research tooling profile of 3600 guest seconds and 2400 build seconds for a fresh signed run; CPU/RAM, traffic/deadline/security assertions and legacy profile budgets unchanged."
+}
