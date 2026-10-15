@@ -41,3 +41,7 @@ Reject this direction if relayd cannot preserve the selected supported behavior,
 ## Review result and rollback
 
 The decision remains proposed until the maintainer explicitly accepts a candidate-specific architecture and implementation scope. Merging this source/evidence assessment records the recommendation; it does not satisfy the gates above or turn research fixtures into adopted runtime. Keep #15, #16 and M1 open. Revisions can replace the recommendation while preserving all historical evidence; no deployed component needs rollback because this ADR changes none.
+
+## TLS ownership follow-up
+
+The [bounded passthrough ADR](adr-0005-tls-passthrough-research.md) adds a second research candidate: relayd performs stock health-checked TCP forwarding; the companion parses PROXY then terminates TLS and binds HTTP authority to actual SNI. [Native receipts](../../research/native/tls-passthrough-observations.json) pass 29 cases with unchanged legacy controls and offline fixture/checker/CLI compilation. This addresses the tested cross-host gap without a relayd patch, at the cost of companion key ownership and future certificate operations. A local forged-prefix request still reaches inspected service. The TLS-at-relayd control and strict Caddy results remain separate; no topology, product privilege policy or separate connector repository is adopted.

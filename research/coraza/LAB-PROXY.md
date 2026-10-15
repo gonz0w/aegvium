@@ -40,7 +40,7 @@ Add an independently owned HTTPS route with a public fixture CA file:
 }
 ```
 
-The native fixture generates its CA/certificates in memory and stores only the temporary public CA/config needed by the child. Private backend keys never enter files or evidence. Ingress uses the prior root-owned temporary relayd key/cert and removes them at teardown.
+The legacy TLS-at-relayd fixture generates its CA/certificates in memory and stores only the temporary public CA/config needed by the child. Private backend keys never enter files or evidence. Ingress uses the prior root-owned temporary relayd key/cert and removes them at teardown.
 
 Configuration accepts 1–8 unique lowercase `.test` hosts and at most 8192 bytes. Duplicate/folded/unknown fields, trailing JSON, incompatible version, wildcard/port-bearing hosts, nonloopback/DNS/privileged backend addresses, listener collisions and backend URL credentials/paths/queries/fragments are rejected. HTTPS requires a valid bounded regular public CA file and explicit `.test` name; it uses neither ambient trust nor verification bypass. No redirects are followed and no upstream request retry is configured. CA/config checks reject directly symlinked inputs; owned-file checks do not authenticate local senders or concurrent file replacement.
 
@@ -59,3 +59,18 @@ After atomically replacing the same owned config file, send SIGHUP to the origin
 Data/health listeners remain owned by the same process. Existing handlers finish against their original generation; reload does not revoke their effects or promise cancellation/retry safety. New traffic can wait while old handlers drain within the existing laboratory deadlines. A cleanup failure after activation terminates the lab process with a generic error instead of misreporting an uncommitted rejection. The earlier reload fixture measured fresh data requests and one persistent health connection across five signals; host tests separately prove held-request drain/retirement and cleanup failure classification. Rules remain embedded/pinned; SIGHUP is route/trust-input replacement, not a rules-distribution system.
 
 The current workload fixture holds four backend requests across both routes and verifies the fifth receives 503 without an application effect. A mixed burst preserves both benign JSON bodies while denying two SQL requests. A separate verified HTTPS response stays in flight across SIGHUP: no accepted acknowledgement appears during the 500ms hold; the old response completes, then new authority/removal and known-good rollback pass. Health returns sampled 200 in all three phases. Observed backend high-water counts are 4/2/1; these small workloads do not establish hard memory/CPU/disk limits, throughput, continuous availability or safe retries.
+
+## Opt-in companion TLS behind stock TCP relayd
+
+`make research-native-tls` repeats the native compile and legacy path, then runs the separate [passthrough profile](../relayd/lab-tls-passthrough.conf) and [29-case native matrix](../native/tls-passthrough-observations.json). The companion first validates the mandatory bounded PROXY v1 prefix and then performs TLS; stock relayd forwards TLS bytes and independently checks readiness. No relayd source patch or dependency is added. This TLS research target uses a predeclared 3600-second guest and 2400-second native build ceiling after a retained initial compilation timeout; the legacy target stays at 1800/1200 seconds.
+
+Inside that owned nonroot guest, the opt-in command is:
+
+```sh
+AEGVIUM_LAB_PROXY=owned-guest ./labproxy -config routes.json -tls-cert frontend.pem -tls-key frontend.key -check
+AEGVIUM_LAB_PROXY=owned-guest ./labproxy -config routes.json -tls-cert frontend.pem -tls-key frontend.key
+```
+
+The fixture writes ephemeral certificate/key files with mode 0600 and removes them after stopping the child; private key bytes/hashes never enter evidence. Both flags are required together. Startup/check-only rejects invalid keypairs or certificate-uncovered routes before binding. TLS >=1.2 and HTTP/1.1 ALPN are explicit, session tickets are disabled, empty/unknown SNI is rejected, and authority must exactly match SNI with optional `:18120`. Uppercase/trailing-dot/wrong-port authorities are deliberately outside this bounded profile. SIGHUP can replace certificate-covered routes transactionally; an uncovered route preserves known good. Certificate replacement requires stop/start; no automated rotation contract is selected.
+
+A direct local sender can forge a valid prefix and still obtain inspected service with verified TLS. This is retained as a 200/one-effect control, not trusted identity. The flow does not qualify sender containment, persistent connection revocation, client certificate authentication, arbitrary streaming, broad protocol compatibility or appliance adoption. See [ADR 0005](../../docs/architecture/adr-0005-tls-passthrough-research.md).
