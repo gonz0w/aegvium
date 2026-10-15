@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "commit": "73fd9fd2a74bfc5e2be3bd635f060c257aa0b667",
+  "tree": "325060cebef0c15def2923021846f142b5195519",
+  "started": "2026-10-15T16:12:01.118658+00:00",
+  "finished": "2026-10-15T16:23:22.418136+00:00",
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 3600,
+    "patch_deadline_seconds": 1200,
+    "native_build_deadline_seconds": 2400,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "bootstrap_revoked": true,
+  "source_unchanged": true,
+  "baseline_unchanged": true,
+  "passed": false,
+  "patch_refresh": {
+    "signature_verified": true,
+    "installed": 34,
+    "pending": 0,
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+    "boot_before": "1792080739",
+    "boot_after": "1792081338"
+  },
+  "run_id": "4d446794-e0af-4329-ab2e-0280306a2cb4",
+  "stage": "non-mutating PF preflight before native compilation or traffic",
+  "failure": "sender PF syntax/snapshot preflight failed; see sender-preflight.log",
+  "preflight_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "raw_report_sha256": "18d937564e8e4971ff5deade14001efc9b4aa4e78d52d4ddff3b1787050c13df",
+  "teardown": {
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 3600,
+    "escalated": false,
+    "teardown_verified": true
+  },
+  "disposition": "Retain failed attempt. No preflight stage receipts or traffic results were emitted. Static source review found canonical PF rules were incorrectly read from stderr rather than stdout. Correct the stream and add literal preflight failure-stage diagnostics; preserve all policies and admission assertions. Repeat from a fresh signed candidate."
+}

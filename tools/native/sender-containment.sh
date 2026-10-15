@@ -2,6 +2,15 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Nonce-bound, root-only controller for ONE disposable guest. Never a service.
 set -eu
+preflight_step=identity
+preflight_exit() {
+    preflight_status=$1
+    if [ "$preflight_status" -ne 0 ]; then
+        printf 'SENDER-PREFLIGHT-FAIL\t%s\t%s\n' "$preflight_step" "$preflight_status" >&2
+    fi
+    exit "$preflight_status"
+}
+trap 'preflight_exit $?' EXIT
 [ "$(uname -srm)" = 'OpenBSD 7.9 amd64' ]
 [ "$(id -u)" = 0 ]
 cd /var/aegvium-lab-sender
@@ -36,7 +45,9 @@ compare() {
 case ${AEGVIUM_SENDER_STAGE:-} in
 preflight)
     [ ! -e before.rules ]
+    preflight_step=snapshot
     snapshot before
+    preflight_step=initial-state
     [ ! -s before.anchors ] && [ ! -s before.tables ]
     awk '/\(skip\)/ && $1 != "lo0" && $1 != "lo" {bad=1} END {exit bad}' before.interfaces
     : > restore.pf
@@ -50,13 +61,18 @@ preflight)
     fi
     cat before.rules >> restore.pf
     for policy in open protected; do
+        preflight_step=syntax-$policy
         /sbin/pfctl -o none -nvf "$policy.pf" > "$policy.syntax-out" 2> "$policy.syntax-log"
-        sed -n '/^pass /p; /^block /p' "$policy.syntax-log" > "$policy.expected"
+        sed -n '/^pass /p; /^block /p' "$policy.syntax-out" > "$policy.expected"
     done
+    preflight_step=canonical-rules
     [ "$(wc -l < open.expected | tr -d ' ')" = 2 ]
     [ "$(wc -l < protected.expected | tr -d ' ')" = 3 ]
+    preflight_step=restore-syntax
     /sbin/pfctl -nf restore.pf
+    preflight_step=relayd-syntax
     /usr/sbin/relayd -n -f profile.conf
+    preflight_step=unchanged
     snapshot after-preflight
     compare after-preflight
     printf 'SENDER-PREFLIGHT\tuid\tRELAY_UID\nSENDER-PREFLIGHT\tsyntax\taccepted\nSENDER-PREFLIGHT\tunchanged\tverified\n'
@@ -72,6 +88,7 @@ preflight)
 run) ;;
 *) exit 2 ;;
 esac
+trap - EXIT
 [ "$(sha256 -q /var/aegvium-lab/engine.test)" = 'ENGINE_SHA256' ]
 [ "$(sha256 -q /var/aegvium-lab-proxy)" = 'PROGRAM_SHA256' ]
 [ "$(sha256 -q /var/aegvium-lab-readycheck)" = 'CHECKER_SHA256' ]
