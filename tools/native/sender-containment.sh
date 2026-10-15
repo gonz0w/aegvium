@@ -42,19 +42,24 @@ compare() {
         cmp -s "before.$view" "$1.$view" || return 1
     done
 }
+sole_loopback() {
+    awk '/^[^[:space:]]+:/ {sub(/:$/, "", $1); count++; if ($1 != "lo0") bad=1} END {exit (bad || count != 1)}' "$1"
+}
 case ${AEGVIUM_SENDER_STAGE:-} in
 preflight)
     [ ! -e before.rules ]
     preflight_step=snapshot
     snapshot before
-    preflight_step=initial-state
+    preflight_step=empty-anchors-tables
     [ ! -s before.anchors ] && [ ! -s before.tables ]
+    preflight_step=skip-scope
     awk '/\(skip\)/ && $1 != "lo0" && $1 != "lo" {bad=1} END {exit bad}' before.interfaces
     : > restore.pf
     skipped=$(awk '/\(skip\)/ {print $1}' before.interfaces)
     if printf '%s\n' "$skipped" | grep -qx lo; then
-        ifconfig -g lo > loopback-members
-        [ "$(cat loopback-members)" = lo0 ]
+        preflight_step=loopback-members
+        ifconfig lo > loopback-status
+        sole_loopback loopback-status
     fi
     if [ -n "$skipped" ]; then
         printf 'set skip on { %s }\n' "$(printf '%s\n' "$skipped" | tr '\n' ' ')" >> restore.pf

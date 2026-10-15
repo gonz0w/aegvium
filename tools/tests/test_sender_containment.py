@@ -85,3 +85,13 @@ class SenderTests(unittest.TestCase):
             guest=Guest()
             with patch.object(S,'admit',return_value={'admitted':True}):r=S.guest_run(guest,Path(d),'a'*64,'c'*64,'b'*64,prepared)
             self.assertFalse(r['admitted']);self.assertFalse(any('cat > /var/aegvium-lab-proxy' in c for c in guest.commands))
+
+    def test_loopback_group_guard_rejects_extra_missing_or_duplicate_members(self):
+        controller=(S.ROOT/'tools/native/sender-containment.sh').read_text()
+        function=controller.split('sole_loopback() {',1)[1].split('\n}',1)[0]
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'status'
+            for text, accepted in [('lo0: flags=8049<UP,LOOPBACK,RUNNING> mtu 32768\n\tgroups: lo\n\tinet 127.0.0.1 netmask 0xff000000\n',True),('lo0: flags=8049\nlo1: flags=8049\n',False),('lo1: flags=8049\n',False),('',False),('lo: carp demote count 0\n',False),('lo0: flags=8049\nlo0: flags=8049\n',False)]:
+                path.write_text(text)
+                reply=subprocess.run(['sh','-c','sole_loopback() {'+function+'\n}\nsole_loopback "$1"','guard',str(path)],capture_output=True)
+                self.assertEqual(reply.returncode==0,accepted,text)

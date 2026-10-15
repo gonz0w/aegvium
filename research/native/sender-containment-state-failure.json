@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "commit": "c4344d83d1fb522dbb83abc3406546b5fcbbc13c",
+  "tree": "057e5222a102411a00cb68d90bb165e01b38769a",
+  "started": "2026-10-15T16:26:19.415714+00:00",
+  "finished": "2026-10-15T16:38:00.816951+00:00",
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 3600,
+    "patch_deadline_seconds": 1200,
+    "native_build_deadline_seconds": 2400,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "bootstrap_revoked": true,
+  "source_unchanged": true,
+  "baseline_unchanged": true,
+  "passed": false,
+  "patch_refresh": {
+    "signature_verified": true,
+    "installed": 34,
+    "pending": 0,
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+    "boot_before": "1792081596",
+    "boot_after": "1792082206"
+  },
+  "run_id": "92ccd28f-7743-417e-a275-a14dd80df0bd",
+  "stage": "non-mutating initial PF-state admission before syntax parsing/native compilation/traffic",
+  "failure": "sender PF syntax/snapshot preflight failed; see sender-preflight.log",
+  "preflight_stage": "initial-state",
+  "preflight_exit": 1,
+  "preflight_log_sha256": "7da3afd6ad08d97a0c7808899a7b08c09a42cf375cc37cba8121784cf90fc4c9",
+  "raw_report_sha256": "a34493c0adc1834df490eac289f3a4b84e727c1680684863a84631b24775888f",
+  "teardown": {
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 3600,
+    "escalated": false,
+    "teardown_verified": true
+  },
+  "disposition": "Retain failed attempt and separate unpatched read-only diagnostic. Correct membership admission using member interface headers from ifconfig lo; reject extra, missing or duplicate members. No policy, traffic assertion, UID or restoration gate is relaxed. Repeat full patch/reboot/native-build/traffic qualification from a fresh signed candidate.",
+  "read_only_diagnostic": {
+    "scope": "Read-only PF-state diagnostic on unpatched owned baseline; no qualification or policy load",
+    "run_id": "9fa56e59-2558-4091-8652-2d9b1563e5af",
+    "passed": true,
+    "bootstrap_revoked": true,
+    "baseline_unchanged": true,
+    "source_unchanged": true,
+    "raw_report_sha256": "2bf51fae894471fc17b30438e10b5c5f4becf7d3055f84b34697cca6008e30ee",
+    "finding": "PF reports only lo/lo0 skipped and no anchors/tables, but ifconfig -g lo reports lo: carp demote count 0, which is a group attribute rather than a member name.",
+    "teardown": {
+      "returncode": 0,
+      "reason": "controller-eof",
+      "deadline_seconds": 600,
+      "escalated": false,
+      "teardown_verified": true
+    }
+  }
+}
