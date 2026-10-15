@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "commit": "7a87d0930730de6be56e724afad7211b3bfe78fa",
+  "tree": "e0dc2ed1f1ad5764628ee1894f3e7edd024da88c",
+  "started": "2026-10-15T15:55:06.324500+00:00",
+  "finished": "2026-10-15T16:07:31.657367+00:00",
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 3600,
+    "native_build_deadline_seconds": 2400,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "bootstrap_revoked": true,
+  "source_unchanged": true,
+  "baseline_unchanged": true,
+  "run_id": "62fd99f5-aadc-4ec5-80e9-1cc50e5a63fb",
+  "passed": false,
+  "stage": "authenticated offline patch application before PF preflight/native compilation",
+  "failure": "The existing patch call exhausted 600 seconds during patch preparation/application. Complete installed/pending/reboot gates were not admitted.",
+  "raw_report_sha256": "92cc81a937b3dc5fec7d41f3759386eed8c4f2e60128b1590c7f19ffe4c2e0c2",
+  "patch_log_sha256": "2a6231d928e4b12e8ce357ae55a88b2ec0f3aa48dea11ad2d1694874b19983d7",
+  "partial_patch_receipts": [
+    [
+      "signature",
+      "VERIFIED"
+    ]
+  ],
+  "teardown": {
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 3600,
+    "escalated": false,
+    "teardown_verified": true
+  },
+  "disposition": "Retain failed attempt. A fresh signed sender-only profile declares a 1200-second patch-call budget within the unchanged 3600-second guest/2400-second build ceilings. Existing legacy patch budget600 and all cryptographic/install/reboot/traffic gates remain unchanged."
+}

@@ -85,6 +85,25 @@ class NativeBuildTests(unittest.TestCase):
             for bad in (0, True, 3600):
                 with self.assertRaises(ValueError): LAB.source_build_guest(guest, work, inputs, build_seconds=bad)
 
+    def test_sender_patch_budget_never_accepts_partial_install_or_skips_reboot(self):
+        with tempfile.TemporaryDirectory() as folder:
+            work = Path(folder).resolve()
+            class Guest:
+                def __init__(self): self.seconds = []; self.commands = []
+                def call(self, command, **kwargs):
+                    self.commands.append(command); self.seconds.append(kwargs['seconds'])
+                    if 'output' in kwargs: kwargs['output'].write(b'PATCH\tsignature\tVERIFIED\n')
+                    return subprocess.CompletedProcess([], 0)
+                def require(self, command): self.commands.append(command); raise AssertionError('reboot before complete patch admission')
+            for budget in (600, 1200):
+                guest = Guest()
+                with patch.object(LAB.PATCHES, 'verify', return_value=work), patch.object(LAB.PATCHES, 'expected_files', return_value=[]):
+                    with self.assertRaises(RuntimeError): LAB.patch_guest(guest, work, patch_seconds=budget)
+                self.assertEqual(guest.seconds, [180, budget])
+                self.assertFalse(any('reboot' in x for x in guest.commands))
+            for bad in (0, True, 3600):
+                with self.assertRaises(ValueError): LAB.patch_guest(Guest(), work, patch_seconds=bad)
+
     def test_native_checker_install_uses_build_receipt_and_rejects_legacy_output(self):
         valid = '\n'.join(('BUILD\tuid\t32767', 'BUILD\tcompiler\t' + 'a'*64,
                            'BUILD\tsource\t' + 'b'*64, 'BUILD\tbinary\t' + 'c'*64,
