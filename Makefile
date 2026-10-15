@@ -27,6 +27,10 @@ research-tools:
 research-audit:
 	cd research/coraza && PATH=$(CURDIR)/.tools/go/bin:$$PATH GOTOOLCHAIN=local ../../.tools/research-bin/govulncheck -test ./...
 
+.PHONY: research-advisories
+research-advisories:
+	python3 tools/research-advisories.py
+
 .PHONY: research-native
 research-native:
 	python3 tools/native-engine.py

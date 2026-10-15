@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "scope": "Bounded private research regression gate only; residuals remain adoption blockers. Levels: module=0, imported package=1, reachable symbol=2.",
+  "review": "docs/architecture/adr-0003-research-advisory-refresh.md",
+  "modules": {
+    "coraza": {},
+    "connector": {
+      "GO-2026-6094": {
+        "module": "github.com/google/cel-go",
+        "version": "v0.28.1",
+        "maximum_level": 1,
+        "reason": "Reported fix v0.30.0 does not compile with pinned Caddy v2.11.4; requires a compatible framework review. No symbol finding permitted."
+      },
+      "GO-2026-5932": {
+        "module": "golang.org/x/crypto",
+        "version": "v0.57.0",
+        "maximum_level": 0,
+        "reason": "Deprecated openpgp package is not imported; no reported fixed version. Importing it rejects this gate."
+      }
+    }
+  }
+}
