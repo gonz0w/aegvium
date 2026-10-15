@@ -3,12 +3,14 @@ package spike
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 )
 
 type labTransportFunc func(*http.Request) (*http.Response, error)
@@ -81,6 +83,64 @@ func TestLabBodyTransport(t *testing.T) {
 			tr := labBodyTransport{base: labTransportFunc(func(*http.Request) (*http.Response, error) { called = true; return nil, nil })}
 			if _, e := tr.RoundTrip(request); e == nil || called || source.closes != 1 {
 				t.Fatal("body fault reached backend or leaked source")
+			}
+		})
+	}
+}
+
+type labCancelEOF struct {
+	context.Context
+	entered chan struct{}
+}
+
+func (r labCancelEOF) Read([]byte) (int, error) { close(r.entered); <-r.Done(); return 0, io.EOF }
+
+type labExpiredContext struct{ context.Context }
+
+func (labExpiredContext) Deadline() (time.Time, bool) { return time.Now().Add(-time.Second), true }
+
+func TestLabBufferedResponse(t *testing.T) {
+	for _, name := range []string{"healthy", "cancelled-eof", "expired-unnotified", "missing-request", "read-error", "oversize"} {
+		t.Run(name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			var reader io.Reader = strings.NewReader("owned response")
+			var entered chan struct{}
+			if name == "cancelled-eof" {
+				entered = make(chan struct{})
+				reader = labCancelEOF{Context: ctx, entered: entered}
+			}
+			if name == "read-error" {
+				reader = labTransportReadError{}
+			}
+			if name == "oversize" {
+				reader = strings.NewReader(strings.Repeat("x", LabBodyLimit+1))
+			}
+			if name == "expired-unnotified" {
+				ctx = labExpiredContext{Context: ctx}
+			}
+			source := &labTransportSource{Reader: reader}
+			request := httptest.NewRequest("GET", "http://app.test/", nil).WithContext(ctx)
+			if name == "missing-request" {
+				request = nil
+			}
+			response := &http.Response{StatusCode: 200, Request: request, Body: source}
+			done := make(chan error, 1)
+			go func() { done <- labBufferedResponse(response) }()
+			if entered != nil {
+				<-entered
+				cancel()
+			}
+			err := <-done
+			if (err == nil) != (name == "healthy") || source.closes != 1 {
+				t.Fatal("response boundary accepted expired/error data", name, err)
+			}
+			if name == "healthy" {
+				data, err := io.ReadAll(response.Body)
+				response.Body.Close()
+				if err != nil || string(data) != "owned response" {
+					t.Fatal("response bytes changed")
+				}
 			}
 		})
 	}

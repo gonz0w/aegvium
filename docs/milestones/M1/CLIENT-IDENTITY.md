@@ -36,6 +36,12 @@ Before native admission, detach at most 4096 inspected body bytes into a per-req
 
 Require a deterministic delayed-writer regression that reads only after the source buffer is reset, exact body/metadata preservation, no backend on read/close/oversize errors, focused/full lab race checks, and all prior native semantics unchanged. Native OpenBSD race instrumentation is not claimed.
 
-The component native call requires ten wire rows, six context subtests and five body-lifetime/fault subtests, plus both CLI check-only outcomes and independent cleanup. Normal-CRS CLI/PF cases remain a separately admitted 44-case/four-phase matrix.
+The component native call requires ten wire rows, six context, five body-lifetime/fault and six response-boundary subtests, plus both CLI check-only outcomes and independent cleanup. Normal-CRS CLI/PF cases remain a separately admitted 44-case/four-phase matrix.
 
 The initial host failure's source fingerprints match signed candidate `ec1bca4cd4cb4ea45469418166e3fe05aac8957d`. The repaired working tree passes twenty focused race repetitions, the full lab race suite, full Go regression/vet/cross builds, 95 repository checks and four source-advisory scans. Companion scans have no findings; Caddy's existing non-symbol residuals remain. These are host/tooling outcomes; native qualification is still pending.
+
+## Native stalled-response rejection finding
+
+The first native attempt compiled all three outputs and passed 163 ordinary cases, then failed legacy api-stall: the owned HTTPS backend produced one inspected effect and the client received empty 200 instead of the required 502. No later TLS/PF/identity matrices ran; source/base invariance and teardown passed. Retain this failed result independently.
+
+The response-buffer gate currently accepts clean EOF without independently checking the request context/deadline. Reject cancelled or expired context after bounded response buffering even if the body reader returns clean EOF. Keep the existing two-second request deadline and 502/one-effect expectation. Deterministic tests must cover EOF following cancellation, expired deadline before timer notification, missing request context, response read error/limit and healthy response preservation. Repeat all prior native semantics; do not promote a retry as proof of the first attempt.

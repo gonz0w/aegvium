@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "commit": "66c2380286335a4be414d04e3ff11dd90b4960e1",
+  "tree": "fbbbd8eab472117dae84764130301ac64434e1f0",
+  "started": "2026-10-15T19:34:33.802372+00:00",
+  "finished": "2026-10-15T20:25:34.928016+00:00",
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 3600,
+    "patch_deadline_seconds": 1200,
+    "native_build_deadline_seconds": 2400,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "bootstrap_revoked": true,
+  "source_unchanged": true,
+  "baseline_unchanged": true,
+  "passed": false,
+  "native_build": true,
+  "patch_refresh": {
+    "signature_verified": true,
+    "installed": 34,
+    "pending": 0,
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+    "boot_before": "1792092895",
+    "boot_after": "1792093819"
+  },
+  "run_id": "b928a65c-71d9-4c7e-8e21-1d25451d1f0c",
+  "stage": "legacy companion composition before later TLS/PF/identity matrices",
+  "failure": "lab proxy composition failed; partial receipts retained",
+  "raw_report_sha256": "83766b552727e7772380e7e87ef7ad0ee40e4f232b5687a682e49c325f10ed36",
+  "lab_log_sha256": "72cc83eeea4bf55507664ba5a3f9256c137ca729792c230a563b81898b519812",
+  "native_build_receipts": {
+    "compiler": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+    "source": "00eecb32f5f37ef1bd91f9fdd676dc87c396915e9109284d055f1aed340122ec",
+    "uid": "32767",
+    "binary": "50ee1db0b105ab7fd0bf6ab1d6a00a4bd662cb8d551265f8cf0a89238b045529",
+    "checker": "52932419021d857d0eda4e818e11a564d29cb617c75b1a1937f7fb076ffb8dd9",
+    "program": "36713cd9a0710b734f4ff7473defb781c8f9178e9ae0c9bce6a2ff8934e93ed0"
+  },
+  "ordinary_native_case_count": 163,
+  "legacy_observed_row_count": 42,
+  "legacy_observed_load_row_count": 3,
+  "legacy_supervisor_exit": 1,
+  "differences": [
+    {
+      "expected": {
+        "case": "api-stall",
+        "status": 502,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      "observed": {
+        "case": "api-stall",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      }
+    }
+  ],
+  "source_manifest": {
+    "file_count": 791,
+    "sha256": "bad241e0ba52ea15dd120b7fe8959a7468ee8322fb7c0a3f5eed238d8a6dcf09"
+  },
+  "teardown": {
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 3600,
+    "escalated": false,
+    "teardown_verified": true
+  },
+  "disposition": "Retain failed native attempt. Native fixture/checker/CLI compilation and all 163 ordinary tests passed. Legacy api-stall returned empty 200/one effect instead of 502/one effect at 2.13 seconds; the other 41 path rows match the prior baseline. No later TLS/PF/identity matrix ran. The response-buffer gate lacks an independent context/deadline check after clean EOF. Add deterministic cancelled/expired-context EOF rejection, retaining original time limits/effects and source-scope separation; repeat from a fresh signed candidate.",
+  "stall_elapsed_seconds": 2.13
+}

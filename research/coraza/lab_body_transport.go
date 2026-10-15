@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"time"
 )
 
 // Coraza owns its body reader until the inspection handler returns. The backend
@@ -24,4 +25,26 @@ func (t labBodyTransport) RoundTrip(request *http.Request) (*http.Response, erro
 		copy.Body = io.NopCloser(bytes.NewReader(data))
 	}
 	return t.base.RoundTrip(copy)
+}
+
+// A clean EOF can race cancellation of a stalled backend. A completed bounded
+// read is not sufficient when its request budget is already exhausted.
+func labBufferedResponse(response *http.Response) error {
+	if response.Body == nil {
+		return errors.New("lab response bound")
+	}
+	defer response.Body.Close()
+	data, err := io.ReadAll(io.LimitReader(response.Body, LabBodyLimit+1))
+	if err != nil || len(data) > LabBodyLimit || response.Request == nil {
+		return errors.New("lab response bound")
+	}
+	ctx := response.Request.Context()
+	if ctx.Err() != nil {
+		return errors.New("lab response bound")
+	}
+	if deadline, ok := ctx.Deadline(); ok && !time.Now().Before(deadline) {
+		return errors.New("lab response bound")
+	}
+	response.Body = io.NopCloser(bytes.NewReader(data))
+	return nil
 }

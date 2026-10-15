@@ -10,6 +10,7 @@ COMPONENT_TESTS={
     'TestLabClientIdentityWire':[r['case'] for r in EXPECTED],
     'TestLabClientIdentityContext':['missing','wrong-type','wrong-destination','zero-port','ipv6','valid'],
     'TestLabBodyTransport':['writer-after-transaction-close','read','close','oversize','length'],
+    'TestLabBufferedResponse':['healthy','cancelled-eof','expired-unnotified','missing-request','read-error','oversize'],
 }
 
 
@@ -35,7 +36,7 @@ def admit(text,binary,program):
             raise ValueError('client identity component execution incomplete')
     if set(re.findall(r'^--- PASS: ([^ /]+) \(',text,re.M))!=set(COMPONENT_TESTS) or text.splitlines().count('PASS')!=1 or '--- FAIL:' in text or '--- SKIP:' in text:
         raise ValueError('client identity component execution incomplete')
-    return {'admitted':True,'case_count':len(rows),'cases':rows,'native_built':True,'receipts':dict(receipts),'startup_checks':2,'context_cases':6,'body_lifetime_cases':5,'scope':'Direct uncontained TLS component server with test-only REMOTE_ADDR/REMOTE_PORT rules and internal route replacement. Separate from the normal-CRS actual CLI/PF matrix.'}
+    return {'admitted':True,'case_count':len(rows),'cases':rows,'native_built':True,'receipts':dict(receipts),'startup_checks':2,'context_cases':6,'body_lifetime_cases':5,'response_boundary_cases':6,'scope':'Direct uncontained TLS component server with test-only REMOTE_ADDR/REMOTE_PORT rules and internal route replacement. Separate from the normal-CRS actual CLI/PF matrix.'}
 
 
 def guest_run(guest,work,binary,program):
@@ -47,7 +48,7 @@ def guest_run(guest,work,binary,program):
 [ "$(sha256 -q /var/aegvium-lab/engine.test)" = 'BINARY_SHA256' ]
 [ "$(sha256 -q /var/aegvium-lab-proxy)" = 'PROGRAM_SHA256' ]
 printf 'CLIENT-RECEIPT\tbinary\tBINARY_SHA256\nCLIENT-RECEIPT\tprogram\tPROGRAM_SHA256\n'
-su -m nobody -c 'set -eu; [ "$(id -u)" -eq 32767 ]; printf "CLIENT-RECEIPT\tuid\t32767\n"; cd /var/aegvium-lab; export AEGVIUM_CLIENT_IDENTITY=owned-guest; exec ./engine.test -test.v -test.timeout=90s -test.run="^(TestLabClientIdentityWire|TestLabClientIdentityContext|TestLabBodyTransport)$"'
+su -m nobody -c 'set -eu; [ "$(id -u)" -eq 32767 ]; printf "CLIENT-RECEIPT\tuid\t32767\n"; cd /var/aegvium-lab; export AEGVIUM_CLIENT_IDENTITY=owned-guest; exec ./engine.test -test.v -test.timeout=90s -test.run="^(TestLabClientIdentityWire|TestLabClientIdentityContext|TestLabBodyTransport|TestLabBufferedResponse)$"'
 '''.replace('BINARY_SHA256',binary).replace('PROGRAM_SHA256',program).encode()
     log=work/'client-identity-component.log'
     with log.open('wb') as output:
