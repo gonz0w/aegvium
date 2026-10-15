@@ -68,6 +68,23 @@ class NativeBuildTests(unittest.TestCase):
                 with self.assertRaises(RuntimeError): LAB.source_build_guest(guest, work, inputs)
                 self.assertFalse(any('/var/aegvium-lab' in command for command in guest.commands))
 
+    def test_reviewed_tls_build_budget_preserves_failure_boundary(self):
+        with tempfile.TemporaryDirectory() as folder:
+            work = Path(folder).resolve(); asset = work / 'asset'; asset.write_bytes(b'fixture')
+            inputs = {'compiler': asset, 'source': asset, 'compiler_sha256': 'a'*64, 'source_sha256': 'b'*64}
+            class Guest:
+                def __init__(self): self.calls = []; self.commands = []
+                def require(self, command): self.commands.append(command)
+                def call(self, command, **kwargs):
+                    self.calls.append(kwargs['seconds'])
+                    return subprocess.CompletedProcess([], 1 if len(self.calls)==3 else 0)
+            guest = Guest()
+            with self.assertRaises(RuntimeError): LAB.source_build_guest(guest, work, inputs, program=True, build_seconds=2400)
+            self.assertEqual(guest.calls, [180, 180, 2400])
+            self.assertFalse(any('cp /var/aegvium-build/output' in x for x in guest.commands))
+            for bad in (0, True, 3600):
+                with self.assertRaises(ValueError): LAB.source_build_guest(guest, work, inputs, build_seconds=bad)
+
     def test_native_checker_install_uses_build_receipt_and_rejects_legacy_output(self):
         valid = '\n'.join(('BUILD\tuid\t32767', 'BUILD\tcompiler\t' + 'a'*64,
                            'BUILD\tsource\t' + 'b'*64, 'BUILD\tbinary\t' + 'c'*64,

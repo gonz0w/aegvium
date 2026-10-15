@@ -19,6 +19,7 @@ type labRouteGeneration struct {
 	waf        io.Closer
 	once       sync.Once
 	closeErr   error
+	hosts      map[string]bool
 }
 
 func prepareLabRoutes(routes []LabRoute, directives string) (*labRouteGeneration, error) {
@@ -26,7 +27,10 @@ func prepareLabRoutes(routes []LabRoute, directives string) (*labRouteGeneration
 	if e != nil {
 		return nil, e
 	}
-	generation := &labRouteGeneration{handler: handler, waf: waf}
+	generation := &labRouteGeneration{handler: handler, waf: waf, hosts: make(map[string]bool)}
+	for _, route := range routes {
+		generation.hosts[route.Host] = true
+	}
 	for _, transport := range transports {
 		generation.transports = append(generation.transports, transport)
 	}
@@ -96,6 +100,9 @@ func (o *labRouteOwner) close() error {
 // new listeners. Failed preparation preserves the currently serving generation.
 func (f *LabProxy) Reload(routes []LabRoute) error { return f.reload(routes, labDirectives) }
 func (f *LabProxy) reload(routes []LabRoute, directives string) error {
+	if _, e := labFrontendCertificate(f.frontend, routes); e != nil {
+		return e
+	}
 	next, e := prepareLabRoutes(routes, directives)
 	if e != nil {
 		return e
