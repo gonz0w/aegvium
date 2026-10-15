@@ -18,7 +18,7 @@ Do not add a rule-file CLI or synthetic production rule. Test-only directives pa
 
 ## Test design
 
-Host and native component wire tests compare default/off and opt-in/on with verified TLS, explicit source address/port prefixes, spoofed forwarding headers, exact rule-denial status/zero independent backend effects, benign bytes/header removal, post-denial recovery and SIGHUP-equivalent route replacement/rollback. Host context tests reject absent/wrong/invalid/wrong-destination metadata and refuse enabling without TLS. Missing metadata must return generic 503 before the handler; raw connections retain their transport peer.
+Host and native component wire tests compare default/off and opt-in/on with verified TLS, explicit source address/port prefixes, spoofed forwarding headers, exact rule-denial status/zero independent backend effects, benign bytes/header removal, post-denial recovery and SIGHUP-equivalent route replacement/rollback. Host and native context tests reject absent/wrong/invalid/wrong-destination metadata and refuse enabling without TLS. Missing metadata must return generic 503 before the handler; raw connections retain their transport peer.
 
 Repeat 163 ordinary, 42 legacy path/three load/seven startup, 29 TLS/four startup and the original 44 PF cases unchanged. Separately repeat all four PF phases/44 actual CLI cases with the option enabled, requiring the fixed named Go test and one mode receipt per phase. Keep exact input/status/effect/TLS/UID/program/policy/counter/invalid-replacement and eight-view restoration gates. Reject substituted baseline-mode receipts, missing/reordered tests, nonzero supervisor or partial cleanup. Native CLI check-only must accept TLS+identity and reject identity without TLS without binding.
 
@@ -35,3 +35,7 @@ The initial focused host race check fails: Coraza transaction cleanup resets its
 Before native admission, detach at most 4096 inspected body bytes into a per-request transport-owned copy. Consume and close the middleware-provided body synchronously, clone the outbound request, remove its replay closure and preserve content length/transfer encoding. Read/close/limit failures must prevent calling the backend transport. No dependency/upstream patch or unbounded buffering. This repair applies to the lab backend path in both identity modes.
 
 Require a deterministic delayed-writer regression that reads only after the source buffer is reset, exact body/metadata preservation, no backend on read/close/oversize errors, focused/full lab race checks, and all prior native semantics unchanged. Native OpenBSD race instrumentation is not claimed.
+
+The component native call requires ten wire rows, six context subtests and five body-lifetime/fault subtests, plus both CLI check-only outcomes and independent cleanup. Normal-CRS CLI/PF cases remain a separately admitted 44-case/four-phase matrix.
+
+The initial host failure's source fingerprints match signed candidate `ec1bca4cd4cb4ea45469418166e3fe05aac8957d`. The repaired working tree passes twenty focused race repetitions, the full lab race suite, full Go regression/vet/cross builds, 95 repository checks and four source-advisory scans. Companion scans have no findings; Caddy's existing non-symbol residuals remain. These are host/tooling outcomes; native qualification is still pending.

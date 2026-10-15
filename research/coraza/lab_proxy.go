@@ -96,7 +96,7 @@ func labConfiguredHandler(routes []LabRoute, directives string) (http.Handler, [
 			p.SetURL(target)
 			p.Out.Host = route.Host
 			stripLabHeaders(p.Out.Header)
-		}, Transport: tr, ErrorLog: log.New(io.Discard, "", 0), ErrorHandler: func(w http.ResponseWriter, _ *http.Request, _ error) { http.Error(w, "backend unavailable", 502) }, ModifyResponse: func(r *http.Response) error {
+		}, Transport: labBodyTransport{base: tr}, ErrorLog: log.New(io.Discard, "", 0), ErrorHandler: func(w http.ResponseWriter, _ *http.Request, _ error) { http.Error(w, "backend unavailable", 502) }, ModifyResponse: func(r *http.Response) error {
 			defer r.Body.Close()
 			data, e := io.ReadAll(io.LimitReader(r.Body, LabBodyLimit+1))
 			if e != nil || len(data) > LabBodyLimit {
