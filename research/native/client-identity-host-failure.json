@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "stage": "host identity wire race check before native execution",
+  "source_state": "Working tree before first signed capability candidate; relevant source hashes retained. No native admission.",
+  "base_commit": "e93fa15fc5ef3d8f11605c4ffdbab660fa73ac1f",
+  "passed": false,
+  "command": "go test -race -count=1 -run '^TestLabClientIdentity' .",
+  "host_go": "go version go1.27.2 darwin/arm64",
+  "raw_log_sha256": "7130cd2d4b79815270515b466596456dc27bf0355e48962bd454fc9092236b60",
+  "runtime_inputs": {
+    "research/coraza/lab_proxy.go": "4956e1b3dff96cdde0568629dc0fc5fa336550cb0a313b73e90213702527f8e7",
+    "research/coraza/lab_client_identity.go": "5021865f6b3cb8a39944734935ed894f81642a2b91841c6737101d06fb1c7ff7",
+    "research/coraza/lab_client_identity_test.go": "bb96e53ccbad854ad129e3ec260f84a7b931f7df62e78e2ae4452473b66ca7f8"
+  },
+  "finding": "Coraza Transaction.Close resets BodyBuffer/bodyBufferReader while net/http transferWriter is still reading the inspected request body from an asynchronous transport write loop. The race is observed in the benign JSON wire case.",
+  "disposition": "Retain failed host observation. Add a bounded independent body copy before backend RoundTrip, preserving wire metadata and read/close/limit error rejection. Require a deterministic lifetime regression, focused/full lab race checks and unchanged native controls before admission."
+}

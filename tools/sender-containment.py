@@ -78,7 +78,13 @@ def expected_rows():
     return result
 
 
-def admit(text, hashes, prepared):
+def admit(text, hashes, prepared, client_identity=False):
+    if type(client_identity) is not bool:
+        raise ValueError('invalid sender identity mode')
+    test_name='TestLabSenderClientIdentity' if client_identity else 'TestLabSenderContainment'
+    modes=re.findall(r'SENDER-CLIENT-IDENTITY phase=(\w+) enabled=true',text)
+    if modes != (list(PHASES) if client_identity else []):
+        raise ValueError('sender client identity mode incomplete or substituted')
     rows, receipts, phases, counters, stops, daemons, assets, finals, restored = [], {}, [], {}, {}, {}, {}, {}, {}
     events, invalid = [], None
     for line in text.splitlines():
@@ -88,6 +94,11 @@ def admit(text, hashes, prepared):
                 raise ValueError('sender row schema/type drift')
             rows.append(row)
             events.append(('row',row['phase'],row['case']))
+        elif 'SENDER-CLIENT-IDENTITY ' in line:
+            m=re.fullmatch(r'phase=(\w+) enabled=true',line.split('SENDER-CLIENT-IDENTITY ',1)[1])
+            if not client_identity or m is None:
+                raise ValueError('sender identity mode malformed or unexpected')
+            events.append(('mode',m[1]))
         elif 'SENDER-ASSETS ' in line:
             m = re.fullmatch(r'phase=(\w+) cert_sha256=([0-9a-f]{64}) config_sha256=([0-9a-f]{64})',line.split('SENDER-ASSETS ',1)[1])
             if m is None or m[1] in assets:
@@ -138,6 +149,7 @@ def admit(text, hashes, prepared):
     for phase in PHASES:
         expected_events.append(('phase',phase))
         if phase=='protected': expected_events.append(('invalid',phase))
+        if client_identity: expected_events.append(('mode',phase))
         expected_events.append(('assets',phase))
         expected_events += [('row',phase,r['case']) for r in BASELINE]
         expected_events.append(('final',phase))
@@ -163,24 +175,29 @@ def admit(text, hashes, prepared):
                 raise ValueError('sender PF denial not witnessed')
         elif counter['states']<(7 if label.endswith('allow') else 11):
             raise ValueError('sender allowed socket UID/control not witnessed')
-    passed = re.findall(r'^\s*--- PASS: TestLabSenderContainment/([^ ]+) ',text,re.M)
-    parents = re.findall(r'^--- PASS: TestLabSenderContainment \(',text,re.M)
+    passed = re.findall(r'^\s*--- PASS: '+test_name+r'/([^ ]+) ',text,re.M)
+    parents = re.findall(r'^--- PASS: '+test_name+r' \(',text,re.M)
     if passed!=[row['case'] for row in expected_rows()] or len(parents)!=4 or len(re.findall('^PASS$',text,re.M))!=4 or '--- FAIL:' in text or '--- SKIP:' in text:
         raise ValueError('sender Go phase execution incomplete')
-    return {'admitted':True,'case_count':len(rows),'cases':rows,'phase_order':phases,'native_program':True,'receipts':receipts,'public_assets':assets,'daemon_log_sha256':daemons,'restored_views':restored,'invalid_policy':invalid,'counters':[{'phase':p,'label':l,**v} for (p,l),v in counters.items()]}
+    return {'admitted':True,'client_identity':client_identity,'mode_phases':modes,'go_test':test_name,'case_count':len(rows),'cases':rows,'phase_order':phases,'native_program':True,'receipts':receipts,'public_assets':assets,'daemon_log_sha256':daemons,'restored_views':restored,'invalid_policy':invalid,'counters':[{'phase':p,'label':l,**v} for (p,l),v in counters.items()]}
 
 
-def guest_run(guest,work,binary,checker,program,prepared):
+def guest_run(guest,work,binary,checker,program,prepared,client_identity=False):
+    if type(client_identity) is not bool:
+        raise ValueError('invalid sender identity mode')
     hashes = {**prepared['hashes'],'engine':binary,'checker':checker,'program':program}
     if any(not isinstance(v,str) or not SHA.fullmatch(v) for v in hashes.values()) or not prepared['preflight']['admitted']:
         raise ValueError('native sender identity/preflight invalid')
     guest.require('test "$(sha256 -q /var/aegvium-lab-proxy)" = "'+program+'"')
-    log = work/'sender-containment.log'
+    log = work/('client-identity-pf.log' if client_identity else 'sender-containment.log')
+    controller=script(hashes,prepared['relay_uid'])
+    if client_identity:
+        controller=controller.replace(b'TestLabSenderContainment',b'TestLabSenderClientIdentity')
     with log.open('wb') as output:
-        reply = guest.call('AEGVIUM_SENDER_STAGE=run sh -s',data=script(hashes,prepared['relay_uid']),seconds=360,output=output)
+        reply = guest.call('AEGVIUM_SENDER_STAGE=run sh -s',data=controller,seconds=360,output=output)
     result = {'admitted':False,'hashes':hashes,'log_sha256':hashlib.sha256(log.read_bytes()).hexdigest(),'supervisor_exit':reply.returncode}
     try:
-        result.update(admit(log.read_text(),hashes,prepared))
+        result.update(admit(log.read_text(),hashes,prepared,client_identity))
     except (ValueError,KeyError,TypeError) as error:
         result['admission_error'] = str(error)
     if reply.returncode:

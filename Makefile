@@ -120,3 +120,7 @@ research-native-tls:
 .PHONY: research-native-sender
 research-native-sender:
 	python3 tools/native-engine.py --source-build --lab-proxy --lab-tls --sender-containment
+
+.PHONY: research-native-identity
+research-native-identity:
+	python3 tools/native-engine.py --source-build --lab-proxy --lab-tls --sender-containment --client-identity
