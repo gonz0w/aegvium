@@ -1,6 +1,6 @@
 # Bounded local backend isolation
 
-Status: authorized bounded research; native evidence pending. Refs #15/#16/#18/#21, WAF-03/05/06. No product policy or service identity adoption.
+Status: observed bounded native research; product adoption pending. Refs #15/#16/#18/#21, WAF-03/05/06. No product policy or service identity adoption.
 
 ## PRD
 
@@ -31,3 +31,9 @@ Host checks cover synchronization-file validation and strict receipt mutations, 
 The new native option requires the complete client-identity profile. Existing policies, CLI arguments, non-test Go and dependencies remain unchanged. Rollback restores all eight captured static views, joins owned children, removes public synchronization and private TLS assets, then destroys the owned guest. Disabling or reloading these policies does not revoke past backend effects. BootWeave's generic contract remains untouched. Full product trust, backend network isolation, privilege/certificate/audit policy, resource/soak budgets and adoption remain separate gates.
 
 Reference: [OpenBSD 7.9 PF semantics](https://man.openbsd.org/OpenBSD-7.9/pf.conf.5).
+
+## Observed result
+
+[Native evidence](../../../research/native/backend-isolation-observations.json) binds `7c1d07c0b3a76d94191f02ff67dc5dd7e7cc95b7` and run `2a672f8f-8ee3-42bb-9216-7ecf0eb611b1`. BI-01–03 pass within the four-phase distinct-user scope: eight direct attack attempts, eight independently observed effects, forty-four unchanged actual identity-enabled CLI cases and the public-file validation test. All previous native semantics repeat unchanged. Three PF matrices independently restore eight static views; offline native compile/install/execution hashes, UID separation, authenticated 34 patches/reboot/access, source/base invariance and complete teardown pass under unchanged limits. All 99 local checks and host Go/vet/race/cross/advisory policy pass.
+
+The companion/checker native hashes match the preceding study, with no non-test Go or dependency changes. Root/PF administrators and allowed-UID compromise, production accounts/startup/backend network policy, IPv6/existing sessions and full protocol/resource/certificate/audit/lineage/adoption acceptance remain outside this result.
