@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "scope": "Host fixture-helper and admission checks plus cross-compilation only; no native execution or security validation rerun.",
+  "commit": "c4c87de9247242eef45ce0d4c7a6369c85ce2cc1",
+  "tree": "f4a1c193c0b2b06087ca56c9e98c398b62368da0",
+  "base": "627fde87e7929194d715834a1ad6c46e4517dbf6",
+  "inputs": {
+    "research/coraza/lab_path_test.go": "01829b3b4411bfc918c5dde664e83854f401d618bb546784581db0fadbd22007",
+    "research/coraza/lab_transport_trace_test.go": "44233f845e5699c32cafd9bc3ee179be9fae77645e0c6681dfe64a2ac962b96f",
+    "tools/lab-proxy.py": "ecbc2b05d8291533abdf05ee68f1430c8ea5639e61a25e0ed5e2bd9762200efd",
+    "tools/native-build.py": "bbcfc769b127398a37aa5f367e47e137520ad08531db6602182643d45ca75767",
+    "tools/tests/test_lab_proxy.py": "9a4f39b32e614f8ac883824bdbfd0dd33c5ff2290c9a7403a3d550a1940461f9",
+    "tools/tests/test_transport_diagnostics.py": "3bd99b35f061faffbb17ac449a5616f30ff99514ad78c7e76e1d5d15469b5b1f"
+  },
+  "checks": {
+    "verify-runtime-clean.log": {
+      "command": "make verify",
+      "passed": true,
+      "log_sha256": "86186934430f26b562b31a8b55f72033fbac1593b8f4bfbf4f6b26765bf018e5"
+    },
+    "helpers-clean.log": {
+      "command": "tools/run-research-go.sh test -count=1 -run '^TestLabTransportTrace'",
+      "passed": true,
+      "log_sha256": "a62fcf17becef69a33e771598fd69026e3669eaf20e9b34b5fe60258969deccb"
+    },
+    "helpers-race-clean.log": {
+      "command": "tools/run-research-go.sh test -race -count=1 -run '^TestLabTransportTrace'",
+      "passed": true,
+      "log_sha256": "ccad844ba7a14b0d16e7c5bab28476dbe0509cee9ead5e056daaca89eedf5fb7"
+    },
+    "vet-clean.log": {
+      "command": "tools/run-research-go.sh vet ./...",
+      "passed": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "cross-clean.log": {
+      "command": "make research-cross research-labproxy-cross",
+      "passed": true,
+      "log_sha256": "9fab6385a70047b8b2a9f22903c89f52800dd63befdc24e81f13c278ef143fc0"
+    }
+  },
+  "local_repository_tests": 107,
+  "focused_go_parent_tests": 3,
+  "fake_client_network_calls": 0,
+  "native_executed": false,
+  "security_validation_rerun": false,
+  "advisory_scan_rerun": false,
+  "dependencies_changed": false,
+  "non_test_go_changed": false,
+  "historical_native_failure": {
+    "path": "research/native/request-wire-native-failure.json",
+    "sha256": "8747bba7b7eb9035df1740c1e2b2a24f0e6c605f374cc391bba9c3087251a257",
+    "runtime": "cbc21ae71fb94c5da25580856729d518c48a874d",
+    "run_id": "d234e0d8-5116-4608-a6bd-0a1d61f56cfc",
+    "passed": false,
+    "cause_known": false,
+    "later_wire_matrix_executed": false
+  },
+  "findings": [
+    "Fixed class/stage/status/call/time/health metadata replaces loss of transport failure detail. Raw errors, URLs, headers, bodies and certificate values are never serialized.",
+    "Nested timeout classification must walk wrappers because an outer URL error can report false while an inner error times out; focused helper tests cover the repair.",
+    "One completion timestamp prevents inconsistent duration/health-age arithmetic. Unique atomic call IDs and one-shot completion are checked with concurrent fake calls under the host race detector.",
+    "Strict admission correlates 41 named HTTP outcomes, 10 workload calls and readiness probes with the existing path/load expectations. The raw-prefix case retains its original separate assertions.",
+    "Partial diagnostic observations remain available when Go or the supervisor fails; no diagnostic can convert that failure into successful composition. Historical logs without the namespace remain incomplete, never backfilled."
+  ],
+  "limitations": [
+    "Only fake transports/synthetic errors and structural receipt mutations were executed. No listeners or network calls in the focused helper tests. The full traffic/security suite and new native diagnostic integration remain unexecuted.",
+    "Sampled persistent-health count/age is not an atomic pair or relayd table-state witness; instrumentation may perturb timing. Error classes do not prove a precise failure layer or retroactively diagnose the old native failure.",
+    "This is fixture tooling, not a product logging/audit API, runtime repair or qualification of OpenBSD behavior, framing/CRS/resource/architecture adoption. No live service/network/installer/release changes.",
+    "Affected security validation remains paused pending clarification of the reported access notice. Ordinary engineering does not grant broader access or bypass safeguards."
+  ]
+}

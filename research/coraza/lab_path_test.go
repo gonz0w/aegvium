@@ -283,10 +283,26 @@ func TestLabCompanionPath(t *testing.T) {
 	transport := &http.Transport{Proxy: nil, DisableKeepAlives: true, TLSClientConfig: &tls.Config{RootCAs: pool, ServerName: "app.test", MinVersion: tls.VersionTLS12}}
 	defer transport.CloseIdleConnections()
 	client := &http.Client{Transport: transport, Timeout: 3 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
-	request := func(c *http.Client, method, path, host, media, body string, extra http.Header) (int, bool) {
+	trace := newLabTransportTrace()
+	var healthSamples atomic.Int32
+	var healthLatestMS atomic.Int64
+	request := func(name string, c *http.Client, method, path, host, media, body string, extra http.Header) (int, bool) {
+		call, err := trace.begin(name)
+		if err != nil {
+			t.Fatal("invalid transport diagnostic case")
+		}
+		finish := func(stage string, status int, cause error) {
+			row, err := call.finish(stage, status, cause, healthSamples.Load(), healthLatestMS.Load())
+			if err != nil {
+				t.Fatal("invalid transport diagnostic completion")
+			}
+			raw, _ := json.Marshal(row)
+			t.Log("LAB-TRANSPORT " + string(raw))
+		}
+
 		r, e := http.NewRequest(method, "https://127.0.0.1:18120"+path, strings.NewReader(body))
 		if e != nil {
-			t.Fatal(e)
+			t.Fatal("fixture request construction failed")
 		}
 		r.Host = host
 		r.Header.Set("Accept", "*/*")
@@ -299,13 +315,19 @@ func TestLabCompanionPath(t *testing.T) {
 		}
 		response, e := c.Do(r)
 		if e != nil {
+			finish("roundtrip", 0, e)
 			return 0, true
 		}
 		defer response.Body.Close()
 		data, e := io.ReadAll(io.LimitReader(response.Body, LabBodyLimit+1))
 		if e != nil || len(data) > LabBodyLimit {
+			if e == nil {
+				e = errLabTraceBodyLimit
+			}
+			finish("body", response.StatusCode, e)
 			t.Fatal("client response bound")
 		}
+		finish("complete", response.StatusCode, nil)
 		if response.StatusCode == 503 && string(data) != "inspection busy\n" {
 			t.Fatal("admission response changed")
 		}
@@ -316,7 +338,7 @@ func TestLabCompanionPath(t *testing.T) {
 	}
 	ready := false
 	for deadline := time.Now().Add(15 * time.Second); time.Now().Before(deadline); {
-		code, _ := request(client, "GET", "/probe", "unknown.test", "", "", nil)
+		code, _ := request("readiness", client, "GET", "/probe", "unknown.test", "", "", nil)
 		if code == 421 {
 			ready = true
 			break
@@ -377,7 +399,7 @@ func TestLabCompanionPath(t *testing.T) {
 			mu.Lock()
 			before := len(receipts)
 			mu.Unlock()
-			code, err := request(client, tc.method, tc.path, tc.host, tc.media, tc.body, tc.extra)
+			code, err := request(tc.name, client, tc.method, tc.path, tc.host, tc.media, tc.body, tc.extra)
 			emit(tc.name, code, err, before, tc.status, tc.delta, tc.body)
 		})
 	}
@@ -395,7 +417,7 @@ func TestLabCompanionPath(t *testing.T) {
 			mu.Lock()
 			before := len(receipts)
 			mu.Unlock()
-			code, err := request(c, "GET", "/ok", "app.test", "", "", nil)
+			code, err := request(name, c, "GET", "/ok", "app.test", "", "", nil)
 			if !err {
 				t.Error("unverified TLS accepted")
 			}
@@ -429,7 +451,7 @@ func TestLabCompanionPath(t *testing.T) {
 			if method == "POST" {
 				media = "application/json"
 			}
-			code, err := request(client, method, path, host, media, body, nil)
+			code, err := request(name, client, method, path, host, media, body, nil)
 			emit(name, code, err, before, status, delta, body)
 		})
 	}
@@ -479,7 +501,6 @@ func TestLabCompanionPath(t *testing.T) {
 	}
 	healthStop := make(chan struct{})
 	healthDone := make(chan error, 1)
-	var healthSamples atomic.Int32
 	go func() {
 		reader := bufio.NewReader(healthConn)
 		for {
@@ -498,6 +519,7 @@ func TestLabCompanionPath(t *testing.T) {
 				healthDone <- errors.New("health generation interrupted")
 				return
 			}
+			healthLatestMS.Store(trace.elapsedMS())
 			healthSamples.Add(1)
 			select {
 			case <-healthStop:
@@ -602,7 +624,7 @@ func TestLabCompanionPath(t *testing.T) {
 		return response.StatusCode
 	}
 	runLabWorkloads(t, labLoadFixture{control: control, mu: &mu, receipts: &receipts, request: func(method, path, host, media, body string) int {
-		code, _ := request(client, method, path, host, media, body, nil)
+		code, _ := request("load", client, method, path, host, media, body, nil)
 		return code
 	}, health: healthOnce, signalReload: signalReload, expectEvent: expectEvent, events: events, replacement: replacementData})
 	apiCase("alt-load-available", "/ok", "alt.test", "GET", "", 200, 1)
@@ -616,7 +638,7 @@ func TestLabCompanionPath(t *testing.T) {
 		mu.Lock()
 		before := len(receipts)
 		mu.Unlock()
-		code, err := request(client, "GET", "/ok", "app.test", "", "", nil)
+		code, err := request("backend-down", client, "GET", "/ok", "app.test", "", "", nil)
 		emit("backend-down", code, err, before, 502, 0, "")
 	})
 	backend, backendDone = startBackend()
@@ -625,7 +647,7 @@ func TestLabCompanionPath(t *testing.T) {
 		mu.Lock()
 		before := len(receipts)
 		mu.Unlock()
-		code, err := request(client, "GET", "/ok", "app.test", "", "", nil)
+		code, err := request("backend-recovery", client, "GET", "/ok", "app.test", "", "", nil)
 		emit("backend-recovery", code, err, before, 200, 1, "")
 	})
 	t.Run("companion-stop", func(t *testing.T) {
@@ -633,7 +655,7 @@ func TestLabCompanionPath(t *testing.T) {
 		mu.Lock()
 		before := len(receipts)
 		mu.Unlock()
-		code, err := request(client, "GET", "/ok", "app.test", "", "", nil)
+		code, err := request("companion-stop", client, "GET", "/ok", "app.test", "", "", nil)
 		if code >= 200 && code < 400 {
 			t.Error("forwarded after stop")
 		}
@@ -664,5 +686,6 @@ func TestLabCompanionPath(t *testing.T) {
 			t.Error("backend listener survived")
 		}
 	}
+	t.Logf("LAB-TRANSPORT-FINAL calls=%d raw_errors=false", trace.next.Load())
 	t.Log("LAB-FINAL companion-stopped backend-stopped listeners-absent")
 }

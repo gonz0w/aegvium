@@ -24,6 +24,39 @@ def admit_load(row):
     if sorted(observed)!=sorted(targets):raise ValueError('load backend mismatch')
     return row
 
+TRACE_CLASSES={'none','body-limit','cancelled','deadline','refused','reset','broken-pipe','unreachable','unexpected-eof','eof','closed','tls-certificate','tls-protocol','dns','timeout','other'}
+TRACE_KEYS={'id','case','start_ms','duration_ms','status','stage','class','health_samples','health_age_ms'}
+
+
+def transport_diagnostics(text, complete=False):
+    """Separate observations, never sufficient to admit composition success."""
+    rows=[]
+    for line in text.splitlines():
+        if 'LAB-TRANSPORT {' not in line:continue
+        row=json.loads(line.split('LAB-TRANSPORT ',1)[1])
+        if not isinstance(row,dict) or set(row)!=TRACE_KEYS:raise ValueError('transport diagnostic schema drift')
+        integers=('id','start_ms','duration_ms','status','health_samples','health_age_ms')
+        if any(type(row[k])is not int for k in integers) or any(not isinstance(row[k],str) for k in ('case','stage','class')):raise ValueError('transport diagnostic type drift')
+        if not 1<=row['id']<=200 or not 0<=row['start_ms']<=120000 or not 0<=row['duration_ms']<=120000 or row['start_ms']+row['duration_ms']>120000 or not 0<=row['health_samples']<=2000:raise ValueError('transport diagnostic bounds')
+        if row['case'] not in (set(EXPECTED)-{'bare-data'})|{'readiness','load'} or row['stage'] not in ('roundtrip','body','complete') or row['class'] not in TRACE_CLASSES:raise ValueError('transport diagnostic label/stage/class')
+        if row['stage']=='roundtrip':
+            if row['status']!=0 or row['class']=='none':raise ValueError('transport failure disguised')
+        elif not 100<=row['status']<=599 or (row['stage']=='complete')!=(row['class']=='none'):raise ValueError('transport completion inconsistent')
+        if row['health_samples']==0:
+            if row['health_age_ms']!=-1:raise ValueError('unsampled health given age')
+        elif not 0<=row['health_age_ms']<=row['start_ms']+row['duration_ms']+1:raise ValueError('transport health age invalid')
+        rows.append(row)
+        if len(rows)>200:raise ValueError('too many transport diagnostics')
+    ids=[r['id'] for r in rows]
+    if len(set(ids))!=len(ids):raise ValueError('duplicate transport call')
+    finals=re.findall(r'^.*LAB-TRANSPORT-FINAL calls=([0-9]+) raw_errors=false$',text,re.M)
+    if len(finals)>1:raise ValueError('duplicate transport final')
+    final=bool(finals)
+    if final and (int(finals[0])!=len(rows) or sorted(ids)!=list(range(1,len(rows)+1))):raise ValueError('transport calls missing')
+    if complete and (not final or not rows):raise ValueError('transport diagnostics incomplete')
+    return {'valid':True,'complete':final,'call_count':len(rows),'rows':sorted(rows,key=lambda r:r['id'])}
+
+
 def admit(text,hashes):
     rows,receipts={},{}
     loads={}
@@ -70,7 +103,19 @@ def admit(text,hashes):
         if row['backend_authority']!=expected_authority:raise ValueError('wrong backend authority')
         if row['backend_host']!=expected_host:raise ValueError('wrong backend route')
         if row['body_sha256']!=expected_hash:raise ValueError('backend bytes mismatch')
-    return {'admitted':True,'case_count':len(EXPECTED), 'load_case_count':len(LOAD_PHASES),'loads':[loads[p] for p in sorted(loads)],'config':config,'reload':reload,'cases':[rows[n] for n in sorted(rows)],'receipts':receipts}
+    diagnostics=transport_diagnostics(text,complete=True)
+    named={}
+    for row in diagnostics['rows']:
+        if row['case'] in EXPECTED:
+            if row['case'] in named:raise ValueError('repeated named transport call')
+            named[row['case']]=row
+    if set(named)!=set(EXPECTED)-{'bare-data'}:raise ValueError('named transport coverage incomplete')
+    for name,row in named.items():
+        if row['status']!=rows[name]['status'] or row['stage']=='body':raise ValueError('transport/path outcomes disagree')
+    readiness=[r for r in diagnostics['rows'] if r['case']=='readiness']
+    load=[r for r in diagnostics['rows'] if r['case']=='load']
+    if not readiness or readiness[-1]['status']!=421 or len(load)!=10 or sorted(r['status'] for r in load)!=[200]*7+[403]*2+[503]:raise ValueError('transport readiness/load coverage incomplete')
+    return {'admitted':True,'case_count':len(EXPECTED), 'load_case_count':len(LOAD_PHASES),'loads':[loads[p] for p in sorted(loads)],'config':config,'reload':reload,'cases':[rows[n] for n in sorted(rows)],'receipts':receipts,'transport_diagnostics':diagnostics}
 
 def guest_run(guest,work,binary,checker,native_program=None):
     program=ROOT/'.tools/research/labproxy-openbsd-amd64';profile=(ROOT/'research/relayd/lab-proxy.conf').read_bytes()
@@ -88,6 +133,8 @@ def guest_run(guest,work,binary,checker,native_program=None):
     log=work/'lab-proxy.log'
     with log.open('wb') as output:reply=guest.call('sh -s',data=script,seconds=180,output=output)
     result={'hashes':hashes,'log_sha256':hashlib.sha256(log.read_bytes()).hexdigest(),'supervisor_exit':reply.returncode,'admitted':False,'native_program':native_program is not None}
+    try:result['transport_diagnostics']=transport_diagnostics(log.read_text())
+    except (ValueError,KeyError,TypeError) as error:result['transport_diagnostics']={'valid':False,'complete':False,'error':str(error)}
     try:result.update(admit(log.read_text(),hashes))
     except (ValueError,KeyError,TypeError) as error:result['admission_error']=str(error)
     if reply.returncode:result['admitted']=False
