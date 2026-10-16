@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "scope": "SV-01\u201304 bounded lab HTTP server supervision and CLI owner shutdown",
+  "classification": "host tooling only; native qualification pending",
+  "source": {
+    "commit": "0b7ef3c50ca231aa25b734f25fef7ff67917a903",
+    "tree": "f89519f81002e904c6482d14ae1c5b9d8928ec35",
+    "base": "ef82cf4f33312fb48e921e625c11cdf6851be0bf",
+    "runtime_inputs_sha256": {
+      "research/coraza/lab_proxy.go": "3d26f20725c4109fbb2e0754a8e5d1a5a3c0c6bd157675c3caa0ae3bb492c295",
+      "research/coraza/lab_supervision.go": "f38873b71f2b0859ff514c3c09cf06576364c8eaebd009bc8c5f9dd7e20d4599",
+      "research/coraza/lab_supervision_test.go": "b2fc15d9a5e4ae82e1512d0e84e6c192df24368907c8a3ca068a714643f0e60d",
+      "research/coraza/cmd/labproxy/main.go": "015ab8efddb6470ffccb6647965ca29fd78b06aee5ac33cd0dcbe6eea2a6e379",
+      "research/coraza/cmd/labproxy/control.go": "1cb8fcf63cf6a92ab5e36254c369792fb9c891affd76f641badb336dedefa3de",
+      "research/coraza/cmd/labproxy/control_test.go": "47a58165b418250ccd15328405d3890182d82d692ff78485523dd1aebbea436a",
+      "research/coraza/lab_shutdown.go": "1dce02282e19690273f963ba11e89c5addd068a0ca68f7c39c98b17663b7ac0c",
+      "research/coraza/lab_shutdown_test.go": "3c2397acedbf906d623c50f24640f5a1d6c0230e4e569802b58c6aad7ae62d3b",
+      "research/coraza/lab_reload.go": "580b3fa812d0f715c0622270ebf2db7e62a5975d5a06779c33e052e8a753c3a5",
+      "research/coraza/lab_reload_test.go": "b76d3c5dac326d6b4d533e8a34507bee1649a865d621726b870683b113c2ba2b",
+      "research/coraza/proxy_listener.go": "97a2c04f84f6d2d02b4463e1c6b65a2391d1b0468a61289e7bfe683e4e8cfcff",
+      "tools/native-build.py": "103a27b98d1ed6525bfd212c8c0bad58ef284ece7dc21df4cb0c20f99ef4ad3c",
+      "research/coraza/go.mod": "dca5c181ccdc6e49e975e7e9ede59a72578e42b36818d90cfeaed2ede0525e27",
+      "research/coraza/go.sum": "afc8a15db82d3fab3614845cff2bf2406eb7496b20f98f6240bb2913e75696c8"
+    }
+  },
+  "discovery": {
+    "classification": "source inspection, no pre-change execution",
+    "observed_gap": "Serve completion receipts were only consumed by Close; CLI waited for signals without a server-exit notification."
+  },
+  "host": {
+    "go": "go version go1.27.2 darwin/arm64"
+  },
+  "checks": {
+    "local_repository": {
+      "command": "make verify",
+      "passed": true,
+      "log_sha256": "fff3280073ea2342ad145d753cd9dd80db38a3aa34c2453f47210967fa825d70"
+    },
+    "focused_lifecycle": {
+      "command": "cd research/coraza && ../../tools/run-research-go.sh test -json -timeout=30s -count=1 -run '^TestLabSupervision|^TestLabShutdown|^TestLabGenerationDrain$|^TestLabReloadRetirementFailure$|^TestLabControl' . ./cmd/labproxy",
+      "passed": true,
+      "log_sha256": "1b74d132dd2722dfc239985b52405b69d0ab2ab98329aee452c500d17b933e9b"
+    },
+    "focused_host_race": {
+      "command": "cd research/coraza && ../../tools/run-research-go.sh test -json -race -timeout=30s -count=1 -run '^TestLabSupervision|^TestLabShutdown|^TestLabGenerationDrain$|^TestLabReloadRetirementFailure$|^TestLabControl' . ./cmd/labproxy",
+      "passed": true,
+      "log_sha256": "a09d9d318dc0a46fd57fd254ac5a7a38c472751a8fd916cda25e5e0bf1cb3a2d"
+    },
+    "vet": {
+      "command": "cd research/coraza && ../../tools/run-research-go.sh vet ./...",
+      "passed": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "openbsd_cross_compile": {
+      "command": "make research-cross research-labproxy-cross",
+      "passed": true,
+      "log_sha256": "9fab6385a70047b8b2a9f22903c89f52800dd63befdc24e81f13c278ef143fc0"
+    },
+    "offline_source_export": {
+      "command": "native-build.package(work); verify_source_bundle and all four new supervision inputs",
+      "passed": true,
+      "log_sha256": "f5881b32bc29c24479ab6e7a06ec21c03a85e248f9f03031048e72687971bcc6"
+    }
+  },
+  "local_repository_tests": 116,
+  "selected_go_parent_count": 18,
+  "selected_go_package_count": 2,
+  "selected_go_parent_tests": [
+    "github.com/gonz0w/aegvium/research/coraza/cmd/labproxy::TestLabControlCleanupError",
+    "github.com/gonz0w/aegvium/research/coraza/cmd/labproxy::TestLabControlFailureDuringClose",
+    "github.com/gonz0w/aegvium/research/coraza/cmd/labproxy::TestLabControlFailureDuringReload",
+    "github.com/gonz0w/aegvium/research/coraza/cmd/labproxy::TestLabControlReload",
+    "github.com/gonz0w/aegvium/research/coraza/cmd/labproxy::TestLabControlServerFailure",
+    "github.com/gonz0w/aegvium/research/coraza/cmd/labproxy::TestLabControlStopPriority",
+    "github.com/gonz0w/aegvium/research/coraza::TestLabGenerationDrain",
+    "github.com/gonz0w/aegvium/research/coraza::TestLabReloadRetirementFailure",
+    "github.com/gonz0w/aegvium/research/coraza::TestLabShutdownConcurrentClose",
+    "github.com/gonz0w/aegvium/research/coraza::TestLabShutdownDrainedServeFailure",
+    "github.com/gonz0w/aegvium/research/coraza::TestLabShutdownErrorOwnership",
+    "github.com/gonz0w/aegvium/research/coraza::TestLabShutdownLeaseRetirement",
+    "github.com/gonz0w/aegvium/research/coraza::TestLabShutdownMissingJoin",
+    "github.com/gonz0w/aegvium/research/coraza::TestLabShutdownReloadErrorCause",
+    "github.com/gonz0w/aegvium/research/coraza::TestLabSupervisionCloseExitRace",
+    "github.com/gonz0w/aegvium/research/coraza::TestLabSupervisionCompletion",
+    "github.com/gonz0w/aegvium/research/coraza::TestLabSupervisionConcurrentFailureCleanup",
+    "github.com/gonz0w/aegvium/research/coraza::TestLabSupervisionExpectedShutdown"
+  ],
+  "focused_execution": {
+    "new_library_parent_tests": 4,
+    "new_cli_parent_tests": 6,
+    "retained_lifecycle_parent_tests": 8,
+    "network_listeners": 0,
+    "traffic_requests": 0,
+    "waf_engine_instances": 0,
+    "host_race_instrumented": true,
+    "controls": "fake Serve/listener/runtime/config callbacks, empty HTTP servers, counting closers and benign in-memory leases"
+  },
+  "cross_built_outputs": {
+    "classification": "host cross-build, not native execution",
+    "fixture_sha256": "0eaf8702015adf70708d43f2dda489ac4e766de12d8744dbc5647b97001990da",
+    "program_sha256": "8055e97be93b43720ed111e6e60329cf45eb58be9f9c7e7ce4e06f3539dd533c"
+  },
+  "private_source_export": {
+    "file_count": 800,
+    "canonical_manifest_sha256": "1d002bd52d0b90ca3fe9b257eedf357422805e7f46b76aae987bcf19b7d59271",
+    "archive_sha256": "61311bef27f4cf184927b45c7bed63f332ae9ca8274eed7e7bcecc325e395923",
+    "supervision_inputs_verified": true,
+    "native_executed": false
+  },
+  "private_manifest_encoding": "SHA-256 of sorted UTF-8 relative source names, TAB, lowercase content SHA-256, LF; complete private manifest remains ignored",
+  "historical_evidence_unchanged": {
+    "research/native/request-wire-native-failure.json": "8747bba7b7eb9035df1740c1e2b2a24f0e6c605f374cc391bba9c3087251a257",
+    "research/coraza/shutdown-host-observations.json": "12c9d7e823bc9783903b9029815e2e3218f427e51d49beddaa6abcec1b70f275"
+  },
+  "native_execution": false,
+  "security_validation_rerun": false,
+  "advisory_scan_rerun": false,
+  "limitations": [
+    "No native SV/SD lifecycle or complete profile execution for this runtime.",
+    "Affected native/security validation remains paused under the reported access notice; no expanded access or safeguard bypass.",
+    "Exit-versus-close classification records observer mutex order, not kernel timing or causality.",
+    "Already executing reloads/accepted handlers may finish or drain; no cancellation or atomic in-flight revocation.",
+    "Library owners must observe Failed or explicitly Close; notification alone does not retire resources.",
+    "Failed drain/missing join preserves conservative SD ownership; no general leak-free or crash cleanup guarantee.",
+    "Earlier native reload response failure remains unexplained and later wire matrix remains unexecuted.",
+    "No dependency/CLI-option/traffic-policy/service/live-network/installer/release or product adoption change."
+  ]
+}
