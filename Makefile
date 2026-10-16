@@ -6,7 +6,7 @@ hooks:
 check:
 	sh tools/check-repo.sh
 lint:
-	.tools/bin/shellcheck tools/native/backend-isolation.sh tools/native/sender-containment.sh tools/native/lab-tls.sh tools/native/configured-caddy.sh tools/native/connector-build.sh tools/native/connector-comparison.sh tools/native/lab-proxy.sh tools/native/relayd-body.sh tools/native/relayd-traffic.sh tools/native/relayd-checker-contract.sh tools/native/relayd-signals.sh tools/native/relayd-wiring.sh tools/native/relayd-health-faults.sh tools/native/relayd-checker-replacement.sh tools/native/relayd-generations.sh research/relayd/checker-exit2.sh tools/native/relayd-config.sh tools/native/source-build.sh tools/native/engine-repeat.sh tools/native/patch-openbsd.sh tools/run-research-go.sh tools/check-repo.sh .githooks/pre-commit .githooks/commit-msg
+	.tools/bin/shellcheck tools/native/request-wire.sh tools/native/backend-isolation.sh tools/native/sender-containment.sh tools/native/lab-tls.sh tools/native/configured-caddy.sh tools/native/connector-build.sh tools/native/connector-comparison.sh tools/native/lab-proxy.sh tools/native/relayd-body.sh tools/native/relayd-traffic.sh tools/native/relayd-checker-contract.sh tools/native/relayd-signals.sh tools/native/relayd-wiring.sh tools/native/relayd-health-faults.sh tools/native/relayd-checker-replacement.sh tools/native/relayd-generations.sh research/relayd/checker-exit2.sh tools/native/relayd-config.sh tools/native/source-build.sh tools/native/engine-repeat.sh tools/native/patch-openbsd.sh tools/run-research-go.sh tools/check-repo.sh .githooks/pre-commit .githooks/commit-msg
 test:
 	.tools/venv/bin/python3 -m unittest discover -s tools/tests -v
 secrets:
@@ -128,3 +128,7 @@ research-native-identity:
 .PHONY: research-native-backends
 research-native-backends:
 	python3 tools/native-engine.py --source-build --lab-proxy --lab-tls --sender-containment --client-identity --backend-isolation
+
+.PHONY: research-native-request-wire
+research-native-request-wire:
+	python3 tools/native-engine.py --source-build --lab-proxy --lab-tls --sender-containment --client-identity --backend-isolation --request-wire

@@ -91,11 +91,14 @@ func TestLabTLSPassthrough(t *testing.T) {
 	runTLSPath(t, true)
 }
 
-func runTLSPath(t *testing.T, guest bool) {
+func runTLSPath(t *testing.T, guest bool) { runTLSPathOptions(t, guest, false) }
+func runTLSPathOptions(t *testing.T, guest, requestWire bool) {
 	certPath, keyPath, cert, roots := tlsPathMaterial(t)
 	var mu sync.Mutex
 	type effect struct {
 		host, body string
+		path       string
+		trailers   int
 		clean      bool
 	}
 	var effects []effect
@@ -113,7 +116,7 @@ func runTLSPath(t *testing.T, guest bool) {
 			}
 		}
 		mu.Lock()
-		effects = append(effects, effect{r.Host, string(body), clean})
+		effects = append(effects, effect{host: r.Host, body: string(body), path: r.URL.Path, trailers: len(r.Trailer), clean: clean})
 		mu.Unlock()
 		io.WriteString(w, "owned backend\n")
 	})
@@ -127,6 +130,7 @@ func runTLSPath(t *testing.T, guest bool) {
 	config := LabConfig{Version: 1, Routes: []LabRoute{{Host: "app.test", Backend: plain.URL}, {Host: "api.test", Backend: api.URL, TLSServerName: "api.test", TLSCAFile: certPath}}}
 	profile := config.Profile()
 	profile.FrontendCertificate = cert
+	profile.ProxyClientIP = requestWire
 	if !guest {
 		profile.DataAddress = "127.0.0.1:0"
 		profile.HealthAddress = "127.0.0.1:0"
@@ -176,6 +180,10 @@ func runTLSPath(t *testing.T, guest bool) {
 			return false
 		}
 		return true
+	}
+	if requestWire {
+		t.Log("REQUEST-WIRE-MODE client_identity=true")
+		args = append(args, "-proxy-client-ip")
 	}
 	if guest {
 		check := func(a []string) error {
@@ -449,6 +457,17 @@ func runTLSPath(t *testing.T, guest bool) {
 	reload(config, true)
 	run("api-restored", "api.test", "api.test", "GET", "", 200, 1, "")
 	run("removed-alt", "alt.test", "alt.test", "GET", "", 0, 0, "")
+	if requestWire {
+		runRequestWire(t, guest, dial, clientConfig, func() []requestWireEffect {
+			mu.Lock()
+			defer mu.Unlock()
+			result := make([]requestWireEffect, len(effects))
+			for i, v := range effects {
+				result[i] = requestWireEffect{Authority: v.host, Body: v.body, Path: v.path, Trailers: v.trailers, Clean: v.clean}
+			}
+			return result
+		})
+	}
 	stop()
 	run("companion-stop", "app.test", "app.test", "GET", "", 0, 0, "")
 	if !absent(profile.DataAddress) || !absent(profile.HealthAddress) {

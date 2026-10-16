@@ -134,6 +134,11 @@ func labConfiguredHandler(routes []LabRoute, directives string) (http.Handler, [
 			original = http.NoBody
 		}
 		defer original.Close()
+		// Trailer declarations are outside this lab's admitted request interface.
+		if len(r.Trailer) != 0 || len(r.Header.Values("Trailer")) != 0 {
+			http.Error(w, "trailers unsupported", 400)
+			return
+		}
 		if r.ContentLength > LabBodyLimit {
 			http.Error(w, "body too large", 413)
 			return
@@ -172,6 +177,12 @@ func labConfiguredHandler(routes []LabRoute, directives string) (http.Handler, [
 		}
 		if e != nil {
 			http.Error(w, "body unavailable", 500)
+			return
+		}
+		// Chunked EOF can add previously undeclared trailer keys. Never pass
+		// those extra application inputs to a backend after inspecting only headers/body.
+		if len(r.Trailer) != 0 {
+			http.Error(w, "trailers unsupported", 400)
 			return
 		}
 		if r.ContentLength >= 0 && r.ContentLength != int64(len(data)) {
