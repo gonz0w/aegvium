@@ -25,6 +25,7 @@ def load(name):
     spec.loader.exec_module(module)
     return module
 
+PROGRESS = load('native-progress')
 IMAGE = load('native-image')
 PATCHES = load('openbsd-patches')
 BUILD = load('native-build')
@@ -771,132 +772,157 @@ def run():
         report['native_build_inputs'] = {key: value for key, value in build_inputs.items() if key not in ('compiler', 'source')}
     if connector_inputs:
         report['connector_build_inputs'] = {key: value for key, value in connector_inputs.items() if key not in ('compiler', 'source')}
+    progress = PROGRESS.Journal(work / 'progress.json', work.name, report['commit'], report['tree'], PROGRESS.plan(args))
     supervisor = None
     expires = time.monotonic() + duration
     try:
-        with socket.socket() as reservation:
-            reservation.bind(('127.0.0.1', 0))
-            port = reservation.getsockname()[1]
-        config = work / 'ssh.conf'
-        ssh_config(config, port, bootstrap, work)
-        command = qemu_command(image, port, work)
-        report['qemu_version'] = subprocess.check_output([command[0], '--version'], text=True).splitlines()[0]
-        report['qemu_sha256'] = digest(Path(command[0]).resolve())
-        with (work / 'qemu.log').open('wb') as output:
-            supervisor = subprocess.Popen([sys.executable, str(ROOT / 'tools/lab-supervisor.py'),
-                                           str(work / 'teardown.json'), str(duration), '--', *command],
-                                          stdin=subprocess.PIPE, stdout=output, stderr=output,
-                                          env={**os.environ, 'TMPDIR': str(work)},
-                                          preexec_fn=bound_child_storage)
-        print(f'Native run: {work}\nWaiting for restricted guest boot...', flush=True)
-        if args.inject_failure == 'boot':
-            raise RuntimeError('injected boot failure after owned launch')
-        guest = Guest(config, expires)
-        guest.wait('uname -srm', lambda value: value.strip() == b'OpenBSD 7.9 amd64', 240)
-        if args.inject_failure == 'ssh':
-            raise RuntimeError('injected SSH failure after readiness')
-        report['bootstrap_revoked'] = rotate(guest, port, work, bootstrap)
-        print('Fresh access verified; public bootstrap authentication rejected.', flush=True)
-        if args.inject_failure == 'auth':
-            raise RuntimeError('injected authentication-stage failure')
-        print('Authenticating and applying reviewed patch set in owned guest...', flush=True)
-        report['patch_refresh'] = patch_guest(guest, work, patch_seconds=1200 if args.sender_containment else 600)
-        if args.inject_failure == 'transfer':
-            raise RuntimeError('injected transfer-stage failure')
+        with progress.stage('guest_boot'):
+            with socket.socket() as reservation:
+                reservation.bind(('127.0.0.1', 0))
+                port = reservation.getsockname()[1]
+            config = work / 'ssh.conf'
+            ssh_config(config, port, bootstrap, work)
+            command = qemu_command(image, port, work)
+            report['qemu_version'] = subprocess.check_output([command[0], '--version'], text=True).splitlines()[0]
+            report['qemu_sha256'] = digest(Path(command[0]).resolve())
+            with (work / 'qemu.log').open('wb') as output:
+                supervisor = subprocess.Popen([sys.executable, str(ROOT / 'tools/lab-supervisor.py'),
+                                               str(work / 'teardown.json'), str(duration), '--', *command],
+                                              stdin=subprocess.PIPE, stdout=output, stderr=output,
+                                              env={**os.environ, 'TMPDIR': str(work)},
+                                              preexec_fn=bound_child_storage)
+            print(f'Native run: {work}\nWaiting for restricted guest boot...', flush=True)
+            if args.inject_failure == 'boot':
+                raise RuntimeError('injected boot failure after owned launch')
+            guest = Guest(config, expires)
+            guest.wait('uname -srm', lambda value: value.strip() == b'OpenBSD 7.9 amd64', 240)
+            if args.inject_failure == 'ssh':
+                raise RuntimeError('injected SSH failure after readiness')
+        with progress.stage('fresh_access'):
+            report['bootstrap_revoked'] = rotate(guest, port, work, bootstrap)
+            print('Fresh access verified; public bootstrap authentication rejected.', flush=True)
+            if args.inject_failure == 'auth':
+                raise RuntimeError('injected authentication-stage failure')
+        with progress.stage('patch_refresh'):
+            print('Authenticating and applying reviewed patch set in owned guest...', flush=True)
+            report['patch_refresh'] = patch_guest(guest, work, patch_seconds=1200 if args.sender_containment else 600)
+            if args.inject_failure == 'transfer':
+                raise RuntimeError('injected transfer-stage failure')
         if args.relayd_config or args.relayd_traffic:
-            print('Validating stock relayd configuration without starting daemon...', flush=True)
-            report['relayd_config'] = relayd_config_guest(guest, work)
+            with progress.stage('relayd_config'):
+                print('Validating stock relayd configuration without starting daemon...', flush=True)
+                report['relayd_config'] = relayd_config_guest(guest, work)
         if args.sender_containment:
-            print('Parsing owned sender PF policies and recording restoration inputs...', flush=True)
-            report['sender_preparation'] = SENDER.prepare_guest(guest, work)
+            with progress.stage('sender_preparation'):
+                print('Parsing owned sender PF policies and recording restoration inputs...', flush=True)
+                report['sender_preparation'] = SENDER.prepare_guest(guest, work)
         if args.backend_isolation:
-            print('Parsing separate backend policies and foreign principal...', flush=True)
-            report['backend_preparation'] = BACKEND_ISOLATION.prepare_guest(guest, work)
-        if args.source_build:
-            print('Offline unprivileged native compilation started.', flush=True)
-            report['native'] = source_build_guest(guest, work, build_inputs, program=args.lab_proxy, build_seconds=2400 if args.lab_tls else 1200)
-            report['native_build'] = True
-            checker_hash = report['native']['build_receipts']['checker']
-            report['checker'] = {'sha256': checker_hash, 'installed_verified': True,
-                                 'host_cross_built': False, 'native_built': True}
-        else:
-            checker = ROOT / '.tools/research/readycheck-openbsd-amd64'
-            checker_hash = digest(checker)
-            with checker.open('rb') as stream:
-                response = guest.call('set -eu; cat > /var/aegvium-lab-readycheck; chmod 555 /var/aegvium-lab-readycheck', stream=stream, seconds=120)
-            if response.returncode:
-                raise RuntimeError('checker transfer failed')
-            guest.require('test "$(sha256 -q /var/aegvium-lab-readycheck)" = "' + checker_hash + '"')
-            report['checker'] = {'sha256': checker_hash, 'transfer_verified': True, 'host_cross_built': True}
-            report['native'] = engine_guest(guest, work, binary, binary_hash)
+            with progress.stage('backend_preparation'):
+                print('Parsing separate backend policies and foreign principal...', flush=True)
+                report['backend_preparation'] = BACKEND_ISOLATION.prepare_guest(guest, work)
+        with progress.stage('native'):
+            if args.source_build:
+                print('Offline unprivileged native compilation started.', flush=True)
+                report['native'] = source_build_guest(guest, work, build_inputs, program=args.lab_proxy, build_seconds=2400 if args.lab_tls else 1200)
+                report['native_build'] = True
+                checker_hash = report['native']['build_receipts']['checker']
+                report['checker'] = {'sha256': checker_hash, 'installed_verified': True,
+                                     'host_cross_built': False, 'native_built': True}
+            else:
+                checker = ROOT / '.tools/research/readycheck-openbsd-amd64'
+                checker_hash = digest(checker)
+                with checker.open('rb') as stream:
+                    response = guest.call('set -eu; cat > /var/aegvium-lab-readycheck; chmod 555 /var/aegvium-lab-readycheck', stream=stream, seconds=120)
+                if response.returncode:
+                    raise RuntimeError('checker transfer failed')
+                guest.require('test "$(sha256 -q /var/aegvium-lab-readycheck)" = "' + checker_hash + '"')
+                report['checker'] = {'sha256': checker_hash, 'transfer_verified': True, 'host_cross_built': True}
+                report['native'] = engine_guest(guest, work, binary, binary_hash)
         if args.relayd_wiring or args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations:
-            print('Running connected readiness/forwarding matrix...', flush=True)
-            report['relayd_wiring'] = WIRING.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, faults=args.relayd_health_faults, replacements=args.relayd_checker_replacements, generations=args.relayd_generations)
-            if not report['relayd_wiring']['admitted']:
-                raise RuntimeError('connected wiring admission failed; partial receipts retained')
+            with progress.stage('relayd_wiring'):
+                print('Running connected readiness/forwarding matrix...', flush=True)
+                report['relayd_wiring'] = WIRING.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, faults=args.relayd_health_faults, replacements=args.relayd_checker_replacements, generations=args.relayd_generations)
+                if not report['relayd_wiring']['admitted']:
+                    raise RuntimeError('connected wiring admission failed; partial receipts retained')
         if args.relayd_signals:
-            print('Running isolated plain/instrumented signal comparison...', flush=True)
-            observer = ROOT / '.tools/research/signalobserve-openbsd-amd64'
-            report['relayd_signals'] = SIGNALS.guest_run(guest, work, observer, digest(observer))
-            if not report['relayd_signals']['admitted']:
-                raise RuntimeError('native signal comparison failed; partial receipts retained')
+            with progress.stage('relayd_signals'):
+                print('Running isolated plain/instrumented signal comparison...', flush=True)
+                observer = ROOT / '.tools/research/signalobserve-openbsd-amd64'
+                report['relayd_signals'] = SIGNALS.guest_run(guest, work, observer, digest(observer))
+                if not report['relayd_signals']['admitted']:
+                    raise RuntimeError('native signal comparison failed; partial receipts retained')
         if args.relayd_contract:
-            print('Running isolated stock-relayd script contract controls...', flush=True)
-            report['relayd_contract'] = relayd_contract_guest(guest, work, checker_hash)
+            with progress.stage('relayd_contract'):
+                print('Running isolated stock-relayd script contract controls...', flush=True)
+                report['relayd_contract'] = relayd_contract_guest(guest, work, checker_hash)
         if args.lab_proxy:
-            report['lab_proxy'] = LAB_PROXY.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, native_program=report['native'].get('build_receipts',{}).get('program'))
-            if not report['lab_proxy']['admitted']:
-                raise RuntimeError('lab proxy composition failed; partial receipts retained')
+            with progress.stage('lab_proxy'):
+                report['lab_proxy'] = LAB_PROXY.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, native_program=report['native'].get('build_receipts',{}).get('program'))
+                if not report['lab_proxy']['admitted']:
+                    raise RuntimeError('lab proxy composition failed; partial receipts retained')
         if args.lab_tls:
-            report['lab_tls'] = LAB_TLS.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, report['native']['build_receipts']['program'])
-            if not report['lab_tls']['admitted']:
-                raise RuntimeError('TLS passthrough admission failed; partial receipts retained')
+            with progress.stage('lab_tls'):
+                report['lab_tls'] = LAB_TLS.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, report['native']['build_receipts']['program'])
+                if not report['lab_tls']['admitted']:
+                    raise RuntimeError('TLS passthrough admission failed; partial receipts retained')
         if args.sender_containment:
-            report['sender_containment'] = SENDER.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, report['native']['build_receipts']['program'], report['sender_preparation'])
-            if not report['sender_containment']['admitted']:
-                raise RuntimeError('sender containment admission failed; partial receipts retained')
+            with progress.stage('sender_containment'):
+                report['sender_containment'] = SENDER.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, report['native']['build_receipts']['program'], report['sender_preparation'])
+                if not report['sender_containment']['admitted']:
+                    raise RuntimeError('sender containment admission failed; partial receipts retained')
         if args.client_identity:
-            print('Running explicit client identity component and CLI/PF controls...', flush=True)
-            report['client_identity_component'] = CLIENT_IDENTITY.guest_run(guest, work, report['native']['receipts']['binary'], report['native']['build_receipts']['program'])
-            if not report['client_identity_component']['admitted']:
-                raise RuntimeError('client identity component admission failed; partial receipts retained')
-            report['client_identity_pf'] = SENDER.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, report['native']['build_receipts']['program'], report['sender_preparation'], client_identity=True)
-            if not report['client_identity_pf']['admitted']:
-                raise RuntimeError('client identity CLI/PF admission failed; partial receipts retained')
+            with progress.stage('client_identity_component'):
+                print('Running explicit client identity component and CLI/PF controls...', flush=True)
+                report['client_identity_component'] = CLIENT_IDENTITY.guest_run(guest, work, report['native']['receipts']['binary'], report['native']['build_receipts']['program'])
+                if not report['client_identity_component']['admitted']:
+                    raise RuntimeError('client identity component admission failed; partial receipts retained')
+            with progress.stage('client_identity_pf'):
+                report['client_identity_pf'] = SENDER.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, report['native']['build_receipts']['program'], report['sender_preparation'], client_identity=True)
+                if not report['client_identity_pf']['admitted']:
+                    raise RuntimeError('client identity CLI/PF admission failed; partial receipts retained')
         if args.backend_isolation:
-            print('Running foreign-user backend isolation and inspected CLI controls...', flush=True)
-            report['backend_isolation'] = BACKEND_ISOLATION.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, report['native']['build_receipts']['program'], report['backend_preparation'])
-            if not report['backend_isolation']['admitted']:
-                raise RuntimeError('backend isolation admission failed; partial receipts retained')
+            with progress.stage('backend_isolation'):
+                print('Running foreign-user backend isolation and inspected CLI controls...', flush=True)
+                report['backend_isolation'] = BACKEND_ISOLATION.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, report['native']['build_receipts']['program'], report['backend_preparation'])
+                if not report['backend_isolation']['admitted']:
+                    raise RuntimeError('backend isolation admission failed; partial receipts retained')
         if args.request_wire:
-            print('Running actual CLI direct/stock-relayd TLS wire policy...', flush=True)
-            report['request_wire'] = REQUEST_WIRE.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, report['native']['build_receipts']['program'])
-            if not report['request_wire']['admitted']:
-                raise RuntimeError('request wire admission failed; partial receipts retained')
+            with progress.stage('request_wire'):
+                print('Running actual CLI direct/stock-relayd TLS wire policy...', flush=True)
+                report['request_wire'] = REQUEST_WIRE.guest_run(guest, work, report['native']['receipts']['binary'], checker_hash, report['native']['build_receipts']['program'])
+                if not report['request_wire']['admitted']:
+                    raise RuntimeError('request wire admission failed; partial receipts retained')
         if args.relayd_body:
-            report['relayd_body'] = BODY.guest_run(guest, work, report['native']['receipts']['binary'])
-            if not report['relayd_body']['admitted']:
-                raise RuntimeError('relayd body comparison failed; partial receipts retained')
+            with progress.stage('relayd_body'):
+                report['relayd_body'] = BODY.guest_run(guest, work, report['native']['receipts']['binary'])
+                if not report['relayd_body']['admitted']:
+                    raise RuntimeError('relayd body comparison failed; partial receipts retained')
         if args.relayd_traffic:
-            print('Running guest-loopback stock relayd / Coraza traffic comparison...', flush=True)
-            report['relayd_traffic'] = relayd_traffic_guest(guest, work, report['native']['receipts']['binary'],
-                                                           report['relayd_config']['receipts']['binary'])
+            with progress.stage('relayd_traffic'):
+                print('Running guest-loopback stock relayd / Coraza traffic comparison...', flush=True)
+                report['relayd_traffic'] = relayd_traffic_guest(guest, work, report['native']['receipts']['binary'],
+                                                               report['relayd_config']['receipts']['binary'])
         if args.connector_source_build:
-            print('Offline unprivileged native connector compilation started.', flush=True)
-            report['connector_native_build'] = connector_build_guest(guest, work, connector_inputs)
+            with progress.stage('connector_native_build'):
+                print('Offline unprivileged native connector compilation started.', flush=True)
+                report['connector_native_build'] = connector_build_guest(guest, work, connector_inputs)
         if args.connector_comparison:
-            print('Running pinned connector request/response/rule-reuse comparison...', flush=True)
-            report['connector_comparison'] = CONNECTOR.guest_run(guest, work, native_binary=report.get('connector_native_build', {}).get('receipts', {}).get('binary'), require_native=args.connector_source_build)
-            if args.connector_source_build:
-                if not report['connector_comparison']['native_binary'] or report['connector_comparison']['receipts']['uid'] != report['connector_native_build']['receipts']['uid']:
-                    raise ValueError('native connector build/execution identity mismatch')
+            with progress.stage('connector_comparison'):
+                print('Running pinned connector request/response/rule-reuse comparison...', flush=True)
+                report['connector_comparison'] = CONNECTOR.guest_run(guest, work, native_binary=report.get('connector_native_build', {}).get('receipts', {}).get('binary'), require_native=args.connector_source_build)
+                if args.connector_source_build:
+                    if not report['connector_comparison']['native_binary'] or report['connector_comparison']['receipts']['uid'] != report['connector_native_build']['receipts']['uid']:
+                        raise ValueError('native connector build/execution identity mismatch')
         if args.configured_caddy:
-            report['configured_caddy'] = CONFIGURED.guest_run(guest, work, report['connector_comparison']['receipts']['binary'], report['connector_comparison']['native_binary'])
-        if args.inject_failure == 'test':
-            raise RuntimeError('injected test-stage failure')
-        report['native_subset_passed'] = True
+            with progress.stage('configured_caddy'):
+                report['configured_caddy'] = CONFIGURED.guest_run(guest, work, report['connector_comparison']['receipts']['binary'], report['connector_comparison']['native_binary'])
+        with progress.stage('subset_gate'):
+            if args.inject_failure == 'test':
+                raise RuntimeError('injected test-stage failure')
+            report['native_subset_passed'] = True
     except (Exception, KeyboardInterrupt) as error:
         report['error'] = str(error)
+        report['error_class'] = PROGRESS.error_class(error)
     finally:
         if supervisor is not None:
             try:
@@ -911,13 +937,27 @@ def run():
             report['teardown'] = json.loads(teardown.read_text()) if teardown.is_file() else {'teardown_verified': False}
         report['baseline_unchanged'] = digest(image) == PINS['qcow2_sha256']
         report['source_unchanged'] = source == {name: digest(ROOT / name) for name in source}
-        report['passed'] = bool(report.get('native_subset_passed') and not report.get('error')
+        report['passed'] = bool(report.get('native_subset_passed') and 'error' not in report
+                                and 'cleanup_error' not in report
                                 and report.get('teardown', {}).get('teardown_verified')
                                 and report['baseline_unchanged'] and report['source_unchanged']
                                 and report['commit'] == git('rev-parse', 'HEAD') and not git('status', '--porcelain'))
         report['finished'] = datetime.now(timezone.utc).isoformat()
-        (work / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
-        print(json.dumps({key: value for key, value in report.items() if key != 'source'}, indent=2), flush=True)
+        try:
+            progress.finish(report['passed'], report.get('teardown', {}).get('teardown_verified') is True)
+            report['progress'] = {**progress.summary(), 'sha256': digest(work / 'progress.json')}
+        except (OSError, ValueError):
+            # Cleanup above is independent of checkpoint storage availability.
+            report['passed'] = False
+            report['progress_error'] = 'checkpoint-finalization-failed'
+        PROGRESS.atomic_json(work / 'report.json', report)
+        print(json.dumps({'run_id': work.name, 'passed': report['passed'],
+                          'commit': report['commit'], 'tree': report['tree'],
+                          'error_class': report.get('error_class', 'none'),
+                          'teardown_verified': report.get('teardown', {}).get('teardown_verified') is True,
+                          'progress': report.get('progress'),
+                          'progress_error': report.get('progress_error'),
+                          'report_sha256': digest(work / 'report.json')}, indent=2), flush=True)
     return 0 if report['passed'] else 1
 
 
