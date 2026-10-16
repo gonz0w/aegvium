@@ -66,3 +66,7 @@ Product changes add go vet/test, focused staticcheck and govulncheck, bounded
 parser/security fuzzing and race checks where supported. Native security, recovery,
 performance and accessibility gates remain separate. A skipped capability cannot
 be counted as passing. Keep fixture credentials and unsanitized logs ignored.
+
+## Security validation output and access
+
+Prefer concise status/count/hash summaries over raw request fixtures or verbose security findings in chat. This presentation preference does not change permitted work or account access. Respect access restrictions; never request expanded cyber access or hide/repackage restricted content to bypass a safeguard. Pause affected validation, retain completed evidence and mark missing qualification explicitly. Continue ordinary implementation/documentation/tracking work within its authorization. A draft PR with a retained failure is not a successful qualification result.

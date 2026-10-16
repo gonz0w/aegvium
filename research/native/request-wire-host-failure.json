@@ -444,13 +444,14 @@
     "source": {
       "research/coraza/lab_proxy.go": "ebfeebd76861af4032c87d3322800abb8ced7e9e7441bb1a9f70e7240841d3a3",
       "research/coraza/lab_client_identity.go": "5021865f6b3cb8a39944734935ed894f81642a2b91841c6737101d06fb1c7ff7",
-      "research/coraza/lab_frontend_tls_test.go": "a0ef527fe574d8b0679cc947e9beacd2a97b475053f39292884cbd63bd65ff63",
+      "research/coraza/lab_frontend_tls_test.go": "68a41320487d8ca41579b465f1ae4e3ddb26ecd20e84791169dd82bd2e647dd6",
       "research/coraza/lab_request_wire_test.go": "5e3b345b0cc8c5346c5c09fce87cf167a4c8e93d3be907cd73ddc0ad0b7c3d04"
     },
     "failed_cases": [
       "wire-direct-undeclared-trailer",
       "wire-direct-authorization-trailer"
     ],
-    "finding": "Declared trailers reject, but undeclared trailers remain invisible to the identity wrapper request copy when the original request Trailer map is nil. Both undeclared requests still forward; no zero-effect assertion changed."
+    "finding": "Declared trailers reject, but undeclared trailers remain invisible to the identity wrapper request copy when the original request Trailer map is nil. Both undeclared requests still forward; no zero-effect assertion changed.",
+    "source_metadata_correction": "Frontend fingerprint corrected to the pre-MODE-log bytes actually compiled; failed outcomes and raw log hashes are unchanged."
   }
 }

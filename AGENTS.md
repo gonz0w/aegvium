@@ -15,3 +15,5 @@
 
 13. The 2026-10-11 user request authorizes the Aegvium rename, tracking setup and bounded research. Keep results separate from runtime adoption.
 14. Inspect open PRs and unblocked Ready issues on continue; keep issue state, native blockers and Project fields consistent.
+
+15. Present security validation as concise statuses, counts and hashes instead of raw request fixtures or verbose findings. Respect security access notices; never request broader cyber access or hide/repackage restricted content to bypass a safeguard. Stop affected validation and record it as blocked while continuing ordinary engineering.

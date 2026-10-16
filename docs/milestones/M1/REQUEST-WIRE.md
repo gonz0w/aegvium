@@ -21,3 +21,11 @@ Strict admission requires exact named Go tests, ordered typed rows, native build
 ## Compatibility and rollback
 
 Trailers become explicitly unsupported in this laboratory profile. No HTTP/2/3, persistent/streaming support, full smuggling/CRS coverage, native race, production trust/privilege/resource policy or safe retry acceptance follows. Existing application effects cannot be undone by a rejected response. Rollback restores the prior handler and omits the separate request-wire mode, preserving all evidence. No live networks/services, installer schema or release changes.
+
+## Current evidence and blocker
+
+Host direct verified-TLS controls pass all twenty-six raw-wire rows after the repair, alongside full Go/vet/lab race/cross/advisory policy and 103 local checks. [Failed host discovery/first repair](../../../research/native/request-wire-host-failure.json) remain separate uncommitted source-hash-bound observations.
+
+The [failed native attempt](../../../research/native/request-wire-native-failure.json) binds `cbc21ae71fb94c5da25580856729d518c48a874d` and run `d234e0d8-5116-4608-a6bd-0a1d61f56cfc`. Offline native fixture/checker/CLI build and 163 ordinary cases passed, then three legacy post-reload response assertions failed. Each had status zero/client error and zero effects; expected outcomes were 403/0, 421/0 and 200/1. Cause is unproven. All later native matrices, including the new fifty-two wire rows, were not executed. Cleanup/source/base invariance/teardown passed independently. Native trailer/complete profile qualification remains blocked; keep the PR draft and acceptance unchecked.
+
+Next validation must diagnose the legacy response failure with sufficient client/daemon evidence and repeat the full candidate without changing required outcomes or retrying failures away. Security validation stays paused if an applicable access restriction prevents it; ordinary engineering and truthful evidence/tracking work can continue. No expanded cyber access, safeguard bypass or product adoption is implied.
