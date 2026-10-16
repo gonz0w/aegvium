@@ -1,0 +1,159 @@
+{
+  "schema": 1,
+  "scope": "NC-01\u201304 ordinary no-network lifecycle execution only",
+  "passed": true,
+  "source": {
+    "commit": "25c916d2c466230463b5229520a2dc2c2a3d20a0",
+    "tree": "4d066bf4e5e39f94ea80a56e810bad65bf0ab4b9",
+    "base": "f753c4a5f5db25a06c4ac26dce733cf423ec1e66",
+    "runtime_inputs_sha256": {
+      "Makefile": "6624a60050a033f5a829b6a74ffa7e379e1bd1abbffa0bfa163566b2378ad765",
+      "research/coraza/cmd/labproxy/control.go": "1cb8fcf63cf6a92ab5e36254c369792fb9c891affd76f641badb336dedefa3de",
+      "research/coraza/cmd/labproxy/control_test.go": "47a58165b418250ccd15328405d3890182d82d692ff78485523dd1aebbea436a",
+      "research/coraza/cmd/labproxy/main.go": "015ab8efddb6470ffccb6647965ca29fd78b06aee5ac33cd0dcbe6eea2a6e379",
+      "research/coraza/go.mod": "dca5c181ccdc6e49e975e7e9ede59a72578e42b36818d90cfeaed2ede0525e27",
+      "research/coraza/go.sum": "afc8a15db82d3fab3614845cff2bf2406eb7496b20f98f6240bb2913e75696c8",
+      "research/coraza/lab_proxy.go": "3d26f20725c4109fbb2e0754a8e5d1a5a3c0c6bd157675c3caa0ae3bb492c295",
+      "research/coraza/lab_reload.go": "580b3fa812d0f715c0622270ebf2db7e62a5975d5a06779c33e052e8a753c3a5",
+      "research/coraza/lab_reload_test.go": "b76d3c5dac326d6b4d533e8a34507bee1649a865d621726b870683b113c2ba2b",
+      "research/coraza/lab_shutdown.go": "1dce02282e19690273f963ba11e89c5addd068a0ca68f7c39c98b17663b7ac0c",
+      "research/coraza/lab_shutdown_test.go": "3c2397acedbf906d623c50f24640f5a1d6c0230e4e569802b58c6aad7ae62d3b",
+      "research/coraza/lab_supervision.go": "f38873b71f2b0859ff514c3c09cf06576364c8eaebd009bc8c5f9dd7e20d4599",
+      "research/coraza/lab_supervision_test.go": "b2fc15d9a5e4ae82e1512d0e84e6c192df24368907c8a3ca068a714643f0e60d",
+      "research/coraza/proxy_listener.go": "97a2c04f84f6d2d02b4463e1c6b65a2391d1b0468a61289e7bfe683e4e8cfcff",
+      "research/native/image-pin.json": "8b3c0b1961712f01f2fbc11532da3d4576845fffddc24856782a850da81d6f8b",
+      "tools/lab-supervisor.py": "17d5204dcc4b286bc049ad34022df7ec9d65a447be7a7dbf4ef8b7e5b738aea3",
+      "tools/lifecycle-components.py": "6d2fc271ab2cd347cc999970ec58c4fa41bc2ed2e70f56b2edda6fd7e35de335",
+      "tools/native-build.py": "103a27b98d1ed6525bfd212c8c0bad58ef284ece7dc21df4cb0c20f99ef4ad3c",
+      "tools/native-engine.py": "fa5cdf242b8dd93551f28f47d8638fcac5ed3862b65db76e83db59a087c8c9f6",
+      "tools/native-progress.py": "eae4eb56378a9f16238247d2fa3d41018ed13c5dff39d8a7184ccd121fe88d72",
+      "tools/native/lifecycle-components.sh": "d2f62d01b785b777b62f836259598286c97324fc821e6b899773b49d78875ec6",
+      "tools/native/patch-openbsd.sh": "eae9d586161ed5f30c6d179ff55884b5a47ddad7c3b5a7a4637345219e8190e7",
+      "tools/openbsd-patches.json": "0cf5b352ea5d50d91d106abd42e65b8dac105b6c72fca3c83bfd1706bc891771",
+      "tools/research-pins.json": "7383179c02c51b05fc29776bfe538c1ee1f6438aa5b35065d1a44a3b06f02efe"
+    },
+    "runtime_go_unchanged_from_base": true
+  },
+  "run_id": "aa1f2005-7ad9-4b07-8bd3-ad60db0fdcdf",
+  "started": "2026-10-16T15:25:40.337965+00:00",
+  "finished": "2026-10-16T15:30:59.993774+00:00",
+  "build_lineage": {
+    "origin": "host-cross-build",
+    "host_go": "go version go1.27.2 darwin/arm64",
+    "host_go_executable_sha256": "516c1fbb53b5f8f4852f0c3c379d45bcff53a1032e5cd1a9ca1738f03ba07cb1",
+    "target": "OpenBSD amd64",
+    "native_source_build": false,
+    "native_race_instrumentation": false
+  },
+  "component_execution": {
+    "admitted": true,
+    "hashes": {
+      "library": "0eaf8702015adf70708d43f2dda489ac4e766de12d8744dbc5647b97001990da",
+      "control": "0bb34a75321270b4d8d199b121d1f83582a5ba37ac64981ef1c137565fa71c19"
+    },
+    "execution_returncode": 0,
+    "execution_error_class": "none",
+    "log_sha256": "ef7d352baf937f265420f18a6656a9b15795bd59717c273037e1bf821bb0daef",
+    "observed_pass_count": 30,
+    "scope": "ordinary-components-only",
+    "parent_count": 18,
+    "subtest_count": 12,
+    "pass_count": 30,
+    "receipts": {
+      "os": "OpenBSD 7.9 amd64",
+      "scope": "ordinary-components",
+      "library": "0eaf8702015adf70708d43f2dda489ac4e766de12d8744dbc5647b97001990da",
+      "control": "0bb34a75321270b4d8d199b121d1f83582a5ba37ac64981ef1c137565fa71c19",
+      "uid": "32767",
+      "complete": "verified"
+    },
+    "native_source_build": false,
+    "complete_profile_qualified": false
+  },
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 900,
+    "patch_deadline_seconds": 600,
+    "native_build_deadline_seconds": null,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "patch_refresh": {
+    "signature_verified": true,
+    "installed": 34,
+    "pending": 0,
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+    "boot_before": "1792164354",
+    "boot_after": "1792164606"
+  },
+  "bootstrap_revoked": true,
+  "source_unchanged": true,
+  "baseline_unchanged": true,
+  "base_image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "qemu": {
+    "version": "QEMU emulator version 11.1.1",
+    "executable_sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f"
+  },
+  "progress": {
+    "result": "passed",
+    "finished": true,
+    "stage_counts": {
+      "pending": 0,
+      "running": 0,
+      "completed": 5,
+      "failed": 0,
+      "interrupted": 0,
+      "not-run": 0
+    },
+    "sequence": 12,
+    "stopped_stage": null,
+    "error_class": "none",
+    "sha256": "3e63eb90920c5a71229a742c5ff9bd2d2831e5b6a68668f7f8109e6ae98ef0fe"
+  },
+  "teardown": {
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 900,
+    "escalated": false,
+    "teardown_verified": true
+  },
+  "private_source_inventory": {
+    "file_count": 342,
+    "canonical_sha256": "0cabfe86d559c31c09e63ea72f54c725d33c43d694ddd76a95b295d2c94cc98c",
+    "encoding": "sorted UTF-8 relative source name, TAB, lowercase SHA-256, LF; inventory remains ignored"
+  },
+  "independent_host_cleanup": {
+    "owned_process_absent": true,
+    "owned_process_group_absent": true
+  },
+  "private_independent_cleanup_sha256": "95404f9615aa80432318a2d4bcf32908d01a0ce1a98125400a332838650897ac",
+  "private_report_sha256": "19c8109c249e99498e4bed610756e1fe93ad0b61ad555da34e1fbaa7e724d81e",
+  "private_progress_sha256": "3e63eb90920c5a71229a742c5ff9bd2d2831e5b6a68668f7f8109e6ae98ef0fe",
+  "private_teardown_sha256": "b4b12d37fb1e5b162ce959bdb0c2ce75d9a264c5adb95cf3af14b07536f36da1",
+  "local_checks": {
+    "repository_tests": 122,
+    "verify_log_sha256": "1fa99c537f838d5310019800dc69e9d14cb71f0afa5494ee89c88d0025fa7b7e",
+    "focused_host_race_log_sha256": "a8979b676d22593881a98f868eb2e9099e2475faa646ed15557ffba4e58d67d6",
+    "vet_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "historical_evidence_unchanged": {
+    "research/native/request-wire-native-failure.json": "8747bba7b7eb9035df1740c1e2b2a24f0e6c605f374cc391bba9c3087251a257",
+    "research/coraza/shutdown-host-observations.json": "12c9d7e823bc9783903b9029815e2e3218f427e51d49beddaa6abcec1b70f275",
+    "research/coraza/supervision-host-observations.json": "3c8b346bd092458f2f1217753282fb77c38b302de12ae25e857b7913a0032036"
+  },
+  "full_engine_suite_executed": false,
+  "traffic_security_validation_rerun": false,
+  "advisory_scan_rerun": false,
+  "complete_profile_qualified": false,
+  "limitations": [
+    "Native execution of host-cross-built component tests, not native compilation or actual companion/relayd traffic.",
+    "The exact eighteen parents use fake servers/listeners/closers and benign in-memory handlers; no application listener, traffic, WAF instance or PF change.",
+    "Affected WAF/traffic/security validation remains paused under the reported access notice; no expanded access or safeguard bypass.",
+    "Earlier native reload response failure remains unexplained and later wire matrix unexecuted.",
+    "Component results cannot replace unchanged 163-case engine or complete native SV/SD/profile requirements.",
+    "No product adoption, deployment/service enablement, live network, installer or release change."
+  ]
+}
