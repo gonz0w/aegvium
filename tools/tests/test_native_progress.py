@@ -137,13 +137,14 @@ class RunnerProgressTests(unittest.TestCase):
             stack.enter_context(patch.object(ENGINE, 'patch_guest', return_value={'admitted': True}))
             built = {'receipts': {'binary': digest, 'uid': '32767'},
                      'build_receipts': {'checker': digest, 'program': digest}}
+            engine_calls = {}
             for name in ('source_build_guest', 'engine_guest'):
-                stack.enter_context(patch.object(ENGINE, name, return_value=built))
+                engine_calls[name] = stack.enter_context(patch.object(ENGINE, name, return_value=built))
             for name in ('relayd_config_guest', 'relayd_contract_guest', 'relayd_traffic_guest', 'connector_build_guest'):
                 stack.enter_context(patch.object(ENGINE, name, return_value={**built, 'admitted': True}))
             modules = [ENGINE.WIRING, ENGINE.SIGNALS, ENGINE.BODY, ENGINE.LAB_PROXY, ENGINE.LAB_TLS,
                        ENGINE.SENDER, ENGINE.CLIENT_IDENTITY, ENGINE.BACKEND_ISOLATION,
-                       ENGINE.REQUEST_WIRE, ENGINE.CONNECTOR, ENGINE.CONFIGURED]
+                       ENGINE.REQUEST_WIRE, ENGINE.CONNECTOR, ENGINE.CONFIGURED, ENGINE.LIFECYCLE]
             calls = {}
             for module in modules:
                 calls[module.__name__] = stack.enter_context(patch.object(module, 'guest_run',
@@ -177,6 +178,13 @@ class RunnerProgressTests(unittest.TestCase):
                 self.assertEqual(report['progress']['sha256'], hashlib.sha256((work / 'progress.json').read_bytes()).hexdigest())
                 self.assertEqual(report['progress']['result'], journal['result'])
             self.assertTrue(report['teardown']['teardown_verified'])
+            if '--lifecycle-components' in flags:
+                for call in engine_calls.values():call.assert_not_called()
+                for name, call in calls.items():
+                    if name != ENGINE.LIFECYCLE.__name__:call.assert_not_called()
+                calls[ENGINE.LIFECYCLE.__name__].assert_called_once()
+                self.assertEqual(report['scope'], 'ordinary-lifecycle-components')
+                self.assertFalse(report['native_build'])
             self.assertNotIn('private marker', output.getvalue())
             self.assertNotIn('private checkpoint failure', output.getvalue())
             self.assertNotIn('build_receipts', output.getvalue())
@@ -188,7 +196,7 @@ class RunnerProgressTests(unittest.TestCase):
             '--client-identity', '--backend-isolation', '--request-wire']
 
     def test_selected_profiles_complete_exact_plans_without_launching_guest(self):
-        for flags in ([], self.wire,
+        for flags in ([], ['--lifecycle-components'], self.wire,
                       ['--lab-proxy', '--connector-comparison', '--connector-source-build', '--configured-caddy'],
                       ['--relayd-traffic', '--relayd-generations', '--relayd-signals', '--relayd-contract', '--relayd-body']):
             with self.subTest(flags=flags):
