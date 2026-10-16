@@ -69,6 +69,9 @@ func TestLabSenderClientIdentity(t *testing.T) {
 }
 func runSenderPath(t *testing.T, phase string, guest bool) { runSenderPathMode(t, phase, guest, false) }
 func runSenderPathMode(t *testing.T, phase string, guest, clientIP bool) {
+	runSenderPathOptions(t, phase, guest, clientIP, false)
+}
+func runSenderPathOptions(t *testing.T, phase string, guest, clientIP, backendIsolation bool) {
 	certPath, keyPath, cert, roots := tlsPathMaterial(t)
 	var mu sync.Mutex
 	type effect struct {
@@ -354,6 +357,17 @@ func runSenderPathMode(t *testing.T, phase string, guest, clientIP bool) {
 	run("direct-bare-tls", "app.test", "app.test", "GET", "", "direct-bare-tls", 0, 0)
 	run("direct-plain", "", "app.test", "GET", "", "direct-plain", 0, 0)
 	run("ingress-after-direct", "api.test", "api.test", "GET", "", "ingress", 200, 1)
+	if backendIsolation {
+		backendProbeFixture(t, phase, certPath, func() []backendProbeEffect {
+			mu.Lock()
+			defer mu.Unlock()
+			result := make([]backendProbeEffect, len(effects))
+			for i, v := range effects {
+				result[i] = backendProbeEffect{authority: v.host, body: v.body}
+			}
+			return result
+		})
+	}
 	stop()
 	absent := func(address string) bool {
 		c, e := net.DialTimeout("tcp4", address, 100*time.Millisecond)

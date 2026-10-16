@@ -53,3 +53,7 @@ The [bounded PF ADR](adr-0006-owned-pf-sender-containment.md) and [native receip
 ## Explicit client identity follow-up
 
 [ADR 0007](adr-0007-proxy-client-identity-research.md) and [native evidence](../../research/native/client-identity-observations.json) add default-off PROXY source selection for Coraza behind the externally maintained sender boundary. Test-only direct component rules prove address/port decisions; a separate normal-CRS actual CLI/PF matrix verifies the option and containment controls. The process does not establish that boundary. A diagnosed inspected-body lifetime race is repaired by bounded detachment before backend transport; its original host failure remains retained. Production identity/startup/privilege/certificate/audit policy, backend isolation, full compatibility/resources and architecture adoption remain proposed.
+
+## Local backend ownership follow-up
+
+[ADR 0008](adr-0008-local-backend-isolation-research.md) and [native receipts](../../research/native/backend-isolation-observations.json) add separate PF policies restricting the owned backend ports to the lab companion/fixture UID. A different nonroot principal's direct attack requests reach HTTP/verified HTTPS backends in open/rollback controls and reject before TLS/HTTP with zero effects when protected. The actual identity-enabled CLI retains its inspected-traffic outcomes. This is conditional local socket ownership, not production service identity, remote application isolation, allowed-UID/root compromise protection or architecture adoption.

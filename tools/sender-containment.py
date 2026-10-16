@@ -78,10 +78,10 @@ def expected_rows():
     return result
 
 
-def admit(text, hashes, prepared, client_identity=False):
-    if type(client_identity) is not bool:
+def admit(text, hashes, prepared, client_identity=False, backend_isolation=False):
+    if type(client_identity) is not bool or type(backend_isolation) is not bool or (backend_isolation and not client_identity):
         raise ValueError('invalid sender identity mode')
-    test_name='TestLabSenderClientIdentity' if client_identity else 'TestLabSenderContainment'
+    test_name='TestLabBackendIsolation' if backend_isolation else 'TestLabSenderClientIdentity' if client_identity else 'TestLabSenderContainment'
     modes=re.findall(r'SENDER-CLIENT-IDENTITY phase=(\w+) enabled=true',text)
     if modes != (list(PHASES) if client_identity else []):
         raise ValueError('sender client identity mode incomplete or substituted')
