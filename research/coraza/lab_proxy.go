@@ -262,29 +262,11 @@ func startLabProxy(p LabProfile, directives string) (*LabProxy, error) {
 func (f *LabProxy) Close() error {
 	f.once.Do(func() {
 		f.engine.Store(false)
-		_ = f.receiver.Close()
-		f.routes.stopReloads()
-		for _, s := range f.servers {
-			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-			if e := s.Shutdown(ctx); e != nil {
-				f.closeErr = e
-				_ = s.Close()
-			}
-			cancel()
+		servers := make([]labShutdownServer, len(f.servers))
+		for i, server := range f.servers {
+			servers[i] = server
 		}
-		for _, done := range f.done {
-			select {
-			case e := <-done:
-				if e != nil && !errors.Is(e, http.ErrServerClosed) && !errors.Is(e, net.ErrClosed) {
-					f.closeErr = e
-				}
-			case <-time.After(time.Second):
-				f.closeErr = errors.New("lab server did not join")
-			}
-		}
-		if f.closeErr == nil {
-			f.closeErr = f.routes.close()
-		}
+		f.closeErr = closeLabResources(f.receiver, f.routes, servers, f.done)
 	})
 	return f.closeErr
 }

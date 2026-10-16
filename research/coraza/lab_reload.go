@@ -3,7 +3,6 @@ package spike
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"sync"
@@ -52,6 +51,7 @@ type labRouteOwner struct {
 	active   *labRouteGeneration
 	closed   bool
 	stopping bool
+	closeErr error
 }
 
 func (o *labRouteOwner) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -75,7 +75,7 @@ func (o *labRouteOwner) replace(next *labRouteGeneration) error {
 	o.active = next
 	o.mu.Unlock()
 	if e := old.close(); e != nil {
-		return fmt.Errorf("%w: %v", ErrLabReloadCleanup, e)
+		return errors.Join(ErrLabReloadCleanup, e)
 	}
 	return nil
 }
@@ -86,14 +86,15 @@ func (o *labRouteOwner) close() error {
 	o.mu.Lock()
 	if o.closed {
 		o.mu.Unlock()
-		return nil
+		return o.closeErr
 	}
 	o.stopping = true
 	o.closed = true
 	old := o.active
 	o.active = nil
 	o.mu.Unlock()
-	return old.close()
+	o.closeErr = old.close()
+	return o.closeErr
 }
 
 // Reload replaces owned lab routes; it does not update embedded rules or bind
