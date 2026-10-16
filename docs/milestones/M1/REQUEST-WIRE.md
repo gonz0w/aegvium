@@ -39,3 +39,9 @@ TD-02: each application-path HTTP call emits exactly one bounded diagnostic, inc
 TD-03: ordinary host helper tests use fake transports and synthetic errors without listeners or network access. Cover fixed classification, nested errors, redaction, invalid labels/stages, one-shot completion, monotonic times, concurrent call IDs and native receipt mutations. Run repository checks, focused helper/race/vet and compilation only. Affected security validation remains paused; these checks do not qualify OpenBSD behavior, diagnose the old failure or replace the complete pending native repeat.
 
 Rollback removes the diagnostic helper/fixture calls/admission fields and rebuilds the prior fixture. The application binary, dependency graph, response/effect expectations and historical receipts remain unchanged. No production audit API, live network or service change.
+
+### TD tooling evidence
+
+[Host-only evidence](../../../research/coraza/transport-diagnostic-observations.json) binds `c4c87de9247242eef45ce0d4c7a6369c85ce2cc1`. Three focused helper tests, fake-client classification/redaction, concurrent call IDs under host race instrumentation, admission mutation checks, vet, OpenBSD cross-compilation and 107 local repository tests pass. The application Go code and dependency graph are unchanged.
+
+No native diagnostic integration or affected security validation rerun occurred. TD implementation/tooling checks are observed; native integration and diagnosis of the retained legacy failure remain pending. The old failure and all later unexecuted scopes stay unchanged. Affected validation remains paused under the reported access notice; no access expansion or safeguard bypass is implied.
