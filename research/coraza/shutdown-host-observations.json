@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "scope": "SD-01\u201304 bounded lab shutdown ownership",
+  "classification": "host tooling only; native qualification pending",
+  "source": {
+    "commit": "e3c2691ede5d91fb356ef6cff10e4c08bb8b7aab",
+    "tree": "d1f9213d8cf0c4ab4d80e8cb36c1c8f040033753",
+    "base": "a61d1c38a3b3e3dfc55858879843291c991bba4c",
+    "runtime_inputs_sha256": {
+      "research/coraza/lab_proxy.go": "39104e7e57e20d52e6361fd0a0e6a672681de5bbadb219c749ac525a0fee0373",
+      "research/coraza/lab_reload.go": "580b3fa812d0f715c0622270ebf2db7e62a5975d5a06779c33e052e8a753c3a5",
+      "research/coraza/lab_shutdown.go": "1dce02282e19690273f963ba11e89c5addd068a0ca68f7c39c98b17663b7ac0c",
+      "research/coraza/lab_shutdown_test.go": "3c2397acedbf906d623c50f24640f5a1d6c0230e4e569802b58c6aad7ae62d3b",
+      "research/coraza/lab_reload_test.go": "b76d3c5dac326d6b4d533e8a34507bee1649a865d621726b870683b113c2ba2b",
+      "research/coraza/proxy_listener.go": "97a2c04f84f6d2d02b4463e1c6b65a2391d1b0468a61289e7bfe683e4e8cfcff",
+      "tools/native-build.py": "6909ea3cba52fcfe7bbe6b6ecabd2ea169f9fb64f7d1934ac56b3278b784fe34",
+      "research/coraza/go.mod": "dca5c181ccdc6e49e975e7e9ede59a72578e42b36818d90cfeaed2ede0525e27",
+      "research/coraza/go.sum": "afc8a15db82d3fab3614845cff2bf2406eb7496b20f98f6240bb2913e75696c8"
+    }
+  },
+  "host": {
+    "go": "go version go1.27.2 darwin/arm64"
+  },
+  "initial_regression": {
+    "classification": "uncommitted host test against unchanged base runtime",
+    "base_commit": "a61d1c38a3b3e3dfc55858879843291c991bba4c",
+    "test_source_sha256": "4f2acfe996c9c73f2cc62dafba19c3dde3b9d81968fa56fab412f0a872d4cbfe",
+    "log_sha256": "8e8815e838ea280487a7024fa4e8b788e85c634d20204ee684eb7144953be35d",
+    "test": "TestLabShutdownDrainedServeFailure",
+    "passed": false,
+    "exit_code": 1,
+    "expected_waf_close_calls": 1,
+    "observed_waf_close_calls": 0,
+    "raw_requests": false
+  },
+  "checks": {
+    "local_repository": {
+      "command": "make verify",
+      "passed": true,
+      "log_sha256": "a6d2bb87623215a5735b096a513d873e4703e352b8965d4fe034aa387188980e"
+    },
+    "focused_lifecycle": {
+      "command": "cd research/coraza && ../../tools/run-research-go.sh test -count=1 -run '^TestLabShutdown|^TestLabGenerationDrain$|^TestLabReloadRetirementFailure$'",
+      "passed": true,
+      "log_sha256": "924677ba1da13b95b6de07749d5aa3a271e504b22dff9dd4484b99514fa97767"
+    },
+    "focused_host_race": {
+      "command": "cd research/coraza && ../../tools/run-research-go.sh test -race -count=1 -run '^TestLabShutdown|^TestLabGenerationDrain$|^TestLabReloadRetirementFailure$'",
+      "passed": true,
+      "log_sha256": "eb9d2df2cf6791c89dd919bdbcb0b1dc59e5f252b99fc8106752afd4fa9cb46c"
+    },
+    "vet": {
+      "command": "cd research/coraza && ../../tools/run-research-go.sh vet ./...",
+      "passed": true,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "openbsd_cross_compile": {
+      "command": "make research-cross research-labproxy-cross",
+      "passed": true,
+      "log_sha256": "9fab6385a70047b8b2a9f22903c89f52800dd63befdc24e81f13c278ef143fc0"
+    },
+    "offline_source_export": {
+      "command": "native-build.package(work); verify_source_bundle; verify both shutdown inputs",
+      "passed": true,
+      "log_sha256": "550b5e73ec92dd75db222fd4bee9025ab71ab381b8afd23c19023ef949646396"
+    }
+  },
+  "local_repository_tests": 116,
+  "selected_go_parent_tests": [
+    "TestLabShutdownDrainedServeFailure",
+    "TestLabShutdownErrorOwnership",
+    "TestLabShutdownMissingJoin",
+    "TestLabShutdownConcurrentClose",
+    "TestLabShutdownLeaseRetirement",
+    "TestLabShutdownReloadErrorCause",
+    "TestLabGenerationDrain",
+    "TestLabReloadRetirementFailure"
+  ],
+  "focused_execution": {
+    "network_listeners": 0,
+    "traffic_requests": 0,
+    "waf_engine_instances": 0,
+    "host_race_instrumented": true,
+    "controls": "fake listeners/servers/closers, empty HTTP servers and benign in-memory handler leases"
+  },
+  "cross_built_outputs": {
+    "classification": "host cross-build, not native execution",
+    "fixture_sha256": "68ba14f648e889aff12738ebed83cb4f3b05f0377340350262f02e510df541a0",
+    "program_sha256": "9e8f6f0f76060fda7db7e8e074a3d5de70e737e8978306041f605e4362afcd13"
+  },
+  "private_source_export": {
+    "file_count": 796,
+    "canonical_manifest_sha256": "911849120e671cb3a97a2d6a634cc03a9c2208e771b7b7bb9430c173a095e087",
+    "archive_sha256": "d932b14b4caa16db5353df80ef7c9ced0838f5b689507583013b33627fb12a7c",
+    "shutdown_inputs_verified": true,
+    "native_executed": false
+  },
+  "private_manifest_encoding": "SHA-256 of sorted UTF-8 relative source names, TAB, lowercase content SHA-256, LF; complete private manifest remains ignored",
+  "native_execution": false,
+  "security_validation_rerun": false,
+  "advisory_scan_rerun": false,
+  "historical_native_failure": {
+    "path": "research/native/request-wire-native-failure.json",
+    "sha256": "8747bba7b7eb9035df1740c1e2b2a24f0e6c605f374cc391bba9c3087251a257",
+    "modified": false,
+    "diagnosed": false
+  },
+  "limitations": [
+    "No OpenBSD execution of this repair or SD lifecycle tests.",
+    "Affected native/security validation remains paused under the reported access notice; no expanded access or safeguard bypass.",
+    "Earlier native reload response failure remains unexplained; later wire matrix remains unexecuted.",
+    "Failed drain or missing join intentionally retains engine state until process exit; no general leak-free or forced-handler completion guarantee.",
+    "No protocol/routing/dependency/CLI/service/live-network/installer/release or product adoption change."
+  ]
+}
