@@ -43,6 +43,7 @@ type LabProxy struct {
 	once                 sync.Once
 	closeErr             error
 	frontend             *tls.Certificate
+	serve                labServeState
 }
 
 func labAddress(value string, zero bool) bool {
@@ -255,13 +256,13 @@ func startLabProxy(p LabProfile, directives string) (*LabProxy, error) {
 		done := make(chan error, 1)
 		f.servers = append(f.servers, server)
 		f.done = append(f.done, done)
-		go func() { done <- server.Serve(listener) }()
+		go f.serveLabHTTP(server, listener, done)
 	}
 	return f, nil
 }
 func (f *LabProxy) Close() error {
 	f.once.Do(func() {
-		f.engine.Store(false)
+		f.beginLabClose()
 		servers := make([]labShutdownServer, len(f.servers))
 		for i, server := range f.servers {
 			servers[i] = server

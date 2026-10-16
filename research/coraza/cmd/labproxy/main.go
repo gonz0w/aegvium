@@ -4,7 +4,6 @@ package main
 
 import (
 	"bytes"
-	"errors"
 	"flag"
 	"fmt"
 	spike "github.com/gonz0w/aegvium/research/coraza"
@@ -69,37 +68,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "lab startup failed")
 		os.Exit(1)
 	}
-	fmt.Println("owned lab companion ready")
-running:
-	for {
-		select {
-		case <-stopped:
-			break running
-		default:
-		}
-		select {
-		case <-stopped:
-			break running
-		case <-reloaded:
-		}
-
-		replacement, e := readConfig()
-		if e == nil {
-			e = f.Reload(replacement.Routes)
-		}
-		if errors.Is(e, spike.ErrLabReloadCleanup) {
-			fmt.Fprintln(os.Stderr, "lab reload cleanup failed")
-			_ = f.Close()
-			os.Exit(1)
-		}
-		if e != nil {
-			fmt.Println("owned lab reload rejected")
-		} else {
-			fmt.Println("owned lab reload accepted")
-		}
-	}
-	if f.Close() != nil {
-		fmt.Fprintln(os.Stderr, "lab cleanup failed")
-		os.Exit(1)
+	if status := runLabControl(f, readConfig, stopped, reloaded, os.Stdout, os.Stderr); status != 0 {
+		os.Exit(status)
 	}
 }

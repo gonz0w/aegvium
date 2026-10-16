@@ -20,7 +20,7 @@ The optional sender-containment experiment uses stock PF to restrict fresh conne
 
 ## Build and verify
 
-The current [shutdown ownership repair](research/coraza/shutdown-host-observations.json) has host-only evidence; its OpenBSD execution and complete profile qualification remain pending. Earlier native receipts above retain their original source and scope.
+The latest shutdown ownership and server supervision changes have [host-only lifecycle evidence](research/coraza/supervision-host-observations.json); their OpenBSD execution and complete profile qualification remain pending. Earlier native receipts above retain their original source and scope.
 
 Read [CONTRIBUTING](CONTRIBUTING.md), [agent instructions](AGENTS.md) and the active [M1 PRD](docs/milestones/M1/PRD.md), [EDD](docs/milestones/M1/EDD.md) and [test design](docs/milestones/M1/TDD.md). Use signed Conventional Commits, author DCO sign-offs, `codex/` branches and open PRs. Checks run locally; GitHub Actions, runners and hosted success publishers are prohibited.
 
