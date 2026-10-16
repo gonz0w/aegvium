@@ -10,7 +10,10 @@ FINAL = 'TLS-FINAL reload_accepted=2 reload_rejected=1 companion_stopped=true ba
 STARTUP = 'TLS-STARTUP checked=1 rejected=4 listeners_absent=true'
 
 
-def admit(text, hashes):
+def admit(text, hashes, request_wire=False):
+    if type(request_wire) is not bool: raise ValueError("invalid TLS wire mode")
+    test_name = "TestLabRequestWireNative" if request_wire else "TestLabTLSPassthrough"
+    wire_names = ["wire-"+r["mode"]+"-"+r["case"] for r in json.loads((ROOT/"research/coraza/request-wire-expectations.json").read_text())] if request_wire else []
     rows, receipts, assets = [], {}, []
     for line in text.splitlines():
         if 'TLS-PATH ' in line:
@@ -35,9 +38,9 @@ def admit(text, hashes):
     wanted = {**hashes, 'uid': '32767', 'syntax': 'accepted', 'cleanup': 'verified'}
     if set(receipts) != set(wanted)|{'relayd', 'daemon-log'} or any(receipts.get(k) != v for k, v in wanted.items()) or any(not re.fullmatch('[0-9a-f]{64}', receipts[k]) for k in (*hashes, 'relayd', 'daemon-log')):
         raise ValueError('TLS identity/cleanup incomplete')
-    passed = re.findall(r'^\s*--- PASS: TestLabTLSPassthrough/([^ ]+) ', text, re.M)
-    parent = re.findall(r'^--- PASS: TestLabTLSPassthrough \(', text, re.M)
-    if passed != [r['case'] for r in EXPECTED] or len(parent) != 1 or len(assets) != 1 or text.count(STARTUP) != 1 or text.count(FINAL) != 1 or not re.search(r'^PASS$', text, re.M) or '--- FAIL:' in text or '--- SKIP:' in text:
+    passed = re.findall(r'^\s*--- PASS: '+test_name+r'/([^ ]+) ', text, re.M)
+    parent = re.findall(r'^--- PASS: '+test_name+r' \(', text, re.M)
+    if passed != [r['case'] for r in EXPECTED[:-1]]+wire_names+[EXPECTED[-1]['case']] or len(parent) != 1 or len(assets) != 1 or text.count(STARTUP) != 1 or text.count(FINAL) != 1 or not re.search(r'^PASS$', text, re.M) or '--- FAIL:' in text or '--- SKIP:' in text:
         raise ValueError('TLS process/startup/test gates incomplete')
     return {'admitted': True, 'case_count': len(rows), 'cases': rows, 'receipts': receipts, 'public_assets': assets[0], 'startup_rejects': 4, 'reload_accepted': 2, 'reload_rejected': 1}
 

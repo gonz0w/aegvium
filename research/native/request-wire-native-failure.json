@@ -1,0 +1,2213 @@
+{
+  "schema": 1,
+  "commit": "cbc21ae71fb94c5da25580856729d518c48a874d",
+  "tree": "8d26b163fc8e4796666f5b9829f0cde2c354556e",
+  "started": "2026-10-16T00:08:37.988607+00:00",
+  "configured_caddy_requested": false,
+  "connector_native_build_requested": false,
+  "connector_comparison_requested": false,
+  "request_wire_requested": true,
+  "backend_isolation_requested": true,
+  "client_identity_requested": true,
+  "sender_containment_requested": true,
+  "lab_tls_requested": true,
+  "lab_proxy_requested": true,
+  "relayd_body_requested": false,
+  "binary_sha256": "e4626c431c536400bfdcedf5308bd9498951e5336ce1f776298a8a7a4a69353d",
+  "native_build": true,
+  "native_build_requested": true,
+  "relayd_config_requested": false,
+  "relayd_traffic_requested": false,
+  "relayd_generations_requested": false,
+  "relayd_checker_replacements_requested": false,
+  "relayd_health_faults_requested": false,
+  "relayd_wiring_requested": false,
+  "relayd_signals_requested": false,
+  "relayd_contract_requested": false,
+  "passed": false,
+  "host_go": "go version go1.27.2 darwin/arm64",
+  "image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "injected_failure": null,
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 3600,
+    "patch_deadline_seconds": 1200,
+    "native_build_deadline_seconds": 2400,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "native_build_inputs": {
+    "compiler_sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+    "source_sha256": "6bef6e19db55a23472000e62bbe7c0d4fe6e894f7fe9c3da2f0c608a09b1288e"
+  },
+  "qemu_version": "QEMU emulator version 11.1.1",
+  "qemu_sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f",
+  "bootstrap_revoked": true,
+  "patch_refresh": {
+    "signature_verified": true,
+    "installed": 34,
+    "pending": 0,
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+    "boot_before": "1792109339",
+    "boot_after": "1792110198"
+  },
+  "sender_preparation": {
+    "hashes": {
+      "open": "5e8657b60e673d942709f95f8ef658543281ddcaae375baf91e6231463b1bc77",
+      "protected": "42312abb0a8e27a1f48e225abfc48ca188640c0dff20237bd28086a611db79c0",
+      "profile": "dbb62c22122477ff3cb5f83c41ef6e7dc484797f915968369225b49d2c086ce6",
+      "marker": "002857b650b5bacf09d3614e578bcf5be8d25822a468fd632d0bb847b40b7bb3"
+    },
+    "relay_uid": 89,
+    "preflight": {
+      "admitted": true,
+      "receipts": {
+        "uid": "89",
+        "syntax": "accepted",
+        "unchanged": "verified",
+        "open": "5e8657b60e673d942709f95f8ef658543281ddcaae375baf91e6231463b1bc77",
+        "protected": "42312abb0a8e27a1f48e225abfc48ca188640c0dff20237bd28086a611db79c0",
+        "profile": "dbb62c22122477ff3cb5f83c41ef6e7dc484797f915968369225b49d2c086ce6",
+        "open-loaded": "900039593dc3d2f426da8ae9e36d91aafbed301c9c0a4d84673c1be80fcb2bef",
+        "protected-loaded": "57e59a043be604e703b9995be7c76c61f73b228b680caf2be4dd407068e44e08",
+        "restore": "c0b4f0821c0832b15f36da5a3fe860369b8cbd59f938de622a2010e48898dc0f"
+      },
+      "before_views": {
+        "rules": "dbe3b274e68f67fd68ec29aa6ad49b0de44f5e6646dedc3b24517da5ba945fec",
+        "interfaces": "56c8329dc60e55b37e235e62278a0ac0bd57ad0b9520b0e6c0042e6f8823453b",
+        "timeouts": "d46cf38f471d7cb4cc46f86b92bf00e0ff7216d98d33d6dffb0ac45cc323a245",
+        "memory": "fa0b769d044775222a14e352246492178c48fef796411b43c2f73ebc2176691a",
+        "anchors": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tables": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "config": "32a50efc2651afcae4ba6f0cc456027f4668ecf2fb81fcd7ddf10b3c5e72835a",
+        "enabled": "f4ffa01691237fdcc4cb5a71d255f687442e9294c9ebf07a2851fea4f8e502d4"
+      }
+    },
+    "preflight_log_sha256": "1936da7d90e6c8d0eb8e8d283b5d11bc7299836496256a969d6fc8cd68588561"
+  },
+  "backend_preparation": {
+    "hashes": {
+      "open": "cef716404b0c713605abd7dcbe37c6497d2c6c4fd5aa5262782a4d45dc471639",
+      "protected": "e80e6e728a66906c0f00cabf2cdd5ce09e81510cddd3f701f49c15776122f281",
+      "profile": "bf52c187c207bd1e948c3028647a51931337a4256de1ed83f6e88ba6c22cd997",
+      "marker": "644866ae07c3f018fce94c84e2eba816889cfc65e157def94e965141fca50bac"
+    },
+    "relay_uid": 89,
+    "probe_uid": 1,
+    "preflight": {
+      "admitted": true,
+      "receipts": {
+        "uid": "89",
+        "syntax": "accepted",
+        "unchanged": "verified",
+        "open": "cef716404b0c713605abd7dcbe37c6497d2c6c4fd5aa5262782a4d45dc471639",
+        "protected": "e80e6e728a66906c0f00cabf2cdd5ce09e81510cddd3f701f49c15776122f281",
+        "profile": "bf52c187c207bd1e948c3028647a51931337a4256de1ed83f6e88ba6c22cd997",
+        "open-loaded": "cfbdf5867acbc8009056456b526cb5b6d7273a0cc4a77eefb91aeeabb413fd4d",
+        "protected-loaded": "bb42560985b8a23cc9b5deb5727e4bee3560d8906637da73ea013ba005ea76ab",
+        "restore": "c0b4f0821c0832b15f36da5a3fe860369b8cbd59f938de622a2010e48898dc0f"
+      },
+      "before_views": {
+        "rules": "dbe3b274e68f67fd68ec29aa6ad49b0de44f5e6646dedc3b24517da5ba945fec",
+        "interfaces": "56c8329dc60e55b37e235e62278a0ac0bd57ad0b9520b0e6c0042e6f8823453b",
+        "timeouts": "d46cf38f471d7cb4cc46f86b92bf00e0ff7216d98d33d6dffb0ac45cc323a245",
+        "memory": "fa0b769d044775222a14e352246492178c48fef796411b43c2f73ebc2176691a",
+        "anchors": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "tables": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "config": "32a50efc2651afcae4ba6f0cc456027f4668ecf2fb81fcd7ddf10b3c5e72835a",
+        "enabled": "f4ffa01691237fdcc4cb5a71d255f687442e9294c9ebf07a2851fea4f8e502d4"
+      }
+    },
+    "preflight_log_sha256": "ff1703b2f566fdb88f791c84fe612000489288a07a157c9f3fb037781c44c561"
+  },
+  "native": {
+    "build_receipts": {
+      "compiler": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+      "source": "6bef6e19db55a23472000e62bbe7c0d4fe6e894f7fe9c3da2f0c608a09b1288e",
+      "uid": "32767",
+      "binary": "c1aa0e6908a84ad17c6ef2807af524b02d1d752aa2cf40f7347f38378d0a19f6",
+      "checker": "52932419021d857d0eda4e818e11a564d29cb617c75b1a1937f7fb076ffb8dd9",
+      "program": "11e5d1a02d4afa784879851eb25418d950a7ea0868cdd51d511f185326da2b8c"
+    },
+    "build_log_sha256": "c184f43c676d488a7a8eba7d24557c8b6b45431b3f4c19d94f2b966da3d6eeb1",
+    "receipts": {
+      "os": "OpenBSD 7.9 amd64",
+      "binary": "c1aa0e6908a84ad17c6ef2807af524b02d1d752aa2cf40f7347f38378d0a19f6",
+      "kernel": "GENERIC.MP#16",
+      "kernel_sha256": "b6591c107e234e4b0de56587a24c80b524b2613e73df2fbac50d5f677900828d",
+      "patches": "001_xserver,002_smtpd,003_vmd,004_elf,005_sysv,006_nfs,007_ipsec,008_npppd,009_iked,010_ifioctl,011_nipledge,012_kernproc,013_ttyioctl,014_expat,015_smtpd,016_nfs,017_wscons,018_shmat,019_expat,020_xserver,021_ldapd,022_nsd,023_unbound,024_libressl,025_procargs,026_sysvipc,027_iked,028_wgbind,029_sysvsem,030_uidrange,031_isakmpd,032_xserver,033_expat,034_wsdisplay",
+      "uid": "32767"
+    },
+    "cases": [
+      "TestBodyAdmissionHeaders/duplicate-encoding",
+      "TestBodyAdmissionHeaders/duplicate-media",
+      "TestBodyAdmissionHeaders/identity-json",
+      "TestBodyAdmissionHeaders/long-declared",
+      "TestBodyAdmissionHeaders/malformed-media",
+      "TestBodyAdmissionHeaders/short-declared",
+      "TestBodyAdmissionHeaders/unsupported-charset",
+      "TestBodyAdmissionHeaders/utf8-json",
+      "TestBodyAdmissionTCP/bad-chunk",
+      "TestBodyAdmissionTCP/chunked-json",
+      "TestBodyAdmissionTCP/chunked-over",
+      "TestBodyAdmissionTCP/cl-te",
+      "TestBodyAdmissionTCP/conflicting-cl",
+      "TestBodyAdmissionTCP/fixed-json",
+      "TestBodyAdmissionTCP/fixed-over",
+      "TestBodyAdmissionTCP/form-sql",
+      "TestBodyAdmissionTCP/identical-cl",
+      "TestBodyAdmissionTCP/invalid-json",
+      "TestBodyAdmissionTCP/json-script",
+      "TestBodyAdmissionTCP/short-fixed",
+      "TestBodyAdmissionTCP/stalled-chunked",
+      "TestBodyAdmissionTCP/text-media",
+      "TestBodyAdmissionTCP/unsupported-te",
+      "TestBodyReadFailure",
+      "TestBoundedBodyAdmission/baseline/declared-over",
+      "TestBoundedBodyAdmission/baseline/encoded-json",
+      "TestBoundedBodyAdmission/baseline/exact-cap",
+      "TestBoundedBodyAdmission/baseline/form-benign",
+      "TestBoundedBodyAdmission/baseline/form-sql",
+      "TestBoundedBodyAdmission/baseline/invalid-json",
+      "TestBoundedBodyAdmission/baseline/json-benign",
+      "TestBoundedBodyAdmission/baseline/json-script",
+      "TestBoundedBodyAdmission/baseline/partial-read-error",
+      "TestBoundedBodyAdmission/baseline/read-error",
+      "TestBoundedBodyAdmission/baseline/text-media",
+      "TestBoundedBodyAdmission/baseline/understated-over",
+      "TestBoundedBodyAdmission/baseline/unknown-over",
+      "TestBoundedBodyAdmission/gated/declared-over",
+      "TestBoundedBodyAdmission/gated/encoded-json",
+      "TestBoundedBodyAdmission/gated/exact-cap",
+      "TestBoundedBodyAdmission/gated/form-benign",
+      "TestBoundedBodyAdmission/gated/form-sql",
+      "TestBoundedBodyAdmission/gated/invalid-json",
+      "TestBoundedBodyAdmission/gated/json-benign",
+      "TestBoundedBodyAdmission/gated/json-script",
+      "TestBoundedBodyAdmission/gated/partial-read-error",
+      "TestBoundedBodyAdmission/gated/read-error",
+      "TestBoundedBodyAdmission/gated/text-media",
+      "TestBoundedBodyAdmission/gated/understated-over",
+      "TestBoundedBodyAdmission/gated/unknown-over",
+      "TestExplicitInspectionError/benign-post",
+      "TestExplicitInspectionError/body-denied",
+      "TestExplicitInspectionError/detection-uri",
+      "TestExplicitInspectionError/empty-benign",
+      "TestExplicitInspectionError/partial-read-error",
+      "TestExplicitInspectionError/read-error",
+      "TestExplicitInspectionError/uri-denied",
+      "TestInvalidRulesRejected",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/cookie-benign",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/cookie-script",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/cookie-sql",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/form-benign",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/form-script",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/form-sql",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/json-benign",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/json-script",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/json-sql",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/query-benign",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/query-script",
+      "TestPinnedCRSRequestCorpus/DetectionOnly/query-sql",
+      "TestPinnedCRSRequestCorpus/On/cookie-benign",
+      "TestPinnedCRSRequestCorpus/On/cookie-script",
+      "TestPinnedCRSRequestCorpus/On/cookie-sql",
+      "TestPinnedCRSRequestCorpus/On/form-benign",
+      "TestPinnedCRSRequestCorpus/On/form-script",
+      "TestPinnedCRSRequestCorpus/On/form-sql",
+      "TestPinnedCRSRequestCorpus/On/json-benign",
+      "TestPinnedCRSRequestCorpus/On/json-script",
+      "TestPinnedCRSRequestCorpus/On/json-sql",
+      "TestPinnedCRSRequestCorpus/On/query-benign",
+      "TestPinnedCRSRequestCorpus/On/query-script",
+      "TestPinnedCRSRequestCorpus/On/query-sql",
+      "TestPinnedCRSSmoke/benign-post",
+      "TestPinnedCRSSmoke/benign-query",
+      "TestPinnedCRSSmoke/script-injection",
+      "TestPinnedCRSSmoke/sql-injection",
+      "TestProxyReady/accept-failure",
+      "TestProxyReady/close",
+      "TestProxyReady/head",
+      "TestProxyReady/method",
+      "TestProxyReady/nil",
+      "TestProxyReady/route",
+      "TestProxyReady/server-bounds",
+      "TestProxyReady/transitions",
+      "TestProxyReadyTCP/accept-failure",
+      "TestProxyReadyTCP/lifecycle",
+      "TestProxyV1Accepted/coalesced",
+      "TestProxyV1Accepted/maximum",
+      "TestProxyV1Accepted/one-byte",
+      "TestProxyV1Accepted/two-requests",
+      "TestProxyV1Conn/clear-deadline-failure",
+      "TestProxyV1Conn/coalesced",
+      "TestProxyV1Conn/deadline-cleared",
+      "TestProxyV1Conn/initial-deadline-failure",
+      "TestProxyV1Conn/invalid-budget",
+      "TestProxyV1Conn/malformed",
+      "TestProxyV1Conn/timeout-partial",
+      "TestProxyV1Conn/timeout-silent",
+      "TestProxyV1Listener/accept-failure",
+      "TestProxyV1Listener/capacity",
+      "TestProxyV1Listener/close-pending",
+      "TestProxyV1Listener/close-undelivered",
+      "TestProxyV1Listener/engine-gate",
+      "TestProxyV1Listener/progress",
+      "TestProxyV1ListenerTCP/bare-head",
+      "TestProxyV1ListenerTCP/progress",
+      "TestProxyV1ReadFailure",
+      "TestProxyV1Rejected/bare-lf",
+      "TestProxyV1Rejected/destination",
+      "TestProxyV1Rejected/duplicate-space",
+      "TestProxyV1Rejected/extra-field",
+      "TestProxyV1Rejected/family",
+      "TestProxyV1Rejected/leading-zero-address",
+      "TestProxyV1Rejected/leading-zero-port",
+      "TestProxyV1Rejected/magic",
+      "TestProxyV1Rejected/mapped-ipv6",
+      "TestProxyV1Rejected/missing",
+      "TestProxyV1Rejected/overflow-port",
+      "TestProxyV1Rejected/overlong",
+      "TestProxyV1Rejected/signed-port",
+      "TestProxyV1Rejected/source",
+      "TestProxyV1Rejected/tab",
+      "TestProxyV1Rejected/truncated",
+      "TestProxyV1Rejected/unknown",
+      "TestProxyV1Rejected/v2",
+      "TestProxyV1Rejected/wrong-destination",
+      "TestProxyV1Rejected/zero-port",
+      "TestProxyV1TCP/handoff",
+      "TestProxyV1TCP/timeout",
+      "TestReadyCheckerTCP/invalid-argument",
+      "TestReadyCheckerTCP/malformed",
+      "TestReadyCheckerTCP/missing-executable",
+      "TestReadyCheckerTCP/refused",
+      "TestReadyCheckerTCP/silent",
+      "TestReadyCheckerTCP/transitions",
+      "TestReadyProbe/body",
+      "TestReadyProbe/dial-failure",
+      "TestReadyProbe/keepalive",
+      "TestReadyProbe/malformed",
+      "TestReadyProbe/missing-no-store",
+      "TestReadyProbe/oversized",
+      "TestReadyProbe/ready",
+      "TestReadyProbe/redirect",
+      "TestReadyProbe/silent-timeout",
+      "TestReadyProbe/unavailable",
+      "TestReadyProbe/validation",
+      "TestRequestInterruption/benign-get",
+      "TestRequestInterruption/benign-post",
+      "TestRequestInterruption/body-denied",
+      "TestRequestInterruption/body-limit",
+      "TestRequestInterruption/detection-body",
+      "TestRequestInterruption/detection-uri",
+      "TestRequestInterruption/uri-denied"
+    ],
+    "case_count": 163,
+    "crs_corpus": [
+      {
+        "mode": "DetectionOnly",
+        "role": "cookie",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "cookie",
+        "kind": "script",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "cookie",
+        "kind": "sql",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "form",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "form",
+        "kind": "script",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "form",
+        "kind": "sql",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "json",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "json",
+        "kind": "script",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "json",
+        "kind": "sql",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "query",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "query",
+        "kind": "script",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "DetectionOnly",
+        "role": "query",
+        "kind": "sql",
+        "status": 200,
+        "backend": 1,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "cookie",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "On",
+        "role": "cookie",
+        "kind": "script",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "cookie",
+        "kind": "sql",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "form",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "On",
+        "role": "form",
+        "kind": "script",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "form",
+        "kind": "sql",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "json",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "On",
+        "role": "json",
+        "kind": "script",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "json",
+        "kind": "sql",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "query",
+        "kind": "benign",
+        "status": 200,
+        "backend": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "mode": "On",
+        "role": "query",
+        "kind": "script",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "mode": "On",
+        "role": "query",
+        "kind": "sql",
+        "status": 403,
+        "backend": 0,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      }
+    ],
+    "body_admission": [
+      {
+        "profile": "baseline",
+        "case": "declared-over",
+        "status": 200,
+        "backend": 1,
+        "read": 129,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "encoded-json",
+        "status": 403,
+        "backend": 0,
+        "read": 22,
+        "closed": 0,
+        "rules": [
+          920450,
+          949110
+        ],
+        "phases": [
+          1,
+          2
+        ]
+      },
+      {
+        "profile": "baseline",
+        "case": "exact-cap",
+        "status": 200,
+        "backend": 1,
+        "read": 128,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "form-benign",
+        "status": 200,
+        "backend": 1,
+        "read": 16,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "form-sql",
+        "status": 403,
+        "backend": 0,
+        "read": 22,
+        "closed": 0,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "profile": "baseline",
+        "case": "invalid-json",
+        "status": 400,
+        "backend": 0,
+        "read": 11,
+        "closed": 0,
+        "rules": [
+          200002
+        ],
+        "phases": [
+          2
+        ]
+      },
+      {
+        "profile": "baseline",
+        "case": "json-benign",
+        "status": 200,
+        "backend": 1,
+        "read": 22,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "json-script",
+        "status": 403,
+        "backend": 0,
+        "read": 39,
+        "closed": 0,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "profile": "baseline",
+        "case": "partial-read-error",
+        "status": 200,
+        "backend": 0,
+        "read": 16,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "read-error",
+        "status": 200,
+        "backend": 0,
+        "read": 0,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "text-media",
+        "status": 403,
+        "backend": 0,
+        "read": 8,
+        "closed": 0,
+        "rules": [
+          920420,
+          949110
+        ],
+        "phases": [
+          1,
+          2
+        ]
+      },
+      {
+        "profile": "baseline",
+        "case": "understated-over",
+        "status": 200,
+        "backend": 1,
+        "read": 129,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "baseline",
+        "case": "unknown-over",
+        "status": 200,
+        "backend": 1,
+        "read": 129,
+        "closed": 0,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "declared-over",
+        "status": 413,
+        "backend": 0,
+        "read": 0,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "encoded-json",
+        "status": 415,
+        "backend": 0,
+        "read": 0,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "exact-cap",
+        "status": 200,
+        "backend": 1,
+        "read": 128,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "form-benign",
+        "status": 200,
+        "backend": 1,
+        "read": 16,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "form-sql",
+        "status": 403,
+        "backend": 0,
+        "read": 22,
+        "closed": 1,
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ]
+      },
+      {
+        "profile": "gated",
+        "case": "invalid-json",
+        "status": 400,
+        "backend": 0,
+        "read": 11,
+        "closed": 1,
+        "rules": [
+          200002
+        ],
+        "phases": [
+          2
+        ]
+      },
+      {
+        "profile": "gated",
+        "case": "json-benign",
+        "status": 200,
+        "backend": 1,
+        "read": 22,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "json-script",
+        "status": 403,
+        "backend": 0,
+        "read": 39,
+        "closed": 1,
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "profile": "gated",
+        "case": "partial-read-error",
+        "status": 500,
+        "backend": 0,
+        "read": 16,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "read-error",
+        "status": 500,
+        "backend": 0,
+        "read": 0,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "text-media",
+        "status": 415,
+        "backend": 0,
+        "read": 0,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "understated-over",
+        "status": 413,
+        "backend": 0,
+        "read": 129,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      },
+      {
+        "profile": "gated",
+        "case": "unknown-over",
+        "status": 413,
+        "backend": 0,
+        "read": 129,
+        "closed": 1,
+        "rules": [],
+        "phases": []
+      }
+    ],
+    "body_http": [
+      {
+        "case": "bad-chunk",
+        "status": 500,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "other",
+        "wire_read": 179,
+        "request_bytes": 179,
+        "request_sha256": "8cfd767a426d04573c5f16ee964774fa089426f55d1024d9db4776e87c485899",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "chunked-json",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 208,
+        "request_bytes": 208,
+        "request_sha256": "05c53f495ad3c49266af69e386a7f5c3a7106ff8727063070014a689f3956e32",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "chunked-over",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 129,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 315,
+        "request_bytes": 315,
+        "request_sha256": "37ea7ea67842f29a2b5a76629b7a575443ce930f6066d594307e190885770804",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "cl-te",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 229,
+        "request_bytes": 229,
+        "request_sha256": "3435e83820d5079e050d99980389050675664b16ee315a134b6c968bd4b978f2",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "conflicting-cl",
+        "status": 400,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 209,
+        "request_bytes": 209,
+        "request_sha256": "1a8afaa62149e6d3b21fd8384e323190385ad79b0a8cc1e1dc4fb1146b2b7be4",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "fixed-json",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "429f11968c483a0387d1be7973e1fdfe68c77f72a28b91b714d56306ec2dbf81",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "fixed-over",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 129,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "129"
+        ],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 297,
+        "request_bytes": 297,
+        "request_sha256": "cba84022cb80bf3adb60f06dcb8e069f498689e225d53a95743c21e7c8b8f44e",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "form-sql",
+        "status": 403,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 206,
+        "request_bytes": 206,
+        "request_sha256": "3356d2c6ec6581d323d7ca2dc7399742c7bdcbc3768cbcb5dfb2b4f087a967d1",
+        "body_sha256": "",
+        "rules": [
+          942100,
+          949110
+        ],
+        "phases": [
+          2,
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "identical-cl",
+        "status": 200,
+        "handler": 1,
+        "backend": 1,
+        "content_length": 22,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "22"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 209,
+        "request_bytes": 209,
+        "request_sha256": "78c9549155cd1964bb16a6a58d8ce8409a5dc0f72b3b55717a3b53ccdb44ec35",
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "invalid-json",
+        "status": 400,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 11,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "11"
+        ],
+        "source_read": 11,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 178,
+        "request_bytes": 178,
+        "request_sha256": "519c5504cc2876f400e524b915f0af9a9ddbab916eebfc5ead2cbf1e74e41f5b",
+        "body_sha256": "",
+        "rules": [
+          200002
+        ],
+        "phases": [
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "json-script",
+        "status": 403,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 39,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "39"
+        ],
+        "source_read": 39,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 206,
+        "request_bytes": 206,
+        "request_sha256": "d60d5141cd485e656b32bf48ee12c4c80813d74df08ad57ec1aadbc8858fe378",
+        "body_sha256": "",
+        "rules": [
+          941100,
+          941110,
+          941160,
+          941390,
+          949110
+        ],
+        "phases": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "short-fixed",
+        "status": 500,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 23,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "23"
+        ],
+        "source_read": 22,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 189,
+        "request_bytes": 189,
+        "request_sha256": "dffda0e804a777077b5d11e0f052ee95cfcd519adff7aae40695cd485d550d3a",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "stalled-chunked",
+        "status": 413,
+        "handler": 1,
+        "backend": 0,
+        "content_length": -1,
+        "transfer_encoding": [
+          "chunked"
+        ],
+        "header_lengths": [],
+        "source_read": 129,
+        "source_closed": 1,
+        "source_close_error": "timeout",
+        "wire_read": 308,
+        "request_bytes": 308,
+        "request_sha256": "480efaa6696f53364e10aab16e88f3f4a972f87b3b685a93d7941c1886945ea5",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "text-media",
+        "status": 415,
+        "handler": 1,
+        "backend": 0,
+        "content_length": 8,
+        "transfer_encoding": [],
+        "header_lengths": [
+          "8"
+        ],
+        "source_read": 0,
+        "source_closed": 1,
+        "source_close_error": "none",
+        "wire_read": 168,
+        "request_bytes": 168,
+        "request_sha256": "810eb570a76d716d526bda05f5870a5bd214fc93e29904b05d267cddb2fec108",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      },
+      {
+        "case": "unsupported-te",
+        "status": 501,
+        "handler": 0,
+        "backend": 0,
+        "content_length": null,
+        "transfer_encoding": null,
+        "header_lengths": null,
+        "source_read": 0,
+        "source_closed": 0,
+        "source_close_error": "none",
+        "wire_read": 194,
+        "request_bytes": 194,
+        "request_sha256": "7ae1af7461a4cbd552d73e036e98226189e22157c9b0298f491c47bcf03a0206",
+        "body_sha256": "",
+        "rules": [],
+        "phases": [],
+        "connection_closed": true,
+        "server_joined": true,
+        "listener_absent": true
+      }
+    ],
+    "log_sha256": "179c3933c729f83ef05997375cb8881048ab551c13012d32b3b5e7f2fd012660"
+  },
+  "checker": {
+    "sha256": "52932419021d857d0eda4e818e11a564d29cb617c75b1a1937f7fb076ffb8dd9",
+    "installed_verified": true,
+    "host_cross_built": false,
+    "native_built": true
+  },
+  "lab_proxy": {
+    "hashes": {
+      "program": "11e5d1a02d4afa784879851eb25418d950a7ea0868cdd51d511f185326da2b8c",
+      "profile": "9832d9f71b705675f09ab3e8c718c06d64a71f19f0b4ddbce92bf91254436215",
+      "engine": "c1aa0e6908a84ad17c6ef2807af524b02d1d752aa2cf40f7347f38378d0a19f6",
+      "checker": "52932419021d857d0eda4e818e11a564d29cb617c75b1a1937f7fb076ffb8dd9"
+    },
+    "log_sha256": "4d84c41300f0ea8cbf1e5fb46313b9f210e1bffdf8ac3291f5059da5803db9c5",
+    "supervisor_exit": 1,
+    "admitted": false,
+    "native_program": true,
+    "admission_error": "Go/process gates incomplete"
+  },
+  "error": "lab proxy composition failed; partial receipts retained",
+  "teardown": {
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 3600,
+    "escalated": false,
+    "teardown_verified": true
+  },
+  "baseline_unchanged": true,
+  "source_unchanged": true,
+  "finished": "2026-10-16T00:57:56.205317+00:00",
+  "runtime_inputs": {
+    ".go-version": "6c075150045fda9bac31bb93cf5a0a0bc91622a75c1f10fb2971e6f994c6d4d6",
+    "Makefile": "aa15be026a51ff9ebbc1eb95d521d879d7fb704057c9736aeedaed8aba5650ea",
+    "research/advisory-policy.json": "d2c6c37a543d41441914f9eeb59991c833675a1bec64023ae5af1e4403402896",
+    "research/connector/advisory-review.json": "82f46e14fac394fa325b219bb28fac8f15da9cb58c3bc38fb76434673a100cb3",
+    "research/connector/comparison.go": "d7afade77d3a1ec233d275a2ca2511e0ec811c03b595b8c2f168a1c332cca8d6",
+    "research/connector/comparison_test.go": "b729f6b3af268944bb4e44376008a741c9346dd25d3a483a15f103371faa82ed",
+    "research/connector/go.mod": "b5a53937c88062b2a4bef996bb70275c790e030c3290b7da4b6d533b1023c17a",
+    "research/connector/go.sum": "b7032ced454a525603a1b3c369c3135d0a2280c4e1a809a9114ff77afcdb1639",
+    "research/connector/server-expectations.json": "32084a70437327437758fa97c5ece020073f21f5056431be2794fb609d6c6dee",
+    "research/connector/server.go": "1d4c981791fcc450eb012a56344471c2ace99c93ae4509d5b85f0479b8e6ce62",
+    "research/connector/server_test.go": "07278ea453acb54dcb558a875b4582ab4574f71baedb8f31661b1b0b567f2218",
+    "research/connector/wire-expectations.json": "b8cecb61fe000562127437aa6c805a152a1e869aa4a23fd9d9cf5c1cbe765fa1",
+    "research/coraza/body_admission_test.go": "00b4eb8aa88410b44461ce3674b31d8da3a47f2f2d05f17a98a19372357daeb3",
+    "research/coraza/body_http_test.go": "11d8e148626f41e1865e9ad7c419b5e828cd8ed84389211c6cc509fd85632fa4",
+    "research/coraza/client-identity-expectations.json": "7809b7014286fa7fa93be497981cffbeaed77d938b4738bf04a3bfa86d316740",
+    "research/coraza/cmd/labproxy/main.go": "caa6db8d97beabaa662851eb8e32ba520f77bbd0f6ceec054a63b9e19eddf052",
+    "research/coraza/cmd/readycheck/main.go": "e25613e6467ffefbbcddb175ccfac9e11986bce886c0f15c6f7222321f0616ee",
+    "research/coraza/cmd/readycheck/main_test.go": "63c70f71d2c40d76b82c1e91083f13df23d97cd096e712058dce459a84aaf193",
+    "research/coraza/cmd/signalobserve/main.go": "4f999b8c21610eef67def912862f75a70a39edb9b5349d9e1b3c9612beeec282",
+    "research/coraza/cmd/signalobserve/main_test.go": "d6201d7afe5e1453f544bb6a2983c541d31ed0aa8fbcd2ea7706817a634f84fd",
+    "research/coraza/connector-dependencies.json": "c48a2555eb2c020cef5703d60fc1fd11f10f14f45dae823ee943a2e8973dfae5",
+    "research/coraza/crs-inputs.json": "975858efd9111265a53ce3c9c6db0ca6af63ff3ded181cb8f13c1d72d3383c7d",
+    "research/coraza/crs_corpus_test.go": "08652515a34cc27f834cfead1c4c674c03d9b2cddad7745c50740708fa66c4c0",
+    "research/coraza/crs_test.go": "33df0a96989f7229d7f9868a5aeac81afdf003a96407e0e793ce1976e6a9f618",
+    "research/coraza/engine_test.go": "0b204ff60105de40dbb09f8b1b8a45fbf4ba102f7c74c0e476862a2a1e24feb6",
+    "research/coraza/go.mod": "dca5c181ccdc6e49e975e7e9ede59a72578e42b36818d90cfeaed2ede0525e27",
+    "research/coraza/go.sum": "afc8a15db82d3fab3614845cff2bf2406eb7496b20f98f6240bb2913e75696c8",
+    "research/coraza/internal/readyprobe/probe.go": "596335c9103807c31c705b8f51b89cf9829216f203c6be3e5d99326c9f9aaf1f",
+    "research/coraza/lab_admission.go": "eeec8899ad19a50d46aca9767b148eb3c50679ec5f9841c9e129dcbe3986880e",
+    "research/coraza/lab_admission_test.go": "5f2a1505af512bd782407587835ddf8128c5dd2371321787112244a1f6b539a1",
+    "research/coraza/lab_backend_test.go": "a41cb092c2b26b854aab443a6effa577ea88b20ecdc4a21aa2f02eb43b76dce7",
+    "research/coraza/lab_body_transport.go": "8f3285c5fe948d89d66fb63cf0fb5c56bd177443369582c76185af0421390c72",
+    "research/coraza/lab_body_transport_test.go": "e3a1ac07436238280c18b72d9fe0e6ccea07c926002229f349ff7292108e209e",
+    "research/coraza/lab_client_identity.go": "0910fe94a04b7348683974cb58fa1b1a3e5e7e0539b105771ea3e4e711cf4006",
+    "research/coraza/lab_client_identity_test.go": "fd4598965c2da10ae18fbcead95f477467539e1a0809b35ed32887b027a9862a",
+    "research/coraza/lab_config.go": "458cecbaf4cc2f31e54a6b790bcba942684ce4b7144118ca67ee36d03a1aa688",
+    "research/coraza/lab_config_test.go": "7a6ed895aa968625b48ec9dc1358cad4c9a7a2de03d6e9b030c06b92bf00994a",
+    "research/coraza/lab_frontend_tls.go": "2651e4499c0a7bddaeefcf2bdaee39e5abc4e51db545893c3c1d0e2d06a6b3b1",
+    "research/coraza/lab_frontend_tls_test.go": "a0ef527fe574d8b0679cc947e9beacd2a97b475053f39292884cbd63bd65ff63",
+    "research/coraza/lab_load_test.go": "e736b16fff956c6dc3c4a99c89d37bd10aced15771536aeef119475564000e2a",
+    "research/coraza/lab_path_test.go": "007f72c58d95795b26aa4284000c456890462e26136368541183a7f9bb66c152",
+    "research/coraza/lab_proxy.go": "ebfeebd76861af4032c87d3322800abb8ced7e9e7441bb1a9f70e7240841d3a3",
+    "research/coraza/lab_proxy_test.go": "666cd8297c04c2a3710467722ae74fd18ba983e6df1dfc3775df2cea7b867cb2",
+    "research/coraza/lab_reload.go": "c070dcb16d305a0147c1f056f70bfe85a4485b926c4c03a09b86b826b43b2a09",
+    "research/coraza/lab_reload_test.go": "b76d3c5dac326d6b4d533e8a34507bee1649a865d621726b870683b113c2ba2b",
+    "research/coraza/lab_request_wire_test.go": "84064c911462c9f9dd9a0dd3c81a1705af72c422b5815811f4c8267e071e99e8",
+    "research/coraza/lab_sender_test.go": "2f3723ec1c6fdf06149020a809efdd46c80d4738570631ab16a4d37813bbe6cd",
+    "research/coraza/proxy_conn.go": "f6358938b51d25879b2528fc8d6b7ea4d22dabe82a383f1c012df3f5742a1138",
+    "research/coraza/proxy_conn_test.go": "d57665e541a0ac6a62210922e96e0766c3b0b8b69cdaf9275352d8cf36021a8b",
+    "research/coraza/proxy_listener.go": "97a2c04f84f6d2d02b4463e1c6b65a2391d1b0468a61289e7bfe683e4e8cfcff",
+    "research/coraza/proxy_listener_test.go": "b57e7b536ec7b25a51b1bf121e8bad4e77915ab7a16bdbfb215704a90087ed17",
+    "research/coraza/proxy_ready.go": "184f3a1403092a58163546454a5f9e00adbbb79e4ca0fc5ea0960541560df794",
+    "research/coraza/proxy_ready_test.go": "08ce691aaef39b144491cd9aff88a66ac65ebd89435e7cfd14004d341853bf26",
+    "research/coraza/proxy_v1.go": "6c9b1f559a1d2e1131dcb7e4bcc092e39180f799ac3914e93c2683698041e5ab",
+    "research/coraza/proxy_v1_test.go": "0d6bec3257f816709551928d8c9387178b7ff68667cdfe66d0dd2aa1fba151aa",
+    "research/coraza/ready_checker_tcp_test.go": "297eaf82050beef246d3cc9132c9f7ece2555e1396e6736f618928886144e1bf",
+    "research/coraza/ready_probe.go": "b38fa3c5656831902d1d04794852690a2efe4ecf6a9557d6dfa0dd99f0cfc21d",
+    "research/coraza/ready_probe_test.go": "e1496459992b38b84c06d120a73e546bd1a7223c4df3c0b92a51829360cd76b7",
+    "research/coraza/relayd_body_test.go": "86c5f2a95928dc73e3a5850dcd6fecedf3e23c52c54c307b464894c5bf85275f",
+    "research/coraza/relayd_test.go": "75d41267f6ffd3d52bdc788d118014c056948a2ef9326dba9980e9b2d536fa9d",
+    "research/coraza/request-wire-expectations.json": "813753f5b41280d15f99e0294a6a5518c9ef1974edb8f4d21bccc776091a8b69",
+    "research/coraza/sender-path-expectations.json": "f954589e75d980a82cd9b8ab8d027ecb6e785876e9f0b69d6bebf0d0541413b9",
+    "research/coraza/tls-path-expectations.json": "75bb63581f3fb0c9047e27404f1e674b48c33e02d461bd7a642a60440d3d8e7e",
+    "research/coraza/wiring_control_host_test.go": "dd3483eb2c41f074ceb3fc4d5dfc157ba2b92b6247e35b3562cfb4e7d643fcec",
+    "research/coraza/wiring_control_test.go": "749294080b3fc50a6ca7e520ef15032e5c77ba0d6833404a00b5dd7d4f3c67bb",
+    "research/coraza/wiring_fault_host_test.go": "36e4af25d52fca4f19bed31ab361b2db5d233111f5a7074a754c15a7f183e17c",
+    "research/coraza/wiring_fixture_test.go": "126ef16020a5096b9a77c8a37716fb9beb6fc639397eb15e6dab4dc7da1d736a",
+    "research/coraza/wiring_generation_host_test.go": "7a779df0bcc94150776b6a676ef4c5cf38cc317c673258ec30b8a39d998217f1",
+    "research/coraza/wiring_host_test.go": "55044772c63d492c369b78d1b2f54ccbb0c5161606a31f63a1eb39811805de47",
+    "research/dependency-refresh.json": "aea95bc8174ea3ea3e743a1920e5a6daeeb6ffdb414f3032299bb42d7e247543",
+    "research/native/image-pin.json": "8b3c0b1961712f01f2fbc11532da3d4576845fffddc24856782a850da81d6f8b",
+    "research/relayd/backend-open.pf": "cef716404b0c713605abd7dcbe37c6497d2c6c4fd5aa5262782a4d45dc471639",
+    "research/relayd/backend-protected.pf": "03cb2b752d5c8c59bcffb6fa2540fdb13353ae0bb0583c5ee4241ddcd6194146",
+    "research/relayd/body-comparison.conf": "05e6deee91c91b1eb08463866cd2b83f28fc24c344312be2a0ebedcdc7a5e98f",
+    "research/relayd/checker-contract-source.json": "7f80a922d9ea14fbdc90f055db3d33ed47175b012a81764b140b730cb4c13395",
+    "research/relayd/checker-contract.conf": "bb9a5a9594c2f15e7bbe02cb6b15c1a39e9ddfaa1ddc9424f8976cf63453a07e",
+    "research/relayd/checker-exit2.sh": "94b42d8723bcb52133789831e6817356f06f69f2c4ed0baa04fbb1daebb4450b",
+    "research/relayd/ingress.conf": "d4ad8dedfb9dfcce07c09f32e8fc4e8f2ca474916d1d031cdbe71ac67a7a2174",
+    "research/relayd/lab-backend.conf": "bf52c187c207bd1e948c3028647a51931337a4256de1ed83f6e88ba6c22cd997",
+    "research/relayd/lab-proxy.conf": "9832d9f71b705675f09ab3e8c718c06d64a71f19f0b4ddbce92bf91254436215",
+    "research/relayd/lab-request-wire.conf": "932636d1518ae83e3af0b76be1bc4092b6246574917ee199d6017022d716fa51",
+    "research/relayd/lab-sender.conf": "dbb62c22122477ff3cb5f83c41ef6e7dc484797f915968369225b49d2c086ce6",
+    "research/relayd/lab-tls-passthrough.conf": "11e57cd2de81baba024ea575756524dcb36948c08d1244c514b9837dfbda0525",
+    "research/relayd/readiness-wiring.conf": "4a50dfecaa497c87920d20660378190e7ad9b5296cc99af9c96899d6518c92ae",
+    "research/relayd/sender-open.pf": "5e8657b60e673d942709f95f8ef658543281ddcaae375baf91e6231463b1bc77",
+    "research/relayd/sender-protected.pf": "6ad8f2dbf6b7840a2a5a1eb65b777957af4eb804a2f1ca238662445852e096f5",
+    "research/relayd/signal-comparison.conf": "9f50c90688ca6c4964b7ea9979c9f04d428054f07d4d70b420ce2243357ef769",
+    "research/relayd/traffic.conf": "96cc8c642be2b16148c6b0cc35e8c9020c453e493edab3e0f0773064be2feab0",
+    "tools/backend-isolation.py": "aabebfecce268230812c2c886d8f92680cc43e42e8fe0cde14cf5574a2d3b3c8",
+    "tools/bootstrap-research.py": "01d65124fe4af8fe06d2b7ef67c81e69ae12271c60311770c94f810488e0f780",
+    "tools/client-identity.py": "686d3172f6eafebfed67d6b2a13ccc4a0773f02c55a01457ae7e2d5dce030039",
+    "tools/configured-caddy.py": "7354f01ff540c5dd73a138a2bfa63b1e951f6c583166c92effb207e500a63594",
+    "tools/connector-comparison.py": "c38c09dfa97a2fa6fe5e01aeeb388d14b9afe10ea756be79712af3857ee02da6",
+    "tools/lab-proxy.py": "eff56624f56f434f992ba34fbed5fe7727ad1b17de18b179cce09694e37cdc4f",
+    "tools/lab-supervisor.py": "17d5204dcc4b286bc049ad34022df7ec9d65a447be7a7dbf4ef8b7e5b738aea3",
+    "tools/lab-tls.py": "accc064a3a6e6df5df608186c3ee3566424f7d625e92db99f8ffddd2df07fdc3",
+    "tools/native-build.py": "81b15eb7a3ac573c9aad83367a0eb5e8dc3d0d8a7a9dde6a0d04bdceb44c26d0",
+    "tools/native-engine.py": "0a06e00ba798db95e86eb18a44bd0b2197b3e5aa5be112325bd6d4b48eb8e263",
+    "tools/native-image.py": "4e286adac78b34e3172736f8cc78e64d2c7cae456d03426243a5378b8f953290",
+    "tools/native/backend-isolation.sh": "a63160cc06bdeddded59761e8d2f39da73a3bfe791f88d067764a65d0258d339",
+    "tools/native/configured-caddy.sh": "58963646d9f191a6169f59072a99e79a423e0a12f3b6d4c5323e9cfaf7d512fa",
+    "tools/native/connector-build.sh": "c58fa9bbecfde21f0e687acc91efeebd86cc2ed97748cd94517be2ceee9eb67d",
+    "tools/native/connector-comparison.sh": "13db681ef519d26d377a64c9ebf0fdf500be67b4402a21d5d448772a4d793b5e",
+    "tools/native/engine-repeat.sh": "cb081c021c953e4b1914c4ef3507dd3a89319c4f6e19cf9f3c5b3476fadb387e",
+    "tools/native/lab-proxy.sh": "ff810b208d254757946a94a38e0bbdf9804b6feb98faff28583842d7e8e73356",
+    "tools/native/lab-tls.sh": "9b3fc38afd315632eb12b8db2f9d9dd6c9dd1d02f0217298d35bafd6457bd7c2",
+    "tools/native/patch-openbsd.sh": "eae9d586161ed5f30c6d179ff55884b5a47ddad7c3b5a7a4637345219e8190e7",
+    "tools/native/relayd-body.sh": "c533419ac5818428d309ead08c58e6589a3ee2237ce70632ad7be26b5d5f8e73",
+    "tools/native/relayd-checker-contract.sh": "8998f9bd2780dfbd015736ddcb46d1a17521f78116d83682e5a06f37bc75f2da",
+    "tools/native/relayd-checker-replacement.sh": "93b337e88154a04a0b738c332a5a6c4f44bca2f4e093961de868f23fe7d97d4d",
+    "tools/native/relayd-config.sh": "cb859310476cfb56f33ca4e66d198034936f0f9f856b6f5d879abb5d489f81a4",
+    "tools/native/relayd-generations.sh": "4571073828ce31d85da5fe6fab1a0821fb28ac210fe79a10990bdf40bd07d541",
+    "tools/native/relayd-health-faults.sh": "3b0f04630ed1acfde0dd3972c8d3cab6fe96d938856afeafc7684bfafb41c017",
+    "tools/native/relayd-signals.sh": "8bebb3984e202ff1f90d06a68ac6f7c7d24153055bece4ab6e12a125fa237838",
+    "tools/native/relayd-traffic.sh": "d85ccd13fa9da6a58622acaff5851c43de45d5cbb793024fe1fe0435810aeb55",
+    "tools/native/relayd-wiring.sh": "6acf0c8127ce09147fde024b0a8312495d5ae7420d4190a723fd664ac7584275",
+    "tools/native/request-wire.sh": "3324fcf7f5131bb80a7891ff2afdf14aa864b03c5ebdebd4d195ea0e9efe3bd0",
+    "tools/native/sender-containment.sh": "c10e05f43cb75707a20cbcfaa7b2ab38c52ea1c7a08a589ffc2aaf901cf4cfd7",
+    "tools/native/source-build.sh": "ef6007edd30d464c61db11c4f04e47cf741e0f5d70e2dfb3ade9938cb888594a",
+    "tools/openbsd-patches.json": "0cf5b352ea5d50d91d106abd42e65b8dac105b6c72fca3c83bfd1706bc891771",
+    "tools/openbsd-patches.py": "a7afe69f68a9ff7a80fe1f0c9a7dbf99ea594f535f68e79e848e706ba797fe6c",
+    "tools/relayd-body.py": "04767623ecd5472794a727061434934ac4d97d8e6ac47ad629bc6780248e7a68",
+    "tools/relayd-signals.py": "31f26c4a2580269ef56b999fa4b6390897b1fbb38c41ca1599489d138315cc75",
+    "tools/relayd-wiring.py": "5b1985a9797aac10676ec004b5707865b8933abecab25e8f1c581c7fe766949b",
+    "tools/request-wire.py": "ca8aff686c53d421bb4005cba18e25660a5f5e0c7606db375dee935adb76c78b",
+    "tools/research-advisories.py": "02921f90aae8d7e8210529d13275925ca201b855f06f3053309c53a5d1074102",
+    "tools/research-pins.json": "7383179c02c51b05fc29776bfe538c1ee1f6438aa5b35065d1a44a3b06f02efe",
+    "tools/run-research-go.sh": "06d4587549d98741339751f7360dd9a1a4402a253cd280eee221d3c8f382094a",
+    "tools/sender-containment.py": "f523bd1aba21ffedcd66dcbfb7cca9ca3850f8e41d358c77fbc2e1694fec71aa",
+    "tools/tests/test_backend_isolation.py": "e076e25d608021d8fe8c9579ec4ecbc777217f27b89d752700a8efeeb5c1c31b",
+    "tools/tests/test_client_identity.py": "d70225be705dab7624a368d289be7f3f31f49c44bc2de92b7b71b8c08f75665a",
+    "tools/tests/test_configured_caddy.py": "1b99a2708aeeccb289906212a035d26dc926668a96f833ff02386ea837ff723e",
+    "tools/tests/test_connector_comparison.py": "e48d2828d3c21401f14e7b6ae4439e463afc1cb6b878c2bd19f769e30c9fbad4",
+    "tools/tests/test_lab_proxy.py": "c98e4af9ce346bd6bad503d4883b9337cb7e49037d750dfbe74f9bf9d4bf8c88",
+    "tools/tests/test_lab_supervisor.py": "7d51b16b0f68ff4486439eb74da057560dba6004b6eb1621f7caebd374fdbbfb",
+    "tools/tests/test_lab_tls.py": "ab243c7cad1f6dc58ec9fd8a785db336c527d5cdef4228825837beb9791eeabd",
+    "tools/tests/test_native_build.py": "ae7be1c0c6010f2e795e4ce5735a11dbe2e34b1f4ffb6bea4c552d868f5383df",
+    "tools/tests/test_native_engine.py": "a4bb1217dd9ea85a941d2709fbf8dc937de8ad77f701f65f1e19d1f6bf5513de",
+    "tools/tests/test_relayd_body.py": "ab80905e6057f1c52bacb3ab12af319abcb2e64b66b2ab1a84dcf4f0e330ce98",
+    "tools/tests/test_relayd_contract.py": "e50de20927500ecd6bda03daa9cea9b6ac0483e3d620f1849c2a5e353d2e1200",
+    "tools/tests/test_relayd_signals.py": "c17e5d96b2d658f2cc288911dc5b7592cf5d2a1a469d5f8689bb17424539a81b",
+    "tools/tests/test_relayd_wiring.py": "bfb500d697f378ab61356e5871d7eae2d1a9e3e1675ffc22cb08aa86c8c3d6dc",
+    "tools/tests/test_request_wire.py": "6b31d80cbe0ac264b5f889e2b6f68ec18a613ec6dd9943a937334245fa94f983",
+    "tools/tests/test_research_advisories.py": "fa19a1be1c8bcd0314e1f09c827827cb8cb9cd8ea3c1bc84e4ad360bcaf7f91a",
+    "tools/tests/test_sender_containment.py": "514b54bb6262370f9d7d3162c3bef2bac70810c869d8c139f0cae204fc0d9277"
+  },
+  "source_manifest": {
+    "file_count": 793,
+    "sha256": "bfee0feb0f0719e66c53188a3cd37f2252493116d3287b396b3b688d687db4a3",
+    "scope": "Private complete source/vendor regular-file manifest; not a distribution SBOM or linked footprint."
+  },
+  "run_id": "d234e0d8-5116-4608-a6bd-0a1d61f56cfc",
+  "raw_report_sha256": "e2746e4f3cbed15c2503ecda3fcd4e4c0e8050c46db860f4f842b235e41006c9",
+  "crs_inputs": {
+    "bundle": "github.com/corazawaf/coraza-coreruleset/v4@v4.25.0",
+    "file_count": 51,
+    "manifest_sha256": "975858efd9111265a53ce3c9c6db0ca6af63ff3ded181cb8f13c1d72d3383c7d",
+    "native_file_hash_gate_passed": true
+  },
+  "make_verify_tests": 103,
+  "host_checks": {
+    "verify-runtime-clean.log": "2e284ce0a13e6cec5e9d9231a381e120715377659ce5d2d2b5e6bb1a235922b9",
+    "host-full.log": "6c1cbe0edacc0d33fa195106c366399db7c9289fe4d2e9bce821389f2b62c1f6",
+    "vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "race.log": "393c186878ccd7b0f1e3244faa1e405594b9ed7f54d9573fa88a5ef2b3535880",
+    "advisories.log": "7f62a780ede63369f1bad18e0df456141122c7f50ba070c3403abb43a789216c"
+  },
+  "advisory": {
+    "scans": {
+      "coraza/host": {
+        "admitted": true,
+        "config": {
+          "protocol_version": "v1.0.0",
+          "scanner_name": "govulncheck",
+          "scanner_version": "v1.9.0",
+          "db": "https://vuln.go.dev",
+          "db_last_modified": "2026-10-08T22:31:09Z",
+          "go_version": "go1.27.2",
+          "scan_level": "symbol",
+          "scan_mode": "source"
+        },
+        "sbom_modules": 21,
+        "module_ids": [],
+        "package_ids": [],
+        "symbol_ids": [],
+        "residuals": {},
+        "raw_sha256": "a105ab9483e03eaf06adb5ba2f85de81f0d0bd427f24a81c94e67740c9170b7b",
+        "graph_sha256": "33191a5ab643afd4ab42b5c15e32c3d077165b7fdfc740f9aa7bb1daa913c020",
+        "module_files": {
+          "go.mod": "dca5c181ccdc6e49e975e7e9ede59a72578e42b36818d90cfeaed2ede0525e27",
+          "go.sum": "afc8a15db82d3fab3614845cff2bf2406eb7496b20f98f6240bb2913e75696c8"
+        }
+      },
+      "coraza/openbsd-amd64": {
+        "admitted": true,
+        "config": {
+          "protocol_version": "v1.0.0",
+          "scanner_name": "govulncheck",
+          "scanner_version": "v1.9.0",
+          "db": "https://vuln.go.dev",
+          "db_last_modified": "2026-10-08T22:31:09Z",
+          "go_version": "go1.27.2",
+          "scan_level": "symbol",
+          "scan_mode": "source"
+        },
+        "sbom_modules": 21,
+        "module_ids": [],
+        "package_ids": [],
+        "symbol_ids": [],
+        "residuals": {},
+        "raw_sha256": "8fa3c42af96b67efe7e5ca95ac0abd82989f64044804168cc2a0186e48b4eae5",
+        "graph_sha256": "33191a5ab643afd4ab42b5c15e32c3d077165b7fdfc740f9aa7bb1daa913c020",
+        "module_files": {
+          "go.mod": "dca5c181ccdc6e49e975e7e9ede59a72578e42b36818d90cfeaed2ede0525e27",
+          "go.sum": "afc8a15db82d3fab3614845cff2bf2406eb7496b20f98f6240bb2913e75696c8"
+        }
+      },
+      "connector/host": {
+        "admitted": true,
+        "config": {
+          "protocol_version": "v1.0.0",
+          "scanner_name": "govulncheck",
+          "scanner_version": "v1.9.0",
+          "db": "https://vuln.go.dev",
+          "db_last_modified": "2026-10-08T22:31:09Z",
+          "go_version": "go1.27.2",
+          "scan_level": "symbol",
+          "scan_mode": "source"
+        },
+        "sbom_modules": 156,
+        "module_ids": [
+          "GO-2026-5932",
+          "GO-2026-6094"
+        ],
+        "package_ids": [
+          "GO-2026-6094"
+        ],
+        "symbol_ids": [],
+        "residuals": {
+          "GO-2026-5932": {
+            "module": "golang.org/x/crypto",
+            "version": "v0.57.0",
+            "maximum_level": 0,
+            "reason": "Deprecated openpgp package is not imported; no reported fixed version. Importing it rejects this gate."
+          },
+          "GO-2026-6094": {
+            "module": "github.com/google/cel-go",
+            "version": "v0.28.1",
+            "maximum_level": 1,
+            "reason": "Reported fix v0.30.0 does not compile with pinned Caddy v2.11.4; requires a compatible framework review. No symbol finding permitted."
+          }
+        },
+        "raw_sha256": "4aca69b33e1b85b78165b40d5c684ef3b2aff810e028543bfc31e826c05f73bf",
+        "graph_sha256": "1a45f57fc0bd053cbfbab0397fa7c00435fa82ce29b7a1a542df5ac200ec5cf2",
+        "module_files": {
+          "go.mod": "b5a53937c88062b2a4bef996bb70275c790e030c3290b7da4b6d533b1023c17a",
+          "go.sum": "b7032ced454a525603a1b3c369c3135d0a2280c4e1a809a9114ff77afcdb1639"
+        }
+      },
+      "connector/openbsd-amd64": {
+        "admitted": true,
+        "config": {
+          "protocol_version": "v1.0.0",
+          "scanner_name": "govulncheck",
+          "scanner_version": "v1.9.0",
+          "db": "https://vuln.go.dev",
+          "db_last_modified": "2026-10-08T22:31:09Z",
+          "go_version": "go1.27.2",
+          "scan_level": "symbol",
+          "scan_mode": "source"
+        },
+        "sbom_modules": 155,
+        "module_ids": [
+          "GO-2026-5932",
+          "GO-2026-6094"
+        ],
+        "package_ids": [
+          "GO-2026-6094"
+        ],
+        "symbol_ids": [],
+        "residuals": {
+          "GO-2026-5932": {
+            "module": "golang.org/x/crypto",
+            "version": "v0.57.0",
+            "maximum_level": 0,
+            "reason": "Deprecated openpgp package is not imported; no reported fixed version. Importing it rejects this gate."
+          },
+          "GO-2026-6094": {
+            "module": "github.com/google/cel-go",
+            "version": "v0.28.1",
+            "maximum_level": 1,
+            "reason": "Reported fix v0.30.0 does not compile with pinned Caddy v2.11.4; requires a compatible framework review. No symbol finding permitted."
+          }
+        },
+        "raw_sha256": "7379f11c9c9b868967b44014332e746bc431292f678d2e2aa9899f8c924b3071",
+        "graph_sha256": "36501243c1a0368129283091d9cc65f4d649a225c6ff24bccab01af30c106f6f",
+        "module_files": {
+          "go.mod": "b5a53937c88062b2a4bef996bb70275c790e030c3290b7da4b6d533b1023c17a",
+          "go.sum": "b7032ced454a525603a1b3c369c3135d0a2280c4e1a809a9114ff77afcdb1639"
+        }
+      }
+    },
+    "adoption": false
+  },
+  "legacy_path_observed": {
+    "admitted": false,
+    "log_sha256": "4d84c41300f0ea8cbf1e5fb46313b9f210e1bffdf8ac3291f5059da5803db9c5",
+    "case_count": 42,
+    "cases": [
+      {
+        "case": "get",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "app.test",
+        "backend_authority": "app.test"
+      },
+      {
+        "case": "json",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "app.test",
+        "backend_authority": "app.test"
+      },
+      {
+        "case": "sql",
+        "status": 403,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "script",
+        "status": 403,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "unknown",
+        "status": 421,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "oversize",
+        "status": 413,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "media",
+        "status": 415,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "upgrade",
+        "status": 501,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "spoof",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "app.test",
+        "backend_authority": "app.test"
+      },
+      {
+        "case": "untrusted-cert",
+        "status": 0,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": true,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "wrong-name",
+        "status": 0,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": true,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "bare-data",
+        "status": 0,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": true,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "api-get",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "api-json",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "api-port",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "api-wrong-port",
+        "status": 421,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "api-sql",
+        "status": 403,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "api-wrong-cert",
+        "status": 502,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "api-untrusted-cert",
+        "status": 502,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "api-tls-recovery",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "api-large",
+        "status": 502,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "api-stall",
+        "status": 502,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "api-after-stall",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "api-cleartext",
+        "status": 502,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "api-cleartext-recovery",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "api-reload-version",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "api-reload-duplicate",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "api-reload-ca",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "alt-reload-get",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "alt.test"
+      },
+      {
+        "case": "alt-reload-json",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "0334086dbb3d85e5723bba7cd678195ea656deaa0f7683a9da352a5b2758c3d0",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "alt.test"
+      },
+      {
+        "case": "alt-reload-sql",
+        "status": 0,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": true,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "reload-removed-api",
+        "status": 0,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": true,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "reload-app-during",
+        "status": 0,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": true,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "api-reload-restored",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "reload-alt-removed",
+        "status": 421,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "alt-load-available",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "alt.test"
+      },
+      {
+        "case": "load-api-removed",
+        "status": 421,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "api-load-restored",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "api.test",
+        "backend_authority": "api.test"
+      },
+      {
+        "case": "load-alt-removed",
+        "status": 421,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "backend-down",
+        "status": 502,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "",
+        "backend_authority": ""
+      },
+      {
+        "case": "backend-recovery",
+        "status": 200,
+        "backend": 1,
+        "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "headers_clean": true,
+        "client_error": false,
+        "backend_host": "app.test",
+        "backend_authority": "app.test"
+      },
+      {
+        "case": "companion-stop",
+        "status": 0,
+        "backend": 0,
+        "body_sha256": "",
+        "headers_clean": true,
+        "client_error": true,
+        "backend_host": "",
+        "backend_authority": ""
+      }
+    ],
+    "mismatches": [
+      {
+        "case": "alt-reload-sql",
+        "expected": {
+          "case": "alt-reload-sql",
+          "status": 403,
+          "backend": 0,
+          "body_sha256": "",
+          "headers_clean": true,
+          "client_error": false,
+          "backend_host": "",
+          "backend_authority": ""
+        },
+        "observed": {
+          "case": "alt-reload-sql",
+          "status": 0,
+          "backend": 0,
+          "body_sha256": "",
+          "headers_clean": true,
+          "client_error": true,
+          "backend_host": "",
+          "backend_authority": ""
+        }
+      },
+      {
+        "case": "reload-removed-api",
+        "expected": {
+          "case": "reload-removed-api",
+          "status": 421,
+          "backend": 0,
+          "body_sha256": "",
+          "headers_clean": true,
+          "client_error": false,
+          "backend_host": "",
+          "backend_authority": ""
+        },
+        "observed": {
+          "case": "reload-removed-api",
+          "status": 0,
+          "backend": 0,
+          "body_sha256": "",
+          "headers_clean": true,
+          "client_error": true,
+          "backend_host": "",
+          "backend_authority": ""
+        }
+      },
+      {
+        "case": "reload-app-during",
+        "expected": {
+          "case": "reload-app-during",
+          "status": 200,
+          "backend": 1,
+          "body_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "headers_clean": true,
+          "client_error": false,
+          "backend_host": "app.test",
+          "backend_authority": "app.test"
+        },
+        "observed": {
+          "case": "reload-app-during",
+          "status": 0,
+          "backend": 0,
+          "body_sha256": "",
+          "headers_clean": true,
+          "client_error": true,
+          "backend_host": "",
+          "backend_authority": ""
+        }
+      }
+    ],
+    "parent_test": "FAIL",
+    "cause": "Not established. Client errors were collapsed to booleans by the existing fixture; no authenticated daemon health/connection diagnosis was retained. Zero backend effect is not a successful required response."
+  },
+  "not_executed": [
+    "lab_tls",
+    "sender_containment",
+    "client_identity_component",
+    "client_identity_pf",
+    "backend_isolation",
+    "request_wire"
+  ],
+  "scope": "Failed native qualification: offline compile and 163 engine cases passed, legacy composition failed on three post-reload responses. New 52-row direct/relayd wire matrix and all later matrices did not execute.",
+  "limitations": [
+    "This run does not qualify the request trailer repair natively, the new wire matrix or the complete prior regression profile.",
+    "Native compilation and 163 engine cases are separate from failed legacy composition; no failed result is reclassified. Zero effect with no required response is a qualification failure.",
+    "The cause of the three client errors is unproven. No retry, deadline increase or weaker expectation is introduced. Retain failure and diagnose/repeat within this PR before review readiness.",
+    "Earlier passing native studies remain immutable and source-bound; their results cannot substitute for this changed candidate. Host Go/race/cross/advisories remain tooling evidence; native has no race instrumentation.",
+    "No production/architecture/protocol adoption, full smuggling/CRS/OWASP/resource/soak/lineage acceptance, dependency/CLI option change, live service/network, installer contract or release. Raw keys/logs/full inventories remain ignored."
+  ],
+  "host_failure": {
+    "path": "research/native/request-wire-host-failure.json",
+    "sha256": "17528da3e97d001a599e3537197adecc6eab6b24f14615da5df48fa1e9a4c729",
+    "scope": "Uncommitted source-hash-bound host observations, not signed or native runs. Failed outcomes remain failed."
+  }
+}

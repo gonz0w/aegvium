@@ -48,6 +48,12 @@ func labClientIdentity(expected netip.AddrPort, next http.Handler) http.Handler 
 			http.Error(w, "client identity unavailable", http.StatusServiceUnavailable)
 			return
 		}
+		// The server body populates the original request's Trailer map at EOF.
+		// Allocate before the shallow request copy so undeclared trailer keys
+		// remain visible to the downstream admission check as well.
+		if r.Trailer == nil {
+			r.Trailer = make(http.Header)
+		}
 		copy := r.WithContext(r.Context())
 		copy.RemoteAddr = identity.source.String()
 		next.ServeHTTP(w, copy)
