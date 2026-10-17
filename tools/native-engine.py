@@ -26,6 +26,7 @@ def load(name):
     return module
 
 PROGRESS = load('native-progress')
+LIFECYCLE = load('lifecycle-components')
 IMAGE = load('native-image')
 PATCHES = load('openbsd-patches')
 BUILD = load('native-build')
@@ -697,6 +698,7 @@ def run():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--inject-failure', choices=('boot', 'ssh', 'auth', 'transfer', 'test'))
     parser.add_argument('--source-build', action='store_true')
+    parser.add_argument('--lifecycle-components', action='store_true')
     parser.add_argument('--relayd-config', action='store_true')
     parser.add_argument('--lab-proxy', action='store_true')
     parser.add_argument('--lab-tls', action='store_true')
@@ -716,6 +718,8 @@ def run():
     parser.add_argument('--relayd-health-faults', action='store_true')
     parser.add_argument('--relayd-wiring', action='store_true')
     args = parser.parse_args()
+    if args.lifecycle_components and any(value for name, value in vars(args).items() if name != 'lifecycle_components'):
+        parser.error('lifecycle-components is exclusive; no source-build, injection or other study')
     if sum((args.relayd_wiring, args.relayd_health_faults, args.relayd_checker_replacements, args.relayd_generations)) > 1:
         parser.error('select one connected wiring study')
     if args.connector_source_build and (not args.connector_comparison or args.source_build):
@@ -746,6 +750,8 @@ def run():
     binary = ROOT / '.tools/research/coraza-openbsd-amd64.test'
     # Always derive the executable from this clean candidate, never stale cache.
     subprocess.run(['make', 'research-cross', 'research-readycheck-cross'], cwd=ROOT, check=True, timeout=180)
+    if args.lifecycle_components:
+        subprocess.run(['make', 'research-lifecycle-cross'], cwd=ROOT, check=True, timeout=180)
     if args.lab_proxy:
         subprocess.run(['make', 'research-labproxy-cross'], cwd=ROOT, check=True, timeout=180)
     if args.relayd_signals:
@@ -760,6 +766,8 @@ def run():
     source = {name: digest(ROOT / name) for name in git('ls-files').splitlines()}
     duration = 3600 if args.connector_source_build or args.lab_tls else 1800 if args.source_build else (1500 if args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations else 1200 if args.relayd_wiring else 900)
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
+              'scope': 'ordinary-lifecycle-components' if args.lifecycle_components else 'existing-requested-profile',
+              'lifecycle_components_requested': args.lifecycle_components,
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
               'configured_caddy_requested': args.configured_caddy, 'connector_native_build_requested': args.connector_source_build, 'connector_comparison_requested': args.connector_comparison, 'request_wire_requested': args.request_wire, 'backend_isolation_requested': args.backend_isolation, 'client_identity_requested': args.client_identity, 'sender_containment_requested': args.sender_containment, 'lab_tls_requested': args.lab_tls, 'lab_proxy_requested': args.lab_proxy, 'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
@@ -821,7 +829,12 @@ def run():
                 print('Parsing separate backend policies and foreign principal...', flush=True)
                 report['backend_preparation'] = BACKEND_ISOLATION.prepare_guest(guest, work)
         with progress.stage('native'):
-            if args.source_build:
+            if args.lifecycle_components:
+                control = ROOT / '.tools/research/labcontrol-openbsd-amd64.test'
+                report['native'] = LIFECYCLE.guest_run(guest, work, binary, binary_hash, control, digest(control))
+                if not report['native']['admitted']:
+                    raise RuntimeError('ordinary lifecycle component admission failed; partial counts/hash retained')
+            elif args.source_build:
                 print('Offline unprivileged native compilation started.', flush=True)
                 report['native'] = source_build_guest(guest, work, build_inputs, program=args.lab_proxy, build_seconds=2400 if args.lab_tls else 1200)
                 report['native_build'] = True

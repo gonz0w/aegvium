@@ -20,7 +20,7 @@ The optional sender-containment experiment uses stock PF to restrict fresh conne
 
 ## Build and verify
 
-The latest shutdown ownership and server supervision changes have [host-only lifecycle evidence](research/coraza/supervision-host-observations.json); their OpenBSD execution and complete profile qualification remain pending. Earlier native receipts above retain their original source and scope.
+The shutdown/reload/supervision components now have [separate OpenBSD lifecycle execution evidence](research/native/lifecycle-component-observations.json): eighteen no-network parent tests using host-cross-built binaries. Native source compilation and complete WAF/traffic/profile qualification remain separate and pending; earlier receipts above retain their original source and scope.
 
 Read [CONTRIBUTING](CONTRIBUTING.md), [agent instructions](AGENTS.md) and the active [M1 PRD](docs/milestones/M1/PRD.md), [EDD](docs/milestones/M1/EDD.md) and [test design](docs/milestones/M1/TDD.md). Use signed Conventional Commits, author DCO sign-offs, `codex/` branches and open PRs. Checks run locally; GitHub Actions, runners and hosted success publishers are prohibited.
 
@@ -36,6 +36,7 @@ Host checks and cross-builds are tooling evidence only. Disposable native experi
 
 | Command | Owned native experiment |
 | --- | --- |
+| `make research-native-lifecycle` | Exclusive ordinary lifecycle component tests on owned OpenBSD; host-cross-built binaries, no application/WAF/traffic/PF execution. |
 | `make research-native-lab` | Offline native fixture/checker/CLI compilation and legacy TLS-at-relayd routing/reload/load controls. |
 | `make research-native-tls` | Native compilation, legacy controls and companion TLS passthrough/authority matrix. |
 | `make research-native-sender` | All TLS controls plus PF UID containment, invalid replacement, rollback and verified static PF restoration. |
