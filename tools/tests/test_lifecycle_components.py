@@ -106,8 +106,12 @@ class LifecycleComponentsTests(unittest.TestCase):
                 self.assertNotIn('private marker',json.dumps(result))
 
     def test_exclusive_mode_rejects_every_other_option_before_preflight(self):
-        for option in ('--source-build','--lab-proxy','--lab-tls','--request-wire','--relayd-config','--relayd-traffic','--connector-comparison'):
-            with patch.object(sys,'argv',['native-engine.py','--lifecycle-components',option]), patch.object(ENGINE,'git') as git, redirect_stderr(io.StringIO()):
-                with self.assertRaises(SystemExit) as error:ENGINE.run()
-                self.assertEqual(error.exception.code,2)
-                git.assert_not_called()
+        for mode in ('--lifecycle-components', '--lifecycle-source-build'):
+            other = '--lifecycle-components' if mode == '--lifecycle-source-build' else '--lifecycle-source-build'
+            for option in (other, '--source-build', '--lab-proxy', '--lab-tls', '--request-wire',
+                           '--relayd-config', '--relayd-traffic', '--connector-comparison', '--inject-failure'):
+                extra = [option, 'boot'] if option == '--inject-failure' else [option]
+                with patch.object(sys, 'argv', ['native-engine.py', mode, *extra]), patch.object(ENGINE, 'git') as git, redirect_stderr(io.StringIO()):
+                    with self.assertRaises(SystemExit) as error:ENGINE.run()
+                    self.assertEqual(error.exception.code, 2)
+                    git.assert_not_called()

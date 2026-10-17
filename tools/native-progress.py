@@ -18,6 +18,7 @@ def plan(args):
         ('relayd_config', args.relayd_config or args.relayd_traffic),
         ('sender_preparation', args.sender_containment),
         ('backend_preparation', args.backend_isolation),
+        ('lifecycle_build', getattr(args, 'lifecycle_source_build', False)),
         ('native', True),
         ('relayd_wiring', any((args.relayd_wiring, args.relayd_health_faults,
                               args.relayd_checker_replacements, args.relayd_generations))),
