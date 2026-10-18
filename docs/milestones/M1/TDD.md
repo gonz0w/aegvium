@@ -2,6 +2,8 @@
 
 Status: full M1 qualification pending; bounded engine execution observations exist.
 
+The [OB-01–04 stock-media packet](OFFICIAL-BASELINE.md) separately addresses original laboratory image provenance, observed stock installation and installed daemon/key byte identity. Its ordinary component repeat cannot satisfy paused WAF/traffic qualification or retroactively authenticate inherited-image results.
+
 | Requirement | Required disposable native evidence |
 | --- | --- |
 | WAF-01/02 | TLS and benign GET/POST to synthetic backend; CRS attack corpus with backend receipt assertions |

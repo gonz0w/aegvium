@@ -144,3 +144,8 @@ research-native-backends:
 .PHONY: research-native-request-wire
 research-native-request-wire:
 	python3 tools/native-engine.py --source-build --lab-proxy --lab-tls --sender-containment --client-identity --backend-isolation --request-wire
+
+# Explicit authenticated stock baseline; ordinary components only.
+.PHONY: research-native-official-lifecycle
+research-native-official-lifecycle:
+	python3 tools/native-engine.py --lifecycle-components --official-baseline

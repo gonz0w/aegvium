@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "scope": "original non-X stock baseline patch-admission failure; ordinary tests not run",
+  "passed": false,
+  "source": {
+    "commit": "bf9b139f02c4f4642fef6191ddbfc5363b6abf77",
+    "tree": "70dfbbbba6c23b096ab5500c0de75b14a7f897fe",
+    "base": "bfc6809effec096484d64cac787be3440264abc8"
+  },
+  "run_id": "55b4222c-5fdf-4f01-b761-3388243f1df6",
+  "started": "2026-10-18T16:43:45.869027+00:00",
+  "finished": "2026-10-18T16:47:47.342087+00:00",
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 900,
+    "patch_deadline_seconds": 600,
+    "post_build_reserve_seconds": null,
+    "native_build_deadline_seconds": null,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "baseline": {
+    "kind": "authenticated-stock-install",
+    "image_sha256": "b440e8ac0d47d28d6cdd71baf2dbca1bec5028aaeabdcc6e5d48a72cc484439a",
+    "bootstrap_public_sha256": "9d6b1e92e3c992d627f856a8cbaf360afe9506bc31a83dcc4a793bc6a9470cdf",
+    "provision_source_commit": "9aa4a3d4f2f6154406a76cda65a45f947f0f17f8",
+    "provision_run_id": "ba2799ae-8946-4363-bd1b-0659bbf2d255"
+  },
+  "signature_verified": true,
+  "install_message_count": 31,
+  "controller_required_installed_count": 34,
+  "missing_install_messages": [
+    "001_xserver",
+    "020_xserver",
+    "032_xserver"
+  ],
+  "final_patch_admission": false,
+  "native_components_executed": false,
+  "observed_failure": "strict inherited patch admission fails after stock syspatch returns; no final installed/pending receipts",
+  "analysis": "The authenticated stock installer deliberately omitted X sets. Its stock syspatch filters absent targets, while the inherited profile requires 34 installed records. A separately specified exact non-X applicability gate must be verified on a fresh snapshot; this failed run is not reclassified.",
+  "bootstrap_revoked": true,
+  "cleanup": {
+    "teardown_verified": true,
+    "supervisor_status": "completed",
+    "receipt_status": "valid",
+    "independent_process_absent": true,
+    "independent_group_absent": true,
+    "started_receipt_sha256": "0a60bd3a1ed5dc1b75c80ff72c98517a826155a86c941cce3b9f3a5e811540e9",
+    "receipt_sha256": "cd6b7315332150672a5101883fc712edfe58669669373fca4c6e9ffce0da9067",
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 900,
+    "escalated": false,
+    "reported_teardown_verified": true
+  },
+  "integrity": {
+    "gates": {
+      "baseline_unchanged": "passed",
+      "head_unchanged": "passed",
+      "worktree_clean": "passed",
+      "source_unchanged": "passed"
+    },
+    "source_file_count": 364,
+    "changed_source_count": 0,
+    "unreadable_source_count": 0
+  },
+  "progress": {
+    "result": "failed",
+    "finished": true,
+    "stage_counts": {
+      "pending": 0,
+      "running": 0,
+      "completed": 2,
+      "failed": 1,
+      "interrupted": 0,
+      "not-run": 2
+    },
+    "sequence": 8,
+    "stopped_stage": "patch_refresh",
+    "error_class": "operation",
+    "sha256": "906e227f13166b12b01fbf7bd418478a793b1e0d46de00c0e5d8a06e56a16c86"
+  },
+  "private_report_sha256": "3b0365c4d80702125668edcc5575ec459e7c923e5b468c56d3c6dd92590941ce",
+  "private_patch_log_sha256": "8e5bf761336fe516bf66a0ae05e17e9b5fd8d76fa414c5dbb3cdd6866adadff5",
+  "private_serial_sha256": "98433ec13cfecd8e71af8e9a890c64250db214af8c623c5c907587fc55c8ae6b",
+  "source_inventory": {
+    "file_count": 364,
+    "canonical_sha256": "28ec0ce419b8e08e7fdce2ca386f03e30de5cc79b64ff9222d8afc7f3b9c1446"
+  },
+  "full_engine_suite_executed": false,
+  "traffic_security_validation_rerun": false,
+  "advisory_scan_rerun": false,
+  "complete_profile_qualified": false,
+  "retention": "Original report/log/serial/progress retained privately; this public status/count/hash observation is immutable. No same-snapshot retry or deadline extension."
+}

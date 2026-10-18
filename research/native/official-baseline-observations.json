@@ -1,0 +1,360 @@
+{
+  "schema": 1,
+  "scope": "OB-01\u201304 authenticated stock-install lineage and ordinary component repeat",
+  "passed": true,
+  "source": {
+    "commit": "ac107360fcd5f7f5352201d2e68909f837bafb4d",
+    "tree": "d388d32a800490f3481d0a822cb7c2c69bd1d313",
+    "base": "bfc6809effec096484d64cac787be3440264abc8",
+    "inputs_sha256": {
+      "tools/native-engine.py": "132c69d4b502e1af518ef6ec47441ee6e041c218ee83c0185ab7ccdeaa659cef",
+      "tools/native-baseline.py": "3c2084b5e9418cd4839f1b7ae6b7d09a3b9f5f9baf3b6159c6d86b6589d10843",
+      "tools/official-media.py": "fe68979c6ed2694a2dde29e974fed16ce46d57364a120815b5d312581dcde4f8",
+      "tools/stock-lab.py": "46ead74cbba812629cf2c11e368f8b4f416e449439f62970a96d797a811fccfb",
+      "tools/native-image.py": "4e286adac78b34e3172736f8cc78e64d2c7cae456d03426243a5378b8f953290",
+      "tools/native-cleanup.py": "b1444709ba2923a51e973f040e3f47f95a50a52523cb6ac3b77373eca7578d23",
+      "tools/lab-supervisor.py": "fde32556e35cea9dab3b73e644f5b547a5059aeca54940f91467b585645ae154",
+      "tools/lifecycle-components.py": "585eba15cf79d84b8c9db3ffafbae70c562ca72980164156323d884dfe3986af",
+      "tools/native/lifecycle-components.sh": "1d3026b163d547d56d7392ee29a7b5339d1ebbab5810083fb66c5c19e8a7fa34",
+      "tools/openbsd-patches.py": "2dc99538c5d036c79ee73ac1635fdd34733c8566facf7b458886b40b023c7fae",
+      "tools/native/patch-openbsd.sh": "eae9d586161ed5f30c6d179ff55884b5a47ddad7c3b5a7a4637345219e8190e7",
+      "research/native/official-release-pins.json": "5feb0da44549ef249a1fc6f5f5570be6bebc093bc67d0f9e0e67672b83c29aa8",
+      "research/native/official-image-pin.json": "66fb9a2e10506845d7b874169f3ca4a5bb1146fe13eedf0265e2857c59c3b44c"
+    },
+    "runtime_go_and_dependencies_unchanged": true
+  },
+  "release_authentication": {
+    "signature_verified": true,
+    "image_verified": true,
+    "verifier_sha256": "4b9b2069c5e5acda9d35ca898ecd5afc050094170cf3c73fa7cf9eb615530946",
+    "assets_sha256": {
+      "openbsd-79-base.pub": "b7ee8e7981549a1f707a4ed05115a99959a5f9e34b9bed9f9a098be17dd7e4b1",
+      "SHA256.sig": "99db2ba3d63cddeeb9a1166319e48bf4b22224c48bbdc4deff8ecadc0f7b2786",
+      "install79.iso": "7a4a92e953618035097c796a90b54424a0f3ae775552e1e7d102cf8a5130449f"
+    },
+    "image_bytes": 798625792,
+    "verifier_output_sha256": "6308729b6e0663cdf2335be727c148988146d160c199cc6c83dd4faa501958d0",
+    "trust": "pinned official HTTPS release key; host-only verifier; not independent out-of-band authentication"
+  },
+  "provisioning": {
+    "run_id": "ba2799ae-8946-4363-bd1b-0659bbf2d255",
+    "source_commit": "9aa4a3d4f2f6154406a76cda65a45f947f0f17f8",
+    "source_tree": "ca7fc012384d466d1506322c2e3b0da0798c8c8a",
+    "started": "2026-10-18T16:11:55.114696+00:00",
+    "finished": "2026-10-18T16:40:16.923078+00:00",
+    "profile": {
+      "deadline_seconds": 3600,
+      "stop_new_work_seconds": 3000,
+      "cleanup_reserve_seconds": 600,
+      "cpu": 2,
+      "ram_mib": 2048,
+      "virtual_disk_bytes": 8589934592,
+      "file_ceiling_bytes": 4294967296,
+      "network": "no NIC; private Unix control/serial sockets only"
+    },
+    "effective_inventory": {
+      "writable_owned_targets": 1,
+      "readonly_iso_media": 1,
+      "empty_removable_slots": 2,
+      "network_devices": 0,
+      "host_devices_or_mounts": 0
+    },
+    "selected_installer_entries": [
+      "bsd",
+      "bsd.mp",
+      "bsd.rd",
+      "base79.tgz",
+      "comp79.tgz",
+      "man79.tgz",
+      "BUILDINFO"
+    ],
+    "installation_completed": true,
+    "installed_boot": {
+      "installed_kernel_booted": true,
+      "os": "OpenBSD 7.9 amd64",
+      "kernel": "GENERIC.MP #449",
+      "installed_root": "sd0a",
+      "file_count": 7,
+      "all_release_file_hashes_match": true,
+      "files_sha256": {
+        "/usr/sbin/relayd": "18f66755fcd95225005da2784e8071a2e97eaf749c0c32a53b721c2151d0f010",
+        "/usr/sbin/httpd": "c28becd27a261aab2e2b3e3062e36df7d95e9fdc2a2ca7f43868eaa2c1ed7d60",
+        "/usr/bin/signify": "f29045c0813293c5d3e6af36729eca0fb427c13b7e70d7201644ba1362b9ab2a",
+        "/etc/signify/openbsd-79-base.pub": "b7ee8e7981549a1f707a4ed05115a99959a5f9e34b9bed9f9a098be17dd7e4b1",
+        "/etc/signify/openbsd-79-syspatch.pub": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+        "/bin/ksh": "39962c1b2f2b665b0fb06954aa66681f97df47fcf64041c4eba2253e4c40cad3",
+        "/sbin/init": "c150f80da6b2ec4d55b9d8c9070731f3053501ed75078ec33753d47cc927085d"
+      },
+      "base_set_sha256": "923d2e03f06408d50d4848334398c6d04b5514dcac7917badfc178a0eef248de",
+      "serial_prefix_sha256": "eb1fa7c095c716e1ed6e1b737456054b44bdb568ffec078a2e462401cf97bbef",
+      "offline_first_boot_checks": {
+        "firmware_fetch": "failed; no NIC/no DNS",
+        "online_patch_check": "failed; no NIC/no DNS",
+        "offline_pinned_patch_repeat": "pending"
+      }
+    },
+    "clean_halt_observed": true,
+    "temporary_root_password_locked": true,
+    "temporary_host_password_removed": true,
+    "lab_bootstrap": {
+      "public_sha256": "9d6b1e92e3c992d627f856a8cbaf360afe9506bc31a83dcc4a793bc6a9470cdf",
+      "public_key_only_config_validated": true,
+      "fresh_component_access_and_rotation": true
+    },
+    "image_sha256": "b440e8ac0d47d28d6cdd71baf2dbca1bec5028aaeabdcc6e5d48a72cc484439a",
+    "independent_base_mode": "0400",
+    "disk_identity_unchanged": true,
+    "source_unchanged": true,
+    "media_unchanged": true,
+    "head_unchanged": true,
+    "worktree_clean": true,
+    "cleanup": {
+      "teardown_verified": true,
+      "supervisor_status": "completed",
+      "receipt_status": "valid",
+      "independent_process_absent": true,
+      "independent_group_absent": true,
+      "started_receipt_sha256": "76a59580fb9d1cf25873fc63548a374f1773c909882b4adcd8586416192e54ab",
+      "receipt_sha256": "9f970d49520e7d6f42c39504028f9756ac4fd102879f03b599ff727b8121c916",
+      "returncode": 0,
+      "reason": "child-exit",
+      "deadline_seconds": 3600,
+      "escalated": false,
+      "reported_teardown_verified": true
+    },
+    "no_open_disk_handles_post_halt": true,
+    "private_source_inventory": {
+      "file_count": 361,
+      "canonical_sha256": "7e69abbdf685381729b31d9c961b7c28dbe446b0b67769efff6d34a4a6a286a7"
+    },
+    "private_stopped_report_sha256": "09c1004c71482990a48854945168676ad4f2ea90f394ad7c5a057b06974c8842",
+    "private_serial_sha256": "201ee571c9b724b3ddedbf39a14ddd7389d8114c37eb46e7f5902b9a05f1d3e3",
+    "layout_mib": {
+      "root": 1087.8,
+      "usr": 3072,
+      "home": 2048,
+      "swap": 256
+    },
+    "source_build_capacity": "unqualified; selector refuses native-source-build and other studies"
+  },
+  "retained_corrections": {
+    "initial_stock_host_fixture": {
+      "observed_errors": 3,
+      "log_sha256": "d80fe8f3f79d977fe8e7c135121bee7dac93b16f54f8be6e696a6e4ff17d6fa9",
+      "test_sha256": "8bc814bb279d3db5119238f82ce7b83df4c7903e910bd92370255e7be4624e01",
+      "scope": "host fixture setup; no VM launched",
+      "correction": "create the complete owned mock media directory before testing disk inventory rejection"
+    },
+    "initial_baseline_host_fixture": {
+      "observed_errors": 2,
+      "cause": "unresolved macOS temporary path passes through symlinked /var; production guard correctly rejected it",
+      "correction": "resolve owned temporary test roots",
+      "test_sha256": "e150d998ab20d86fac585fb28431642e260cb1571ca5f293236896b02b35d277",
+      "log_sha256": "e4824af36e9e7d7c2bdb777540205516a5ee9effcfc4494e08644f9d6172675a"
+    },
+    "inventory_observer": {
+      "state": "paused; no guest execution",
+      "initial_assertion": "counted all block slots as attached media",
+      "observed_slots": 4,
+      "observed_inserted_media": 2,
+      "empty_removable_slots": 2,
+      "correction": "require exactly two inserted media and no additional nonremovable disk",
+      "original_helper_sha256": "d0846d6091d18e73f3082fe3ad7481c6ad7e45e0ab45a6ee8888d107deaedde5"
+    },
+    "boot_prompt_observer": {
+      "initial": {
+        "matched": false,
+        "cpu_paused": true,
+        "known_stock_prompt_pixel_sha256": "9531dafbb5ebe07fc393bd1b487f021d5cff6229c0cfbd05704e101d1f96ae8a"
+      },
+      "manual_recovery": {
+        "recovery_count": 1,
+        "same_disk_initial_hash_verified": true,
+        "shared_supervisor_deadline_unchanged": true,
+        "purpose": "correct boot-prompt row observer before installer entry"
+      },
+      "original_helper_sha256": "b0295edab727d27d74f28c4ef6b2b8d46e5b31cff491d67c3a7866a83ea8b480",
+      "original_screen_retained": false,
+      "later_matched_row": 208
+    },
+    "original_native_patch_admission": {
+      "observation": "official-baseline-native-failure.json",
+      "sha256": "49ee7f3c885f5d1aefaadbdf007d56a491c96fdd305814802ca60ffabb477550",
+      "passed": false,
+      "components_executed": false,
+      "inherited_installed_count": 34,
+      "observed_install_messages": 31
+    },
+    "missing_embedded_signature_list": "exact stock-ISO prompt accepted only after independent whole-ISO signature verification; not failed-signature bypass"
+  },
+  "local_checks": {
+    "command": "make verify",
+    "test_count": 159,
+    "passed": true,
+    "clean_signed_candidate": true,
+    "log_sha256": "d7fe1f8905bc6740ae38337dc59f25876d1e28321de538dab088176b30d4e5c3"
+  },
+  "run_id": "36dcddc2-468f-4008-92cc-3429d6cd4177",
+  "started": "2026-10-18T16:52:33.396789+00:00",
+  "finished": "2026-10-18T17:00:32.418208+00:00",
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 900,
+    "patch_deadline_seconds": 600,
+    "post_build_reserve_seconds": null,
+    "native_build_deadline_seconds": null,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "baseline": {
+    "kind": "authenticated-stock-install",
+    "image_sha256": "b440e8ac0d47d28d6cdd71baf2dbca1bec5028aaeabdcc6e5d48a72cc484439a",
+    "bootstrap_public_sha256": "9d6b1e92e3c992d627f856a8cbaf360afe9506bc31a83dcc4a793bc6a9470cdf",
+    "provision_source_commit": "9aa4a3d4f2f6154406a76cda65a45f947f0f17f8",
+    "provision_run_id": "ba2799ae-8946-4363-bd1b-0659bbf2d255"
+  },
+  "native_components": {
+    "admitted": true,
+    "hashes": {
+      "library": "406fd9f2a549052454fb1953bd7d12359ddf9e15d83f58ea94421df3b2275ab8",
+      "control": "ccd9ca3794723d08c59b9cbe77434f1d683f7f190249866152c7aa05fffb1271"
+    },
+    "execution_returncode": 0,
+    "execution_error_class": "none",
+    "log_sha256": "6797f96ac0f28abc7f5d5e223ae82efc9b0666e20bbd831facc7a5cb6fd263e9",
+    "observed_pass_count": 54,
+    "scope": "ordinary-components-only",
+    "parent_count": 23,
+    "subtest_count": 31,
+    "retained_lifecycle": {
+      "parent_count": 18,
+      "subtest_count": 12
+    },
+    "file_inputs": {
+      "parent_count": 5,
+      "subtest_count": 19
+    },
+    "suite_pass_counts": {
+      "library": 18,
+      "control": 12,
+      "files": 24
+    },
+    "pass_count": 54,
+    "receipts": {
+      "os": "OpenBSD 7.9 amd64",
+      "scope": "ordinary-components",
+      "library": "406fd9f2a549052454fb1953bd7d12359ddf9e15d83f58ea94421df3b2275ab8",
+      "control": "ccd9ca3794723d08c59b9cbe77434f1d683f7f190249866152c7aa05fffb1271",
+      "uid": "32767",
+      "complete": "verified"
+    },
+    "native_source_build": false,
+    "complete_profile_qualified": false
+  },
+  "native_compilation": false,
+  "native_race_instrumentation": false,
+  "patch_refresh": {
+    "signature_verified": true,
+    "authenticated_archives": 34,
+    "installed": 31,
+    "pending": 0,
+    "applicability": {
+      "inapplicable": [
+        "001_xserver",
+        "020_xserver",
+        "032_xserver"
+      ],
+      "target_count": 29,
+      "target_inventory_sha256": "34ca83c8b34c5af44f4256e1f9bd8574cc1b2e704855b4476d37d78bf21850ba"
+    },
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "9aebeff036ab63f57f49859701424fa02554fbed91e00fd178cba1ea34da59e4",
+    "boot_before": "1792342368",
+    "boot_after": "1792342743"
+  },
+  "bootstrap_revoked": true,
+  "cleanup": {
+    "teardown_verified": true,
+    "supervisor_status": "completed",
+    "receipt_status": "valid",
+    "independent_process_absent": true,
+    "independent_group_absent": true,
+    "started_receipt_sha256": "71bfeb32595ea396d89d37bd602a044c97fd51874618933472c979bcb21ec6a2",
+    "receipt_sha256": "0655f2fb754c5d5c1622ebd3aafdabf4fb1c5d29ff4564ebeeca8e627cbba9bd",
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 900,
+    "escalated": false,
+    "reported_teardown_verified": true
+  },
+  "integrity": {
+    "gates": {
+      "baseline_unchanged": "passed",
+      "head_unchanged": "passed",
+      "worktree_clean": "passed",
+      "source_unchanged": "passed"
+    },
+    "source_file_count": 365,
+    "changed_source_count": 0,
+    "unreadable_source_count": 0
+  },
+  "source_unchanged": true,
+  "baseline_unchanged": true,
+  "head_unchanged": true,
+  "worktree_clean": true,
+  "private_source_inventory": {
+    "file_count": 365,
+    "canonical_sha256": "4351a832ac94793b6b0b3d53b813792d291fed8fe9231b664ffb821bce19a7b4"
+  },
+  "historical_native_receipts": {
+    "file_count": 51,
+    "all_unchanged_from_base": true,
+    "inventory_sha256": "a73e1c38c09d846334dccc5b6956afb19baa4cfab071a91f2f6ef4351a310dc7"
+  },
+  "progress": {
+    "result": "passed",
+    "finished": true,
+    "stage_counts": {
+      "pending": 0,
+      "running": 0,
+      "completed": 5,
+      "failed": 0,
+      "interrupted": 0,
+      "not-run": 0
+    },
+    "sequence": 12,
+    "stopped_stage": null,
+    "error_class": "none",
+    "sha256": "1b4777c790160473028252a0d9936a4cacc9939ef8f1cb907df936f4b5bc8c42"
+  },
+  "private_report_sha256": "64537a73992265bad80eac05e27fd30efe4a8bda10ac0b95f878b050874b5023",
+  "private_launch_log_sha256": "33cabbc535d331c0198983a719d9e3596d693a88bf9785f4d49be9323d48fed7",
+  "host_go": "go version go1.27.2 darwin/arm64",
+  "qemu": {
+    "version": "QEMU emulator version 11.1.1",
+    "sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f"
+  },
+  "full_engine_suite_executed": false,
+  "actual_companion_cli_executed": false,
+  "traffic_security_validation_rerun": false,
+  "advisory_scan_rerun": false,
+  "complete_profile_qualified": false,
+  "limitations": [
+    "Release authentication bootstraps a pinned official HTTPS public key and local reviewed host verifier; no independent out-of-band key authentication, measured boot or reproducible image claim.",
+    "Owned new stock-install lineage applies only to this baseline and subsequent explicitly selected ordinary component run; inherited historical evidence is not retroactively authenticated.",
+    "Stock OS boot services and PF startup executed. Online firmware and patch checks failed without networking; later pinned offline authentication of all 34 archives, exact 31-applicable/3-absent-X cohort and reboot admission are separate and is not a latest-patch claim.",
+    "Only ordinary cross-built test executables ran as UID 32767. Source compilation, complete WAF/relayd/CRS/application traffic, native race, resource/soak and full failure coverage remain unqualified on this image.",
+    "The stock layout has unqualified native-build storage capacity; other official-baseline modes are refused and no fallback is allowed.",
+    "Affected validation remains paused under the reported access notice; earlier three legacy reload-response failures remain unexplained and later wire scope unexecuted.",
+    "Baseline #10 review, broad #12/#14 acceptance and architecture/phase adoption remain separate. No product service, installer contract, live network or release change."
+  ],
+  "independent_post_run_checks": {
+    "processes_absent": 2,
+    "groups_absent": 2,
+    "open_disk_handles": 0,
+    "private_permissions_match": true,
+    "independent_image_inode": true
+  }
+}

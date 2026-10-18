@@ -56,3 +56,53 @@ class PatchTests(unittest.TestCase):
                 (cache / name).symlink_to(cache / 'target')
                 with self.assertRaises(ValueError):
                     PATCHES.verify(cache)
+
+    def test_legacy_script_is_byte_identical_without_stock_applicability(self):
+        with patch.object(PATCHES, 'stock_applicability') as stock:
+            script, result = PATCHES.guest_script()
+            self.assertEqual(script, (TOOLS / 'native/patch-openbsd.sh').read_bytes())
+            self.assertIsNone(result); stock.assert_not_called()
+
+    def stock_fixture(self, cache, kind='valid'):
+        import copy, io, tarfile
+        pins = copy.deepcopy(PATCHES.PINS)
+        for name in PATCHES.STOCK_INAPPLICABLE:
+            path = cache / ('syspatch79-' + name + '.tgz')
+            with tarfile.open(path, 'w:gz') as archive:
+                target = ('usr/X11R6/bin/fixture' if kind == 'valid' else
+                          'usr/X11R6/../escape' if kind == 'traversal' else
+                          'usr/sbin/ordinary' if kind == 'foreign' else 'usr/X11R6/bin/fixture')
+                member = tarfile.TarInfo(target); member.size = 1
+                if kind == 'link': member.type = tarfile.SYMTYPE; member.linkname = 'fixture'; member.size = 0
+                archive.addfile(member, io.BytesIO(b'x') if member.isfile() else None)
+                if kind != 'missing-signature':
+                    member = tarfile.TarInfo('var/syspatch/79-' + name + '/' + name + '.patch.sig');member.size = 1
+                    archive.addfile(member, io.BytesIO(b'x'))
+            pins['assets'][path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
+        return pins
+
+    def test_stock_exact_cohort_retains_full_authentication_and_absence_gates(self):
+        with tempfile.TemporaryDirectory() as folder:
+            cache = Path(folder).resolve(); pins = self.stock_fixture(cache)
+            with patch.object(PATCHES, 'PINS', pins): script, result = PATCHES.guest_script(True, cache)
+            self.assertEqual(result['inapplicable'], list(PATCHES.STOCK_INAPPLICABLE))
+            self.assertEqual(result['target_count'], 6)
+            self.assertIn(b'cd "$mirror" && sha256 -c SHA256', script)
+            self.assertIn(b'PATCH\\tinstalled\\t31', script)
+            self.assertIn(b'PATCH\\tinapplicable\\t3', script)
+            self.assertIn(b'cmp -s /var/aegvium-lab-patches-expected /var/aegvium-lab-patches-installed', script)
+            self.assertEqual(script.count(b'[ ! -e /usr/X11R6 ] && [ ! -L /usr/X11R6 ]'), 2)
+            for name in PATCHES.STOCK_INAPPLICABLE:
+                self.assertEqual(script.count(('[ ! -e /var/syspatch/79-' + name + ' ]').encode()), 2)
+            expected = [n.removeprefix('syspatch79-').removesuffix('.tgz') for n in pins['assets']
+                        if not any(n == 'syspatch79-' + skip + '.tgz' for skip in PATCHES.STOCK_INAPPLICABLE)]
+            self.assertEqual(len(expected), 31)
+            self.assertIn((' '.join(expected) + ' > /var/aegvium-lab-patches-expected').encode(), script)
+
+    def test_stock_unreviewed_targets_or_drift_never_render(self):
+        for kind in ('foreign', 'traversal', 'link', 'missing-signature', 'drift'):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as folder:
+                cache = Path(folder).resolve(); pins = self.stock_fixture(cache, kind if kind != 'drift' else 'valid')
+                if kind == 'drift': (cache / 'syspatch79-001_xserver.tgz').write_bytes(b'changed')
+                with patch.object(PATCHES, 'PINS', pins):
+                    with self.assertRaises(ValueError): PATCHES.guest_script(True, cache)

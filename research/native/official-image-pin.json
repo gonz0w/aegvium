@@ -1,0 +1,10 @@
+{
+  "release": "7.9",
+  "architecture": "amd64",
+  "origin": "authenticated-stock-install",
+  "image_sha256": "b440e8ac0d47d28d6cdd71baf2dbca1bec5028aaeabdcc6e5d48a72cc484439a",
+  "bootstrap_public_sha256": "9d6b1e92e3c992d627f856a8cbaf360afe9506bc31a83dcc4a793bc6a9470cdf",
+  "provision_source_commit": "9aa4a3d4f2f6154406a76cda65a45f947f0f17f8",
+  "provision_run_id": "ba2799ae-8946-4363-bd1b-0659bbf2d255",
+  "qualified_mode": "ordinary-lifecycle-components"
+}

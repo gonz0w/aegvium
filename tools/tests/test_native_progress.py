@@ -118,6 +118,12 @@ class RunnerProgressTests(unittest.TestCase):
             stack.enter_context(patch.object(ENGINE, 'ROOT', root))
             stack.enter_context(patch.object(ENGINE, 'PINS', {'qcow2_sha256': digest,
                 'assets': {'openbsd-7.9-host.id_rsa': {'sha256': digest}}}))
+            if '--official-baseline' in flags:
+                stack.enter_context(patch.object(ENGINE.BASELINES, 'select', return_value={
+                    'kind': 'authenticated-stock-install', 'image': image,
+                    'bootstrap': root / '.tools/native/bootstrap.key', 'image_sha256': digest,
+                    'bootstrap_public_sha256': 'c'*64}))
+                stack.enter_context(patch.object(ENGINE.BASELINES, 'verify_bootstrap'))
             after_cleanup, attempts = [], []
             def git(*args):
                 if after_cleanup:
@@ -250,7 +256,7 @@ class RunnerProgressTests(unittest.TestCase):
             '--client-identity', '--backend-isolation', '--request-wire']
 
     def test_selected_profiles_complete_exact_plans_without_launching_guest(self):
-        for flags in ([], ['--lifecycle-components'], ['--lifecycle-source-build'], self.wire,
+        for flags in ([], ['--lifecycle-components'], ['--lifecycle-components', '--official-baseline'], ['--lifecycle-source-build'], self.wire,
                       ['--lab-proxy', '--connector-comparison', '--connector-source-build', '--configured-caddy'],
                       ['--relayd-traffic', '--relayd-generations', '--relayd-signals', '--relayd-contract', '--relayd-body']):
             with self.subTest(flags=flags):
