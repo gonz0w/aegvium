@@ -29,6 +29,7 @@ PROGRESS = load('native-progress')
 CLEANUP = load('native-cleanup')
 LIFECYCLE = load('lifecycle-components')
 IMAGE = load('native-image')
+BASELINES = load('native-baseline')
 PATCHES = load('openbsd-patches')
 BUILD = load('native-build')
 SIGNALS = load('relayd-signals')
@@ -700,6 +701,7 @@ def run():
     parser.add_argument('--inject-failure', choices=('boot', 'ssh', 'auth', 'transfer', 'test'))
     parser.add_argument('--source-build', action='store_true')
     parser.add_argument('--lifecycle-components', action='store_true')
+    parser.add_argument('--official-baseline', action='store_true')
     parser.add_argument('--lifecycle-source-build', action='store_true')
     parser.add_argument('--relayd-config', action='store_true')
     parser.add_argument('--lab-proxy', action='store_true')
@@ -721,7 +723,9 @@ def run():
     parser.add_argument('--relayd-wiring', action='store_true')
     args = parser.parse_args()
     component_mode = args.lifecycle_components or args.lifecycle_source_build
-    if component_mode and sum(bool(value) for value in vars(args).values()) != 1:
+    if args.official_baseline and not args.lifecycle_components:
+        parser.error('official baseline requires ordinary lifecycle-components; other profiles unqualified')
+    if component_mode and sum(bool(value) for key, value in vars(args).items() if key != 'official_baseline') != 1:
         parser.error('select one exclusive lifecycle mode; no injection or other study')
     if sum((args.relayd_wiring, args.relayd_health_faults, args.relayd_checker_replacements, args.relayd_generations)) > 1:
         parser.error('select one connected wiring study')
@@ -742,13 +746,12 @@ def run():
     os.umask(0o077)
     if git('status', '--porcelain'):
         raise ValueError('native evidence requires a clean committed candidate')
-    image = ROOT / '.tools/native/base-7.9-reviewed/base.qcow2'
-    if digest(image) != PINS['qcow2_sha256'] or image.stat().st_mode & 0o777 != 0o400:
+    baseline = BASELINES.select(ROOT, PINS, args.official_baseline)
+    image = baseline['image']
+    if digest(image) != baseline['image_sha256'] or image.stat().st_mode & 0o777 != 0o400:
         raise ValueError('independent base admission mismatch')
-    bootstrap = ROOT / '.tools/native/bootstrap.key'
-    if digest(bootstrap) != PINS['assets']['openbsd-7.9-host.id_rsa']['sha256']:
-        raise ValueError('bootstrap key mismatch')
-    bootstrap.chmod(0o600)
+    bootstrap = baseline['bootstrap']
+    BASELINES.verify_bootstrap(baseline, digest)
     PATCHES.verify()
     binary = ROOT / '.tools/research/coraza-openbsd-amd64.test'
     # Always derive the executable from this clean candidate, never stale cache.
@@ -775,7 +778,8 @@ def run():
               'source': source, 'started': datetime.now(timezone.utc).isoformat(),
               'configured_caddy_requested': args.configured_caddy, 'connector_native_build_requested': args.connector_source_build, 'connector_comparison_requested': args.connector_comparison, 'request_wire_requested': args.request_wire, 'backend_isolation_requested': args.backend_isolation, 'client_identity_requested': args.client_identity, 'sender_containment_requested': args.sender_containment, 'lab_tls_requested': args.lab_tls, 'lab_proxy_requested': args.lab_proxy, 'relayd_body_requested': args.relayd_body, 'binary_sha256': binary_hash, 'native_build': False, 'native_build_requested': args.source_build, 'relayd_config_requested': args.relayd_config or args.relayd_traffic, 'relayd_traffic_requested': args.relayd_traffic, 'relayd_generations_requested': args.relayd_generations, 'relayd_checker_replacements_requested': args.relayd_checker_replacements, 'relayd_health_faults_requested': args.relayd_health_faults, 'relayd_wiring_requested': args.relayd_wiring, 'relayd_signals_requested': args.relayd_signals, 'relayd_contract_requested': args.relayd_contract, 'passed': False,
               'host_go': subprocess.check_output([str(ROOT / '.tools/go/bin/go'), 'version'], text=True).strip(),
-              'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
+              'baseline': {key: value for key, value in baseline.items() if key not in ('image', 'bootstrap', 'bootstrap_private_sha256')},
+              'image_sha256': baseline['image_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
                           'patch_deadline_seconds': 1200 if args.sender_containment else 600,
                           'post_build_reserve_seconds': LIFECYCLE.POST_BUILD_SECONDS if args.lifecycle_source_build else None,
@@ -955,7 +959,7 @@ def run():
         report['error_class'] = PROGRESS.error_class(error)
     finally:
         report['teardown'] = CLEANUP.stop_supervisor(supervisor, work, duration)
-        CLEANUP.integrity(report, image, PINS['qcow2_sha256'], source, ROOT, digest, git)
+        CLEANUP.integrity(report, image, baseline['image_sha256'], source, ROOT, digest, git)
         report['passed'] = bool(report.get('native_subset_passed') and 'error' not in report
                                 and 'cleanup_error' not in report
                                 and report.get('teardown', {}).get('teardown_verified')
