@@ -385,10 +385,12 @@ def rotate(guest, port, work, bootstrap):
     return True
 
 
-def patch_guest(guest, work, patch_seconds=600):
+def patch_guest(guest, work, patch_seconds=600, official=False):
     if type(patch_seconds) is not int or patch_seconds not in (600, 1200):
         raise ValueError("unreviewed native patch budget")
     cache = PATCHES.verify()
+    script, applicability = PATCHES.guest_script(official, cache)
+    installed = 31 if official else 34
     archive = work / 'patch-mirror.tar'
     with tarfile.open(archive, 'w') as bundle:
         for name in PATCHES.expected_files():
@@ -402,16 +404,19 @@ def patch_guest(guest, work, patch_seconds=600):
         raise RuntimeError('patch mirror transfer failed')
     archive.unlink()
     with (work / 'patch.log').open('wb') as output:
-        response = guest.call('sh -s', data=(ROOT / 'tools/native/patch-openbsd.sh').read_bytes(),
+        response = guest.call('sh -s', data=script,
                               seconds=patch_seconds, output=output)
     if response.returncode or any(marker not in (work / 'patch.log').read_bytes() for marker in (
-            b'PATCH\tsignature\tVERIFIED', b'PATCH\tinstalled\t34', b'PATCH\tpending\t0')):
+            b'PATCH\tsignature\tVERIFIED', f'PATCH\tinstalled\t{installed}'.encode(), b'PATCH\tpending\t0')):
         raise RuntimeError('native patch authentication/installation failed; see patch.log')
+    if official and b'PATCH\tinapplicable\t3' not in (work / 'patch.log').read_bytes():
+        raise RuntimeError('stock absent-set admission incomplete')
     before = guest.require('sysctl -n kern.boottime')
     guest.require("nohup sh -c 'sleep 2; reboot' >/var/aegvium-lab-reboot.log 2>&1 </dev/null &")
     after = guest.wait('sysctl -n kern.boottime', lambda value: value != before, 240)
     guest.require('test "$(uname -srm)" = "OpenBSD 7.9 amd64"')
-    return {'signature_verified': True, 'installed': 34, 'pending': 0,
+    return {'signature_verified': True, 'authenticated_archives': 34, 'installed': installed, 'pending': 0,
+            'applicability': applicability,
             'manifest_sha256': PATCHES.PINS['manifest_sha256'],
             'public_key_sha256': PATCHES.PINS['public_key_sha256'],
             'log_sha256': digest(work / 'patch.log'),
@@ -822,7 +827,7 @@ def run():
                 raise RuntimeError('injected authentication-stage failure')
         with progress.stage('patch_refresh'):
             print('Authenticating and applying reviewed patch set in owned guest...', flush=True)
-            report['patch_refresh'] = patch_guest(guest, work, patch_seconds=1200 if args.sender_containment else 600)
+            report['patch_refresh'] = patch_guest(guest, work, patch_seconds=1200 if args.sender_containment else 600, official=args.official_baseline)
             if args.inject_failure == 'transfer':
                 raise RuntimeError('injected transfer-stage failure')
         if args.relayd_config or args.relayd_traffic:
