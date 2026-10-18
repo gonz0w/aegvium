@@ -22,11 +22,12 @@ class LifecycleBuildTests(unittest.TestCase):
         receipts = {'os': 'OpenBSD 7.9 amd64', 'version': 'go1.27.2', 'uid': '32767',
                     'compiler': inputs['compiler_executable_sha256'], 'source': inputs['source_sha256'],
                     'library': 'a'*64, 'control': 'b'*64}
-        return '\n'.join('LCBUILD\t'+key+'\t'+value for key,value in receipts.items())+'\n'
+        return '\n'.join('LCSTEP '+step for step in LAB.BUILD_STEPS[:-1])+'\n'+'\n'.join('LCBUILD\t'+key+'\t'+value for key,value in receipts.items())+'\nLCSTEP outputs-verified\n'
 
-    def guest(self, log, outcome=0, transfer_error=False, install_error=False):
+    def guest(self, log, outcome=0, transfer_error=False, install_error=False, remaining=None):
         class Guest:
             def __init__(self):self.commands=[];self.builds=0
+            def remaining(self, required):return required if remaining is None else min(required,remaining)
             def require(self, command):
                 self.commands.append(command)
                 if install_error and 'cp /var/' in command:raise RuntimeError('installation mismatch')
@@ -101,3 +102,52 @@ class LifecycleBuildTests(unittest.TestCase):
         self.assertEqual(next(s['state'] for s in journal['stages'] if s['name']=='lifecycle_build'),'failed')
         self.assertEqual(next(s['state'] for s in journal['stages'] if s['name']=='native'),'not-run')
         self.assertTrue(report['teardown']['teardown_verified'])
+
+    def test_ordered_progress_is_required_without_accepting_partial_output(self):
+        with tempfile.TemporaryDirectory() as folder:
+            inputs=self.inputs(Path(folder));text=self.log(inputs)
+            self.assertEqual(LAB.build_progress(text),{'valid':True,'observed_steps':6,'last_step':'outputs-verified','complete':True})
+            for count in range(len(LAB.BUILD_STEPS)):
+                partial='\n'.join('LCSTEP '+s for s in LAB.BUILD_STEPS[:count])+'\n'
+                progress=LAB.build_progress(partial)
+                self.assertTrue(progress['valid']);self.assertFalse(progress['complete'])
+                with self.assertRaises(ValueError):LAB.parse_build(partial,inputs)
+            for bad in (text.replace('LCSTEP library-compiled\n',''),
+                        text.replace('LCSTEP library-started','LCSTEP control-started'),
+                        text.replace('LCSTEP inputs-verified','LCSTEP unknown'),
+                        text.replace('LCSTEP control-compiled','LCSTEP\tcontrol-compiled'),
+                        text+'LCSTEP outputs-verified\n',text+'late output\n'):
+                with self.assertRaises(ValueError):LAB.parse_build(bad,inputs)
+
+    def test_insufficient_budget_never_launches_compiler_or_installs(self):
+        with tempfile.TemporaryDirectory() as folder:
+            work=Path(folder);inputs=self.inputs(work)
+            for remaining in (0,1200,1379.999):
+                guest=self.guest(self.log(inputs),remaining=remaining)
+                result=LAB.build_guest(guest,work,inputs)
+                self.assertFalse(result['admitted']);self.assertEqual(result['execution_error_class'],'budget')
+                self.assertFalse(result['budget_reserved_before_launch'])
+                self.assertEqual(guest.builds,0)
+                self.assertFalse(any('cp /var/' in c for c in guest.commands))
+            guest=self.guest(self.log(inputs),remaining=1380)
+            result=LAB.build_guest(guest,work,inputs)
+            self.assertTrue(result['admitted']);self.assertTrue(result['budget_reserved_before_launch'])
+            self.assertEqual(guest.timeout,1200)
+            self.assertEqual(result['required_remaining_seconds'],1380)
+
+    def test_deadline_exhaustion_before_launch_records_budget_and_no_execution(self):
+        with tempfile.TemporaryDirectory() as folder:
+            work=Path(folder);inputs=self.inputs(work);guest=self.guest(self.log(inputs))
+            guest.remaining=lambda required: (_ for _ in ()).throw(TimeoutError())
+            result=LAB.build_guest(guest,work,inputs)
+            self.assertEqual(result['execution_error_class'],'budget');self.assertEqual(guest.builds,0)
+            self.assertEqual(result['progress']['observed_steps'],0)
+
+    def test_partial_compile_progress_retained_on_timeout_never_admits(self):
+        with tempfile.TemporaryDirectory() as folder:
+            work=Path(folder);inputs=self.inputs(work)
+            partial='\n'.join('LCSTEP '+s for s in LAB.BUILD_STEPS[:4])+'\n'
+            guest=self.guest(partial,subprocess.TimeoutExpired(['private marker'],1200))
+            result=LAB.build_guest(guest,work,inputs)
+            self.assertFalse(result['admitted']);self.assertEqual(result['progress']['last_step'],'control-started')
+            self.assertEqual(result['execution_error_class'],'timeout');self.assertNotIn('private marker',str(result))

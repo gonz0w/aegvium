@@ -6,6 +6,11 @@ import re
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
+BUILD_SECONDS = 1200
+POST_BUILD_SECONDS = 180
+GUEST_SECONDS = 2400
+BUILD_STEPS = ('inputs-verified', 'library-started', 'library-compiled',
+               'control-started', 'control-compiled', 'outputs-verified')
 LIBRARY = {
     'TestLabGenerationDrain', 'TestLabReloadRetirementFailure',
     'TestLabShutdownConcurrentClose', 'TestLabShutdownDrainedServeFailure',
@@ -126,6 +131,17 @@ def execute_guest(guest, work, hashes):
     return result
 
 
+def build_progress(text):
+    if len(text) > 1024 * 1024:
+        return {'valid': False, 'observed_steps': 0, 'last_step': None, 'complete': False}
+    steps = [line.removeprefix('LCSTEP ') for line in text.splitlines()
+             if line.startswith('LCSTEP')]
+    valid = len(steps) <= len(BUILD_STEPS) and tuple(steps) == BUILD_STEPS[:len(steps)]
+    return {'valid': valid, 'observed_steps': len(steps),
+            'last_step': steps[-1] if valid and steps else None,
+            'complete': valid and tuple(steps) == BUILD_STEPS}
+
+
 def parse_build(text, inputs):
     if len(text) > 1024 * 1024:
         raise ValueError('lifecycle build evidence oversized')
@@ -138,7 +154,9 @@ def parse_build(text, inputs):
             receipts[parts[1]] = parts[2]
     expected = {'os': 'OpenBSD 7.9 amd64', 'version': 'go1.27.2', 'uid': '32767',
                 'compiler': inputs['compiler_executable_sha256'], 'source': inputs['source_sha256']}
-    if (set(receipts) != set(expected) | {'library', 'control'}
+    if (not build_progress(text)['complete']
+            or text.splitlines()[-1:] != ['LCSTEP outputs-verified']
+            or set(receipts) != set(expected) | {'library', 'control'}
             or any(receipts.get(key) != value for key, value in expected.items())
             or any(not re.fullmatch('[0-9a-f]{64}', receipts.get(key, ''))
                    for key in ('compiler', 'source', 'library', 'control'))):
@@ -168,17 +186,34 @@ def build_guest(guest, work, inputs):
         script = script.replace(token.encode(), inputs[key].encode())
     log = work / 'lifecycle-build.log'
     code, error_class = None, 'none'
+    required = BUILD_SECONDS + POST_BUILD_SECONDS
+    # Source transfer precedes this check. Never silently shorten compilation
+    # because setup consumed the shared guest deadline.
+    log.write_bytes(b'')
+    try:
+        reserved = guest.remaining(required) >= required
+    except TimeoutError:
+        reserved = False
+    if not reserved:
+        return {'admitted': False, 'execution_returncode': None,
+                'execution_error_class': 'budget', 'budget_reserved_before_launch': False,
+                'required_remaining_seconds': required,
+                'build_log_sha256': hashlib.sha256(b'').hexdigest(),
+                'progress': build_progress('')}
     with log.open('wb') as output:
         try:
-            code = guest.call('sh -s', data=script, seconds=1200, output=output).returncode
+            code = guest.call('sh -s', data=script, seconds=BUILD_SECONDS, output=output).returncode
         except (TimeoutError, subprocess.TimeoutExpired):
             error_class = 'timeout'
         except OSError:
             error_class = 'io'
+    text = log.read_text(errors='replace')
     result = {'admitted': False, 'execution_returncode': code, 'execution_error_class': error_class,
-              'build_log_sha256': hashlib.sha256(log.read_bytes()).hexdigest()}
+              'budget_reserved_before_launch': True, 'required_remaining_seconds': required,
+              'build_log_sha256': hashlib.sha256(log.read_bytes()).hexdigest(),
+              'progress': build_progress(text)}
     try:
-        receipts = parse_build(log.read_text(errors='replace'), inputs)
+        receipts = parse_build(text, inputs)
     except ValueError:
         result['admission_error'] = 'incomplete-or-invalid-lifecycle-build'
         return result

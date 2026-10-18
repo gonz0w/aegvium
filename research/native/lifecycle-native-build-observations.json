@@ -1,0 +1,220 @@
+{
+  "schema": 1,
+  "scope": "NCB-05\u201308 reserved offline build and ordinary no-network component execution only",
+  "passed": true,
+  "source": {
+    "commit": "2cdc6b40de1fed2f57c363370bd30c8118761a38",
+    "tree": "2ceba13d779918b1b4d3b5d39a3bccb000b0fe1c",
+    "base": "6f4b6eb7eb60eea2358ac53c275c2b5961159fa8",
+    "runtime_inputs_sha256": {
+      "Makefile": "a34fff9fe8d2ceef512964f6a05a8f1916d440f2e0e3fc8b9315241ac427969c",
+      "research/coraza/cmd/labproxy/control.go": "1cb8fcf63cf6a92ab5e36254c369792fb9c891affd76f641badb336dedefa3de",
+      "research/coraza/cmd/labproxy/control_test.go": "47a58165b418250ccd15328405d3890182d82d692ff78485523dd1aebbea436a",
+      "research/coraza/cmd/labproxy/main.go": "015ab8efddb6470ffccb6647965ca29fd78b06aee5ac33cd0dcbe6eea2a6e379",
+      "research/coraza/go.mod": "dca5c181ccdc6e49e975e7e9ede59a72578e42b36818d90cfeaed2ede0525e27",
+      "research/coraza/go.sum": "afc8a15db82d3fab3614845cff2bf2406eb7496b20f98f6240bb2913e75696c8",
+      "research/coraza/lab_proxy.go": "3d26f20725c4109fbb2e0754a8e5d1a5a3c0c6bd157675c3caa0ae3bb492c295",
+      "research/coraza/lab_reload.go": "580b3fa812d0f715c0622270ebf2db7e62a5975d5a06779c33e052e8a753c3a5",
+      "research/coraza/lab_reload_test.go": "b76d3c5dac326d6b4d533e8a34507bee1649a865d621726b870683b113c2ba2b",
+      "research/coraza/lab_shutdown.go": "1dce02282e19690273f963ba11e89c5addd068a0ca68f7c39c98b17663b7ac0c",
+      "research/coraza/lab_shutdown_test.go": "3c2397acedbf906d623c50f24640f5a1d6c0230e4e569802b58c6aad7ae62d3b",
+      "research/coraza/lab_supervision.go": "f38873b71f2b0859ff514c3c09cf06576364c8eaebd009bc8c5f9dd7e20d4599",
+      "research/coraza/lab_supervision_test.go": "b2fc15d9a5e4ae82e1512d0e84e6c192df24368907c8a3ca068a714643f0e60d",
+      "research/coraza/proxy_listener.go": "97a2c04f84f6d2d02b4463e1c6b65a2391d1b0468a61289e7bfe683e4e8cfcff",
+      "research/native/image-pin.json": "8b3c0b1961712f01f2fbc11532da3d4576845fffddc24856782a850da81d6f8b",
+      "tools/lab-supervisor.py": "17d5204dcc4b286bc049ad34022df7ec9d65a447be7a7dbf4ef8b7e5b738aea3",
+      "tools/lifecycle-components.py": "4f8f243121f470a5cfe8b563e025c9ad9aaf97cb9add908bd47584f4aa5e6309",
+      "tools/native-build.py": "5b0f91b5bd5eb789cc79165b4bfab20928b053c8ca597111003d1c2006391e4b",
+      "tools/native-engine.py": "b51b7ac1608700b89cca26ea335d4d1424bd4f1d0e21fbe0303f989357355ac0",
+      "tools/native-progress.py": "6056e94e2f5bc1308bd43c3a90402766676503397c9a419d982678267f38e178",
+      "tools/native/lifecycle-build.sh": "eae65d089d8b73f0cd9525e4ba974bf034e24254cdeac2898d5d0c6f8978526c",
+      "tools/native/lifecycle-components.sh": "d2f62d01b785b777b62f836259598286c97324fc821e6b899773b49d78875ec6",
+      "tools/native/patch-openbsd.sh": "eae9d586161ed5f30c6d179ff55884b5a47ddad7c3b5a7a4637345219e8190e7",
+      "tools/openbsd-patches.json": "0cf5b352ea5d50d91d106abd42e65b8dac105b6c72fca3c83bfd1706bc891771",
+      "tools/research-pins.json": "7383179c02c51b05fc29776bfe538c1ee1f6438aa5b35065d1a44a3b06f02efe"
+    },
+    "runtime_go_unchanged_from_base": true
+  },
+  "run_id": "5dc66628-724e-4d46-ba84-e616614223ac",
+  "started": "2026-10-18T13:49:04.544009+00:00",
+  "finished": "2026-10-18T14:11:20.592861+00:00",
+  "build_lineage": {
+    "origin": "offline-native-compilation",
+    "target": "OpenBSD amd64",
+    "native_source_build": true,
+    "native_race_instrumentation": false,
+    "host_cross_build_control": {
+      "host_go": "go version go1.27.2 darwin/arm64",
+      "host_go_executable_sha256": "516c1fbb53b5f8f4852f0c3c379d45bcff53a1032e5cd1a9ca1738f03ba07cb1",
+      "library_sha256": "0eaf8702015adf70708d43f2dda489ac4e766de12d8744dbc5647b97001990da",
+      "used_for_native_execution": false
+    },
+    "compiler_archive_sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+    "compiler_executable_sha256": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+    "source_archive_sha256": "11286a198c907ee2aafab06eea0d5d091b78c7fb869ae02ab7861beb4395604d",
+    "private_source_export": {
+      "file_count": 800,
+      "canonical_sha256": "1d002bd52d0b90ca3fe9b257eedf357422805e7f46b76aae987bcf19b7d59271",
+      "encoding": "sorted UTF-8 relative source name, TAB, lowercase SHA-256, LF; inventory remains ignored"
+    }
+  },
+  "component_build": {
+    "admitted": true,
+    "execution_returncode": 0,
+    "execution_error_class": "none",
+    "budget_reserved_before_launch": true,
+    "required_remaining_seconds": 1380,
+    "build_log_sha256": "7390d45152f33a2759a84389df44d30cd0d9fef968dfdf2a6f4dc4262a964eef",
+    "progress": {
+      "valid": true,
+      "observed_steps": 6,
+      "last_step": "outputs-verified",
+      "complete": true
+    },
+    "receipts": {
+      "uid": "32767",
+      "os": "OpenBSD 7.9 amd64",
+      "version": "go1.27.2",
+      "compiler": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+      "source": "11286a198c907ee2aafab06eea0d5d091b78c7fb869ae02ab7861beb4395604d",
+      "library": "8356239590ceee7f6a675aae03d758f5499a320db2d59108effaefff4519fc91",
+      "control": "0502d94262f33f330440e4738d52f9f23289164a8c878074f4b64c7064d6dca2"
+    },
+    "hashes": {
+      "library": "8356239590ceee7f6a675aae03d758f5499a320db2d59108effaefff4519fc91",
+      "control": "0502d94262f33f330440e4738d52f9f23289164a8c878074f4b64c7064d6dca2"
+    },
+    "installed_verified": true
+  },
+  "component_execution": {
+    "admitted": true,
+    "hashes": {
+      "library": "8356239590ceee7f6a675aae03d758f5499a320db2d59108effaefff4519fc91",
+      "control": "0502d94262f33f330440e4738d52f9f23289164a8c878074f4b64c7064d6dca2"
+    },
+    "execution_returncode": 0,
+    "execution_error_class": "none",
+    "log_sha256": "a9ea802ef526b0cc010ec37126417d4aae1713fc2d8348984804811eb4725eed",
+    "observed_pass_count": 30,
+    "scope": "ordinary-components-only",
+    "parent_count": 18,
+    "subtest_count": 12,
+    "pass_count": 30,
+    "receipts": {
+      "os": "OpenBSD 7.9 amd64",
+      "scope": "ordinary-components",
+      "library": "8356239590ceee7f6a675aae03d758f5499a320db2d59108effaefff4519fc91",
+      "control": "0502d94262f33f330440e4738d52f9f23289164a8c878074f4b64c7064d6dca2",
+      "uid": "32767",
+      "complete": "verified"
+    },
+    "native_source_build": true,
+    "complete_profile_qualified": false
+  },
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 2400,
+    "patch_deadline_seconds": 600,
+    "post_build_reserve_seconds": 180,
+    "native_build_deadline_seconds": 1200,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "patch_refresh": {
+    "signature_verified": true,
+    "installed": 34,
+    "pending": 0,
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+    "boot_before": "1792331358",
+    "boot_after": "1792331654"
+  },
+  "bootstrap_revoked": true,
+  "source_unchanged": true,
+  "baseline_unchanged": true,
+  "base_image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "qemu": {
+    "version": "QEMU emulator version 11.1.1",
+    "executable_sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f"
+  },
+  "progress": {
+    "result": "passed",
+    "finished": true,
+    "stage_counts": {
+      "pending": 0,
+      "running": 0,
+      "completed": 6,
+      "failed": 0,
+      "interrupted": 0,
+      "not-run": 0
+    },
+    "sequence": 14,
+    "stopped_stage": null,
+    "error_class": "none",
+    "sha256": "29acafcf4991641d89b885da65f37850720068c49cea923b848730f4b72ee67a"
+  },
+  "teardown": {
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 2400,
+    "escalated": false,
+    "teardown_verified": true
+  },
+  "private_tracked_source_inventory": {
+    "file_count": 346,
+    "canonical_sha256": "872cc79b439a78d77cebe43e3fe9a6610b97e75795eec17456bde08b6f6f0f97",
+    "encoding": "sorted UTF-8 relative source name, TAB, lowercase SHA-256, LF; inventory remains ignored"
+  },
+  "independent_host_cleanup": {
+    "owned_process_absent": true,
+    "owned_process_group_absent": true,
+    "supervisor_teardown_verified": true,
+    "supervisor_escalated": false
+  },
+  "private_independent_cleanup_sha256": "a7be49ad58a4cb914176e5ecaaedfe4e3521f61869eb1af9ce8a6ea9c170ed72",
+  "private_report_sha256": "44b76dada362eb28090ecff200f599dbbf6dd98a3432bfd1955ec71b8c3b0204",
+  "private_progress_sha256": "29acafcf4991641d89b885da65f37850720068c49cea923b848730f4b72ee67a",
+  "private_teardown_sha256": "d4af95b362777d80d0335aa9e1d8e8abcc780c8d257fe7f2e6fdb92de8954f03",
+  "local_checks": {
+    "repository_tests": 131,
+    "verify_log_sha256": "c505134511ff5febd4737826e85e6aa3d2e2a68afe5dd7fad19611f10cb3ad9b",
+    "source_export_preflight_log_sha256": "411ebf9e87d1d76c1ae6040af222f5ecf498adb9037ef010ae6f265e4b8f7160",
+    "runtime_go_checks": "not repeated: all Go inputs unchanged from merged #110; original source-bound functional/race/vet evidence retained"
+  },
+  "historical_evidence_unchanged": {
+    "research/native/lifecycle-native-build-failure.json": "3d126fc8ac3925d9ed66a0751a2bd5b39d1a5b2b1cd1a8b51f7a107a8019ce53",
+    "research/native/request-wire-native-failure.json": "8747bba7b7eb9035df1740c1e2b2a24f0e6c605f374cc391bba9c3087251a257",
+    "research/coraza/shutdown-host-observations.json": "12c9d7e823bc9783903b9029815e2e3218f427e51d49beddaa6abcec1b70f275",
+    "research/coraza/supervision-host-observations.json": "3c8b346bd092458f2f1217753282fb77c38b302de12ae25e857b7913a0032036",
+    "research/native/lifecycle-component-observations.json": "43ecd0e75f781026925de9cda480f0e4d87f362da45db6330876b080e2ae55bf"
+  },
+  "full_engine_suite_executed": false,
+  "actual_companion_cli_executed": false,
+  "traffic_security_validation_rerun": false,
+  "advisory_scan_rerun": false,
+  "complete_profile_qualified": false,
+  "limitations": [
+    "Source compilation and exact no-network component execution, not actual companion/relayd/WAF/CRS/traffic/PF qualification.",
+    "Selected eighteen parents use fake servers/listeners/closers and benign in-memory handlers; no application listener or WAF engine instance.",
+    "Affected WAF/traffic/security validation remains paused under the reported access notice; no expanded access or safeguard bypass.",
+    "Earlier native reload response failure remains unexplained and later wire matrix unexecuted.",
+    "Native components cannot replace unchanged 163-case engine or full native SV/SD/profile requirements.",
+    "No product adoption, deployment/service enablement, live network, installer or release change."
+  ],
+  "phase_durations_seconds": {
+    "guest_boot": 47.824,
+    "fresh_access": 4.303,
+    "patch_refresh": 308.927,
+    "lifecycle_build": 963.297,
+    "native": 10.013,
+    "subset_gate": 0.0
+  },
+  "previous_failed_attempt": {
+    "receipt": "research/native/lifecycle-native-build-failure.json",
+    "unchanged_sha256": "3d126fc8ac3925d9ed66a0751a2bd5b39d1a5b2b1cd1a8b51f7a107a8019ce53",
+    "source_control_flow_inference": "The retained post-compile identity rows are emitted after both compile commands return in the signed original script; output/installation/execution identities were not admitted.",
+    "original_native_admission_unchanged": true
+  }
+}

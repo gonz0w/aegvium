@@ -20,7 +20,7 @@ The optional sender-containment experiment uses stock PF to restrict fresh conne
 
 ## Build and verify
 
-The shutdown/reload/supervision components now have [separate OpenBSD lifecycle execution evidence](research/native/lifecycle-component-observations.json): eighteen no-network parent tests using host-cross-built binaries. A later [offline native-build attempt](research/native/lifecycle-native-build-failure.json) reached the total guest deadline during compilation; its component execution did not run. Native source compilation and complete WAF/traffic/profile qualification remain pending; earlier receipts above retain their original source and scope.
+The shutdown/reload/supervision components now have [offline OpenBSD compilation and execution evidence](research/native/lifecycle-native-build-observations.json): eighteen no-network parent tests plus twelve subtests, compiled and run as UID 32767 with matching output/installed/executed hashes. The earlier [cross-built component run](research/native/lifecycle-component-observations.json) and [native-build timeout](research/native/lifecycle-native-build-failure.json) retain their original results. Complete WAF/traffic/profile qualification remains pending.
 
 Read [CONTRIBUTING](CONTRIBUTING.md), [agent instructions](AGENTS.md) and the active [M1 PRD](docs/milestones/M1/PRD.md), [EDD](docs/milestones/M1/EDD.md) and [test design](docs/milestones/M1/TDD.md). Use signed Conventional Commits, author DCO sign-offs, `codex/` branches and open PRs. Checks run locally; GitHub Actions, runners and hosted success publishers are prohibited.
 
@@ -37,7 +37,7 @@ Host checks and cross-builds are tooling evidence only. Disposable native experi
 | Command | Owned native experiment |
 | --- | --- |
 | `make research-native-lifecycle` | Exclusive ordinary lifecycle component tests on owned OpenBSD; host-cross-built binaries, no application/WAF/traffic/PF execution. |
-| `make research-native-lifecycle-build` | Exclusive offline native component build and exact ordinary test selection; first attempt timed out before build admission. |
+| `make research-native-lifecycle-build` | Exclusive offline native component build and exact ordinary test selection; reserved build/verification budget, no application/WAF/traffic/PF execution. |
 | `make research-native-lab` | Offline native fixture/checker/CLI compilation and legacy TLS-at-relayd routing/reload/load controls. |
 | `make research-native-tls` | Native compilation, legacy controls and companion TLS passthrough/authority matrix. |
 | `make research-native-sender` | All TLS controls plus PF UID containment, invalid replacement, rollback and verified static PF restoration. |

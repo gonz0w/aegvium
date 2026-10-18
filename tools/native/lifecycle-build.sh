@@ -19,11 +19,13 @@ chmod -R a+rX go src
 mkdir output
 chown nobody output
 chmod 700 output
+printf 'LCSTEP inputs-verified\n'
 # -c compiles test executables without running any tests or application main.
 # shellcheck disable=SC2016
-su -m nobody -c 'set -eu; umask 077; [ "$(id -u)" -eq 32767 ]; cd /var/aegvium-lifecycle-build/src; export GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off CGO_ENABLED=0 GOMAXPROCS=2 GOOS=openbsd GOARCH=amd64 GOAMD64=v1; export GOFLAGS=""; export GOCACHE=/var/aegvium-lifecycle-build/output/cache GOPATH=/var/aegvium-lifecycle-build/output/gopath TMPDIR=/var/aegvium-lifecycle-build/output; printf "LCBUILD\tuid\t%s\n" "$(id -u)"; /var/aegvium-lifecycle-build/go/bin/go test -mod=vendor -p=2 -c -o /var/aegvium-lifecycle-build/output/library.test .; /var/aegvium-lifecycle-build/go/bin/go test -mod=vendor -p=2 -c -o /var/aegvium-lifecycle-build/output/control.test ./cmd/labproxy'
+su -m nobody -c 'set -eu; umask 077; [ "$(id -u)" -eq 32767 ]; cd /var/aegvium-lifecycle-build/src; export GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off CGO_ENABLED=0 GOMAXPROCS=2 GOOS=openbsd GOARCH=amd64 GOAMD64=v1; export GOFLAGS=""; export GOCACHE=/var/aegvium-lifecycle-build/output/cache GOPATH=/var/aegvium-lifecycle-build/output/gopath TMPDIR=/var/aegvium-lifecycle-build/output; printf "LCBUILD\tuid\t%s\n" "$(id -u)"; printf "LCSTEP library-started\n"; /var/aegvium-lifecycle-build/go/bin/go test -mod=vendor -p=2 -c -o /var/aegvium-lifecycle-build/output/library.test .; printf "LCSTEP library-compiled\nLCSTEP control-started\n"; /var/aegvium-lifecycle-build/go/bin/go test -mod=vendor -p=2 -c -o /var/aegvium-lifecycle-build/output/control.test ./cmd/labproxy; printf "LCSTEP control-compiled\n"'
 [ "$(sha256 -q go/bin/go)" = 'EXECUTABLE_SHA256' ]
 [ "$(sha256 -q source.tar.gz)" = 'SOURCE_SHA256' ]
 printf 'LCBUILD\tos\t%s\nLCBUILD\tversion\tgo1.27.2\n' "$(uname -srm)"
 printf 'LCBUILD\tcompiler\t%s\nLCBUILD\tsource\t%s\n' "$(sha256 -q go/bin/go)" "$(sha256 -q source.tar.gz)"
 printf 'LCBUILD\tlibrary\t%s\nLCBUILD\tcontrol\t%s\n' "$(sha256 -q output/library.test)" "$(sha256 -q output/control.test)"
+printf 'LCSTEP outputs-verified\n'
