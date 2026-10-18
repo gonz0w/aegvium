@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import hashlib
 import importlib.util
 import json
+import math
 import os
 from pathlib import Path
 import resource
@@ -28,6 +29,10 @@ def load(name):
 
 MEDIA, PROGRESS, CLEANUP = load('official-media'), load('native-progress'), load('native-cleanup')
 DURATION = 3600
+QMP_SECONDS = 5
+QMP_FRAME_BYTES = 65536
+QMP_INPUT_BYTES = 4 * QMP_FRAME_BYTES
+QMP_EVENTS = 32
 
 
 def git(*args):
@@ -35,21 +40,98 @@ def git(*args):
 
 
 def qmp(path, command, arguments=None):
-    """One bounded request on the private owned QEMU control socket."""
+    """One exchange with fixed wall, frame, aggregate-input and event bounds."""
+    deadline = time.monotonic() + QMP_SECONDS
+    try:
+        return _qmp_exchange(path, command, arguments, deadline)
+    except TimeoutError:
+        raise TimeoutError('owned QEMU control deadline') from None
+    except OSError:
+        raise RuntimeError('owned QEMU control transport failed') from None
+
+
+def _qmp_exchange(path, command, arguments, deadline):
+    """Internal exchange; the public entry fixes one deadline before any I/O."""
     with socket.socket(socket.AF_UNIX) as connection:
-        connection.settimeout(5)
+        pending, received, events = b'', 0, 0
+
+        def remaining():
+            seconds = deadline - time.monotonic()
+            if seconds <= 0:
+                raise TimeoutError('owned QEMU control deadline')
+            connection.settimeout(seconds)
+
+        def unique(fields):
+            value = {}
+            for name, item in fields:
+                if name in value:
+                    raise ValueError('duplicate field')
+                value[name] = item
+            return value
+
+        def constant(_value):
+            raise ValueError('nonfinite number')
+
+        def finite(value):
+            number = float(value)
+            if not math.isfinite(number):
+                raise ValueError('nonfinite number')
+            return number
+
+        def receive():
+            nonlocal pending, received
+            while True:
+                remaining()
+                if b'\n' in pending:
+                    line, _, pending = pending.partition(b'\n')
+                    try:
+                        value = json.loads(line, object_pairs_hook=unique,
+                                           parse_constant=constant, parse_float=finite)
+                    except (ValueError, RecursionError):
+                        raise RuntimeError('owned QEMU control malformed frame') from None
+                    if type(value) is not dict:
+                        raise RuntimeError('owned QEMU control malformed frame')
+                    remaining()  # Parsing or a completed late read cannot renew the wall.
+                    return value
+                if len(pending) >= QMP_FRAME_BYTES:
+                    raise RuntimeError('owned QEMU control frame bound')
+                chunk = connection.recv(min(4096, QMP_FRAME_BYTES - len(pending),
+                                            QMP_INPUT_BYTES - received + 1))
+                if not chunk:
+                    raise RuntimeError('owned QEMU control incomplete frame')
+                received += len(chunk)
+                if received > QMP_INPUT_BYTES:
+                    raise RuntimeError('owned QEMU control input bound')
+                pending += chunk
+
+        remaining()
         connection.connect(str(path))
-        with connection.makefile('rwb', buffering=0) as stream:
-            json.loads(stream.readline(65536))
-            for request in ({'execute': 'qmp_capabilities'}, {'execute': command, 'arguments': arguments or {}}):
-                stream.write((json.dumps(request) + '\n').encode())
-                while True:
-                    response = json.loads(stream.readline(65536))
-                    if 'error' in response:
-                        raise RuntimeError('owned QEMU control refused')
-                    if 'return' in response:
-                        break
-            return response['return']
+        greeting = receive()
+        if set(greeting) != {'QMP'} or type(greeting['QMP']) is not dict:
+            raise RuntimeError('owned QEMU control greeting refused')
+        for number, request in enumerate(({'execute': 'qmp_capabilities'},
+                                           {'execute': command, 'arguments': arguments or {}})):
+            request['id'] = 'stock-lab-' + str(number)
+            payload = (json.dumps(request) + '\n').encode()
+            if len(payload) > QMP_FRAME_BYTES:
+                raise ValueError('owned QEMU control request bound')
+            remaining()
+            connection.sendall(payload)
+            while True:
+                response = receive()
+                if 'event' in response:
+                    events += 1
+                    if (events > QMP_EVENTS or type(response['event']) is not str or not response['event']
+                            or not set(response) <= {'event', 'data', 'timestamp'}):
+                        raise RuntimeError('owned QEMU control event bound or shape')
+                    continue
+                if (response.get('id') != request['id']
+                        or set(response) not in ({'id', 'return'}, {'id', 'error'})):
+                    raise RuntimeError('owned QEMU control reply refused')
+                if 'error' in response:
+                    raise RuntimeError('owned QEMU control refused')
+                break
+        return response['return']
 
 
 def bounded_child():
