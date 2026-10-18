@@ -28,6 +28,7 @@ class StockLabTests(unittest.TestCase):
                      {'format': 'qcow2', 'virtual-size': 8 * 1024**3, 'backing-filename': 'unowned'}):
             with self.subTest(info=info), tempfile.TemporaryDirectory() as folder:
                 root = Path(folder).resolve(); media = root / '.tools/official-media' / str(uuid.uuid4())
+                media.mkdir(parents=True)
                 with patch.object(LAB, 'ROOT', root), patch.object(LAB, 'git', return_value=''), patch.object(LAB.MEDIA, 'verify', return_value={}), patch.object(LAB.subprocess, 'run'), patch.object(LAB.subprocess, 'check_output', return_value=json.dumps(info)), patch.object(LAB.subprocess, 'Popen') as launch:
                     with self.assertRaises(ValueError): LAB.create(media)
                     launch.assert_not_called()
