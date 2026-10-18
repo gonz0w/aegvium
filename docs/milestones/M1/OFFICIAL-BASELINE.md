@@ -55,3 +55,37 @@ OB-T05: host controls keep the inherited script byte-identical, require the exac
 ## Final ordinary observation
 
 Signed correction source `ac107360fcd5f7f5352201d2e68909f837bafb4d` / tree `d388d32a800490f3481d0a822cb7c2c69bd1d313` produced fresh run `36dcddc2-468f-4008-92cc-3429d6cd4177`. All 159 host checks pass. All 34 patch archives authenticate; the exact 31 applicable patches install, the three fixed X-only patches meet before/after absence checks, and zero applicable patches remain pending. Reboot/access and the exact 23-parent/31-subtest/54-record ordinary component selection pass. All five journal phases, base/source/head/worktree gates and strict teardown pass. Post-run checks independently find both owned provisioning/component processes and groups absent, zero retained disk handles, separate baseline inode and private modes. The original failed run remains [separate evidence](../../../research/native/official-baseline-native-failure.json); [final receipts](../../../research/native/official-baseline-observations.json) do not reclassify it.
+
+## Bounded host control exchange follow-up
+
+Ownership remains [#12](https://github.com/gonz0w/aegvium/issues/12), within its
+open controller/failure-coverage criterion. This host-only correction does not
+resume the paused WAF/traffic/security/advisory validation or execute a guest.
+
+QP-01: one QMP invocation has a fixed five-second monotonic wall established
+before socket creation. Connect, greeting, capability negotiation, both writes,
+events, partial reads and the requested reply consume that same deadline. Set
+each socket timeout from the remaining wall; a late completed operation or
+parsed reply cannot renew it or be accepted. No retry or reconnect is performed.
+
+QP-02: require newline-terminated JSON objects with unique fields and finite
+numbers, including rejecting finite-looking exponents that overflow host floats.
+Bound each incoming frame and outgoing request to 65,536 bytes,
+aggregate received bytes to 262,144 and ignored asynchronous events to 32 across
+both replies. Partial input, EOF, malformed/nonobject/duplicate data and exceeded
+bounds fail closed. Correlate each reply with its fixed request ID; reject stale,
+missing or ambiguous IDs and mixed event/reply/error objects. Transport/peer
+failures expose fixed classifications without raw socket paths or peer details.
+
+QP-T01: deterministic fake-socket checks cover fragmented/coalesced frames,
+interleaved events and exact request/reply identity; exact frame/input/event
+boundaries and overflows; slow byte trickle, event progress, late replies,
+connect/write time and one shared nonrenewed deadline; malformed/nonfinite/
+duplicate/EOF input and transport faults. Every opened fake connection closes.
+These checks create no actual sockets, listeners, credentials, native processes
+or network traffic. Existing native observations and failures retain their
+original source and scope; changed QMP integration is not natively qualified.
+
+This remains ordinary host-control tooling, with no new dependency, baseline
+pin, native profile, installer, service, deployment or adoption change. Broader
+failure coverage, original acceptance boundaries and paused validation stay open.
