@@ -106,3 +106,5 @@ The [NC-01–04 component profile](NATIVE-ENGINE.md#ordinary-lifecycle-component
 The [offline native lifecycle build packet](NATIVE-ENGINE.md#offline-native-lifecycle-build-packet) adds NCB-01–04: exact ordinary component compilation/installation/execution identity, complete failed-build admission checks and an exclusive no-traffic controller path. Its native receipts remain separate from NC's host-cross-built execution and the paused full qualification profile.
 
 The [reserved lifecycle build packet](NATIVE-ENGINE.md#reserved-lifecycle-build-budget-and-output-checkpoints) adds NCB-05–08: complete budget reservation before compiler launch, exact output-progress admission and one separately identified native build attempt. The previous timeout remains immutable and full-profile/security qualification stays separate.
+
+The [owned file input packet](LAB-ROUTING.md#owned-file-input-follow-up) adds FI-01–04: descriptor-first regular-file admission, cap+1/overflow handling and close/error ownership. Its ordinary no-network native suite is counted separately from the retained eighteen lifecycle parents and does not resume paused WAF/traffic validation.

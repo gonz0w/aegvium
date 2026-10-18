@@ -1,0 +1,263 @@
+{
+  "schema": 1,
+  "scope": "FI-01\u201304 owned input-file admission and separately counted ordinary file/lifecycle components",
+  "passed": true,
+  "source": {
+    "commit": "7d5197e25915ebe80a5c4daecbc96d83658fa915",
+    "tree": "aa005991c63cc2b7ed458c06527ae58c574fa5b1",
+    "base": "4367ad3aab18ceaa038494a4e43e55f28f0f8157",
+    "runtime_inputs_sha256": {
+      "Makefile": "a34fff9fe8d2ceef512964f6a05a8f1916d440f2e0e3fc8b9315241ac427969c",
+      "research/coraza/cmd/labproxy/control.go": "1cb8fcf63cf6a92ab5e36254c369792fb9c891affd76f641badb336dedefa3de",
+      "research/coraza/cmd/labproxy/control_test.go": "47a58165b418250ccd15328405d3890182d82d692ff78485523dd1aebbea436a",
+      "research/coraza/cmd/labproxy/main.go": "015ab8efddb6470ffccb6647965ca29fd78b06aee5ac33cd0dcbe6eea2a6e379",
+      "research/coraza/go.mod": "dca5c181ccdc6e49e975e7e9ede59a72578e42b36818d90cfeaed2ede0525e27",
+      "research/coraza/go.sum": "afc8a15db82d3fab3614845cff2bf2406eb7496b20f98f6240bb2913e75696c8",
+      "research/coraza/lab_config.go": "bd97222c6792ac7e5a89af5a8ce594a37ff1b042ce035b00e654ed50d6f0c5db",
+      "research/coraza/lab_file.go": "13c7b181ef905dfd5910bffbd4499ac21c28eec54fbe875431ec8417ce7d9acf",
+      "research/coraza/lab_file_test.go": "c34a0e6f682e7a9027c5012568fda59f446001a71f1c41fdc888c4e39c57bc03",
+      "research/coraza/lab_proxy.go": "3d26f20725c4109fbb2e0754a8e5d1a5a3c0c6bd157675c3caa0ae3bb492c295",
+      "research/coraza/lab_reload.go": "580b3fa812d0f715c0622270ebf2db7e62a5975d5a06779c33e052e8a753c3a5",
+      "research/coraza/lab_reload_test.go": "b76d3c5dac326d6b4d533e8a34507bee1649a865d621726b870683b113c2ba2b",
+      "research/coraza/lab_shutdown.go": "1dce02282e19690273f963ba11e89c5addd068a0ca68f7c39c98b17663b7ac0c",
+      "research/coraza/lab_shutdown_test.go": "3c2397acedbf906d623c50f24640f5a1d6c0230e4e569802b58c6aad7ae62d3b",
+      "research/coraza/lab_supervision.go": "f38873b71f2b0859ff514c3c09cf06576364c8eaebd009bc8c5f9dd7e20d4599",
+      "research/coraza/lab_supervision_test.go": "b2fc15d9a5e4ae82e1512d0e84e6c192df24368907c8a3ca068a714643f0e60d",
+      "research/coraza/proxy_listener.go": "97a2c04f84f6d2d02b4463e1c6b65a2391d1b0468a61289e7bfe683e4e8cfcff",
+      "research/native/image-pin.json": "8b3c0b1961712f01f2fbc11532da3d4576845fffddc24856782a850da81d6f8b",
+      "tools/lab-supervisor.py": "17d5204dcc4b286bc049ad34022df7ec9d65a447be7a7dbf4ef8b7e5b738aea3",
+      "tools/lifecycle-components.py": "585eba15cf79d84b8c9db3ffafbae70c562ca72980164156323d884dfe3986af",
+      "tools/native-build.py": "d14a0f5ae11b5cd174e8fde968efa1cad8e4544255d6eaa1425213b5ee0bca1c",
+      "tools/native-engine.py": "b51b7ac1608700b89cca26ea335d4d1424bd4f1d0e21fbe0303f989357355ac0",
+      "tools/native-progress.py": "6056e94e2f5bc1308bd43c3a90402766676503397c9a419d982678267f38e178",
+      "tools/native/lifecycle-build.sh": "eae65d089d8b73f0cd9525e4ba974bf034e24254cdeac2898d5d0c6f8978526c",
+      "tools/native/lifecycle-components.sh": "1d3026b163d547d56d7392ee29a7b5339d1ebbab5810083fb66c5c19e8a7fa34",
+      "tools/native/patch-openbsd.sh": "eae9d586161ed5f30c6d179ff55884b5a47ddad7c3b5a7a4637345219e8190e7",
+      "tools/openbsd-patches.json": "0cf5b352ea5d50d91d106abd42e65b8dac105b6c72fca3c83bfd1706bc891771",
+      "tools/research-pins.json": "7383179c02c51b05fc29776bfe538c1ee1f6438aa5b35065d1a44a3b06f02efe"
+    },
+    "changed_go_paths": [
+      "research/coraza/lab_config.go",
+      "research/coraza/lab_file.go",
+      "research/coraza/lab_file_test.go"
+    ],
+    "dependencies_unchanged": true
+  },
+  "run_id": "2f2c1c58-e59a-442b-9aad-dd27dc5e5a27",
+  "started": "2026-10-18T14:31:07.065604+00:00",
+  "finished": "2026-10-18T14:53:16.668356+00:00",
+  "discovery": {
+    "base": "4367ad3aab18ceaa038494a4e43e55f28f0f8157",
+    "implementation_sha256": "458cecbaf4cc2f31e54a6b790bcba942684ce4b7144118ca67ee36d03a1aa688",
+    "uncommitted_test_sha256": "675ef77438794b24cc6dfc5a155343fe7b22a4f46e1b0f1c32dd09e2f601be71",
+    "log_sha256": "4948c08912bb6d53bc1fb26594b52ba5260280b6d2655783e9611192a360307b",
+    "failed_parent_count": 1,
+    "failed_subtest_count": 1,
+    "description": "Actual ReadLabFile maximum-limit regression fails before repair; uncommitted host test only."
+  },
+  "build_lineage": {
+    "origin": "offline-native-compilation",
+    "target": "OpenBSD amd64",
+    "native_source_build": true,
+    "native_race_instrumentation": false,
+    "host_cross_build_control": {
+      "host_go": "go version go1.27.2 darwin/arm64",
+      "host_go_executable_sha256": "516c1fbb53b5f8f4852f0c3c379d45bcff53a1032e5cd1a9ca1738f03ba07cb1",
+      "library_sha256": "406fd9f2a549052454fb1953bd7d12359ddf9e15d83f58ea94421df3b2275ab8",
+      "used_for_native_execution": false
+    },
+    "compiler_archive_sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+    "compiler_executable_sha256": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+    "source_archive_sha256": "0035e2997040a2a84fa5c4de11904e4f53582771c15b2ad1b7eb2650aeecb3c1",
+    "private_source_export": {
+      "file_count": 802,
+      "canonical_sha256": "7ec3b1bbc700490603099c8f3d1f56dca5a1ba5fa45dd3c52f2a8c8a762652c6",
+      "encoding": "sorted UTF-8 relative source name, TAB, lowercase SHA-256, LF; inventory remains ignored"
+    }
+  },
+  "component_build": {
+    "admitted": true,
+    "execution_returncode": 0,
+    "execution_error_class": "none",
+    "budget_reserved_before_launch": true,
+    "required_remaining_seconds": 1380,
+    "build_log_sha256": "5450e42c38eed401310006f65d1f89fdf73e2a5f8de648764d83d437e661bbec",
+    "progress": {
+      "valid": true,
+      "observed_steps": 6,
+      "last_step": "outputs-verified",
+      "complete": true
+    },
+    "receipts": {
+      "uid": "32767",
+      "os": "OpenBSD 7.9 amd64",
+      "version": "go1.27.2",
+      "compiler": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+      "source": "0035e2997040a2a84fa5c4de11904e4f53582771c15b2ad1b7eb2650aeecb3c1",
+      "library": "31026e7e21ae711333f1c4a30f3e311f4ab3adadd8f432517921df952c896e8b",
+      "control": "c9e5320756a927c6167d2ab3fbcad911284cdf924c755027f8fa3f1b469cfa28"
+    },
+    "hashes": {
+      "library": "31026e7e21ae711333f1c4a30f3e311f4ab3adadd8f432517921df952c896e8b",
+      "control": "c9e5320756a927c6167d2ab3fbcad911284cdf924c755027f8fa3f1b469cfa28"
+    },
+    "installed_verified": true
+  },
+  "component_execution": {
+    "admitted": true,
+    "hashes": {
+      "library": "31026e7e21ae711333f1c4a30f3e311f4ab3adadd8f432517921df952c896e8b",
+      "control": "c9e5320756a927c6167d2ab3fbcad911284cdf924c755027f8fa3f1b469cfa28"
+    },
+    "execution_returncode": 0,
+    "execution_error_class": "none",
+    "log_sha256": "76705778f7572199e60bbf4d0696ca283760cddb6c6f1bb2ce366e7c2fa8ca8b",
+    "observed_pass_count": 54,
+    "scope": "ordinary-components-only",
+    "parent_count": 23,
+    "subtest_count": 31,
+    "retained_lifecycle": {
+      "parent_count": 18,
+      "subtest_count": 12
+    },
+    "file_inputs": {
+      "parent_count": 5,
+      "subtest_count": 19
+    },
+    "suite_pass_counts": {
+      "library": 18,
+      "control": 12,
+      "files": 24
+    },
+    "pass_count": 54,
+    "receipts": {
+      "os": "OpenBSD 7.9 amd64",
+      "scope": "ordinary-components",
+      "library": "31026e7e21ae711333f1c4a30f3e311f4ab3adadd8f432517921df952c896e8b",
+      "control": "c9e5320756a927c6167d2ab3fbcad911284cdf924c755027f8fa3f1b469cfa28",
+      "uid": "32767",
+      "complete": "verified"
+    },
+    "native_source_build": true,
+    "complete_profile_qualified": false
+  },
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 2400,
+    "patch_deadline_seconds": 600,
+    "post_build_reserve_seconds": 180,
+    "native_build_deadline_seconds": 1200,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "patch_refresh": {
+    "signature_verified": true,
+    "installed": 34,
+    "pending": 0,
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+    "boot_before": "1792333884",
+    "boot_after": "1792334313"
+  },
+  "bootstrap_revoked": true,
+  "source_unchanged": true,
+  "baseline_unchanged": true,
+  "base_image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "qemu": {
+    "version": "QEMU emulator version 11.1.1",
+    "executable_sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f"
+  },
+  "progress": {
+    "result": "passed",
+    "finished": true,
+    "stage_counts": {
+      "pending": 0,
+      "running": 0,
+      "completed": 6,
+      "failed": 0,
+      "interrupted": 0,
+      "not-run": 0
+    },
+    "sequence": 14,
+    "stopped_stage": null,
+    "error_class": "none",
+    "sha256": "0165cc40ba9a4887d65c32c53fc17e2ea9939be4503d66eb11beb7567aad2cfa"
+  },
+  "phase_durations_seconds": {
+    "guest_boot": 69.501,
+    "fresh_access": 8.277,
+    "patch_refresh": 411.383,
+    "lifecycle_build": 829.954,
+    "native": 8.824,
+    "subset_gate": 0.0
+  },
+  "teardown": {
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 2400,
+    "escalated": false,
+    "teardown_verified": true
+  },
+  "private_tracked_source_inventory": {
+    "file_count": 349,
+    "canonical_sha256": "54b310a24eda8cd304ab4ef442e41471f7b3d3f056bcc0bc0f708c3ecb6291d8",
+    "encoding": "sorted UTF-8 relative source name, TAB, lowercase SHA-256, LF; inventory remains ignored"
+  },
+  "independent_host_cleanup": {
+    "owned_process_absent": true,
+    "owned_process_group_absent": true,
+    "supervisor_teardown_verified": true,
+    "supervisor_escalated": false
+  },
+  "private_independent_cleanup_sha256": "a7be49ad58a4cb914176e5ecaaedfe4e3521f61869eb1af9ce8a6ea9c170ed72",
+  "private_report_sha256": "2c40b0c9169a54c330fb97e2d919785408f35e5571880ef83187aa8f81f66033",
+  "private_progress_sha256": "0165cc40ba9a4887d65c32c53fc17e2ea9939be4503d66eb11beb7567aad2cfa",
+  "private_teardown_sha256": "6121c4e6ec7b6786297cec5e8fac20c920a590065f3f6fdbd753935c3a255392",
+  "local_checks": {
+    "repository_tests": 132,
+    "verify_log_sha256": "9ea54405235bad22a7c5d5570cea57af5408637395e592e7a745e93e9a82ba5f",
+    "functional_parent_count": 23,
+    "functional_subtest_count": 31,
+    "functional_log_sha256": "a1a9115c025e9987e2eefaa945e68921790f2a2abcb1b83bbbafff836fbaa68b",
+    "race_log_sha256": "7bf17056896ad0bfbc5503eda488adc74c9d29dc3f9e95e5879516d60707b872",
+    "vet_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cross_log_sha256": "16299ce2204bab2284d20b599f805aaae26f281eeabe74d82fe204364d0aa457",
+    "source_export_log_sha256": "614ba875029380832d9c2e94fb33505ae13cf1eef74705f79f0408b59859b245",
+    "host_go_inputs_sha256": {
+      "research/coraza/lab_config.go": "bd97222c6792ac7e5a89af5a8ce594a37ff1b042ce035b00e654ed50d6f0c5db",
+      "research/coraza/lab_file.go": "13c7b181ef905dfd5910bffbd4499ac21c28eec54fbe875431ec8417ce7d9acf",
+      "research/coraza/lab_file_test.go": "c34a0e6f682e7a9027c5012568fda59f446001a71f1c41fdc888c4e39c57bc03",
+      "research/coraza/lab_reload.go": "580b3fa812d0f715c0622270ebf2db7e62a5975d5a06779c33e052e8a753c3a5",
+      "research/coraza/lab_reload_test.go": "b76d3c5dac326d6b4d533e8a34507bee1649a865d621726b870683b113c2ba2b",
+      "research/coraza/lab_shutdown.go": "1dce02282e19690273f963ba11e89c5addd068a0ca68f7c39c98b17663b7ac0c",
+      "research/coraza/lab_shutdown_test.go": "3c2397acedbf906d623c50f24640f5a1d6c0230e4e569802b58c6aad7ae62d3b",
+      "research/coraza/lab_supervision.go": "f38873b71f2b0859ff514c3c09cf06576364c8eaebd009bc8c5f9dd7e20d4599",
+      "research/coraza/lab_supervision_test.go": "b2fc15d9a5e4ae82e1512d0e84e6c192df24368907c8a3ca068a714643f0e60d",
+      "research/coraza/cmd/labproxy/control.go": "1cb8fcf63cf6a92ab5e36254c369792fb9c891affd76f641badb336dedefa3de",
+      "research/coraza/cmd/labproxy/control_test.go": "47a58165b418250ccd15328405d3890182d82d692ff78485523dd1aebbea436a"
+    }
+  },
+  "historical_evidence_unchanged": {
+    "research/native/lifecycle-native-build-observations.json": "83be3b8bab8fb4fa10ad1aff982933929139c857c9821df92cdcb39dcd8ef706",
+    "research/native/lifecycle-native-build-failure.json": "3d126fc8ac3925d9ed66a0751a2bd5b39d1a5b2b1cd1a8b51f7a107a8019ce53",
+    "research/native/lifecycle-component-observations.json": "43ecd0e75f781026925de9cda480f0e4d87f362da45db6330876b080e2ae55bf",
+    "research/native/request-wire-native-failure.json": "8747bba7b7eb9035df1740c1e2b2a24f0e6c605f374cc391bba9c3087251a257",
+    "research/coraza/shutdown-host-observations.json": "12c9d7e823bc9783903b9029815e2e3218f427e51d49beddaa6abcec1b70f275",
+    "research/coraza/supervision-host-observations.json": "3c8b346bd092458f2f1217753282fb77c38b302de12ae25e857b7913a0032036"
+  },
+  "full_engine_suite_executed": false,
+  "actual_companion_cli_executed": false,
+  "traffic_security_validation_rerun": false,
+  "advisory_scan_rerun": false,
+  "complete_profile_qualified": false,
+  "limitations": [
+    "Owned regular-file intake; parent directories, hard links, same-UID writers, filesystem latency and atomic multi-file snapshots are not authenticated.",
+    "File tests use owned temporary regular/symlink/directory/FIFO inputs and fake I/O; no application listener or WAF engine.",
+    "Native component compilation/execution only; actual companion/relayd/WAF/CRS/traffic/PF/full 163-case qualification is absent.",
+    "Affected WAF/traffic/security validation stays paused under the reported access notice; no expanded access or safeguard bypass.",
+    "Earlier native reload failure remains unexplained and later wire scope unexecuted; previous receipts cannot qualify changed runtime.",
+    "No product/phase adoption, deployment/service enablement, live network, installer or release change."
+  ]
+}

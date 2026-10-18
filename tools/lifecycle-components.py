@@ -32,6 +32,16 @@ CONTROL_CHILDREN = {
     'TestLabControlReload/' + name for name in ('accepted', 'config-error', 'reload-error', 'retirement-error')
 } | {'TestLabControlFailureDuringReload/' + name for name in ('read', 'reload')}
 
+FILE_INPUTS = {'TestLabFileRegular', 'TestLabFileSpecial', 'TestLabFileDescriptor',
+               'TestLabFileLimits', 'TestLabFileOpenFailure'}
+FILE_CHILDREN = {'TestLabFileRegular/' + name for name in ('empty', 'below', 'exact', 'above')}
+FILE_CHILDREN |= {'TestLabFileSpecial/' + name for name in ('missing', 'symlink', 'directory', 'fifo')}
+FILE_CHILDREN |= {'TestLabFileDescriptor/' + name for name in
+                  ('regular', 'nonregular', 'oversized-stat', 'stat-error', 'read-error', 'close-error', 'joined-errors', 'growth')}
+FILE_CHILDREN |= {'TestLabFileLimits/' + name for name in ('negative', 'zero', 'overflow')}
+SUITES = {'library': LIBRARY | LIBRARY_CHILDREN, 'control': CONTROL | CONTROL_CHILDREN,
+          'files': FILE_INPUTS | FILE_CHILDREN}
+
 
 def selection(names):
     return '^(' + '|'.join(sorted(names)) + ')$'
@@ -56,12 +66,12 @@ def admit(text, hashes):
             parts = line.split('\t')
             if active is not None or len(parts) != 3 or parts[1] in receipts:
                 raise ValueError('lifecycle receipt invalid')
-            if parts[1] == 'complete' and set(bodies) != {'library', 'control'}:
+            if parts[1] == 'complete' and set(bodies) != set(SUITES):
                 raise ValueError('premature lifecycle completion')
             receipts[parts[1]] = parts[2]
         elif line.startswith('LIFECYCLE-BEGIN '):
             name = line.removeprefix('LIFECYCLE-BEGIN ')
-            if active is not None or name not in ('library', 'control') or name in bodies or (name == 'control' and 'library' not in bodies):
+            if active is not None or len(bodies) >= len(SUITES) or name != tuple(SUITES)[len(bodies)]:
                 raise ValueError('lifecycle suite order invalid')
             active = name
             bodies[name] = []
@@ -75,15 +85,18 @@ def admit(text, hashes):
             raise ValueError('test output outside lifecycle suite')
     wanted = {**hashes, 'os': 'OpenBSD 7.9 amd64', 'uid': '32767',
               'scope': 'ordinary-components', 'complete': 'verified'}
-    if active is not None or set(bodies) != {'library', 'control'} or receipts != wanted:
+    if active is not None or set(bodies) != set(SUITES) or receipts != wanted:
         raise ValueError('lifecycle identity/suite incomplete')
     if set(hashes) != {'library', 'control'} or any(not re.fullmatch('[0-9a-f]{64}', h) for h in hashes.values()):
         raise ValueError('lifecycle input hash invalid')
-    library = admitted_suite('\n'.join(bodies['library']), LIBRARY | LIBRARY_CHILDREN)
-    control = admitted_suite('\n'.join(bodies['control']), CONTROL | CONTROL_CHILDREN)
+    counts = {name: admitted_suite('\n'.join(bodies[name]), expected) for name, expected in SUITES.items()}
     return {'admitted': True, 'scope': 'ordinary-components-only',
-            'parent_count': len(LIBRARY) + len(CONTROL), 'subtest_count': len(LIBRARY_CHILDREN) + len(CONTROL_CHILDREN),
-            'pass_count': library + control, 'receipts': receipts,
+            'parent_count': len(LIBRARY) + len(CONTROL) + len(FILE_INPUTS),
+            'subtest_count': len(LIBRARY_CHILDREN) + len(CONTROL_CHILDREN) + len(FILE_CHILDREN),
+            'retained_lifecycle': {'parent_count': len(LIBRARY) + len(CONTROL),
+                                   'subtest_count': len(LIBRARY_CHILDREN) + len(CONTROL_CHILDREN)},
+            'file_inputs': {'parent_count': len(FILE_INPUTS), 'subtest_count': len(FILE_CHILDREN)},
+            'suite_pass_counts': counts, 'pass_count': sum(counts.values()), 'receipts': receipts,
             'native_source_build': False, 'complete_profile_qualified': False}
 
 
@@ -107,7 +120,8 @@ def execute_guest(guest, work, hashes):
     library_hash, control_hash = hashes['library'], hashes['control']
     script = (ROOT / 'tools/native/lifecycle-components.sh').read_bytes()
     for token, value in {'LIBRARY_SHA256': library_hash, 'CONTROL_SHA256': control_hash,
-                         'LIBRARY_SELECTION': selection(LIBRARY), 'CONTROL_SELECTION': selection(CONTROL)}.items():
+                         'LIBRARY_SELECTION': selection(LIBRARY), 'CONTROL_SELECTION': selection(CONTROL),
+                         'FILE_SELECTION': selection(FILE_INPUTS)}.items():
         script = script.replace(token.encode(), value.encode())
     log = work / 'lifecycle-components.log'
     code, error_class = None, 'none'

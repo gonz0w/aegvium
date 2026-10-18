@@ -23,7 +23,7 @@ class LifecycleComponentsTests(unittest.TestCase):
         hashes = hashes or self.hashes
         receipts = {**hashes, 'os': 'OpenBSD 7.9 amd64', 'uid': '32767', 'scope': 'ordinary-components'}
         lines = ['LIFECYCLE\t'+key+'\t'+value for key, value in receipts.items()]
-        for name, expected in (('library', LAB.LIBRARY | LAB.LIBRARY_CHILDREN), ('control', LAB.CONTROL | LAB.CONTROL_CHILDREN)):
+        for name, expected in LAB.SUITES.items():
             lines += ['LIFECYCLE-BEGIN '+name]
             lines += ['--- PASS: '+test+' (0.00s)' for test in sorted(expected)]
             lines += ['PASS', 'LIFECYCLE-END '+name]
@@ -31,10 +31,10 @@ class LifecycleComponentsTests(unittest.TestCase):
 
     def test_exact_component_counts_and_selection(self):
         result = LAB.admit(self.log(), self.hashes)
-        self.assertEqual((result['parent_count'], result['subtest_count'], result['pass_count']), (18, 12, 30))
+        self.assertEqual((result['parent_count'], result['subtest_count'], result['pass_count']), (23, 31, 54))
         self.assertFalse(result['native_source_build'])
         self.assertFalse(result['complete_profile_qualified'])
-        for names in (LAB.LIBRARY, LAB.CONTROL):
+        for names in (LAB.LIBRARY, LAB.CONTROL, LAB.FILE_INPUTS):
             selected = LAB.selection(names)
             for name in names:
                 self.assertRegex(name, selected)
@@ -102,7 +102,7 @@ class LifecycleComponentsTests(unittest.TestCase):
                         return subprocess.CompletedProcess([],0)
                 result=LAB.guest_run(Guest(),work,binary,digest,binary,digest)
                 self.assertEqual(result['admitted'],outcome==0)
-                self.assertEqual(result['observed_pass_count'],30)
+                self.assertEqual(result['observed_pass_count'],54)
                 self.assertNotIn('private marker',json.dumps(result))
 
     def test_exclusive_mode_rejects_every_other_option_before_preflight(self):
@@ -115,3 +115,16 @@ class LifecycleComponentsTests(unittest.TestCase):
                     with self.assertRaises(SystemExit) as error:ENGINE.run()
                     self.assertEqual(error.exception.code, 2)
                     git.assert_not_called()
+
+    def test_file_suite_is_required_and_separately_counted(self):
+        text=self.log();result=LAB.admit(text,self.hashes)
+        self.assertEqual(result['retained_lifecycle'],{'parent_count':18,'subtest_count':12})
+        self.assertEqual(result['file_inputs'],{'parent_count':5,'subtest_count':19})
+        self.assertEqual(result['suite_pass_counts'],{'library':18,'control':12,'files':24})
+        a=text.index('LIFECYCLE-BEGIN files');b=text.index('LIFECYCLE-END files')+len('LIFECYCLE-END files\n')
+        for bad in (text[:a]+text[b:],
+                    text.replace('--- PASS: TestLabFileDescriptor/growth (0.00s)\n',''),
+                    text.replace('TestLabFileSpecial/fifo','TestLabFileSpecial/unknown'),
+                    text.replace('LIFECYCLE-BEGIN files','LIFECYCLE-BEGIN control'),
+                    text.replace('--- PASS: TestLabFileRegular/exact (0.00s)','--- SKIP: TestLabFileRegular/exact (0.00s)')):
+            with self.assertRaises(ValueError):LAB.admit(bad,self.hashes)
