@@ -10,7 +10,6 @@ import (
 	"io"
 	"net/netip"
 	"net/url"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -154,23 +153,6 @@ func ReadLabConfig(r io.Reader) (LabConfig, error) {
 	return config, nil
 }
 
-func ReadLabFile(path string, limit int) ([]byte, error) {
-	// No symlinks or special files; this is an owned fixture, not a sender auth boundary.
-	info, e := os.Lstat(path)
-	if e != nil || !info.Mode().IsRegular() || info.Size() > int64(limit) {
-		return nil, errors.New("lab file must be bounded regular input")
-	}
-	file, e := os.Open(path)
-	if e != nil {
-		return nil, e
-	}
-	defer file.Close()
-	data, e := io.ReadAll(io.LimitReader(file, int64(limit)+1))
-	if e != nil || len(data) > limit {
-		return nil, errors.New("lab file read/bound")
-	}
-	return data, nil
-}
 func labRouteTarget(route LabRoute) (*url.URL, *tls.Config, error) {
 	target, e := url.Parse(route.Backend)
 	if e != nil || target == nil || target.Opaque != "" || (target.Scheme != "http" && target.Scheme != "https") || target.User != nil || target.Path != "" || target.RawQuery != "" || target.ForceQuery || target.Fragment != "" || strings.ContainsAny(route.Backend, "?#") {
