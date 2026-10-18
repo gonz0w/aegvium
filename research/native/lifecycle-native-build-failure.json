@@ -1,0 +1,185 @@
+{
+  "schema": 1,
+  "scope": "NCB-01\u201304 ordinary offline build attempt; total guest deadline before build admission; component execution not run",
+  "passed": false,
+  "source": {
+    "commit": "5018429e1b199b402f70b84b31ce529936e95670",
+    "tree": "5ffe2fd900b99f31f1a8f3de192e9f8aabe2b9f5",
+    "base": "262f67be8f7261dc437da057783f7fd9ea8d5e7e",
+    "runtime_inputs_sha256": {
+      "Makefile": "a34fff9fe8d2ceef512964f6a05a8f1916d440f2e0e3fc8b9315241ac427969c",
+      "research/coraza/cmd/labproxy/control.go": "1cb8fcf63cf6a92ab5e36254c369792fb9c891affd76f641badb336dedefa3de",
+      "research/coraza/cmd/labproxy/control_test.go": "47a58165b418250ccd15328405d3890182d82d692ff78485523dd1aebbea436a",
+      "research/coraza/cmd/labproxy/main.go": "015ab8efddb6470ffccb6647965ca29fd78b06aee5ac33cd0dcbe6eea2a6e379",
+      "research/coraza/go.mod": "dca5c181ccdc6e49e975e7e9ede59a72578e42b36818d90cfeaed2ede0525e27",
+      "research/coraza/go.sum": "afc8a15db82d3fab3614845cff2bf2406eb7496b20f98f6240bb2913e75696c8",
+      "research/coraza/lab_proxy.go": "3d26f20725c4109fbb2e0754a8e5d1a5a3c0c6bd157675c3caa0ae3bb492c295",
+      "research/coraza/lab_reload.go": "580b3fa812d0f715c0622270ebf2db7e62a5975d5a06779c33e052e8a753c3a5",
+      "research/coraza/lab_reload_test.go": "b76d3c5dac326d6b4d533e8a34507bee1649a865d621726b870683b113c2ba2b",
+      "research/coraza/lab_shutdown.go": "1dce02282e19690273f963ba11e89c5addd068a0ca68f7c39c98b17663b7ac0c",
+      "research/coraza/lab_shutdown_test.go": "3c2397acedbf906d623c50f24640f5a1d6c0230e4e569802b58c6aad7ae62d3b",
+      "research/coraza/lab_supervision.go": "f38873b71f2b0859ff514c3c09cf06576364c8eaebd009bc8c5f9dd7e20d4599",
+      "research/coraza/lab_supervision_test.go": "b2fc15d9a5e4ae82e1512d0e84e6c192df24368907c8a3ca068a714643f0e60d",
+      "research/coraza/proxy_listener.go": "97a2c04f84f6d2d02b4463e1c6b65a2391d1b0468a61289e7bfe683e4e8cfcff",
+      "research/native/image-pin.json": "8b3c0b1961712f01f2fbc11532da3d4576845fffddc24856782a850da81d6f8b",
+      "tools/lab-supervisor.py": "17d5204dcc4b286bc049ad34022df7ec9d65a447be7a7dbf4ef8b7e5b738aea3",
+      "tools/lifecycle-components.py": "ec42eb475a302540e619883488b26cc17397e905191549afdd3d44fc4666c105",
+      "tools/native-build.py": "5b0f91b5bd5eb789cc79165b4bfab20928b053c8ca597111003d1c2006391e4b",
+      "tools/native-engine.py": "c695a0cdcdce98fd4fc4d3d22889eb8100513cb7fc90ab9851b3f97ccbc7fec2",
+      "tools/native-progress.py": "6056e94e2f5bc1308bd43c3a90402766676503397c9a419d982678267f38e178",
+      "tools/native/lifecycle-build.sh": "8b5b5fcb868ef1b0c670ed2bd73143a31df3574d453f5217696b2a75e3dcdb80",
+      "tools/native/lifecycle-components.sh": "d2f62d01b785b777b62f836259598286c97324fc821e6b899773b49d78875ec6",
+      "tools/native/patch-openbsd.sh": "eae9d586161ed5f30c6d179ff55884b5a47ddad7c3b5a7a4637345219e8190e7",
+      "tools/openbsd-patches.json": "0cf5b352ea5d50d91d106abd42e65b8dac105b6c72fca3c83bfd1706bc891771",
+      "tools/research-pins.json": "7383179c02c51b05fc29776bfe538c1ee1f6438aa5b35065d1a44a3b06f02efe"
+    },
+    "runtime_go_unchanged_from_base": true
+  },
+  "run_id": "cbf6ac77-a69e-4d81-95be-f18297504333",
+  "started": "2026-10-17T00:53:06.884176+00:00",
+  "finished": "2026-10-17T01:23:08.497218+00:00",
+  "build_lineage": {
+    "origin": "requested-offline-native-compilation",
+    "target": "OpenBSD amd64",
+    "native_source_build": false,
+    "native_race_instrumentation": false,
+    "host_cross_build_control": {
+      "host_go": "go version go1.27.2 darwin/arm64",
+      "host_go_executable_sha256": "516c1fbb53b5f8f4852f0c3c379d45bcff53a1032e5cd1a9ca1738f03ba07cb1",
+      "library_sha256": "0eaf8702015adf70708d43f2dda489ac4e766de12d8744dbc5647b97001990da",
+      "used_for_native_execution": false
+    },
+    "compiler_archive_sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+    "compiler_executable_sha256": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+    "source_archive_sha256": "5a71f197549e6df3c71486652d87da0331869dd78bab0a22ddfac0a430f879e3",
+    "private_source_export": {
+      "file_count": 800,
+      "canonical_sha256": "1d002bd52d0b90ca3fe9b257eedf357422805e7f46b76aae987bcf19b7d59271",
+      "encoding": "sorted UTF-8 relative source name, TAB, lowercase SHA-256, LF; inventory remains ignored"
+    }
+  },
+  "component_build": {
+    "admitted": false,
+    "execution_returncode": null,
+    "execution_error_class": "timeout",
+    "build_log_sha256": "51ccf765da497ea6cbcf2dec94b8a81dd45bd8311c02d4a156d8992411104aaa",
+    "admission_error": "incomplete-or-invalid-lifecycle-build",
+    "builder_uid_observed": "32767",
+    "observed_output_receipt_count": 0
+  },
+  "component_execution": {
+    "state": "not-run",
+    "reason": "native-build-not-admitted",
+    "observed_pass_count": 0
+  },
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 1800,
+    "patch_deadline_seconds": 600,
+    "native_build_deadline_seconds": 1200,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "patch_refresh": {
+    "signature_verified": true,
+    "installed": 34,
+    "pending": 0,
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+    "boot_before": "1792198401",
+    "boot_after": "1792198994"
+  },
+  "bootstrap_revoked": true,
+  "source_unchanged": true,
+  "baseline_unchanged": true,
+  "base_image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "qemu": {
+    "version": "QEMU emulator version 11.1.1",
+    "executable_sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f"
+  },
+  "progress": {
+    "result": "failed",
+    "finished": true,
+    "stage_counts": {
+      "pending": 0,
+      "running": 0,
+      "completed": 3,
+      "failed": 1,
+      "interrupted": 0,
+      "not-run": 2
+    },
+    "sequence": 10,
+    "stopped_stage": "lifecycle_build",
+    "error_class": "operation",
+    "sha256": "6692219dca54441e9a3a431b6c9bbaafd132947e7c7325f42f27836bd3865a44"
+  },
+  "teardown": {
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 1800,
+    "escalated": false,
+    "teardown_verified": true
+  },
+  "private_tracked_source_inventory": {
+    "file_count": 345,
+    "canonical_sha256": "5d114f6fdaf1e38682a5bac13074192a59e6bcef049a966397ad609d4eb46624",
+    "encoding": "sorted UTF-8 relative source name, TAB, lowercase SHA-256, LF; inventory remains ignored"
+  },
+  "independent_host_cleanup": {
+    "owned_process_absent": true,
+    "owned_process_group_absent": true,
+    "supervisor_teardown_verified": true,
+    "supervisor_escalated": false
+  },
+  "private_independent_cleanup_sha256": "a7be49ad58a4cb914176e5ecaaedfe4e3521f61869eb1af9ce8a6ea9c170ed72",
+  "private_report_sha256": "2337bb172cece4df2d2754dab08e50d5c33fdd1019b0fba54c6e96862045fb34",
+  "private_progress_sha256": "6692219dca54441e9a3a431b6c9bbaafd132947e7c7325f42f27836bd3865a44",
+  "private_teardown_sha256": "2c01f50c0942562c0f6e6fc759e00a546d173631e2c1d4afe53e51b41579d1e0",
+  "local_checks": {
+    "repository_tests": 127,
+    "verify_log_sha256": "3ba184935fb9958ec96d50061601439b01e986d3e22b5a8cf83165d94a9000c8",
+    "source_export_preflight_log_sha256": "606ace204f0d5607cac1bd3c1a5b4278e2eedecaf26da75d9efd45a88e7f7d7c",
+    "runtime_go_checks": "not repeated: all Go inputs unchanged from merged #110; original source-bound functional/race/vet evidence retained"
+  },
+  "historical_evidence_unchanged": {
+    "research/native/request-wire-native-failure.json": "8747bba7b7eb9035df1740c1e2b2a24f0e6c605f374cc391bba9c3087251a257",
+    "research/coraza/shutdown-host-observations.json": "12c9d7e823bc9783903b9029815e2e3218f427e51d49beddaa6abcec1b70f275",
+    "research/coraza/supervision-host-observations.json": "3c8b346bd092458f2f1217753282fb77c38b302de12ae25e857b7913a0032036",
+    "research/native/lifecycle-component-observations.json": "43ecd0e75f781026925de9cda480f0e4d87f362da45db6330876b080e2ae55bf"
+  },
+  "full_engine_suite_executed": false,
+  "actual_companion_cli_executed": false,
+  "traffic_security_validation_rerun": false,
+  "advisory_scan_rerun": false,
+  "complete_profile_qualified": false,
+  "limitations": [
+    "Native compilation was attempted but not admitted; no native component test execution in this run. Earlier host-cross-built native component success remains separate.",
+    "Selected eighteen parents use fake servers/listeners/closers and benign in-memory handlers; no application listener or WAF engine instance.",
+    "Affected WAF/traffic/security validation remains paused under the reported access notice; no expanded access or safeguard bypass.",
+    "Earlier native reload response failure remains unexplained and later wire matrix unexecuted.",
+    "Native components cannot replace unchanged 163-case engine or full native SV/SD/profile requirements.",
+    "No product adoption, deployment/service enablement, live network, installer or release change."
+  ],
+  "failure": {
+    "error_class": "operation",
+    "stopped_stage": "lifecycle_build",
+    "observed_class": "shared-total-guest-budget-timeout-during-build",
+    "total_guest_deadline_seconds": 1800,
+    "configured_compilation_ceiling_seconds": 1200,
+    "complete_native_outputs_admitted": false,
+    "component_tests_executed": false,
+    "underlying_compiler_cause_established": false,
+    "retry_performed": false,
+    "live_deadline_extension": false
+  },
+  "phase_durations_seconds": {
+    "guest_boot": 59.147,
+    "fresh_access": 7.263,
+    "patch_refresh": 637.612,
+    "lifecycle_build": 1095.985,
+    "native": null,
+    "subset_gate": null
+  }
+}

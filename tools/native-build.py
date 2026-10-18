@@ -36,6 +36,15 @@ def compiler():
     return path
 
 
+def compiler_executable_hash(archive):
+    with tarfile.open(archive, 'r:gz') as sdk:
+        member = sdk.getmember('go/bin/go')
+        if not member.isfile():
+            raise ValueError('native compiler executable is not regular')
+        with sdk.extractfile(member) as executable:
+            return hashlib.file_digest(executable, 'sha256').hexdigest()
+
+
 def fetch():
     os.umask(0o077)
     CACHE.mkdir(mode=0o700, exist_ok=True)
@@ -99,8 +108,10 @@ def package(work):
                 item.mode = 0o444
                 with path.open('rb') as stream:
                     output.addfile(item, stream)
+        verify_source_bundle(bundle, hashes)
         return {'compiler': archive, 'source': bundle,
                 'compiler_sha256': digest(archive), 'source_sha256': digest(bundle),
+                'compiler_executable_sha256': compiler_executable_hash(archive),
                 'source_files': hashes}
 
 
@@ -129,12 +140,7 @@ def connector_package(work):
     connector = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(connector)
     loaded = connector.verify_graph()
-    with tarfile.open(archive, 'r:gz') as sdk:
-        member = sdk.getmember('go/bin/go')
-        if not member.isfile():
-            raise ValueError('native compiler executable is not regular')
-        with sdk.extractfile(member) as executable:
-            compiler_executable_hash = hashlib.file_digest(executable, 'sha256').hexdigest()
+    compiler_executable_digest = compiler_executable_hash(archive)
     reviewed = json.loads((ROOT / 'research/coraza/connector-dependencies.json').read_text())
     env = {**os.environ, 'GOPROXY': 'off', 'GOSUMDB': 'off', 'GOTOOLCHAIN': 'local',
            'GOOS': 'openbsd', 'GOARCH': 'amd64', 'CGO_ENABLED': '0'}
@@ -181,7 +187,7 @@ def connector_package(work):
                 'compiler_sha256': digest(archive), 'source_sha256': digest(bundle),
                 'source_files': hashes, 'reviewed_target_modules': len(graph),
                 'reviewed_notice_files': sum(len(r['legal_files']) for r in reviewed['modules']),
-                'compiler_executable_sha256': compiler_executable_hash}
+                'compiler_executable_sha256': compiler_executable_digest}
 
 
 if __name__ == '__main__':

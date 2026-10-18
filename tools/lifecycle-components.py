@@ -95,6 +95,11 @@ def guest_run(guest, work, library, library_hash, control, control_hash):
         if result.returncode:
             raise RuntimeError('lifecycle binary transfer failed')
         guest.require('test "$(sha256 -q /var/aegvium-lifecycle/' + name + '.test)" = "' + wanted + '"')
+    return execute_guest(guest, work, hashes)
+
+
+def execute_guest(guest, work, hashes):
+    library_hash, control_hash = hashes['library'], hashes['control']
     script = (ROOT / 'tools/native/lifecycle-components.sh').read_bytes()
     for token, value in {'LIBRARY_SHA256': library_hash, 'CONTROL_SHA256': control_hash,
                          'LIBRARY_SELECTION': selection(LIBRARY), 'CONTROL_SELECTION': selection(CONTROL)}.items():
@@ -119,3 +124,71 @@ def guest_run(guest, work, library, library_hash, control, control_hash):
     if code != 0 or error_class != 'none':
         result['admitted'] = False
     return result
+
+
+def parse_build(text, inputs):
+    if len(text) > 1024 * 1024:
+        raise ValueError('lifecycle build evidence oversized')
+    receipts = {}
+    for line in text.splitlines():
+        if line.startswith('LCBUILD\t'):
+            parts = line.split('\t')
+            if len(parts) != 3 or parts[1] in receipts:
+                raise ValueError('lifecycle build receipt invalid')
+            receipts[parts[1]] = parts[2]
+    expected = {'os': 'OpenBSD 7.9 amd64', 'version': 'go1.27.2', 'uid': '32767',
+                'compiler': inputs['compiler_executable_sha256'], 'source': inputs['source_sha256']}
+    if (set(receipts) != set(expected) | {'library', 'control'}
+            or any(receipts.get(key) != value for key, value in expected.items())
+            or any(not re.fullmatch('[0-9a-f]{64}', receipts.get(key, ''))
+                   for key in ('compiler', 'source', 'library', 'control'))):
+        raise ValueError('lifecycle build identity incomplete')
+    return receipts
+
+
+def build_guest(guest, work, inputs):
+    # Verify both host assets again before transferring either. No cross-build
+    # executable is accepted by this path, including after a partial build.
+    for name in ('compiler', 'source'):
+        with inputs[name].open('rb') as stream:
+            if hashlib.file_digest(stream, 'sha256').hexdigest() != inputs[name + '_sha256']:
+                raise ValueError('lifecycle native build input changed')
+    guest.require('set -eu; mkdir /var/aegvium-lifecycle-build; chmod 755 /var/aegvium-lifecycle-build')
+    for name, filename in (('compiler', 'go.tar.gz'), ('source', 'source.tar.gz')):
+        with inputs[name].open('rb') as stream:
+            response = guest.call('set -eu; cat > /var/aegvium-lifecycle-build/' + filename,
+                                  stream=stream, seconds=180)
+        if response.returncode:
+            raise RuntimeError('lifecycle native build transfer failed')
+    script = (ROOT / 'tools/native/lifecycle-build.sh').read_bytes()
+    for token, key in (('COMPILER_SHA256', 'compiler_sha256'), ('SOURCE_SHA256', 'source_sha256'),
+                       ('EXECUTABLE_SHA256', 'compiler_executable_sha256')):
+        if not re.fullmatch('[0-9a-f]{64}', inputs[key]):
+            raise ValueError('lifecycle native build hash invalid')
+        script = script.replace(token.encode(), inputs[key].encode())
+    log = work / 'lifecycle-build.log'
+    code, error_class = None, 'none'
+    with log.open('wb') as output:
+        try:
+            code = guest.call('sh -s', data=script, seconds=1200, output=output).returncode
+        except (TimeoutError, subprocess.TimeoutExpired):
+            error_class = 'timeout'
+        except OSError:
+            error_class = 'io'
+    result = {'admitted': False, 'execution_returncode': code, 'execution_error_class': error_class,
+              'build_log_sha256': hashlib.sha256(log.read_bytes()).hexdigest()}
+    try:
+        receipts = parse_build(log.read_text(errors='replace'), inputs)
+    except ValueError:
+        result['admission_error'] = 'incomplete-or-invalid-lifecycle-build'
+        return result
+    result['receipts'] = receipts
+    if code != 0 or error_class != 'none':
+        return result
+    hashes = {name: receipts[name] for name in ('library', 'control')}
+    guest.require('set -eu; mkdir /var/aegvium-lifecycle; chmod 755 /var/aegvium-lifecycle')
+    for name, wanted in hashes.items():
+        guest.require('set -eu; cp /var/aegvium-lifecycle-build/output/' + name + '.test /var/aegvium-lifecycle/' + name + '.test; '
+                      'chown root:wheel /var/aegvium-lifecycle/' + name + '.test; chmod 555 /var/aegvium-lifecycle/' + name + '.test; '
+                      'test "$(sha256 -q /var/aegvium-lifecycle/' + name + '.test)" = "' + wanted + '"')
+    return {**result, 'admitted': True, 'hashes': hashes, 'installed_verified': True}

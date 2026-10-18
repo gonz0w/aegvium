@@ -102,7 +102,7 @@ class ProgressTests(unittest.TestCase):
 
 
 class RunnerProgressTests(unittest.TestCase):
-    def exercise(self, flags, failure=None, checkpoint_failure=False):
+    def exercise(self, flags, failure=None, checkpoint_failure=False, lifecycle_build_failure=False):
         """Run the actual orchestrator; every guest/process operation is replaced."""
         with tempfile.TemporaryDirectory() as folder, ExitStack() as stack:
             root = Path(folder)
@@ -151,6 +151,10 @@ class RunnerProgressTests(unittest.TestCase):
                     return_value={**built, 'admitted': True, 'native_binary': True}))
             for module in (ENGINE.SENDER, ENGINE.BACKEND_ISOLATION):
                 stack.enter_context(patch.object(module, 'prepare_guest', return_value={'admitted': True}))
+            lifecycle_builder = stack.enter_context(patch.object(ENGINE.LIFECYCLE, 'build_guest',
+                return_value={'admitted': not lifecycle_build_failure, 'hashes': {'library': digest, 'control': digest}}))
+            lifecycle_execution = stack.enter_context(patch.object(ENGINE.LIFECYCLE, 'execute_guest',
+                return_value={**built, 'admitted': True}))
             if failure:
                 calls[ENGINE.LAB_PROXY.__name__].side_effect = failure
             supervisor = Mock()
@@ -178,13 +182,24 @@ class RunnerProgressTests(unittest.TestCase):
                 self.assertEqual(report['progress']['sha256'], hashlib.sha256((work / 'progress.json').read_bytes()).hexdigest())
                 self.assertEqual(report['progress']['result'], journal['result'])
             self.assertTrue(report['teardown']['teardown_verified'])
-            if '--lifecycle-components' in flags:
+            if '--lifecycle-components' in flags or '--lifecycle-source-build' in flags:
                 for call in engine_calls.values():call.assert_not_called()
                 for name, call in calls.items():
                     if name != ENGINE.LIFECYCLE.__name__:call.assert_not_called()
-                calls[ENGINE.LIFECYCLE.__name__].assert_called_once()
-                self.assertEqual(report['scope'], 'ordinary-lifecycle-components')
-                self.assertFalse(report['native_build'])
+                if '--lifecycle-source-build' in flags:
+                    calls[ENGINE.LIFECYCLE.__name__].assert_not_called()
+                    lifecycle_builder.assert_called_once()
+                    if lifecycle_build_failure:lifecycle_execution.assert_not_called()
+                    else:lifecycle_execution.assert_called_once()
+                    self.assertEqual(report['scope'], 'ordinary-lifecycle-components-native-build')
+                    self.assertEqual(report['native_build'], not lifecycle_build_failure)
+                    self.assertEqual(report['profile']['deadline_seconds'], 1800)
+                    self.assertEqual(report['profile']['native_build_deadline_seconds'], 1200)
+                else:
+                    calls[ENGINE.LIFECYCLE.__name__].assert_called_once()
+                    lifecycle_builder.assert_not_called();lifecycle_execution.assert_not_called()
+                    self.assertEqual(report['scope'], 'ordinary-lifecycle-components')
+                    self.assertFalse(report['native_build'])
             self.assertNotIn('private marker', output.getvalue())
             self.assertNotIn('private checkpoint failure', output.getvalue())
             self.assertNotIn('build_receipts', output.getvalue())
@@ -196,7 +211,7 @@ class RunnerProgressTests(unittest.TestCase):
             '--client-identity', '--backend-isolation', '--request-wire']
 
     def test_selected_profiles_complete_exact_plans_without_launching_guest(self):
-        for flags in ([], ['--lifecycle-components'], self.wire,
+        for flags in ([], ['--lifecycle-components'], ['--lifecycle-source-build'], self.wire,
                       ['--lab-proxy', '--connector-comparison', '--connector-source-build', '--configured-caddy'],
                       ['--relayd-traffic', '--relayd-generations', '--relayd-signals', '--relayd-contract', '--relayd-body']):
             with self.subTest(flags=flags):
