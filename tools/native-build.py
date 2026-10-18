@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 """Prepare source and compiler for an offline disposable native build."""
 import argparse
+import gzip
 import hashlib
 import importlib.util
 import json
@@ -99,20 +100,41 @@ def package(work):
         files = sorted(path for path in stage.rglob('*') if not path.is_dir())
         hashes = {str(path.relative_to(stage)): digest(path) for path in files}
         bundle = work / 'engine-source.tar.gz'
-        with tarfile.open(bundle, 'w:gz') as output:
-            for path in files:
-                # Regular-file checks precede export; never transfer symlink/device entries.
-                item = output.gettarinfo(path, arcname='src/' + str(path.relative_to(stage)))
-                if not item.isfile():
-                    raise ValueError('nonregular source export refused')
-                item.mode = 0o444
-                with path.open('rb') as stream:
-                    output.addfile(item, stream)
-        verify_source_bundle(bundle, hashes)
+        write_source_bundle(stage, bundle, hashes)
         return {'compiler': archive, 'source': bundle,
                 'compiler_sha256': digest(archive), 'source_sha256': digest(bundle),
                 'compiler_executable_sha256': compiler_executable_hash(archive),
                 'source_files': hashes}
+
+
+def write_source_bundle(stage, bundle, manifest):
+    """Publish a verified, metadata-independent export of the private stage.
+
+    Fixed tar/gzip metadata makes identical names/bytes reproducible within the
+    same Python/zlib toolchain. Keep the previous bundle until verification passes.
+    """
+    fd, name = tempfile.mkstemp(prefix='.source-export-', dir=bundle.parent)
+    temporary = Path(name)
+    try:
+        with os.fdopen(fd, 'wb') as raw:
+            # No output filename or wall clock in the gzip header.
+            with gzip.GzipFile(filename='', mode='wb', fileobj=raw, mtime=0,
+                               compresslevel=9) as compressed:
+                with tarfile.open(fileobj=compressed, mode='w|', format=tarfile.PAX_FORMAT) as output:
+                    for relative in sorted(manifest):
+                        with os.fdopen(IMAGE.regular_fd(stage / relative), 'rb') as stream:
+                            item = tarfile.TarInfo('src/' + relative)
+                            item.size = os.fstat(stream.fileno()).st_size
+                            item.mode = 0o444
+                            item.mtime = item.uid = item.gid = 0
+                            item.uname = item.gname = ''
+                            output.addfile(item, stream)
+            raw.flush()
+            os.fsync(raw.fileno())
+        verify_source_bundle(temporary, manifest)
+        os.replace(temporary, bundle)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def verify_source_bundle(bundle, manifest):
@@ -174,15 +196,7 @@ def connector_package(work):
         files = sorted(path for path in stage.rglob('*') if not path.is_dir())
         hashes = {str(path.relative_to(stage)): digest(path) for path in files}
         bundle = work / 'connector-source.tar.gz'
-        with tarfile.open(bundle, 'w:gz') as output:
-            for path in files:
-                item = output.gettarinfo(path, arcname='src/' + str(path.relative_to(stage)))
-                if not item.isfile():
-                    raise ValueError('nonregular connector export refused')
-                item.mode = 0o444
-                with path.open('rb') as stream:
-                    output.addfile(item, stream)
-        verify_source_bundle(bundle, hashes)
+        write_source_bundle(stage, bundle, hashes)
         return {'compiler': archive, 'source': bundle,
                 'compiler_sha256': digest(archive), 'source_sha256': digest(bundle),
                 'source_files': hashes, 'reviewed_target_modules': len(graph),
