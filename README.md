@@ -32,6 +32,8 @@ make research-test research-cross
 make research-advisories
 ```
 
+Private engine and connector source exports now use fixed tar/gzip metadata and verified atomic publication. [Host export receipts](research/native/source-export-host-observations.json) retain byte-identical independent exports of both modules; this does not establish reproducible executables or native qualification.
+
 Host checks and cross-builds are tooling evidence only. Disposable native experiments require the [reviewed OpenBSD profile](docs/milestones/M1/NATIVE-ENGINE.md):
 
 | Command | Owned native experiment |

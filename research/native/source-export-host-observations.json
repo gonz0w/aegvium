@@ -1,0 +1,144 @@
+{
+  "schema": 1,
+  "scope": "SE-01\u201304 private host source export; no runtime execution",
+  "passed": true,
+  "source": {
+    "commit": "35e2d1dd55609c1b29003ec6146d54626fccdabe",
+    "tree": "d9ea7637153b3eb50b78cbe1cc5b1690898a5d5f",
+    "base": "04e7f21d3a4d11175cb3dbfea0fd8e19a952c826"
+  },
+  "host": {
+    "os": "Darwin",
+    "architecture": "arm64",
+    "python": "3.14.7",
+    "zlib_compile": "1.2.12",
+    "zlib_runtime": "1.2.12"
+  },
+  "host_inputs_sha256": {
+    "tools/native-build.py": "59520cdc26a88ed844f33207d6f7b5029d94b05398c8c313fa4564ed9fcff6ba",
+    "tools/native-image.py": "4e286adac78b34e3172736f8cc78e64d2c7cae456d03426243a5378b8f953290",
+    "tools/connector-comparison.py": "c38c09dfa97a2fa6fe5e01aeeb388d14b9afe10ea756be79712af3857ee02da6",
+    "tools/run-research-go.sh": "06d4587549d98741339751f7360dd9a1a4402a253cd280eee221d3c8f382094a",
+    "tools/research-pins.json": "7383179c02c51b05fc29776bfe538c1ee1f6438aa5b35065d1a44a3b06f02efe",
+    ".go-version": "6c075150045fda9bac31bb93cf5a0a0bc91622a75c1f10fb2971e6f994c6d4d6",
+    "tools/tests/test_native_build.py": "6ecbf405d0b0a87166ea4e3c8c980c3ae237350b48a39e830948de397552b2e6",
+    "docs/milestones/M1/NATIVE-ENGINE.md": "0a0bbee6c136f1a68d230e3181f5d35fcfa3661dccc7642caee264d2e5134d01",
+    "docs/milestones/M1/TDD.md": "94b54e996773d1bfe32e72f30ee5e3e25a763186e671d9d5a79fc86b68ca231c",
+    "research/coraza/connector-dependencies.json": "c48a2555eb2c020cef5703d60fc1fd11f10f14f45dae823ee943a2e8973dfae5"
+  },
+  "manifest_encoding": "SHA-256 of UTF-8 JSON object, sorted keys, compact comma/colon separators, no final newline",
+  "baseline": {
+    "exporter_sha256": "d14a0f5ae11b5cd174e8fde968efa1cad8e4544255d6eaa1425213b5ee0bca1c",
+    "exports": [
+      {
+        "archive_sha256": "ac3a10e81e3877b3dd23f22956366cbcf056dc71f59d7bdac402c10cae15d0a0",
+        "file_count": 802,
+        "manifest_sha256": "41d742d840c8311b228c11c6fd0cafc7e979aab89a875283d97dc70044d69938"
+      },
+      {
+        "archive_sha256": "3266a140abee593e397e82bebe68593dc206bc2be1b8762d4fa34be788869545",
+        "file_count": 802,
+        "manifest_sha256": "41d742d840c8311b228c11c6fd0cafc7e979aab89a875283d97dc70044d69938"
+      }
+    ],
+    "same_manifest": true,
+    "same_archive": false
+  },
+  "exports": {
+    "engine": {
+      "exports": [
+        {
+          "archive_sha256": "85e166dd75e025df8c5c088bfefc210e053797a857ef5e5a14bf5a39c8dad6cd",
+          "file_count": 802,
+          "manifest_sha256": "41d742d840c8311b228c11c6fd0cafc7e979aab89a875283d97dc70044d69938",
+          "archive_bytes": 1421325,
+          "compiler_sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+          "compiler_executable_sha256": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+          "metadata_verified": true,
+          "manifest_verified": true,
+          "temporary_outputs_remaining": 0
+        },
+        {
+          "archive_sha256": "85e166dd75e025df8c5c088bfefc210e053797a857ef5e5a14bf5a39c8dad6cd",
+          "file_count": 802,
+          "manifest_sha256": "41d742d840c8311b228c11c6fd0cafc7e979aab89a875283d97dc70044d69938",
+          "archive_bytes": 1421325,
+          "compiler_sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+          "compiler_executable_sha256": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+          "metadata_verified": true,
+          "manifest_verified": true,
+          "temporary_outputs_remaining": 0
+        }
+      ],
+      "same_manifest": true,
+      "same_archive": true
+    },
+    "connector": {
+      "exports": [
+        {
+          "archive_sha256": "cf5ba054f6e713a35ae9ffa6ee8e571ea34c4936bc76d6a48f084fc60e1d7299",
+          "file_count": 5597,
+          "manifest_sha256": "daae35c4d49ea66baf6a07790380705b9ff4427262fee6be88b140cd546a76b5",
+          "archive_bytes": 10730794,
+          "compiler_sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+          "compiler_executable_sha256": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+          "metadata_verified": true,
+          "manifest_verified": true,
+          "temporary_outputs_remaining": 0,
+          "reviewed_target_modules": 153,
+          "reviewed_notice_files": 204
+        },
+        {
+          "archive_sha256": "cf5ba054f6e713a35ae9ffa6ee8e571ea34c4936bc76d6a48f084fc60e1d7299",
+          "file_count": 5597,
+          "manifest_sha256": "daae35c4d49ea66baf6a07790380705b9ff4427262fee6be88b140cd546a76b5",
+          "archive_bytes": 10730794,
+          "compiler_sha256": "ab74a2b31761a8c34e9a1059b0f9c82a7db42780fde4e35bac270758d45816a1",
+          "compiler_executable_sha256": "d31495212ad7b67ee9044938f583ff3542756d87c60e6c7d73ef07ac26da4e66",
+          "metadata_verified": true,
+          "manifest_verified": true,
+          "temporary_outputs_remaining": 0,
+          "reviewed_target_modules": 153,
+          "reviewed_notice_files": 204
+        }
+      ],
+      "same_manifest": true,
+      "same_archive": true
+    }
+  },
+  "module_source_unchanged": true,
+  "module_tracked_file_count": 89,
+  "module_tracked_inventory_sha256": "df56ef67f2d08d4c75ed00fbd24866d9e42d5ec7c34cd42149367ec2a167ef4e",
+  "duration_seconds": 27.995,
+  "go_tests_executed": false,
+  "native_vm_executed": false,
+  "traffic_security_validation_rerun": false,
+  "advisory_scan_rerun": false,
+  "complete_profile_qualified": false,
+  "local_checks": {
+    "command": "make verify",
+    "passed": true,
+    "test_count": 135,
+    "new_test_methods": 3,
+    "publication_failure_subcases": 8,
+    "clean_signed_candidate": true,
+    "log_sha256": "07e8e242913202ba41933493674e022a9b51219e694047e662ecec29096c1381"
+  },
+  "historical_native_receipts": {
+    "file_count": 49,
+    "all_unchanged_from_base": true,
+    "inventory_encoding": "SHA-256 of UTF-8 JSON object, sorted keys, compact comma/colon separators, no final newline",
+    "inventory_sha256": "23ee314f212f8a7fe425742f1a58cb960ffbd50be09ff42d11666aad0138e621"
+  },
+  "private_export_log_sha256": "dc3ab43493e2ee401ffc2b0eebea632b2ceb60ccf4af2e6d878e1a35e848cba0",
+  "private_execution_script_sha256": "8efbd4f56089b52a7c3b885dcf8149f42347015180a621af94ce48eca7ce2d78",
+  "limitations": [
+    "Host packaging evidence only; repeatability is scoped to the recorded Python/zlib toolchain.",
+    "No executable reproducibility, native compilation/execution, appliance payload or original installed image/daemon lineage claim.",
+    "Both research modules and dependency pins are unchanged; prior native receipts retain their source and scope.",
+    "No Go tests, actual companion, WAF engine, application listener, relayd, traffic/PF validation or advisory scan executes in this batch.",
+    "Affected validation stays paused under the reported access notice; earlier native reload failure remains unexplained and later wire scope unexecuted.",
+    "Private work directories/stages remain owned; atomic replacement is not an authentication or filesystem durability guarantee.",
+    "No phase/adoption closure, new dependency, BootWeave schema, deployment, service enablement, live network or release change."
+  ]
+}
