@@ -766,7 +766,7 @@ def run():
     build_inputs = BUILD.package(work) if args.source_build or args.lifecycle_source_build else None
     connector_inputs = BUILD.connector_package(work) if args.connector_source_build else None
     source = {name: digest(ROOT / name) for name in git('ls-files').splitlines()}
-    duration = 3600 if args.connector_source_build or args.lab_tls else 1800 if args.source_build or args.lifecycle_source_build else (1500 if args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations else 1200 if args.relayd_wiring else 900)
+    duration = 3600 if args.connector_source_build or args.lab_tls else LIFECYCLE.GUEST_SECONDS if args.lifecycle_source_build else 1800 if args.source_build else (1500 if args.relayd_health_faults or args.relayd_checker_replacements or args.relayd_generations else 1200 if args.relayd_wiring else 900)
     report = {'schema': 1, 'commit': git('rev-parse', 'HEAD'), 'tree': git('rev-parse', 'HEAD^{tree}'),
               'scope': 'ordinary-lifecycle-components-native-build' if args.lifecycle_source_build else 'ordinary-lifecycle-components' if args.lifecycle_components else 'existing-requested-profile',
               'lifecycle_source_build_requested': args.lifecycle_source_build,
@@ -777,6 +777,7 @@ def run():
               'image_sha256': PINS['qcow2_sha256'], 'injected_failure': args.inject_failure,
               'profile': {'cpu': 2, 'ram_mib': 2048, 'acceleration': 'TCG', 'deadline_seconds': duration,
                           'patch_deadline_seconds': 1200 if args.sender_containment else 600,
+                          'post_build_reserve_seconds': LIFECYCLE.POST_BUILD_SECONDS if args.lifecycle_source_build else None,
                           'native_build_deadline_seconds': 2400 if args.lab_tls else 1200 if args.source_build or args.lifecycle_source_build else None,
                           'network': 'restrict=on; dynamic loopback-only SSH; no guest egress'}}
     if build_inputs:

@@ -193,7 +193,8 @@ class RunnerProgressTests(unittest.TestCase):
                     else:lifecycle_execution.assert_called_once()
                     self.assertEqual(report['scope'], 'ordinary-lifecycle-components-native-build')
                     self.assertEqual(report['native_build'], not lifecycle_build_failure)
-                    self.assertEqual(report['profile']['deadline_seconds'], 1800)
+                    self.assertEqual(report['profile']['deadline_seconds'], 2400)
+                    self.assertEqual(report['profile']['post_build_reserve_seconds'], 180)
                     self.assertEqual(report['profile']['native_build_deadline_seconds'], 1200)
                 else:
                     calls[ENGINE.LIFECYCLE.__name__].assert_called_once()
