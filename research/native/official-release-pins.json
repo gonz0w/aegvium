@@ -1,0 +1,28 @@
+{
+  "release": "7.9",
+  "architecture": "amd64",
+  "verifier": {
+    "source": "https://github.com/jpouellet/signify-osx/tree/9a654d698f5dc957ac407a3156a638bb3b77add2",
+    "source_archive_sha256": "5aa954fe6c54f2fc939771779e5bb64298e46d0a4ae3d08637df44c7ed8d2897",
+    "executable_sha256": "4b9b2069c5e5acda9d35ca898ecd5afc050094170cf3c73fa7cf9eb615530946",
+    "license_sha256": "b9780e5335a62e88e628d8ff00d29861ec4c82751dc18408adf03995bfc483f0",
+    "license": "ISC port plus retained upstream notices; local-only use"
+  },
+  "assets": {
+    "openbsd-79-base.pub": {
+      "url": "https://ftp.openbsd.org/pub/OpenBSD/7.9/openbsd-79-base.pub",
+      "sha256": "b7ee8e7981549a1f707a4ed05115a99959a5f9e34b9bed9f9a098be17dd7e4b1",
+      "maximum_bytes": 4096
+    },
+    "SHA256.sig": {
+      "url": "https://ftp.openbsd.org/pub/OpenBSD/7.9/amd64/SHA256.sig",
+      "sha256": "99db2ba3d63cddeeb9a1166319e48bf4b22224c48bbdc4deff8ecadc0f7b2786",
+      "maximum_bytes": 4096
+    },
+    "install79.iso": {
+      "url": "https://ftp.openbsd.org/pub/OpenBSD/7.9/amd64/install79.iso",
+      "sha256": "7a4a92e953618035097c796a90b54424a0f3ae775552e1e7d102cf8a5130449f",
+      "size": 798625792
+    }
+  }
+}
