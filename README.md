@@ -36,10 +36,13 @@ Private engine and connector source exports now use fixed tar/gzip metadata and 
 
 The [cleanup/finalization batch](research/native/cleanup-finalization-observations.json) adds atomic supervisor receipts, independent process/group and integrity checks, and failed-publication handling. All 146 local checks and one unchanged 54-record ordinary native repeat pass; host fault controls and native normal-exit evidence remain separate from full WAF qualification.
 
+The [authenticated stock baseline](research/native/official-baseline-observations.json) was installed into a new owned disk from verified official media. Seven installed binary/key hashes match release-set bytes, and a fresh snapshot passes the same 54 ordinary records, offline patch applicability/reboot/access and teardown gates. All 159 host checks pass. This new lineage applies to the explicitly selected component profile; inherited evidence retains its original assumptions. See the [scoped design](docs/milestones/M1/OFFICIAL-BASELINE.md).
+
 Host checks and cross-builds are tooling evidence only. Disposable native experiments require the [reviewed OpenBSD profile](docs/milestones/M1/NATIVE-ENGINE.md):
 
 | Command | Owned native experiment |
 | --- | --- |
+| `make research-native-official-lifecycle` | Exclusive ordinary component repeat on the authenticated stock baseline; source-build and other official-baseline profiles are refused. |
 | `make research-native-lifecycle` | Exclusive ordinary lifecycle component tests on owned OpenBSD; host-cross-built binaries, no application/WAF/traffic/PF execution. |
 | `make research-native-lifecycle-build` | Exclusive offline native component build and exact ordinary test selection; reserved build/verification budget, no application/WAF/traffic/PF execution. |
 | `make research-native-lab` | Offline native fixture/checker/CLI compilation and legacy TLS-at-relayd routing/reload/load controls. |
@@ -54,7 +57,7 @@ Each experiment owns and tears down its VM, sockets, daemons and synthetic TLS a
 
 ## Adoption and project structure
 
-Still open: selected trust/privilege/startup policy, product client-identity policy, certificate distribution/rotation, supported persistent/streaming protocols, full CRS/application tuning, measured resource/soak budgets, original image/daemon lineage and distribution obligations. Local UID containment excludes root/PF administrators and compromised allowed-UID processes. No live deployment, service enablement or release is implied by research.
+Still open: selected trust/privilege/startup policy, product client-identity policy, certificate distribution/rotation, supported persistent/streaming protocols, full CRS/application tuning, measured resource/soak budgets, complete candidate provenance/acceptance and distribution obligations. The new stock baseline establishes selected installed-file lineage; historical inherited-image lineage remains unproven. Local UID containment excludes root/PF administrators and compromised allowed-UID processes. No live deployment, service enablement or release is implied by research.
 
 [Proposed ingress ADR](docs/architecture/adr-0001-ingress-inspection.md) keeps relayd plus a companion and coraza-caddy under comparison. A future Traefik/Caddy-like relayd control plane may reuse the boundary; no reusable API or separate connector repository is selected. CrowdSec remains an optional later behavioral layer.
 
