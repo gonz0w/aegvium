@@ -102,12 +102,13 @@ class ProgressTests(unittest.TestCase):
 
 
 class RunnerProgressTests(unittest.TestCase):
-    def exercise(self, flags, failure=None, checkpoint_failure=False, lifecycle_build_failure=False):
+    def exercise(self, flags, failure=None, checkpoint_failure=False, lifecycle_build_failure=False,
+                 teardown_problem=None, integrity_problem=None, publication_problem=False):
         """Run the actual orchestrator; every guest/process operation is replaced."""
         with tempfile.TemporaryDirectory() as folder, ExitStack() as stack:
-            root = Path(folder)
+            root = Path(folder).resolve()
             for name in ('.tools/native/base-7.9-reviewed/base.qcow2', '.tools/native/bootstrap.key',
-                         '.tools/research/readycheck-openbsd-amd64', 'tracked.txt'):
+                         '.tools/research/readycheck-openbsd-amd64', 'tracked.txt', 'second.txt'):
                 path = root / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(b'owned synthetic file')
@@ -117,11 +118,25 @@ class RunnerProgressTests(unittest.TestCase):
             stack.enter_context(patch.object(ENGINE, 'ROOT', root))
             stack.enter_context(patch.object(ENGINE, 'PINS', {'qcow2_sha256': digest,
                 'assets': {'openbsd-7.9-host.id_rsa': {'sha256': digest}}}))
-            stack.enter_context(patch.object(ENGINE, 'git', side_effect=lambda *args:
-                '' if args[0] == 'status' else 'tracked.txt' if args[0] == 'ls-files'
-                else 'b'*40 if args[-1] == 'HEAD^{tree}' else 'a'*40))
-            stack.enter_context(patch.object(ENGINE, 'digest', side_effect=lambda path:
-                hashlib.sha256(Path(path).read_bytes()).hexdigest() if Path(path).exists() else digest))
+            after_cleanup, attempts = [], []
+            def git(*args):
+                if after_cleanup:
+                    attempts.append(args[0])
+                    if (integrity_problem == 'head' and args[0] == 'rev-parse' or
+                            integrity_problem == 'worktree' and args[0] == 'status'):
+                        raise OSError('private finalization marker')
+                return ('' if args[0] == 'status' else 'tracked.txt\nsecond.txt' if args[0] == 'ls-files'
+                        else 'b'*40 if args[-1] == 'HEAD^{tree}' else 'a'*40)
+            def hash_file(path):
+                path = Path(path)
+                if after_cleanup:
+                    attempts.append(path.name)
+                    if (integrity_problem == 'baseline' and path == image or
+                            integrity_problem == 'source' and path.name == 'tracked.txt'):
+                        raise OSError('private finalization marker')
+                return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else digest
+            stack.enter_context(patch.object(ENGINE, 'git', side_effect=git))
+            stack.enter_context(patch.object(ENGINE, 'digest', side_effect=hash_file))
             stack.enter_context(patch.object(ENGINE.PATCHES, 'verify'))
             stack.enter_context(patch.object(ENGINE.BUILD, 'package', return_value={'archive_sha256': digest}))
             stack.enter_context(patch.object(ENGINE.BUILD, 'connector_package', return_value={'archive_sha256': digest}))
@@ -158,15 +173,26 @@ class RunnerProgressTests(unittest.TestCase):
             if failure:
                 calls[ENGINE.LAB_PROXY.__name__].side_effect = failure
             supervisor = Mock()
+            supervisor.returncode = 0
             def cleanup(**kwargs):
                 work = next((root / '.tools/native-runs').iterdir())
-                (work / 'teardown.json').write_text(json.dumps({'teardown_verified': True}))
+                after_cleanup.append(True)
+                (work / 'teardown.started.json').write_text(json.dumps({'pid': 24680}))
+                (work / 'teardown.json').write_text('{' if teardown_problem == 'malformed' else
+                    json.dumps({'pid': 24680, 'returncode': 0, 'reason': 'controller-eof',
+                                'deadline_seconds': int(supervisor_launch.call_args.args[0][3]),
+                                'escalated': False, 'teardown_verified': True}))
             supervisor.communicate.side_effect = cleanup
-            stack.enter_context(patch.object(ENGINE.subprocess, 'Popen', return_value=supervisor))
-            if checkpoint_failure:
+            supervisor_launch = stack.enter_context(patch.object(ENGINE.subprocess, 'Popen', return_value=supervisor))
+            stack.enter_context(patch.object(ENGINE.CLEANUP, 'process_absent', return_value=True))
+            publication = []
+            if checkpoint_failure or publication_problem:
                 real_save = PROGRESS.atomic_json
                 def save(path, value):
-                    if Path(path).name == 'progress.json' and (value['finished'] if checkpoint_failure == 'final' else any(s['name'] == 'lab_proxy' and s['state'] == 'running' for s in value['stages'])):
+                    if publication_problem and Path(path).name == 'report.json':
+                        publication.append(value)
+                        raise OSError('private publication marker')
+                    if checkpoint_failure and Path(path).name == 'progress.json' and (value['finished'] if checkpoint_failure == 'final' else any(s['name'] == 'lab_proxy' and s['state'] == 'running' for s in value['stages'])):
                         raise OSError('private checkpoint failure')
                     return real_save(path, value)
                 stack.enter_context(patch.object(PROGRESS, 'atomic_json', side_effect=save))
@@ -175,13 +201,21 @@ class RunnerProgressTests(unittest.TestCase):
             with redirect_stdout(output):
                 status = ENGINE.run()
             work = next((root / '.tools/native-runs').iterdir())
-            report = json.loads((work / 'report.json').read_text())
+            if publication_problem:
+                report = publication[0]
+                self.assertFalse((work / 'report.json').exists())
+                summary = json.loads(output.getvalue()[output.getvalue().rfind('\n{')+1:])
+                self.assertFalse(summary['passed'])
+                self.assertEqual(summary['report_error'], 'report-publication-failed')
+                self.assertIsNone(summary['report_sha256'])
+            else:
+                report = json.loads((work / 'report.json').read_text())
             self.assertEqual(supervisor.communicate.call_count, 1, report.get('error'))
             journal = json.loads((work / 'progress.json').read_text())
             if checkpoint_failure != 'final':
                 self.assertEqual(report['progress']['sha256'], hashlib.sha256((work / 'progress.json').read_bytes()).hexdigest())
                 self.assertEqual(report['progress']['result'], journal['result'])
-            self.assertTrue(report['teardown']['teardown_verified'])
+            self.assertEqual(report['teardown']['teardown_verified'], teardown_problem is None)
             if '--lifecycle-components' in flags or '--lifecycle-source-build' in flags:
                 for call in engine_calls.values():call.assert_not_called()
                 for name, call in calls.items():
@@ -203,9 +237,13 @@ class RunnerProgressTests(unittest.TestCase):
                     self.assertFalse(report['native_build'])
             self.assertNotIn('private marker', output.getvalue())
             self.assertNotIn('private checkpoint failure', output.getvalue())
+            self.assertNotIn('private finalization marker', output.getvalue())
+            self.assertNotIn('private publication marker', output.getvalue())
             self.assertNotIn('build_receipts', output.getvalue())
             if checkpoint_failure is True:
                 calls[ENGINE.LAB_PROXY.__name__].assert_not_called()
+            for name in ('base.qcow2', 'tracked.txt', 'second.txt', 'rev-parse', 'status'):
+                self.assertIn(name, attempts)
             return status, report, journal
 
     wire = ['--source-build', '--lab-proxy', '--lab-tls', '--sender-containment',
@@ -252,3 +290,31 @@ class RunnerProgressTests(unittest.TestCase):
         self.assertEqual(report['progress_error'], 'checkpoint-finalization-failed')
         self.assertNotIn('progress', report)
         self.assertFalse(journal['finished'])
+
+    def test_malformed_teardown_preserves_report_and_integrity(self):
+        status, report, journal = self.exercise(['--lifecycle-components'], teardown_problem='malformed')
+        self.assertEqual(status, 1)
+        self.assertFalse(report['passed'])
+        self.assertTrue(report['baseline_unchanged'])
+        self.assertTrue(report['source_unchanged'])
+        self.assertTrue(journal['finished'])
+
+    def test_independent_integrity_failures_still_finalize_and_cannot_pass(self):
+        for name in ('baseline', 'source', 'head', 'worktree'):
+            with self.subTest(gate=name):
+                status, report, journal = self.exercise(['--lifecycle-components'], integrity_problem=name)
+                self.assertEqual(status, 1)
+                self.assertFalse(report['passed'])
+                self.assertTrue(report['teardown']['teardown_verified'])
+                self.assertTrue(journal['finished'])
+                self.assertEqual(list(report['integrity']['gates'].values()).count('unavailable'), 1)
+                if name == 'source':
+                    self.assertEqual(report['integrity']['unreadable_source_count'], 1)
+                    self.assertEqual(report['integrity']['source_file_count'], 2)
+
+    def test_report_publication_failure_returns_fixed_failed_summary(self):
+        status, report, journal = self.exercise(['--lifecycle-components'], publication_problem=True)
+        self.assertEqual(status, 1)
+        self.assertFalse(report['passed'])
+        self.assertTrue(report['teardown']['teardown_verified'])
+        self.assertTrue(journal['finished'])

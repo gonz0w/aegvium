@@ -2,7 +2,7 @@
 """Own a disposable process group; controller EOF and a bounded deadline initiate teardown.
 
 Adapted from Nomvium tools/lab-supervisor.py (BSD-3-Clause)."""
-import json
+import importlib.util
 import os
 import selectors
 import signal
@@ -10,6 +10,10 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+
+SPEC = importlib.util.spec_from_file_location('supervisor_progress', Path(__file__).with_name('native-progress.py'))
+PROGRESS = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(PROGRESS)
 
 
 def main():
@@ -22,10 +26,14 @@ def main():
     reason = 'child-exit'
     stopping = False
 
-    def stop(_number, _frame):
+    def request_stop(why):
         nonlocal stopping, reason
-        stopping = True
-        reason = 'signal'
+        if not stopping:
+            reason = why
+            stopping = True
+
+    def stop(_number, _frame):
+        request_stop('signal')
 
     signal.signal(signal.SIGTERM, stop)
     signal.signal(signal.SIGINT, stop)
@@ -33,17 +41,16 @@ def main():
     child = subprocess.Popen(command, stdin=subprocess.DEVNULL, start_new_session=True)
     escalated = False
     try:
-        record.with_suffix('.started.json').write_text(json.dumps({'pid': child.pid}) + '\n')
+        PROGRESS.atomic_json(record.with_suffix('.started.json'), {'pid': child.pid})
         selector.register(sys.stdin, selectors.EVENT_READ)
         while child.poll() is None and not stopping:
             if time.monotonic() >= expires:
-                reason = 'deadline'
-                stopping = True
+                request_stop('deadline')
             elif selector.select(timeout=min(0.2, max(0, expires - time.monotonic()))):
                 if not os.read(sys.stdin.fileno(), 1024):
-                    reason = 'controller-eof'
-                    stopping = True
+                    request_stop('controller-eof')
     finally:
+        stopping = True  # Freeze the observed cause before cleanup can receive more signals.
         selector.close()
         try:
             os.killpg(child.pid, signal.SIGTERM)
@@ -79,10 +86,10 @@ def main():
             verified = False
         except ProcessLookupError:
             verified = True
-        record.write_text(json.dumps({'pid': child.pid, 'returncode': child.returncode,
+        PROGRESS.atomic_json(record, {'pid': child.pid, 'returncode': child.returncode,
                                      'reason': reason, 'deadline_seconds': duration,
                                      'escalated': escalated,
-                                     'teardown_verified': verified}) + '\n')
+                                     'teardown_verified': verified})
     return 0 if verified else 1
 
 
