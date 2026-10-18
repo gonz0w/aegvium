@@ -1,7 +1,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 import hashlib
+import gzip
 import importlib.util
+import io
+import os
 import subprocess
+import tarfile
 import tempfile
 import unittest
 from pathlib import Path
@@ -22,6 +26,95 @@ LAB = load('native-engine')
 
 
 class NativeBuildTests(unittest.TestCase):
+    def test_source_exports_ignore_stage_and_host_metadata(self):
+        contents = {'go.mod': b'owned build fixture\n', 'empty': b'',
+                    'vendor/' + 'long-directory/' * 9 + 'data': bytes(range(256))}
+        with tempfile.TemporaryDirectory() as folder:
+            work = Path(folder).resolve()
+            exports = []
+            for index in range(2):
+                stage = work / f'stage-{index}'
+                stage.mkdir()
+                names = list(contents) if index == 0 else list(reversed(contents))
+                manifest = {}
+                before = {}
+                for name in names:
+                    source = stage / name
+                    source.parent.mkdir(parents=True, exist_ok=True)
+                    source.write_bytes(contents[name])
+                    source.chmod(0o400 if index == 0 else 0o600)
+                    os.utime(source, (100 + index, 200 + index))
+                    manifest[name] = hashlib.sha256(contents[name]).hexdigest()
+                    before[name] = (source.stat().st_mode, source.stat().st_mtime_ns)
+                bundle = work / ('engine-source.tar.gz' if index == 0 else 'connector-source.tar.gz')
+                BUILD.write_source_bundle(stage, bundle, manifest)
+                BUILD.verify_source_bundle(bundle, manifest)
+                self.assertEqual(bundle.stat().st_mode & 0o777, 0o600)
+                for name in contents:
+                    source = stage / name
+                    self.assertEqual(source.read_bytes(), contents[name])
+                    self.assertEqual((source.stat().st_mode, source.stat().st_mtime_ns), before[name])
+                data = bundle.read_bytes()
+                # MTIME is zero and FNAME is absent; stage/output names cannot leak.
+                self.assertEqual(data[4:8], b'\0' * 4)
+                self.assertEqual(data[3] & 8, 0)
+                with tarfile.open(fileobj=io.BytesIO(gzip.decompress(data))) as archive:
+                    members = archive.getmembers()
+                    self.assertEqual([m.name for m in members], ['src/' + n for n in sorted(contents)])
+                    for member in members:
+                        self.assertTrue(member.isfile())
+                        self.assertEqual((member.mode, member.mtime, member.uid, member.gid,
+                                          member.uname, member.gname), (0o444, 0, 0, 0, '', ''))
+                exports.append(data)
+            self.assertEqual(exports[0], exports[1])
+            self.assertEqual(list(work.glob('.source-export-*')), [])
+
+    def test_source_export_content_changes_change_identity(self):
+        with tempfile.TemporaryDirectory() as folder:
+            work = Path(folder).resolve()
+            stage = work / 'stage'; stage.mkdir()
+            source = stage / 'go.mod'
+            bundle = work / 'source.tar.gz'
+            hashes = []
+            for data in (b'first ordinary fixture', b'second ordinary fixture'):
+                source.write_bytes(data)
+                manifest = {'go.mod': hashlib.sha256(data).hexdigest()}
+                BUILD.write_source_bundle(stage, bundle, manifest)
+                BUILD.verify_source_bundle(bundle, manifest)
+                hashes.append(BUILD.digest(bundle))
+            self.assertNotEqual(*hashes)
+
+    def test_source_export_failure_preserves_previous_output(self):
+        with tempfile.TemporaryDirectory() as folder:
+            work = Path(folder).resolve()
+            stage = work / 'stage'; stage.mkdir()
+            (stage / 'go.mod').write_bytes(b'fixture')
+            manifest = {'go.mod': hashlib.sha256(b'fixture').hexdigest()}
+            bundle = work / 'source.tar.gz'
+            for existing in (False, True):
+                for phase in ('write', 'interrupted', 'verify', 'publish'):
+                    with self.subTest(existing=existing, phase=phase):
+                        bundle.unlink(missing_ok=True)
+                        if existing:
+                            BUILD.write_source_bundle(stage, bundle, manifest)
+                            previous = bundle.read_bytes()
+                        if phase in ('write', 'interrupted'):
+                            failure = OSError if phase == 'write' else KeyboardInterrupt
+                            operation = patch.object(tarfile.TarFile, 'addfile', side_effect=failure('owned failure'))
+                        elif phase == 'verify':
+                            # Real manifest mismatch, after all archive bytes were written.
+                            failure = ValueError
+                            operation = patch.dict(manifest, {'go.mod': '0' * 64})
+                        else:
+                            failure = OSError
+                            operation = patch.object(BUILD.os, 'replace', side_effect=OSError('owned failure'))
+                        with operation, self.assertRaises(failure):
+                            BUILD.write_source_bundle(stage, bundle, manifest)
+                        self.assertEqual(bundle.exists(), existing)
+                        if existing:
+                            self.assertEqual(bundle.read_bytes(), previous)
+                        self.assertEqual(list(work.glob('.source-export-*')), [])
+
     def test_compiler_corruption_size_and_symlink_refused(self):
         with tempfile.TemporaryDirectory() as folder:
             cache = Path(folder).resolve()
