@@ -1,0 +1,210 @@
+{
+  "schema": 1,
+  "scope": "CF-01\u201304 host cleanup/finalization repair plus exclusive ordinary native repeat",
+  "passed": true,
+  "source": {
+    "commit": "b6615c62c4dcae3bf76ae9a44e935e27c6455424",
+    "tree": "5134aa48db12a10525542bc3ae18509cbe02b030",
+    "base": "e10c2bb452ac78375542dec03a814f6cebdeda6c",
+    "inputs_sha256": {
+      "tools/native-engine.py": "84a90a174cf16bff0bcc2253bda73ee10e9bcfa2c164fd86502746deb8d90e6b",
+      "tools/native-cleanup.py": "b1444709ba2923a51e973f040e3f47f95a50a52523cb6ac3b77373eca7578d23",
+      "tools/lab-supervisor.py": "fde32556e35cea9dab3b73e644f5b547a5059aeca54940f91467b585645ae154",
+      "tools/native-progress.py": "6056e94e2f5bc1308bd43c3a90402766676503397c9a419d982678267f38e178",
+      "tools/native-image.py": "4e286adac78b34e3172736f8cc78e64d2c7cae456d03426243a5378b8f953290",
+      "tools/lifecycle-components.py": "585eba15cf79d84b8c9db3ffafbae70c562ca72980164156323d884dfe3986af",
+      "tools/native/lifecycle-components.sh": "1d3026b163d547d56d7392ee29a7b5339d1ebbab5810083fb66c5c19e8a7fa34",
+      "tools/tests/test_native_cleanup.py": "99cc4c86956b071213ee6dd7cf8ac32e306a2e139ccbd96ba4e11a78e1ffd044",
+      "tools/tests/test_native_progress.py": "664f8395167fefb89ed84396493ff3af33681e2b5b12d244f181bd07f9be076e",
+      "tools/tests/test_lab_supervisor.py": "2a163f2085a8506d35aeea3d4a645adf8d8aaa2da70ade85d2cc62434ce6e5be",
+      "tools/openbsd-patches.json": "0cf5b352ea5d50d91d106abd42e65b8dac105b6c72fca3c83bfd1706bc891771",
+      "research/native/image-pin.json": "8b3c0b1961712f01f2fbc11532da3d4576845fffddc24856782a850da81d6f8b"
+    },
+    "runtime_go_and_dependencies_unchanged": true
+  },
+  "discovery": {
+    "controller": {
+      "source_commit": "e10c2bb452ac78375542dec03a814f6cebdeda6c",
+      "original_controller_sha256": "b51b7ac1608700b89cca26ea335d4d1424bd4f1d0e21fbe0303f989357355ac0",
+      "uncommitted_regression_sha256": "0b1371b410b59f2c5aa4e437cf4a6015654abf940ebee5fae3501d58fdb0f62c",
+      "log_sha256": "82cbd8b476feb443dabe616bc8ce3340150b9d9245f0f6945b3eb7d468d22935",
+      "failure": "malformed teardown interrupted report and integrity finalization",
+      "observed_errors": 1
+    },
+    "supervisor": {
+      "source_sha256": "debbd0648e25dacf231d51f7b94e9c1dd004e11b5647ea3d6ef90a3cf886e0bb",
+      "uncommitted_test_sha256": "2a163f2085a8506d35aeea3d4a645adf8d8aaa2da70ade85d2cc62434ce6e5be",
+      "log_sha256": "2b0c65784c03189af6cd6415f45dfe4b28bcbbfdd957b77b70bed5e7b911a998",
+      "observed_failures": 1,
+      "cause": "EOF observation overwrites an already observed supervisor signal"
+    },
+    "intermediate_fixture_correction": {
+      "failed_assertions": 17,
+      "retained_evidence": "status summary only; verbose intermediate log overwritten",
+      "correction": "resolve the owned macOS temporary root before regular receipt admission",
+      "native_failure": false
+    }
+  },
+  "local_checks": {
+    "command": "make verify",
+    "passed": true,
+    "test_count": 146,
+    "new_test_methods": 11,
+    "clean_signed_candidate": true,
+    "log_sha256": "07347fc958f7cd887a9c5cb642680aa5887c3dafbca1412c7645dd026b634129"
+  },
+  "run_id": "831ef36a-471b-4946-bdac-a8cd6998db8a",
+  "started": "2026-10-18T15:27:40.575166+00:00",
+  "finished": "2026-10-18T15:33:42.075605+00:00",
+  "profile": {
+    "cpu": 2,
+    "ram_mib": 2048,
+    "acceleration": "TCG",
+    "deadline_seconds": 900,
+    "patch_deadline_seconds": 600,
+    "post_build_reserve_seconds": null,
+    "native_build_deadline_seconds": null,
+    "network": "restrict=on; dynamic loopback-only SSH; no guest egress"
+  },
+  "native_components": {
+    "admitted": true,
+    "hashes": {
+      "library": "406fd9f2a549052454fb1953bd7d12359ddf9e15d83f58ea94421df3b2275ab8",
+      "control": "ccd9ca3794723d08c59b9cbe77434f1d683f7f190249866152c7aa05fffb1271"
+    },
+    "execution_returncode": 0,
+    "execution_error_class": "none",
+    "log_sha256": "efa7878266e4b6511e85a8976abaa9cbb42742e5867b12f13e9b1540ddbf13c9",
+    "observed_pass_count": 54,
+    "scope": "ordinary-components-only",
+    "parent_count": 23,
+    "subtest_count": 31,
+    "retained_lifecycle": {
+      "parent_count": 18,
+      "subtest_count": 12
+    },
+    "file_inputs": {
+      "parent_count": 5,
+      "subtest_count": 19
+    },
+    "suite_pass_counts": {
+      "library": 18,
+      "control": 12,
+      "files": 24
+    },
+    "pass_count": 54,
+    "receipts": {
+      "os": "OpenBSD 7.9 amd64",
+      "scope": "ordinary-components",
+      "library": "406fd9f2a549052454fb1953bd7d12359ddf9e15d83f58ea94421df3b2275ab8",
+      "control": "ccd9ca3794723d08c59b9cbe77434f1d683f7f190249866152c7aa05fffb1271",
+      "uid": "32767",
+      "complete": "verified"
+    },
+    "native_source_build": false,
+    "complete_profile_qualified": false
+  },
+  "host_go": "go version go1.27.2 darwin/arm64",
+  "native_compilation": false,
+  "native_race_instrumentation": false,
+  "cleanup": {
+    "teardown_verified": true,
+    "supervisor_status": "completed",
+    "receipt_status": "valid",
+    "independent_process_absent": true,
+    "independent_group_absent": true,
+    "started_receipt_sha256": "30891ee4ab507c61934098767d5980c967093042cad6bfd4757a33a20484f422",
+    "receipt_sha256": "cc1b31084282229d8937fbe72afe1937a6b87c78b8639f2d0a269010bcff19ba",
+    "returncode": 0,
+    "reason": "controller-eof",
+    "deadline_seconds": 900,
+    "escalated": false,
+    "reported_teardown_verified": true
+  },
+  "receipt_modes": "0600 startup and teardown; private atomic file/directory-fsync publication",
+  "independent_post_run_absence": {
+    "process_absent": true,
+    "group_absent": true
+  },
+  "integrity": {
+    "gates": {
+      "baseline_unchanged": "passed",
+      "head_unchanged": "passed",
+      "worktree_clean": "passed",
+      "source_unchanged": "passed"
+    },
+    "source_file_count": 353,
+    "changed_source_count": 0,
+    "unreadable_source_count": 0
+  },
+  "bootstrap_revoked": true,
+  "patch_refresh": {
+    "signature_verified": true,
+    "installed": 34,
+    "pending": 0,
+    "manifest_sha256": "aa7a384f7e5dd66aa1dc144986b4e4633cd2f0862c4e669120893965c36db961",
+    "public_key_sha256": "68aa67092732966f152fb832d2f34a256e4b0bc4759d5b74a79ead8eb8435fed",
+    "log_sha256": "25a886097a8498241452b3ddd827bbc20b70af755cca0b9ee8b67c5fb2a187dd",
+    "boot_before": "1792337274",
+    "boot_after": "1792337561"
+  },
+  "source_unchanged": true,
+  "baseline_unchanged": true,
+  "head_unchanged": true,
+  "worktree_clean": true,
+  "private_source_inventory": {
+    "file_count": 353,
+    "canonical_sha256": "248b00ab98330368be67358bcffe39fecbad643d4134d8ce84f0997a45f30b01",
+    "encoding": "SHA-256 of UTF-8 JSON object, sorted keys, compact comma/colon separators, no final newline"
+  },
+  "historical_native_receipts": {
+    "file_count": 50,
+    "all_unchanged_from_base": true,
+    "inventory_sha256": "d02505fc0cc05199f503d9eff1dc925ad97ce606bb5290398d4bb02c3f10b613",
+    "inventory_encoding": "SHA-256 of UTF-8 JSON object, sorted keys, compact comma/colon separators, no final newline"
+  },
+  "progress": {
+    "result": "passed",
+    "finished": true,
+    "stage_counts": {
+      "pending": 0,
+      "running": 0,
+      "completed": 5,
+      "failed": 0,
+      "interrupted": 0,
+      "not-run": 0
+    },
+    "sequence": 12,
+    "stopped_stage": null,
+    "error_class": "none",
+    "sha256": "bf17835cedf0081b8e0884536bac1a7021e9152965eaea8dc34842c4d7095b56"
+  },
+  "phase_durations_seconds": {
+    "guest_boot": 52.275,
+    "fresh_access": 5.105,
+    "patch_refresh": 278.615,
+    "native": 24.277,
+    "subset_gate": 0.0
+  },
+  "private_report_sha256": "76e895e7ff425ae972d59530b92b6fe1939ac41ec13c0101441643a946c85144",
+  "private_launch_log_sha256": "2187f2270a4fc34bb36870bb0ef427e5c96f7824ebb75383b92416618fdf4f24",
+  "full_engine_suite_executed": false,
+  "actual_companion_cli_executed": false,
+  "traffic_security_validation_rerun": false,
+  "advisory_scan_rerun": false,
+  "complete_profile_qualified": false,
+  "limitations": [
+    "Host fault controls and one successful ordinary native run are separate; no real VM storage/acknowledgement failure was injected.",
+    "Receipt identity is owned-host correlation, not authentication; PID reuse may conservatively reject a run.",
+    "First stop trigger is Python observer order, not kernel timing or historical relayd TERM attribution.",
+    "A completed journal alone cannot qualify a run; final controller success and matching report hash are required. Storage failure may prevent durable publication.",
+    "No native source build/race, WAF engine, actual companion, relayd, application traffic, CRS/PF or advisory execution.",
+    "Affected validation remains paused; historical native reload failure is unexplained and later wire scope unexecuted.",
+    "Full low-level failure coverage/original installed lineage/phase adoption remain open; no runtime dependency, installer, live service/network or release change."
+  ],
+  "base_image_sha256": "84bd3eb636fdcfbb10f710ffd9b65cd056f31bc0b3560cd9ae4630074f86b062",
+  "qemu": {
+    "version": "QEMU emulator version 11.1.1",
+    "sha256": "25afcb2986e4a0f2c567de17273f55de3c99792b78a07c99e923bb62024c088f"
+  }
+}
