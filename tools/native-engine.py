@@ -26,6 +26,7 @@ def load(name):
     return module
 
 PROGRESS = load('native-progress')
+CLEANUP = load('native-cleanup')
 LIFECYCLE = load('lifecycle-components')
 IMAGE = load('native-image')
 PATCHES = load('openbsd-patches')
@@ -953,24 +954,13 @@ def run():
         report['error'] = str(error)
         report['error_class'] = PROGRESS.error_class(error)
     finally:
-        if supervisor is not None:
-            try:
-                supervisor.communicate(timeout=25)  # EOF requests group cleanup.
-            except subprocess.TimeoutExpired:
-                supervisor.terminate()
-                try:
-                    supervisor.communicate(timeout=25)
-                except subprocess.TimeoutExpired:
-                    report['cleanup_error'] = 'supervisor did not acknowledge teardown'
-            teardown = work / 'teardown.json'
-            report['teardown'] = json.loads(teardown.read_text()) if teardown.is_file() else {'teardown_verified': False}
-        report['baseline_unchanged'] = digest(image) == PINS['qcow2_sha256']
-        report['source_unchanged'] = source == {name: digest(ROOT / name) for name in source}
+        report['teardown'] = CLEANUP.stop_supervisor(supervisor, work, duration)
+        CLEANUP.integrity(report, image, PINS['qcow2_sha256'], source, ROOT, digest, git)
         report['passed'] = bool(report.get('native_subset_passed') and 'error' not in report
                                 and 'cleanup_error' not in report
                                 and report.get('teardown', {}).get('teardown_verified')
                                 and report['baseline_unchanged'] and report['source_unchanged']
-                                and report['commit'] == git('rev-parse', 'HEAD') and not git('status', '--porcelain'))
+                                and report['head_unchanged'] and report['worktree_clean'])
         report['finished'] = datetime.now(timezone.utc).isoformat()
         try:
             progress.finish(report['passed'], report.get('teardown', {}).get('teardown_verified') is True)
@@ -979,14 +969,21 @@ def run():
             # Cleanup above is independent of checkpoint storage availability.
             report['passed'] = False
             report['progress_error'] = 'checkpoint-finalization-failed'
-        PROGRESS.atomic_json(work / 'report.json', report)
+        report_hash = None
+        try:
+            PROGRESS.atomic_json(work / 'report.json', report)
+            report_hash = digest(work / 'report.json')
+        except (OSError, ValueError):
+            report['passed'] = False
+            report['report_error'] = 'report-publication-failed'
         print(json.dumps({'run_id': work.name, 'passed': report['passed'],
                           'commit': report['commit'], 'tree': report['tree'],
                           'error_class': report.get('error_class', 'none'),
                           'teardown_verified': report.get('teardown', {}).get('teardown_verified') is True,
                           'progress': report.get('progress'),
                           'progress_error': report.get('progress_error'),
-                          'report_sha256': digest(work / 'report.json')}, indent=2), flush=True)
+                          'report_error': report.get('report_error'),
+                          'report_sha256': report_hash}, indent=2), flush=True)
     return 0 if report['passed'] else 1
 
 
