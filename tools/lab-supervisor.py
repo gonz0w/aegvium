@@ -31,7 +31,7 @@ def own_ordinary(child, record, created, work_end, total_end, duration, stopped,
     pid = child.pid
     reserved, exited, reaped = True, False, False
     reason, primary, selector = 'child-exit', None, None
-    errors, signals = [], []
+    errors, signals, absence_errors = [], [], []
     raw_status = None
     escalated, expired = False, False
     no_more_signals = False
@@ -164,6 +164,21 @@ def own_ordinary(child, record, created, work_end, total_end, duration, stopped,
             os.kill(target, 0)
         except ProcessLookupError:
             return True
+        except InterruptedError as error:
+            failed('absence-interrupted', error)
+            return False
+        except OSError as error:
+            entry = next((item for item in absence_errors
+                          if item['target'] == target and item['errno'] == error.errno
+                          and item['type'] == type(error).__name__), None)
+            if entry is not None:
+                entry['count'] += 1
+            elif len(absence_errors) < 16:
+                absence_errors.append({'target': target, 'errno': error.errno,
+                                       'type': type(error).__name__, 'count': 1})
+            else:
+                failed('absence-observations', RuntimeError('observation limit'))
+            return False  # Uncertain/present now; only a later ESRCH proves absence.
         except BaseException as error:
             failed('absence', error)
             return False
@@ -188,7 +203,7 @@ def own_ordinary(child, record, created, work_end, total_end, duration, stopped,
     deadline_met = not clock_failed and now() < total_end
     audit = {'pid': pid, 'group': pid, 'raw_wait_status': raw_status,
              'child_reaped': reaped, 'pid_absent': pid_absent, 'group_absent': group_absent,
-             'signals': signals, 'errors': errors, 'expired': expired, 'deadline_met': deadline_met,
+             'signals': signals, 'errors': errors, 'absence_errors': absence_errors, 'expired': expired, 'deadline_met': deadline_met,
              'created_monotonic': created, 'deadline_monotonic': total_end,
              'scope': 'Original direct child and its process group only; detached sessions are not covered.'}
     try:

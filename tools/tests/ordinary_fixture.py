@@ -134,10 +134,12 @@ class SupervisorFixture:
             # All receipt-derived operations below are observations, never
             # authority for a late signal. Include known targets even on failure.
             targets = {self.pid}
+            receipts = {}
             for path in (self.record, self.record.with_suffix('.started.json'),
                          self.record.with_suffix('.ownership.json')):
                 try:
                     value = json.loads(path.read_text())
+                    receipts[path.name] = value
                     if type(value.get('pid')) is int and value['pid'] > 1:
                         targets.add(value['pid'])
                 except (OSError, ValueError): pass
@@ -160,7 +162,7 @@ class SupervisorFixture:
             try:
                 self.event('terminal', pid=self.pid, reaped=self.reaped,
                        returncode=self.returncode, signals=self.signals,
-                       errors=self.errors, observations=observations,
+                       errors=self.errors, observations=observations, receipts=receipts,
                        scope='Known direct supervisor, original child group and finite recorded descendant; no detached/native proof.')
             finally:
                 self.output.close(); self.error.close()

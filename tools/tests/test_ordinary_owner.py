@@ -19,7 +19,7 @@ class Interrupted(BaseException):
 
 
 class OrdinaryOwnerTests(unittest.TestCase):
-    def run_owner(self, fault=None, *, reservation_lost=False, signal_error=None, absent=True, wait_error=False, status=0, clock_error=False, late=False, observed_exit=True, stop=False, tick=1.0, eof=False, signal_at_eof=False):
+    def run_owner(self, fault=None, *, reservation_lost=False, signal_error=None, absent=True, wait_error=False, status=0, clock_error=False, late=False, observed_exit=True, stop=False, tick=1.0, eof=False, signal_at_eof=False, transient_probe=False):
         child = types.SimpleNamespace(pid=424242, returncode=None)
         calls, records = [], {}
         def observe(*args):
@@ -39,9 +39,15 @@ class OrdinaryOwnerTests(unittest.TestCase):
             self.assertEqual(pid, 424242)
             if signal_error:
                 raise PermissionError(signal_error, 'synthetic denied signal')
+        probed = set()
         def observation(pid, number):
             self.assertEqual(number, 0)
             calls.append(('absent', pid))
+            if fault == 'probe-eintr': raise InterruptedError()
+            if fault == 'probe-base': raise Interrupted()
+            if transient_probe and pid not in probed:
+                probed.add(pid)
+                raise PermissionError(errno.EPERM, 'synthetic uncertain observation')
             if absent:
                 raise ProcessLookupError
         def started(path):
@@ -148,6 +154,26 @@ class OrdinaryOwnerTests(unittest.TestCase):
     def test_signal_recorded_during_select_beats_simultaneous_eof(self):
         _, _, records = self.run_owner(observed_exit=False, eof=True, signal_at_eof=True)
         self.assertEqual(records['result.json']['reason'], 'signal')
+
+    def test_uncertain_probe_is_retained_and_cannot_itself_prove_absence(self):
+        code, _, records = self.run_owner(transient_probe=True)
+        audit = records['result.ownership.json']
+        self.assertEqual(code, 0)
+        self.assertTrue(audit['pid_absent'] and audit['group_absent'])
+        self.assertEqual([v['errno'] for v in audit['absence_errors']], [errno.EPERM, errno.EPERM])
+        code, _, records = self.run_owner(transient_probe=True, absent=False)
+        self.assertNotEqual(code, 0)
+        self.assertFalse(records['result.ownership.json']['pid_absent'])
+
+    def test_probe_interruptions_are_sticky_and_no_post_wait_signal_occurs(self):
+        for fault in ('probe-eintr', 'probe-base'):
+            with self.subTest(fault=fault):
+                code, calls, records = self.run_owner(fault)
+                self.assertNotEqual(code, 0)
+                self.assertTrue(records['result.ownership.json']['errors'])
+                self.assertEqual(calls.count('wait'), 1)
+                tail = calls[calls.index('wait')+1:]
+                self.assertFalse(any(isinstance(c, tuple) and c[0]=='signal' for c in tail))
 
     def test_capability_failure_happens_before_child_birth(self):
         # Pre-birth guard requires the actual capability name, not a fake waiter.
