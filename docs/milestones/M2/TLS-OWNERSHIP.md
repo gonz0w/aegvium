@@ -50,9 +50,10 @@ because its retained actual-SNI binding addresses a demonstrated gap. This is an
 inference about which decision to examine, not a superseding adoption decision.
 Keep relayd-owned TLS as a control and coraza-caddy as the existing alternative.
 
-The maintainer need only state whether companion key custody is acceptable to
-evaluate or whether key location is a firm product constraint. Engineering must
-then propose the exact authority/privilege/certificate contracts and compare all
+The source-only paper comparison is already authorized and can continue without
+new user input. Any firm key-location constraint informs eventual product adoption;
+companion key custody and runtime architecture remain unapproved. Engineering must
+propose the exact authority/privilege/certificate contracts and compare all
 candidates against M2-01–08, including unsupported behaviors and measured costs.
 Do not silently choose an authentication mechanism or add another approval gate.
 

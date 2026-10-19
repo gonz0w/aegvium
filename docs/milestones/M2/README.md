@@ -40,8 +40,9 @@ GitHub owns live status and blockers; these links are not a second progress queu
 
 - **Product boundary:** retain the proposed narrow request-enforcement outcome;
   no management UI or additional protocol project is needed to describe it.
-- **Key custody:** is companion access to TLS private keys acceptable to evaluate,
-  or must ingress keys remain at relayd? Neither answer proves a safe topology.
+- **Key custody:** the source-only paper comparison is already authorized and can
+  continue without new user input. Any firm requirement that keys remain at relayd
+  constrains eventual product adoption; no key custody or topology is adopted here.
 - **Engineering closure:** propose and review exact raw-wire/authority admission,
   production principals/containment, certificate operations and numerical hard
   budgets before approval. The EDD supplies a concrete initial finite profile,
