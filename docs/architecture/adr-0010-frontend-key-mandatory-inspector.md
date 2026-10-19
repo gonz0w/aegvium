@@ -60,7 +60,7 @@ compromised frontend or make plaintext safe from a compromised inspector.
 |---|---|
 | Public key owner, series inspection, separate WAF VM, first bounded profile | Selected here under delegated engineering authority; no additional CTO choice is needed. |
 | Peer identity, immutable route/generation binding, no bypass/retry, startup-only replacement | Selected contract; engineering implements and reviews exact admission and ownership. No service or credential is provisioned. |
-| HAProxy metadata, public SNI/Host binding, raw framing and byte fidelity | Engineering proof gap. Inspect the exact selected package/source and prove original-wire/inspection/backend agreement; do not invent options or a custom parser. |
+| HAProxy metadata, public SNI/Host binding, raw framing and byte fidelity | Engineering proof gap. The exact 3.2.25 source normalizes equal lengths and CL+TE, so post-parser header counts cannot prove strict rejection. Qualify an existing admission boundary or openly review a normalized-input contract; do not invent options, native success or a custom parser. |
 | Aegvium internal mTLS receiver and backend admission | Unimplemented. Existing companion TLS accepts public-edge custody in a different research profile; it is not this receiver. |
 | Hard resource/lifecycle bounds, engine/CRS/dependency acceptance, retained reload failure | Engineering/qualification blockers, not values or mechanisms for the CTO to invent. M1 and M2 gates remain open. |
 | Protocol expansion, fail-open, co-location or inability to meet this boundary | A consequential change to scope/security direction; return the concrete tradeoff to the maintainer instead of silently weakening this decision. None is required to prepare the next source slice. |

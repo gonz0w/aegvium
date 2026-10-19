@@ -100,6 +100,19 @@ narrower supported subset or an existing qualified boundary. Do not add a custom
 parser or reclassify normalization as rejection without a new reviewed design.
 No h2 translation is admitted by the general frontend's h2 support.
 
+A read-only check of the retained exact **3.2.25** release source makes this a
+concrete blocker: `src/http.c`'s `http_parse_cont_len_header` collapses equal
+length values; `src/h1.c` skips the duplicate field and removes Content-Length
+when Transfer-Encoding is present. Post-parser header counts therefore cannot
+establish original duplicate/CL+TE rejection. Keep strict rejection as an
+unqualified requirement, not a claimed existing HAProxy feature. Before the
+adapter is enabled, engineering must identify a qualified existing admission
+boundary or openly review a named normalized-input alternative with independent
+original-wire/inspection/backend and no-second-effect evidence. All transfer
+encoding remains unsupported either way; changing the prose alone proves none
+of this. No custom parser, package patch or CTO decision is selected by this
+source observation. Pure M2-C01 is unaffected by this runtime proof blocker.
+
 Keep 4096 bytes of public request line + headers, a 2048-byte encoded target and
 1024 bytes of internal context fields as design ceilings. The internal request
 header ceiling is 5120 bytes including the context; these are separate public and
@@ -174,3 +187,9 @@ documents SNI/verified peers and body-buffer limitations; it currently identifie
 3.2.26, while Vectivium's proposed OpenBSD package is 3.2.25. Bundled exact-package
 documentation/source and actual behavior remain prerequisites, not inferred from
 the web manual. No runnable configuration is supplied or current option claimed.
+The retained 3.2.25 source archive SHA-256 is
+`d59a68d0daef7b5c596b019b742089788ff1748513ef96e71fe7b3943577866e`, matching
+the [published release checksum](https://www.haproxy.org/download/3.2/src/haproxy-3.2.25.tar.gz.sha256).
+`src/h1.c` SHA-256 is `30bda655a9944b25e4e754f8d596686d51f2cc3689782133eca06dcace084fef`;
+`src/http.c` is `26cab35d003db929d9bdd99e1b7d1331c0e527fd630e6203c74a65d68a7bc8f5`.
+This is a static source observation, not package/runtime rejection evidence.
