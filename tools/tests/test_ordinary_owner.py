@@ -19,13 +19,14 @@ class Interrupted(BaseException):
 
 
 class OrdinaryOwnerTests(unittest.TestCase):
-    def run_owner(self, fault=None, *, reservation_lost=False, signal_error=None, absent=True, wait_error=False, status=0, clock_error=False, late=False, observed_exit=True, stop=False, tick=1.0, eof=False, signal_at_eof=False, transient_probe=False):
+    def run_owner(self, fault=None, *, reservation_lost=False, signal_error=None, absent=True, wait_error=False, status=0, clock_error=False, late=False, observed_exit=True, stop=False, tick=1.0, eof=False, signal_at_eof=False, transient_probe=False, signal_at_exit=False):
         child = types.SimpleNamespace(pid=424242, returncode=None)
         calls, records = [], {}
         def observe(*args):
             calls.append('observe')
             if reservation_lost:
                 raise ChildProcessError(errno.ECHILD, 'synthetic lost reservation')
+            if signal_at_exit: latch.setdefault('reason', 'signal')
             return types.SimpleNamespace(si_pid=child.pid) if observed_exit else None
         def wait(pid, flags):
             calls.append('wait')
@@ -192,6 +193,10 @@ class OrdinaryOwnerTests(unittest.TestCase):
         self.assertEqual(len(audit['absence_errors']), 16)
         self.assertEqual(len(audit['errors']), 1)
         self.assertLess(len(__import__('json').dumps(audit).encode()), 4096)
+
+    def test_signal_recorded_during_final_exit_observation_is_retained(self):
+        _, _, records = self.run_owner(signal_at_exit=True)
+        self.assertEqual(records['result.json']['reason'], 'signal')
 
     def test_capability_failure_happens_before_child_birth(self):
         # Pre-birth guard requires the actual capability name, not a fake waiter.

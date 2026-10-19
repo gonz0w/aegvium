@@ -103,7 +103,11 @@ def own_ordinary(child, record, created, work_end, total_end, duration, stopped,
             if stopped():
                 reason = choose('signal')
                 break
-            if observe() or not reserved:
+            observed_exit = observe()
+            if not reserved:
+                break
+            if observed_exit:
+                reason = choose('child-exit')
                 break
             if now() >= work_end:
                 reason = choose('deadline')
