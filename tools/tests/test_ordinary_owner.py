@@ -40,9 +40,14 @@ class OrdinaryOwnerTests(unittest.TestCase):
             if signal_error:
                 raise PermissionError(signal_error, 'synthetic denied signal')
         probed = set()
+        probe_number = [100]
         def observation(pid, number):
             self.assertEqual(number, 0)
             calls.append(('absent', pid))
+            if fault == 'probe-denied': raise PermissionError(errno.EPERM, 'synthetic repeated denial')
+            if fault == 'probe-overflow':
+                probe_number[0] += 1
+                raise OSError(probe_number[0], 'synthetic distinct error')
             if fault == 'probe-eintr': raise InterruptedError()
             if fault == 'probe-base': raise Interrupted()
             if transient_probe and pid not in probed:
@@ -174,6 +179,19 @@ class OrdinaryOwnerTests(unittest.TestCase):
                 self.assertEqual(calls.count('wait'), 1)
                 tail = calls[calls.index('wait')+1:]
                 self.assertFalse(any(isinstance(c, tuple) and c[0]=='signal' for c in tail))
+
+    def test_repeated_denial_counts_and_summary_overflow_cannot_admit(self):
+        code, _, records = self.run_owner('probe-denied')
+        self.assertNotEqual(code, 0)
+        audit = records['result.ownership.json']
+        self.assertEqual(len(audit['absence_errors']), 2)
+        self.assertEqual([v['count'] for v in audit['absence_errors']], [251, 251])
+        code, _, records = self.run_owner('probe-overflow')
+        self.assertNotEqual(code, 0)
+        audit = records['result.ownership.json']
+        self.assertEqual(len(audit['absence_errors']), 16)
+        self.assertEqual(len(audit['errors']), 1)
+        self.assertLess(len(__import__('json').dumps(audit).encode()), 4096)
 
     def test_capability_failure_happens_before_child_birth(self):
         # Pre-birth guard requires the actual capability name, not a fake waiter.

@@ -38,8 +38,14 @@ def own_ordinary(child, record, created, work_end, total_end, duration, stopped,
     last_time, clock_failed = created, False
 
     def failed(phase, error):
-        errors.append({'phase': phase, 'type': type(error).__name__,
-                       'errno': getattr(error, 'errno', None)})
+        entry = next((item for item in errors if item['phase'] == phase
+                      and item['type'] == type(error).__name__
+                      and item['errno'] == getattr(error, 'errno', None)), None)
+        if entry is not None:
+            entry['count'] += 1
+        else:
+            errors.append({'phase': phase, 'type': type(error).__name__,
+                           'errno': getattr(error, 'errno', None), 'count': 1})
 
     def now():
         nonlocal last_time, clock_failed
