@@ -20,6 +20,11 @@ key and authenticated separate series inspection. The [earlier recommendation](S
 remains evidence. Only M2-C01's pure source-contract component is specified as the
 next implementation slice; no current connector or required-WAF enablement exists.
 
+The [M2-C01 inert context component](M2-C01.md) is now implemented with portable
+tests. Its success only records a context; it grants no allow verdict and has no
+transport or backend call. The next runtime adapter still requires its scoped
+design and all applicable framing/trust/inspection/containment/qualification gates.
+
 This paper packet uses canonical source
 `c080a869ac60b2844490e16532b5f3687f4e8b7e` and its linked historical receipts.
 It creates no keys, runtime configuration, service, installer or execution packet.
@@ -28,8 +33,8 @@ No test procedure below authorizes a run, retry, access expansion or workaround.
 
 ## Sequence and acceptance ownership
 
-1. Implement/review M2-C01's bounded immutable context admission and fake-I/O
-   portable tests in a separate PR. Engineering owns exact-package framing/trust
+1. M2-C01's bounded immutable context source is implemented; review/verification
+   remains source-bound. Next scope the adapter design. Engineering owns framing/trust
    proofs, adapter design and remaining D2–D4 resource/lifecycle gaps; no further
    CTO key-location or ordinary mechanism/numerical choice is needed.
 2. Keep [M1](../M1/README.md), its parser/CRS blockers and

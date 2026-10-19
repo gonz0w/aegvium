@@ -146,6 +146,11 @@ reversed. Backend access is never enabled by a health result or failure handler.
 
 ## M2-C01: precise next source implementation
 
+The inert [M2-C01 source component](M2-C01.md) now implements this bounded parsed
+context slice, with synthetic portable tests. It has no production peer constructor,
+transport, allow verdict or backend call. The runtime obligations below remain
+unimplemented; its parsed fields cannot prove strict original-wire admission.
+
 Implement a small internal, stdlib-only immutable request-context/route admission
 component with an injected already-authenticated peer descriptor and a recording
 context consumer. A transport adapter alone constructs that descriptor from
@@ -168,8 +173,8 @@ specified/admitted here; it cannot enable a required-WAF route.
 Subsequent receiver/forwarder and Vectivium renderer/configuration slices need
 their own scoped EDD/TDD, signatures, independent review, portable evidence and
 required-WAF rejection until the complete path is admitted. Current portable
-`make verify` checks documentation/foundation integrity only. It does **not**
-execute or pass the M2-C01 cases described here, TLS/framing/CRS behavior, no-bypass,
+`make verify` checks foundation integrity and M2-C01's parsed context component.
+It does **not** execute or pass actual TLS/framing/CRS behavior, no-bypass,
 resources or native qualification. Keep only fixed bounded error classes and
 counts in logs/receipts; never raw bodies, query/header values, keys or private
 inventories. M1 failures and the validation pause remain.
