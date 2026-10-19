@@ -23,6 +23,10 @@ Bounded checker work: [readiness/forwarding study #73](https://github.com/gonz0w
 
 ## M2 — Inline enforcement and backend isolation
 
+The [proposed M2 packet](M2/README.md) and paper TLS-ownership comparison refine
+these existing outcomes. Architecture/implementation adoption and native acceptance
+remain open; affected security/traffic/advisory validation stays paused.
+
 - Review the bounded enforcement implementation packet
 - Implement allowlisted routing and deny unknown hosts
 - Qualify ingress TLS and trusted client identity
