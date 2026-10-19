@@ -3,6 +3,10 @@
 Status: **Proposed decision support; no production topology selected.**
 Owner: Cam (`@gonz0w`). Date: 2026-10-19. [Packet](README.md), [EDD](EDD.md).
 Source baseline: `c080a869ac60b2844490e16532b5f3687f4e8b7e`.
+The [2026-10-19 security recommendation](SECURE-BOUNDARY-RECOMMENDATION.md)
+now recommends frontend-only public key custody and a separately authenticated,
+mandatory inspector. It compares this packet's actual connectors, preserves all
+experiments and changes no runtime/ADR adoption state.
 This preserves [ADR 0001](../../architecture/adr-0001-ingress-inspection.md) and
 [ADR 0005](../../architecture/adr-0005-tls-passthrough-research.md); it does not
 amend their adoption state. No key is created, moved or read by this paper work.

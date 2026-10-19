@@ -12,6 +12,11 @@ and no uninspected forwarding on rejection or failure. Read the [PRD](PRD.md),
 together. They refine [M2's existing roadmap](../ROADMAP.md); they neither select
 a production topology nor turn the research CLI/configuration into a product.
 
+The later [secure boundary recommendation](SECURE-BOUNDARY-RECOMMENDATION.md)
+compares these actual connectors with frontend-only public TLS custody and a
+separate mandatory inspector. It is reported decision support, not adoption or
+permission to implement the unresolved Vectivium/Aegvium interface.
+
 This paper packet uses canonical source
 `c080a869ac60b2844490e16532b5f3687f4e8b7e` and its linked historical receipts.
 It creates no keys, runtime configuration, service, installer or execution packet.
