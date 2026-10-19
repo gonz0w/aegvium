@@ -2,7 +2,7 @@
 
 Lean, auditable OpenBSD WAF research for a dedicated VM behind EdgeWall. BSD-3-Clause; independent of the OpenBSD project. Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
 
-A runnable lab companion now forwards owned HTTP/HTTPS applications through pinned Coraza/OWASP CRS. It supports verified HTTPS backends, strict route allowlists, transactional SIGHUP route replacement and four-request admission. Stock relayd can terminate TLS in the retained control or pass TCP/TLS to the companion, where actual SNI/HTTP authority binding is enforced. Architecture and appliance adoption remain proposed; this is not an installable WAF.
+A runnable lab companion now forwards owned HTTP/HTTPS applications through pinned Coraza/OWASP CRS. It supports verified HTTPS backends, strict route allowlists, transactional SIGHUP route replacement and four-request admission. Stock relayd can terminate TLS in the retained control or pass TCP/TLS to the companion, where actual SNI/HTTP authority binding is enforced. The [M2 boundary](docs/architecture/adr-0010-frontend-key-mandatory-inspector.md) is now selected for reviewed source adoption; runtime integration remains unimplemented/unqualified. This is not an installable WAF.
 
 The optional sender-containment experiment uses stock PF to restrict fresh connections to the companion's PROXY listener by relayd's socket UID. Open/protected/rollback/protected-again native controls retain exact effects and policy counters. These are disposable-guest templates: other lab traffic, including backend ports, remains reachable. They are not an appliance firewall or cryptographic sender authentication.
 
@@ -59,7 +59,7 @@ Each experiment owns and tears down its VM, sockets, daemons and synthetic TLS a
 
 Still open: selected trust/privilege/startup policy, product client-identity policy, certificate distribution/rotation, supported persistent/streaming protocols, full CRS/application tuning, measured resource/soak budgets, complete candidate provenance/acceptance and distribution obligations. The new stock baseline establishes selected installed-file lineage; historical inherited-image lineage remains unproven. Local UID containment excludes root/PF administrators and compromised allowed-UID processes. No live deployment, service enablement or release is implied by research.
 
-[Proposed ingress ADR](docs/architecture/adr-0001-ingress-inspection.md) keeps relayd plus a companion and coraza-caddy under comparison. A future Traefik/Caddy-like relayd control plane may reuse the boundary; no reusable API or separate connector repository is selected. CrowdSec remains an optional later behavioral layer.
+[Selected M2 boundary](docs/architecture/adr-0010-frontend-key-mandatory-inspector.md) keeps public endpoint private-key custody at the Vectivium frontend and mandatory series inspection separate. [M2-H1/1](docs/milestones/M2/FRONTEND-INSPECTOR-CONTRACT.md) defines the first source contract; Vectivium still rejects required WAF until integration and acceptance exist. The [historical M1 ingress ADR](docs/architecture/adr-0001-ingress-inspection.md) retains relayd/companion/Caddy comparison evidence. A future Traefik/Caddy-like relayd control plane may reuse the boundary; no reusable API or separate connector repository is selected. CrowdSec remains an optional later behavioral layer.
 
 BootWeave owns the generic installation builder and its extension contract. Aegvium owns its future payload/runtime policy; no speculative installer schema is defined.
 

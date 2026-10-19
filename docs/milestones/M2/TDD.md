@@ -1,14 +1,19 @@
 # M2 Test Design: enforcement and recovery acceptance
 
-Status: **Proposed; tests not executed by this packet.**
+Status: **M2-H1/1 source-contract Test Design selected; cases not executed by this
+documentation change.** Broader M2/native acceptance remains proposed.
 Owner: Cam (`@gonz0w`). Date: 2026-10-19. [PRD](PRD.md), [EDD](EDD.md).
 Affected security/traffic/advisory validation is **paused/blocked**. This design
 does not authorize execution, resume a blocked profile or provide a workaround.
 
 ## Requirement to acceptance mapping
 
-All rows require the selected architecture and resolved EDD D1–D4 before they can
-become an executable acceptance packet. A skipped/blocked row is not passing.
+The [selected ADR](../../architecture/adr-0010-frontend-key-mandatory-inspector.md)
+and [M2-H1/1 contract](FRONTEND-INSPECTOR-CONTRACT.md) resolve D1 and scope the next
+M2-C01 pure context/route admission component. Its independent bounded fake-I/O
+cases are specified there; no implementation or runtime case passes by publishing
+this design. Rows below still require remaining D2–D4 realization/proof before a
+runtime acceptance packet. A skipped/blocked row is not passing.
 
 | Requirement | Test ID | Fixture and level | Required observation | Gate |
 |---|---|---|---|---|

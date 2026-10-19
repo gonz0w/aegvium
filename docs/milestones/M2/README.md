@@ -1,6 +1,7 @@
 # M2 bounded inline enforcement design
 
-Status: **Proposed for review; implementation and architecture adoption withheld.**
+Status: **Boundary and M2-H1/1 source contract selected for reviewed adoption;
+runtime integration UNIMPLEMENTED/UNQUALIFIED.** Broader M2 remains proposed.
 Owner: Cam (`@gonz0w`). Date: 2026-10-19.
 Refs [#19](https://github.com/gonz0w/aegvium/issues/19),
 [#18](https://github.com/gonz0w/aegvium/issues/18).
@@ -12,10 +13,12 @@ and no uninspected forwarding on rejection or failure. Read the [PRD](PRD.md),
 together. They refine [M2's existing roadmap](../ROADMAP.md); they neither select
 a production topology nor turn the research CLI/configuration into a product.
 
-The later [secure boundary recommendation](SECURE-BOUNDARY-RECOMMENDATION.md)
-compares these actual connectors with frontend-only public TLS custody and a
-separate mandatory inspector. It is reported decision support, not adoption or
-permission to implement the unresolved Vectivium/Aegvium interface.
+The [selected boundary ADR](../../architecture/adr-0010-frontend-key-mandatory-inspector.md)
+and [M2-H1/1 contract](FRONTEND-INSPECTOR-CONTRACT.md) resolve the direction under
+delegated engineering authority: frontend custody of the public endpoint private
+key and authenticated separate series inspection. The [earlier recommendation](SECURE-BOUNDARY-RECOMMENDATION.md)
+remains evidence. Only M2-C01's pure source-contract component is specified as the
+next implementation slice; no current connector or required-WAF enablement exists.
 
 This paper packet uses canonical source
 `c080a869ac60b2844490e16532b5f3687f4e8b7e` and its linked historical receipts.
@@ -25,15 +28,16 @@ No test procedure below authorizes a run, retry, access expansion or workaround.
 
 ## Sequence and acceptance ownership
 
-1. Review the narrow capability/profile and the two TLS ownership choices against
-   the existing connector alternative. Resolve EDD decisions D1–D4 using the
-   retained evidence; record missing evidence rather than inventing conclusions.
+1. Implement/review M2-C01's bounded immutable context admission and fake-I/O
+   portable tests in a separate PR. Engineering owns exact-package framing/trust
+   proofs, adapter design and remaining D2–D4 resource/lifecycle gaps; no further
+   CTO key-location or ordinary mechanism/numerical choice is needed.
 2. Keep [M1](../M1/README.md), its parser/CRS blockers and
    [ADR 0001](../../architecture/adr-0001-ingress-inspection.md) open. Issue #18
    depends on #16/#17; issue #19 depends on M1 gate #2. Drafting this packet does
    not satisfy those relationships or their candidate-specific acceptance.
-3. Only an accepted candidate-specific architecture and approved scoped
-   PRD/EDD/Test Design admit product implementation. Native enforcement and
+3. The ADR/contract scope the next source component; later runtime slices still
+   need their candidate-specific approved EDD/Test Design. Native enforcement and
    bypass acceptance belongs to #24 under M2 gate #3, separately from document
    review and each implementation issue #20–23.
 
@@ -45,14 +49,13 @@ GitHub owns live status and blockers; these links are not a second progress queu
 
 - **Product boundary:** retain the proposed narrow request-enforcement outcome;
   no management UI or additional protocol project is needed to describe it.
-- **Key custody:** the source-only paper comparison is already authorized and can
-  continue without new user input. Any firm requirement that keys remain at relayd
-  constrains eventual product adoption; no key custody or topology is adopted here.
+- **Key custody:** frontend-only custody of the public endpoint private key is
+  selected; internal service keys remain separate. No live key or topology changes.
 - **Engineering closure:** propose and review exact raw-wire/authority admission,
   production principals/containment, certificate operations and numerical hard
-  budgets before approval. The EDD supplies a concrete initial finite profile,
-  separated-principal/startup-only certificate replacement proposal and preferred
-  normalized-input policy. Engineering owns closing the remaining measured gaps;
+  budgets before runtime approval. M2-H1/1 selects fixed-length-only admission and
+  paired startup snapshots, superseding the earlier preferred normalization option
+  for this slice without claiming raw-wire enforcement. Engineering closes gaps;
   the maintainer need not invent mechanisms or numerical resource limits.
 
 Document review checks links, requirement coverage and honest evidence boundaries.

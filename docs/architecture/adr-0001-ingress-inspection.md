@@ -2,6 +2,10 @@
 
 Status: **Proposed for review; adoption withheld.** Date: 2026-10-14. Owns the M1 recommendation under #15 and M1-05, not a runnable appliance contract. [Scoped assessment](../milestones/M1/CONNECTOR-ASSESSMENT.md); [existing connector source comparison](../research/connector-comparison.md).
 
+For the later M2 suite boundary, [ADR 0010](adr-0010-frontend-key-mandatory-inspector.md)
+selects frontend key custody and separate mandatory series inspection. This M1
+comparison retains its evidence/status; it is not the selected M2 default.
+
 ## Recommendation
 
 Prioritize stock relayd TCP transport with TLS termination and a separate unprivileged Coraza inspection/forwarding companion as the next candidate for combined qualification. Keep coraza-caddy as the existing-connector comparison/control. Supersede the earlier HTTP-first prototype preference; do not select relayd HTTP mode as the default WAF ingress while its measured parser/pipeline/rejection gaps remain unresolved. This recommendation does not approve a supported transport profile, configuration schema, service, distribution or product implementation.
