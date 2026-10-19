@@ -25,6 +25,12 @@ tests. Its success only records a context; it grants no allow verdict and has no
 transport or backend call. The next runtime adapter still requires its scoped
 design and all applicable framing/trust/inspection/containment/qualification gates.
 
+The proposed [M2-A01 adapter EDD](ADAPTER-EDD.md) and [Test Design](ADAPTER-TDD.md)
+now recommend concrete mTLS roles, paired startup facts and a single request/
+transaction owner. Its first implementation slice is a no-dial receiver and
+coordinator fixture; strict original-wire framing and backend enablement remain
+separate blocking gates. This proposal is not current runtime behavior.
+
 This paper packet uses canonical source
 `c080a869ac60b2844490e16532b5f3687f4e8b7e` and its linked historical receipts.
 It creates no keys, runtime configuration, service, installer or execution packet.
