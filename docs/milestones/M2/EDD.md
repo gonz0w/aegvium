@@ -1,10 +1,18 @@
 # M2 engineering design: proposed enforcement contracts
 
-Status: **Proposed; architecture and implementation not adopted.**
+Status: **Boundary and M2-H1/1 source-contract scope selected; runtime integration
+UNIMPLEMENTED/UNQUALIFIED.** Remaining M2 mechanisms are proposals.
 Owner: Cam (`@gonz0w`). Date: 2026-10-19.
 [PRD](PRD.md), [Test Design](TDD.md), [TLS comparison](TLS-OWNERSHIP.md).
 Refs [#18](https://github.com/gonz0w/aegvium/issues/18) and
 [#19](https://github.com/gonz0w/aegvium/issues/19).
+
+The [boundary ADR](../../architecture/adr-0010-frontend-key-mandatory-inspector.md)
+and [M2-H1/1 contract](FRONTEND-INSPECTOR-CONTRACT.md) take precedence for the
+selected source slice. Earlier alternatives/limits below remain dated proposals
+where not selected. The contract selects frontend-only public endpoint private-key custody,
+series mTLS, fixed-length-only input and startup stop/validate/start; the preferred
+normalization and seamless replacement options below are not selected for it.
 
 ## Component and trust boundaries
 
@@ -14,16 +22,16 @@ allowlisted backend. No health table or recovery path may point directly at an
 application. Management is a separate authority; losing it cannot convert the
 data plane to DetectionOnly or forwarding without inspection.
 
-Two relayd compositions remain under comparison: TLS termination at relayd with
-a companion, or stock TCP passthrough with TLS termination inside the companion.
-The existing coraza-caddy connector remains a full alternative. The
-[paper comparison](TLS-OWNERSHIP.md) states their actual evidence and gaps.
-No component selection, UID, PF rule, pledge/unveil policy or key move occurs here.
+The selected suite boundary is Vectivium frontend → separate Aegvium inspector →
+authenticated allowlisted application. relayd and coraza-caddy remain historical
+comparisons, not the default for this slice. The [paper comparison](TLS-OWNERSHIP.md)
+retains their actual evidence/gaps. No UID/PF/pledge/unveil or key move occurs here.
 
 The privileged boundary must enforce startup ordering and sender/backend access;
 the nonroot inspection process must not be able to request arbitrary privileged
 actions. PROXY metadata and loopback are not authentication. Product credentials,
-certificate ownership and remote application containment remain D1/D2 decisions.
+certificate operations and exact remote application containment remain engineering
+implementation/proof gaps under D2, not a new CTO key-location decision.
 
 ## Typed routes and state authority
 
@@ -196,16 +204,17 @@ credentials, private keys, bodies, query values and private inventories.
 Audit exhaustion must have a bounded specified outcome without disabling
 inspection; richer operational retention/export remains M3.
 
-## Unresolved decisions before implementation approval
+## Decision closure and remaining runtime approval gaps
 
 | ID | Decision | Required closure |
 |---|---|---|
-| D1 | Maintainer product choice: scope and TLS key custody | Confirm the narrow first outcome and state any key-location constraint. Engineering supplies the comparison; candidate-specific adoption still needs the existing evidence. |
-| D2 | Engineering proposal: authority/privilege | Start with the separated principals, read-only inputs, startup-only certificate replacement and fresh lifetimes above; specify exact identities/permissions/containment and prove loss detection. No implicit lab-policy adoption. |
-| D3 | Engineering proposal: compatibility/admission | Prefer the single-parser normalized-input contract above; document its limits and compare stricter admission if required. Propose exact authority/port/case, TLS and error/replacement behavior for review; no raw rejection claim from normalization. |
+| D1 | Scope and TLS key custody selected under delegated engineering authority | ADR 0010 selects frontend custody of the public endpoint private key, separate mandatory series inspector and M2-H1/1. Runtime enablement and product acceptance remain separate. |
+| D2 | Authority/privilege contract selected; realization unimplemented | M2-H1/1 selects role-specific mTLS, operator-owned paired snapshots and startup-only replacement. Engineering must implement exact identities/permissions/containment, pairing and loss detection; no lab policy is adopted. |
+| D3 | Initial semantic profile selected; raw-wire/package proof still absent | M2-H1/1 selects exact authority/port/context and fixed-length-only rejection obligations. The earlier normalization preference is not selected for this slice. Multiple parsers and stripped/normalized fields require independent wire evidence; no current support claim. |
 | D4 | Engineering proposal: budgets/acceptance | Start with the finite profile above; measure and propose the remaining hard resources and total startup/reload/retirement bounds. Qualify the complete profile before claiming accepted limits. |
 
-The recommended next work is resolving this bounded paper packet, not another
-isolated experiment or a production selection based on source size. M1 blockers
-and the paused validation remain authoritative. No new dependency, service,
+The next work is the contract's M2-C01 pure source component in a separate reviewed
+PR, followed by scoped adapter design; no listener or required-WAF enablement.
+Runtime resource/lifecycle values and qualifications remain engineering blockers.
+M1 blockers and the paused validation remain authoritative. No new dependency, service,
 framework, shared package or deployment contract is introduced.

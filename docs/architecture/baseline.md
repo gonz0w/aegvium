@@ -1,6 +1,12 @@
 # Candidate architecture
 
-Status: proposed, not deployed or qualified. The [connector/privilege ADR](adr-0001-ingress-inspection.md) consolidates the current recommendation and adoption gates; it supersedes the earlier HTTP-first research preference.
+Status: M2 boundary selected by [ADR 0010](adr-0010-frontend-key-mandatory-inspector.md);
+runtime integration unimplemented/unqualified. The current selected source design
+is EdgeWall → Vectivium frontend/public TLS owner → separate authenticated Aegvium
+inspector → allowlisted authenticated application. [M2-H1/1](../milestones/M2/FRONTEND-INSPECTOR-CONTRACT.md)
+scopes the next pure source component; no live topology or feature is enabled.
+The [M1 connector ADR](adr-0001-ingress-inspection.md) and the following historical
+comparison retain their narrower evidence, not a current M2 default.
 
 EdgeWall → WAF VM relayd TLS listener → loopback inspection proxy embedding Coraza + CRS → allowlisted application backend.
 

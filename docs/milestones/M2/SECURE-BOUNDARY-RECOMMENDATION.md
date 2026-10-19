@@ -1,6 +1,9 @@
 # M2 secure connector and TLS boundary recommendation
 
-Status: **Recommendation for review; no runtime architecture adopted.**
+Status: **Historical recommendation; selected M2 boundary now recorded by
+[ADR 0010](../../architecture/adr-0010-frontend-key-mandatory-inspector.md) and
+[M2-H1/1](FRONTEND-INSPECTOR-CONTRACT.md). Runtime integration remains unimplemented
+and unqualified.** The source/evidence comparison below retains its original scope.
 Date: 2026-10-19. Owner: Cam (`@gonz0w`). Baseline:
 `ea84325a513a9584a1fda880c53aebff8e60fa1b`, merged proposal [#118](https://github.com/gonz0w/aegvium/pull/118).
 [PRD](PRD.md), [EDD](EDD.md), [Test Design](TDD.md),

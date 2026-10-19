@@ -1,9 +1,17 @@
 # M2 product requirements: bounded inline enforcement
 
-Status: **Proposed; not approved for implementation.** Owner: Cam (`@gonz0w`).
+Status: **M2-H1/1 boundary/source-contract scope selected; broader runtime
+implementation and product acceptance remain unapproved.** Owner: Cam (`@gonz0w`).
 Date: 2026-10-19. [EDD](EDD.md), [Test Design](TDD.md), [entry](README.md).
 Authority: [WAF-01–06](../../product/PRD.md), [M1-05](../M1/PRD.md),
 [#19](https://github.com/gonz0w/aegvium/issues/19).
+
+The [boundary ADR](../../architecture/adr-0010-frontend-key-mandatory-inspector.md)
+and [M2-H1/1](FRONTEND-INSPECTOR-CONTRACT.md) supersede the initial proposed
+frontend/custody/compatibility choices below for the first source slice: separate
+authenticated series inspection, fixed-length-only close-only HTTP/1.1 and no
+seamless replacement. Only its M2-C01 pure context-admission component is next;
+requirements and acceptance outside that scope remain proposed/unexecuted.
 
 ## Operator outcome and workflows
 
