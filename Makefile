@@ -6,13 +6,24 @@ hooks:
 check:
 	sh tools/check-repo.sh
 lint:
-	.tools/bin/shellcheck tools/native/lifecycle-components.sh tools/native/lifecycle-build.sh
+	.tools/bin/shellcheck tools/run-contract-go.sh tools/native/lifecycle-components.sh tools/native/lifecycle-build.sh
 	.tools/bin/shellcheck tools/native/request-wire.sh tools/native/backend-isolation.sh tools/native/sender-containment.sh tools/native/lab-tls.sh tools/native/configured-caddy.sh tools/native/connector-build.sh tools/native/connector-comparison.sh tools/native/lab-proxy.sh tools/native/relayd-body.sh tools/native/relayd-traffic.sh tools/native/relayd-checker-contract.sh tools/native/relayd-signals.sh tools/native/relayd-wiring.sh tools/native/relayd-health-faults.sh tools/native/relayd-checker-replacement.sh tools/native/relayd-generations.sh research/relayd/checker-exit2.sh tools/native/relayd-config.sh tools/native/source-build.sh tools/native/engine-repeat.sh tools/native/patch-openbsd.sh tools/run-research-go.sh tools/check-repo.sh .githooks/pre-commit .githooks/commit-msg
 test:
 	.tools/venv/bin/python3 -m unittest discover -s tools/tests -v
+	$(MAKE) contract-check
 secrets:
 	.tools/bin/gitleaks dir --redact --no-banner --config .gitleaks.toml .
 verify: check lint test secrets
+
+.PHONY: contract-check contract-race contract-fuzz
+contract-check:
+	@test -z "$$(.tools/go/bin/gofmt -l internal/requestctx)"
+	sh tools/run-contract-go.sh vet ./...
+	sh tools/run-contract-go.sh test -count=1 -timeout=60s ./...
+contract-race:
+	sh tools/run-contract-go.sh test -race -count=1 -timeout=60s ./...
+contract-fuzz:
+	sh tools/run-contract-go.sh test ./internal/requestctx -run '^$$' -fuzz '^FuzzParsedContext$$' -fuzztime=10s -parallel=2 -timeout=30s
 
 .PHONY: research-test research-cross
 research-test:
