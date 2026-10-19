@@ -563,6 +563,7 @@ func TestInvalidAndCancelledInvocation(t *testing.T) {
 	if !errors.Is(s.Record(ctx, Peer{frontend}, request(), dst), context.Canceled) || len(dst.Records()) != 0 {
 		t.Fatal("cancelled dispatch")
 	}
+	//lint:ignore SA1012 Deliberately exercise the defensive nil-context rejection; ordinary callers supply a context.
 	if s.Record(nil, Peer{frontend}, request(), dst) != ErrInput || s.Record(context.Background(), Peer{frontend}, request(), nil) != ErrInput {
 		t.Fatal("nil invocation")
 	}
