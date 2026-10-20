@@ -17,7 +17,7 @@ verify: check lint test secrets
 
 .PHONY: contract-check contract-race contract-fuzz
 contract-check:
-	@test -z "$$(.tools/go/bin/gofmt -l internal/requestctx)"
+	@test -z "$$(.tools/go/bin/gofmt -l internal)"
 	sh tools/run-contract-go.sh vet ./...
 	sh tools/run-contract-go.sh test -count=1 -timeout=60s ./...
 contract-race:

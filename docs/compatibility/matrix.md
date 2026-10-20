@@ -3,6 +3,7 @@
 | Capability | Current evidence | Remaining gate |
 | --- | --- | --- |
 | Foundation tools | Host make verify | Does not qualify runtime |
+| M2-C02 shared capacity owner | Effect-free source accounting; exact ordinary check receipts belong to its Draft PR | No actual socket/authentication/inspection/forwarding; affected security/advisory and complete A01a/native qualification remain open |
 | Coraza v3.8.1 synthetic engine | Authorized research spike | See source-bound PR result; native execution pending |
 | relayd integration | Upstream documentation | Native connector/parser/TLS/identity comparison |
 | OWASP CRS v4.25.0 | Four host-only smoke cases passed | Native full corpus and benign application regressions |

@@ -9,6 +9,7 @@ The optional sender-containment experiment uses stock PF to restrict fresh conne
 | Capability | Current evidence and limits |
 | --- | --- |
 | Inert M2-C01 context admission | [Source component](docs/milestones/M2/M2-C01.md): immutable bounded peer/route/generation/request recording with synthetic portable tests. No production peer constructor, actual TLS/inspection, allow verdict, backend call or required-WAF enablement. |
+| Inert M2-C02 capacity ownership | [Source design](docs/milestones/M2/CAPACITY-OWNER.md): shared four-request/eight-socket reservation accounting across generations, including pre-authentication inbound slots. No actual socket, authentication, inspection or forwarding operation; full qualification remains open. |
 | Actual companion, CRS, HTTP/verified HTTPS routing | [Lab guide](research/coraza/LAB-PROXY.md); [163 ordinary /42 path/three load/seven startup controls](research/native/lab-concurrency-observations.json). Small synthetic corpus, not full OWASP coverage. |
 | TLS passthrough and SNI/Host binding | [29-case native matrix](research/native/tls-passthrough-observations.json), [scoped design](docs/milestones/M1/TLS-PASSTHROUGH.md). Close-only HTTP/1.1; startup-only certificate inputs. |
 | Local sender containment | [44-case/four-phase native matrix](research/native/sender-containment-observations.json), [PF design and rollback](docs/milestones/M1/SENDER-CONTAINMENT.md). Conditional on active PF and loopback filtering; fresh IPv4 data connections only. |
