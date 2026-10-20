@@ -37,6 +37,13 @@ release. It leaves the real peer, transport, attempt barrier, cancellation,
 transaction and shutdown/join integration unimplemented. It neither adopts the
 paused pair descriptor nor changes M2-H1/1 or the existing validation pause.
 
+The [A01a body owner](BODY-OWNER.md) now binds private C02 reservations to actual
+bounded Read/Close calls and detached memory-only body records. It retains charges
+while either call is unfinished and stops admission on uncertain Close. Original
+deadline/cancellation, retirement and Stop suppress late records. Real engine
+transaction ownership, authenticated same-connection transport/framing and full
+receiver/shutdown qualification remain separate; no application dial is present.
+
 This paper packet uses canonical source
 `c080a869ac60b2844490e16532b5f3687f4e8b7e` and its linked historical receipts.
 It creates no keys, runtime configuration, service, installer or execution packet.
