@@ -34,6 +34,7 @@ func TestIndependentStateTraces(t *testing.T) {
 				Usage                                                map[string]Usage `json:"expect_usage"`
 				Pending                                              map[string]int   `json:"expect_pending"`
 				ExpectedGeneration                                   *string          `json:"expect_generation"`
+				Value                                                json.RawMessage  `json:"expect_value"`
 			}
 		}
 	}
@@ -77,9 +78,15 @@ func TestIndependentStateTraces(t *testing.T) {
 						t.Fatal("generation identity mismatch", i)
 					}
 				case "usage":
-					required(t, owners, step.Owner).Usage()
+					var want Usage
+					if len(step.Value) == 0 || json.Unmarshal(step.Value, &want) != nil || required(t, owners, step.Owner).Usage() != want {
+						t.Fatal("explicit usage observation mismatch", i)
+					}
 				case "pending":
-					required(t, generations, step.Generation).Pending()
+					var want int
+					if len(step.Value) == 0 || json.Unmarshal(step.Value, &want) != nil || required(t, generations, step.Generation).Pending() != want {
+						t.Fatal("explicit pending observation mismatch", i)
+					}
 				default:
 					t.Fatal("unknown independent operation", step.Op)
 				}

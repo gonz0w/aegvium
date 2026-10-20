@@ -84,6 +84,13 @@ generation objects are not retained by Owner; live lease references remain
 bounded by four and inbound reservations by eight. Runtime parent allocations,
 real sockets and total process memory remain later integration obligations.
 
+Public Owner, Generation, Inbound and Lease values are handles to private shared
+state. Ordinary Go value copies alias the same accounting, transfer, close and
+retirement state. Closing any copy releases a reservation at most once; stopping
+or retiring any copy affects all copies. Copying a zero handle does not initialize
+it. This is enforced by private state pointers, not by a documentation-only
+instruction to avoid copying a returned public value.
+
 ## Independent Test Design before source
 
 An independent reviewer first supplies literal finite operation traces with
@@ -98,6 +105,9 @@ failed operation. Add deterministic concurrent acquisition barriers and repeated
 close/retire/stop races; successes must never exceed four requests/eight sockets,
 and after explicit closure all counts are zero. Test cloned generation strings,
 value-copy observations and that no independent reset/release path exists.
+An external-package regression copies each public handle before and after
+transfer/closure; copied inbound/lease values cannot release twice or acquire
+duplicate leases, and copied Owner/Generation Stop/Retire must alias originals.
 Use bounded in-memory work only; no timer sleeps, listener or generated identity.
 
 Run repository make verify plus focused go test/vet/race and ordinary staticcheck

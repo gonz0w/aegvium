@@ -29,15 +29,19 @@ type Usage struct{ Requests, Sockets int }
 // Owner shares fixed accounting across generations. A future process owner must
 // use one instance and bind reservations to actual resources and their cleanup.
 // This model cannot enforce those integration obligations. Its zero value rejects.
-type Owner struct {
-	mu          sync.Mutex
-	initialized bool
-	stopped     bool
-	usage       Usage
+// All public handles alias private state when copied, including close/retirement.
+type Owner struct{ state *ownerState }
+
+type ownerState struct {
+	mu      sync.Mutex
+	stopped bool
+	usage   Usage
 }
 
-type Generation struct {
-	owner   *Owner
+type Generation struct{ state *generationState }
+
+type generationState struct {
+	owner   *ownerState
 	token   string
 	retired bool
 	pending int
@@ -45,157 +49,170 @@ type Generation struct {
 
 // Inbound charges a slot before a future accept/handshake. It is not a socket.
 // Once transferred, only the request lease can release its slot.
-type Inbound struct {
-	owner               *Owner
+type Inbound struct{ state *inboundState }
+
+type inboundState struct {
+	owner               *ownerState
 	closed, transferred bool
 }
 
 // Lease owns one request and two socket slots. It has no attempt operation or
 // allow capability. Actual resource closure/join must precede a future release.
-type Lease struct {
-	owner      *Owner
-	generation *Generation
-	inbound    *Inbound
+type Lease struct{ state *leaseState }
+
+type leaseState struct {
+	owner      *ownerState
+	generation *generationState
+	inbound    *inboundState
 	closed     bool
 }
 
-func New() *Owner { return &Owner{initialized: true} }
+func New() *Owner { return &Owner{state: &ownerState{}} }
 
-func (o *Owner) available() bool { return o != nil && o.initialized }
+func (o *Owner) available() bool { return o != nil && o.state != nil }
 
 func (o *Owner) NewGeneration(token string) (*Generation, error) {
 	if !o.available() || !generationToken(token) {
 		return nil, ErrInput
 	}
-	o.mu.Lock()
-	defer o.mu.Unlock()
-	if o.stopped {
+	s := o.state
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.stopped {
 		return nil, ErrStopped
 	}
-	return &Generation{owner: o, token: strings.Clone(token)}, nil
+	return &Generation{state: &generationState{owner: s, token: strings.Clone(token)}}, nil
 }
 
 func (o *Owner) ReserveInbound() (*Inbound, error) {
 	if !o.available() {
 		return nil, ErrInput
 	}
-	o.mu.Lock()
-	defer o.mu.Unlock()
-	if o.stopped {
+	s := o.state
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.stopped {
 		return nil, ErrStopped
 	}
-	if o.usage.Sockets >= MaxSockets {
+	if s.usage.Sockets >= MaxSockets {
 		return nil, ErrCapacity
 	}
-	o.usage.Sockets++
-	return &Inbound{owner: o}, nil
+	s.usage.Sockets++
+	return &Inbound{state: &inboundState{owner: s}}, nil
 }
 
 func (g *Generation) TryRequest(in *Inbound) (*Lease, error) {
-	if g == nil || !g.owner.available() || in == nil || in.owner != g.owner {
+	if g == nil || g.state == nil || in == nil || in.state == nil || in.state.owner != g.state.owner {
 		return nil, ErrInput
 	}
-	o := g.owner
+	gen, inbound := g.state, in.state
+	o := gen.owner
 	o.mu.Lock()
 	defer o.mu.Unlock()
 	if o.stopped {
 		return nil, ErrStopped
 	}
-	if g.retired {
+	if gen.retired {
 		return nil, ErrRetired
 	}
-	if in.closed {
+	if inbound.closed {
 		return nil, ErrClosed
 	}
-	if in.transferred {
+	if inbound.transferred {
 		return nil, ErrTransferred
 	}
 	if o.usage.Requests >= MaxRequests || o.usage.Sockets >= MaxSockets {
 		return nil, ErrCapacity
 	}
-	in.transferred = true
+	inbound.transferred = true
 	o.usage.Requests++
 	o.usage.Sockets++ // Reserved outbound slot, private to the lease.
-	g.pending++
-	return &Lease{owner: o, generation: g, inbound: in}, nil
+	gen.pending++
+	return &Lease{state: &leaseState{owner: o, generation: gen, inbound: inbound}}, nil
 }
 
 func (in *Inbound) Close() error {
-	if in == nil || !in.owner.available() {
+	if in == nil || in.state == nil {
 		return ErrInput
 	}
-	o := in.owner
+	s := in.state
+	o := s.owner
 	o.mu.Lock()
 	defer o.mu.Unlock()
-	if in.closed {
+	if s.closed {
 		return nil
 	}
-	if in.transferred {
+	if s.transferred {
 		return ErrTransferred
 	}
-	in.closed = true
+	s.closed = true
 	o.usage.Sockets--
 	return nil
 }
 
 func (l *Lease) Close() {
-	if l == nil || !l.owner.available() {
+	if l == nil || l.state == nil {
 		return
 	}
-	o := l.owner
+	s := l.state
+	o := s.owner
 	o.mu.Lock()
 	defer o.mu.Unlock()
-	if l.closed {
+	if s.closed {
 		return
 	}
-	l.closed = true
-	l.inbound.closed = true
+	s.closed = true
+	s.inbound.closed = true
 	o.usage.Requests--
 	o.usage.Sockets -= 2
-	l.generation.pending--
+	s.generation.pending--
 }
 
 func (g *Generation) Retire() {
-	if g == nil || !g.owner.available() {
+	if g == nil || g.state == nil {
 		return
 	}
-	g.owner.mu.Lock()
-	g.retired = true
-	g.owner.mu.Unlock()
+	s := g.state
+	s.owner.mu.Lock()
+	s.retired = true
+	s.owner.mu.Unlock()
 }
 
 func (o *Owner) Stop() {
 	if !o.available() {
 		return
 	}
-	o.mu.Lock()
-	o.stopped = true
-	o.mu.Unlock()
+	s := o.state
+	s.mu.Lock()
+	s.stopped = true
+	s.mu.Unlock()
 }
 
 func (o *Owner) Usage() Usage {
 	if !o.available() {
 		return Usage{}
 	}
-	o.mu.Lock()
-	defer o.mu.Unlock()
-	return o.usage
+	s := o.state
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.usage
 }
 
 func (g *Generation) Pending() int {
-	if g == nil || !g.owner.available() {
+	if g == nil || g.state == nil {
 		return 0
 	}
-	g.owner.mu.Lock()
-	defer g.owner.mu.Unlock()
-	return g.pending
+	s := g.state
+	s.owner.mu.Lock()
+	defer s.owner.mu.Unlock()
+	return s.pending
 }
 
 func (l *Lease) Generation() string {
-	if l == nil || !l.owner.available() {
+	if l == nil || l.state == nil {
 		return ""
 	}
-	return l.generation.token
+	return l.state.generation.token
 }
 
 func generationToken(s string) bool {
