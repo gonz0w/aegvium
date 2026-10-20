@@ -244,3 +244,33 @@ func TestCompleteFieldAndCountBounds(t *testing.T) {
 		check("peer-count"+strconv.Itoa(n), in, n == 8)
 	}
 }
+
+func TestDuplicateIdentitiesAndSingleLabelBound(t *testing.T) {
+	c := goldens(t)
+	var two vector
+	for _, v := range c.Valid {
+		if v.ID == "two-routes-sorted-v4-v6" {
+			two = v
+		}
+	}
+	b := raw(t, two)
+	r0, r1 := two.Offsets.Routes[0], two.Offsets.Routes[1]
+	firstID := string(b[r0["id"] : r0["id"]+int(b[r0["id_length"]])])
+	if _, e := Parse(replaceField(b, r1["id_length"], 1, firstID)); e == nil {
+		t.Fatal("duplicate route ID with distinct authorities accepted")
+	}
+	v := c.Valid[0]
+	b = raw(t, v)
+	r := v.Offsets.Routes[0]
+	n := int(b[r["peer_0_length"]])<<8 | int(b[r["peer_0_length"]+1])
+	firstPeer := string(b[r["peer_0"] : r["peer_0"]+n])
+	if _, e := Parse(replaceField(b, r["peer_1_length"], 2, firstPeer)); e == nil {
+		t.Fatal("duplicate complete peer accepted")
+	}
+	for _, n := range []int{63, 64} {
+		_, e := Parse(replaceField(b, r["public_dns_length"], 2, strings.Repeat("a", n)))
+		if (e == nil) != (n == 63) {
+			t.Fatal("isolated DNS label bound", n, e)
+		}
+	}
+}
