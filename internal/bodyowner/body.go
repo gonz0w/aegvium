@@ -349,9 +349,10 @@ func (j *Job) Wait(ctx context.Context) (Outcome, error) {
 	case <-j.state.done:
 		return j.Outcome(), nil
 	case <-ctx.Done():
-		if signaled(j.state.done) {
-			return j.Outcome(), nil
+		out := j.Outcome()
+		if out.Joined {
+			return out, nil
 		}
-		return j.Outcome(), ctx.Err()
+		return out, ctx.Err()
 	}
 }

@@ -198,6 +198,7 @@ func TestObserverCancellationCopiesAndFrozenDetachedRecord(t *testing.T) {
 		t.Fatal("observer canceled the capture", out)
 	}
 	lifeUsage(t, o, 1, 2)
+	//lint:ignore SA1012 Exercise the documented nil observer rejection.
 	if zero, err := j.Wait(nil); !errors.Is(err, bodyowner.ErrInput) || zero.Joined || zero.Recorded {
 		t.Fatal("nil observer was accepted", err)
 	}
@@ -884,4 +885,76 @@ func TestCopiedJobsShareConcurrentWaitAndOutcome(t *testing.T) {
 	}
 	lifeUsage(t, o, 0, 0)
 	lifeCounts(t, s, 1, 1)
+}
+
+// Public barriers cannot deterministically stop Wait between its private done
+// check and Outcome lock. These finite races enforce the observable invariant;
+// a pass is not a claim that the previous interleaving was impossible.
+func TestObserverCancellationCompletionRaceNeverReturnsJoinedWithError(t *testing.T) {
+	o, g, ctx, _ := lifeFixture(t)
+	for range 128 {
+		s := newLifeSource(t, false, true, "A", io.EOF, nil)
+		j := lifeBegin(t, g, ctx, lifeInbound(t, o), s, 1)
+		lifeEntered(t, s.closeEntered)
+		observer, cancelObserver := context.WithCancel(context.Background())
+		const waiters = 8
+		type result struct {
+			out bodyowner.Outcome
+			err error
+		}
+		results := make(chan result, waiters)
+		start := make(chan struct{})
+		canceled, released := make(chan struct{}), make(chan struct{})
+		received := 0
+		t.Cleanup(func() {
+			s.releaseAll()
+			cancelObserver()
+			limit := time.NewTimer(lifeBound)
+			defer limit.Stop()
+			for received < waiters {
+				select {
+				case <-results:
+					received++
+				case <-limit.C:
+					t.Error("observer race waiters did not join during teardown")
+					return
+				}
+			}
+		})
+		for range waiters {
+			copyJob := *j
+			go func() {
+				<-start
+				out, err := copyJob.Wait(observer)
+				results <- result{out: out, err: err}
+			}()
+		}
+		go func() { <-start; cancelObserver(); close(canceled) }()
+		go func() { <-start; s.releaseClose(); close(released) }()
+		close(start)
+		lifeEntered(t, canceled)
+		lifeEntered(t, released)
+		limit := time.NewTimer(lifeBound)
+		for received < waiters {
+			select {
+			case got := <-results:
+				received++
+				if got.out.Joined && got.err != nil {
+					t.Error("completed sampled Outcome carried observer error", got.err)
+				}
+				if got.err != nil && !errors.Is(got.err, context.Canceled) {
+					t.Error("unexpected observer race error", got.err)
+				}
+			case <-limit.C:
+				t.Fatal("finite observer race did not return")
+			}
+		}
+		limit.Stop()
+		cancelObserver()
+		if out := lifeJoined(t, j); !out.Recorded || out.Canceled {
+			t.Fatal("observer race changed capture eligibility", out)
+		}
+		lifeUsage(t, o, 0, 0)
+		lifeCounts(t, s, 1, 1)
+	}
 }
