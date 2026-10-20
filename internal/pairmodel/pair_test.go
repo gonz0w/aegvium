@@ -6,6 +6,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"os"
+	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -160,4 +162,85 @@ func FuzzModel(f *testing.F) {
 			t.Fatal("complete byte round trip failed")
 		}
 	})
+}
+
+// Alter complete independent descriptor bytes without using a product encoder.
+// Unchanged suffixes retain every downstream field and fixed trailer.
+func replaceField(b []byte, at, width int, value string) []byte {
+	old := int(b[at])
+	if width == 2 {
+		old = int(b[at])<<8 | int(b[at+1])
+	}
+	out := bytes.Clone(b[:at])
+	if width == 1 {
+		out = append(out, byte(len(value)))
+	} else {
+		out = append(out, byte(len(value)>>8), byte(len(value)))
+	}
+	out = append(out, value...)
+	return append(out, b[at+width+old:]...)
+}
+func TestCompleteFieldAndCountBounds(t *testing.T) {
+	c := goldens(t)
+	var minimal vector
+	for _, v := range c.Valid {
+		if v.ID == "minimum-reachable-complete-descriptor" {
+			minimal = v
+		}
+	}
+	b := raw(t, minimal)
+	r := minimal.Offsets.Routes[0]
+	check := func(name string, in []byte, want bool) {
+		t.Helper()
+		t.Run(name, func(t *testing.T) {
+			_, e := Parse(in)
+			if (e == nil) != want {
+				t.Fatalf("expected accept=%v, got %v", want, e)
+			}
+		})
+	}
+	for _, n := range []int{32, 33} {
+		check("ID"+string(rune('a'+n)), replaceField(b, r["id_length"], 1, strings.Repeat("a", n)), n == 32)
+	}
+	for _, n := range []int{253, 254} {
+		name := strings.Repeat("a", 63) + "." + strings.Repeat("b", 63) + "." + strings.Repeat("c", 63) + "." + strings.Repeat("d", n-192)
+		for _, key := range []string{"public_dns_length", "peer_0_length", "inspector_dns_length"} {
+			check(key+strconv.Itoa(n), replaceField(b, r[key], 2, name), n == 253)
+		}
+	}
+	for _, address := range []string{"0.0.0.0", "::", "224.0.0.1", "ff02::1", "255.255.255.255", "fe80::1%em0", "2001:0db8::1", strings.Repeat("1", 46)} {
+		check("address-"+address, replaceField(b, r["inspector_address_length"], 1, address), false)
+	}
+	for _, address := range []string{"127.0.0.1", "169.254.1.2", "::1", "fe80::1", "eeee:ffff:ffff:ffff:ffff:ffff:ffff:ffff"} {
+		check("address-"+address, replaceField(b, r["inspector_address_length"], 1, address), true)
+	}
+	for _, at := range []int{0, 8, 40, r["policy_pin"]} {
+		in := bytes.Clone(b)
+		in[at] = 'G'
+		check("lexical"+strconv.Itoa(at), in, false)
+	}
+	route := b[r["start"]:r["end"]]
+	for _, n := range []int{8, 9} {
+		in := bytes.Clone(b[:48])
+		in[47] = byte(n)
+		for i := 0; i < n; i++ {
+			one := bytes.Clone(route)
+			one[r["id"]-r["start"]] = byte('a' + i)
+			one[r["public_dns"]-r["start"]] = byte('a' + i)
+			in = append(in, one...)
+		}
+		in = append(in, b[minimal.Offsets.Fixed:]...)
+		check("route-count"+strconv.Itoa(n), in, n == 8)
+	}
+	for _, n := range []int{8, 9} {
+		at := r["peer_count"]
+		end := r["inspector_address_length"]
+		in := bytes.Clone(b[:at])
+		in = append(in, byte(n))
+		for i := 0; i < n; i++ {
+			in = append(in, 0, 1, byte('a'+i))
+		}
+		in = append(in, b[end:]...)
+		check("peer-count"+strconv.Itoa(n), in, n == 8)
+	}
 }
