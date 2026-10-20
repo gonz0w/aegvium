@@ -1,0 +1,1746 @@
+{
+  "schema": "aegvium-bodyowner-independent-read-vectors-v1",
+  "scope": "Literal finite sequential Read/Close expectations authored independently before Go implementation. No security, wire-framing, TLS, engine or runtime acceptance claim.",
+  "setup": {
+    "fresh_owner_per_vector": true,
+    "generation": "00000000000000000000000000000000",
+    "original_context": "Live deadline context kept live until Wait returns; no cancellation/retirement/Stop is injected by these sequential vectors.",
+    "one_inbound_reserved": true,
+    "usage_after_begin": {
+      "Requests": 1,
+      "Sockets": 2
+    },
+    "read_and_close": "For sequential vectors Read reaches its terminal return before Close; Close returns immediately with nil or a fixed synthetic error."
+  },
+  "script_semantics": {
+    "repeat": "Repeat this exact finite read row count times. Unconsumed trailing rows are intentional and must not execute.",
+    "data": "data_ascii bytes or byte_ascii repeated byte_count times. All literals are ordinary ASCII. The returned n is byte length unless reported_n is present.",
+    "invalid_count": "reported_n may intentionally violate Reader rules; do not copy beyond the supplied buffer. The implementation must reject the count without slicing it.",
+    "errors": {
+      "None": "nil",
+      "EOF": "the exact io.EOF sentinel",
+      "ReadError": "fixed synthetic non-EOF error",
+      "ContextCanceled": "context.Canceled returned by source without canceling the live original context",
+      "WrappedEOF": "a synthetic error wrapping io.EOF; not equal to io.EOF"
+    },
+    "requested_buffer_sizes": "Literal run-length encoding of exact expected len(p) passed to each Read. Expanding only these finite rows is allowed; do not derive expected outcomes from product code.",
+    "record_body": "Concatenate the literal expected Body segments. Empty list means zero bytes; Generation distinguishes a recorded empty body from zero Record.",
+    "final_observation": "Wait returns joined Outcome with nil wait error even for read/Close failure. Inspect all flags, fixed failure enum, detached body, accounting, and subsequent inbound/owner behavior.",
+    "owner_future_reserve_error": "After final usage observation call ReserveInbound once. On success immediately Close that fresh free reservation so the vector tears down its own extra reservation."
+  },
+  "barrier_tests_required_separately": true,
+  "vectors": [
+    {
+      "id": "empty-eof",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": true,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "None",
+          "Record": {
+            "Generation": "00000000000000000000000000000000",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "one-byte-with-eof",
+      "declared_length": 1,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "A",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": true,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "None",
+          "Record": {
+            "Generation": "00000000000000000000000000000000",
+            "Body": [
+              {
+                "data_ascii": "A"
+              }
+            ]
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "one-byte-then-eof",
+      "declared_length": 1,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "A",
+          "error": "None"
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 2,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          },
+          {
+            "size": 4096,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": true,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "None",
+          "Record": {
+            "Generation": "00000000000000000000000000000000",
+            "Body": [
+              {
+                "data_ascii": "A"
+              }
+            ]
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "fragmented-bytes-with-eof",
+      "declared_length": 3,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "A",
+          "error": "None"
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "BC",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 2,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          },
+          {
+            "size": 4096,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": true,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "None",
+          "Record": {
+            "Generation": "00000000000000000000000000000000",
+            "Body": [
+              {
+                "data_ascii": "ABC"
+              }
+            ]
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "exact-cap-with-eof",
+      "declared_length": 4096,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF",
+          "byte_ascii": "A",
+          "byte_count": 4096
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": true,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "None",
+          "Record": {
+            "Generation": "00000000000000000000000000000000",
+            "Body": [
+              {
+                "byte_ascii": "A",
+                "byte_count": 4096
+              }
+            ]
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "exact-cap-needs-next-eof",
+      "declared_length": 4096,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "None",
+          "byte_ascii": "A",
+          "byte_count": 4096
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 2,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          },
+          {
+            "size": 1,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": true,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "None",
+          "Record": {
+            "Generation": "00000000000000000000000000000000",
+            "Body": [
+              {
+                "byte_ascii": "A",
+                "byte_count": 4096
+              }
+            ]
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "exact-cap-no-progress-once-then-eof",
+      "declared_length": 4096,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "None",
+          "byte_ascii": "A",
+          "byte_count": 4096
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "None"
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 3,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          },
+          {
+            "size": 1,
+            "repeat": 2
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": true,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "None",
+          "Record": {
+            "Generation": "00000000000000000000000000000000",
+            "Body": [
+              {
+                "byte_ascii": "A",
+                "byte_count": 4096
+              }
+            ]
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "exact-cap-fragmented-final-byte-eof",
+      "declared_length": 4096,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "None",
+          "byte_ascii": "A",
+          "byte_count": 4095
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "B",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 2,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          },
+          {
+            "size": 2,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": true,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "None",
+          "Record": {
+            "Generation": "00000000000000000000000000000000",
+            "Body": [
+              {
+                "byte_ascii": "A",
+                "byte_count": 4095
+              },
+              {
+                "data_ascii": "B"
+              }
+            ]
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "cap-plus-one-with-eof",
+      "declared_length": 4096,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF",
+          "byte_ascii": "A",
+          "byte_count": 4097
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "LengthError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "cap-plus-one-without-eof",
+      "declared_length": 4096,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "None",
+          "byte_ascii": "A",
+          "byte_count": 4097
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "LengthError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "cap-then-one-with-eof",
+      "declared_length": 4096,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "None",
+          "byte_ascii": "A",
+          "byte_count": 4096
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "B",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 2,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          },
+          {
+            "size": 1,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "LengthError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "early-eof-with-data",
+      "declared_length": 2,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "A",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "LengthError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "early-eof-without-data",
+      "declared_length": 1,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "LengthError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "declared-one-but-two-with-eof",
+      "declared_length": 1,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "AB",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "LengthError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "declared-zero-but-one-with-eof",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "A",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "LengthError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "no-progress-one-hundred",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 100,
+          "data_ascii": "",
+          "error": "None"
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 100,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 100
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "NoProgress",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "ninety-nine-empty-then-eof",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 99,
+          "data_ascii": "",
+          "error": "None"
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 100,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 100
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": true,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "None",
+          "Record": {
+            "Generation": "00000000000000000000000000000000",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "progress-resets-empty-count",
+      "declared_length": 1,
+      "reads": [
+        {
+          "repeat": 99,
+          "data_ascii": "",
+          "error": "None"
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "A",
+          "error": "None"
+        },
+        {
+          "repeat": 99,
+          "data_ascii": "",
+          "error": "None"
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 200,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 100
+          },
+          {
+            "size": 4096,
+            "repeat": 100
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": true,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "None",
+          "Record": {
+            "Generation": "00000000000000000000000000000000",
+            "Body": [
+              {
+                "data_ascii": "A"
+              }
+            ]
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "progress-then-one-hundred-empty",
+      "declared_length": 1,
+      "reads": [
+        {
+          "repeat": 99,
+          "data_ascii": "",
+          "error": "None"
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "A",
+          "error": "None"
+        },
+        {
+          "repeat": 100,
+          "data_ascii": "",
+          "error": "None"
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 200,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 100
+          },
+          {
+            "size": 4096,
+            "repeat": 100
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "NoProgress",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "read-error-without-data",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "ReadError"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "ReadError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "read-error-with-data",
+      "declared_length": 1,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "A",
+          "error": "ReadError"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "ReadError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "read-error-precedes-cap-plus-one",
+      "declared_length": 4096,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "ReadError",
+          "byte_ascii": "A",
+          "byte_count": 4097
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "ReadError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "read-error-at-sentinel-byte",
+      "declared_length": 4096,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "None",
+          "byte_ascii": "A",
+          "byte_count": 4096
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "B",
+          "error": "ReadError"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 2,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          },
+          {
+            "size": 1,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "ReadError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "source-context-error-is-read-error",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "ContextCanceled"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "ReadError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "wrapped-eof-is-read-error",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "WrappedEOF"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "ReadError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "negative-count",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "None",
+          "reported_n": -1
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "ReadError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "too-large-count",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "None",
+          "reported_n": 4098
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "ReadError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "invalid-count-with-eof",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF",
+          "reported_n": 4098
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "ReadError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "negative-count-with-read-error",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "ReadError",
+          "reported_n": -1
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "ReadError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "count-exceeds-remaining-buffer",
+      "declared_length": 4096,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "None",
+          "byte_ascii": "A",
+          "byte_count": 4096
+        },
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF",
+          "reported_n": 2
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 2,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          },
+          {
+            "size": 1,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "ReadError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    },
+    {
+      "id": "close-error-after-empty-eof",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "EOF"
+        }
+      ],
+      "close_error": true,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": true,
+          "Retired": false,
+          "Stopped": true,
+          "CloseFailed": true,
+          "ReadFailure": "None",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 1,
+          "Sockets": 2
+        },
+        "inbound_close_error": "ErrTransferred",
+        "owner_future_reserve_error": "ErrStopped"
+      }
+    },
+    {
+      "id": "close-error-after-exact-data",
+      "declared_length": 1,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "A",
+          "error": "EOF"
+        }
+      ],
+      "close_error": true,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": true,
+          "Retired": false,
+          "Stopped": true,
+          "CloseFailed": true,
+          "ReadFailure": "None",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 1,
+          "Sockets": 2
+        },
+        "inbound_close_error": "ErrTransferred",
+        "owner_future_reserve_error": "ErrStopped"
+      }
+    },
+    {
+      "id": "read-and-close-errors-survive",
+      "declared_length": 1,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "A",
+          "error": "ReadError"
+        }
+      ],
+      "close_error": true,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": true,
+          "Retired": false,
+          "Stopped": true,
+          "CloseFailed": true,
+          "ReadFailure": "ReadError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 1,
+          "Sockets": 2
+        },
+        "inbound_close_error": "ErrTransferred",
+        "owner_future_reserve_error": "ErrStopped"
+      }
+    },
+    {
+      "id": "length-and-close-errors-survive",
+      "declared_length": 2,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "A",
+          "error": "EOF"
+        }
+      ],
+      "close_error": true,
+      "expected": {
+        "read_calls": 1,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": true,
+          "Retired": false,
+          "Stopped": true,
+          "CloseFailed": true,
+          "ReadFailure": "LengthError",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 1,
+          "Sockets": 2
+        },
+        "inbound_close_error": "ErrTransferred",
+        "owner_future_reserve_error": "ErrStopped"
+      }
+    },
+    {
+      "id": "no-progress-and-close-errors-survive",
+      "declared_length": 0,
+      "reads": [
+        {
+          "repeat": 100,
+          "data_ascii": "",
+          "error": "None"
+        }
+      ],
+      "close_error": true,
+      "expected": {
+        "read_calls": 100,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 100
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": true,
+          "Retired": false,
+          "Stopped": true,
+          "CloseFailed": true,
+          "ReadFailure": "NoProgress",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 1,
+          "Sockets": 2
+        },
+        "inbound_close_error": "ErrTransferred",
+        "owner_future_reserve_error": "ErrStopped"
+      }
+    },
+    {
+      "id": "exact-cap-without-eof-is-not-success",
+      "declared_length": 4096,
+      "reads": [
+        {
+          "repeat": 1,
+          "data_ascii": "",
+          "error": "None",
+          "byte_ascii": "A",
+          "byte_count": 4096
+        },
+        {
+          "repeat": 100,
+          "data_ascii": "",
+          "error": "None"
+        }
+      ],
+      "close_error": false,
+      "expected": {
+        "read_calls": 101,
+        "requested_buffer_sizes": [
+          {
+            "size": 4097,
+            "repeat": 1
+          },
+          {
+            "size": 1,
+            "repeat": 100
+          }
+        ],
+        "close_calls": 1,
+        "wait_error": "None",
+        "outcome": {
+          "Joined": true,
+          "Recorded": false,
+          "Canceled": false,
+          "Retired": false,
+          "Stopped": false,
+          "CloseFailed": false,
+          "ReadFailure": "NoProgress",
+          "Record": {
+            "Generation": "",
+            "Body": []
+          }
+        },
+        "usage": {
+          "Requests": 0,
+          "Sockets": 0
+        },
+        "inbound_close_error": "None",
+        "owner_future_reserve_error": "None"
+      }
+    }
+  ]
+}
