@@ -17,3 +17,9 @@
 14. Inspect open PRs and unblocked Ready issues on continue; keep issue state, native blockers and Project fields consistent.
 
 15. Present security validation as concise statuses, counts and hashes instead of raw request fixtures or verbose findings. Respect security access notices; never request broader cyber access or hide/repackage restricted content to bypass a safeguard. Stop affected validation and record it as blocked while continuing ordinary engineering.
+
+## Task context
+
+Use the [local task context](docs/engineering/agent-tasks.md) for the compact shared
+packet and repository command/path index. Existing instructions, required reviews
+and source/native execution and acceptance gates remain authoritative.
