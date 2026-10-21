@@ -45,8 +45,9 @@ transaction ownership, authenticated same-connection transport/framing and full
 receiver/shutdown qualification remain separate; no application dial is present.
 
 The maintainer selected [exclusive external inspector ownership](../../architecture/adr-0011-inspector-owner-containment.md)
-for scoped source implementation. Its first [private lifecycle controller](SUPERVISOR-CONTROLLER.md)
-uses synthetic ownership/clock observations with no native launcher, signal,
+for scoped source implementation. Its first [private C11 lifecycle controller](../../../internal/inspectorowner/README.md)
+implements the [frozen contract](SUPERVISOR-CONTROLLER.md) with synthetic
+ownership/clock observations and no native launcher, signal,
 wait, credentials or runtime activation. Four-second shutdown remains mandatory
 and unqualified; old reservations cannot be released merely because stop was
 requested. Durable startup history and native containment remain separate gates.
