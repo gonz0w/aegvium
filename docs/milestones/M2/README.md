@@ -44,6 +44,13 @@ deadline/cancellation, retirement and Stop suppress late records. Real engine
 transaction ownership, authenticated same-connection transport/framing and full
 receiver/shutdown qualification remain separate; no application dial is present.
 
+The maintainer selected [exclusive external inspector ownership](../../architecture/adr-0011-inspector-owner-containment.md)
+for scoped source implementation. Its first [private lifecycle controller](SUPERVISOR-CONTROLLER.md)
+uses synthetic ownership/clock observations with no native launcher, signal,
+wait, credentials or runtime activation. Four-second shutdown remains mandatory
+and unqualified; old reservations cannot be released merely because stop was
+requested. Durable startup history and native containment remain separate gates.
+
 This paper packet uses canonical source
 `c080a869ac60b2844490e16532b5f3687f4e8b7e` and its linked historical receipts.
 It creates no keys, runtime configuration, service, installer or execution packet.
