@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
-// Package bodyowner owns bounded body Read/Close calls and detached memory-only
-// records. It provides no authentication, framing proof, engine or dial path.
+// Package bodyowner owns bounded request/body and transaction lifetimes. The
+// compatible standalone API records inert bytes. The explicit, unqualified DATA
+// source binds the real receiver, one backend exchange and terminal cleanup.
 package bodyowner
 
 import (
@@ -63,6 +64,9 @@ type ownerState struct {
 	engine         *engineState // Nil in the compatible standalone body owner.
 	controlClaimed bool
 	control        io.ReadWriteCloser // One admitted endpoint; uncertainty stays held.
+	dataAvailable  chan struct{}      // Wake the sole unaccepted DATA accept actor.
+	stoppedSignal  chan struct{}
+	dataPrefixes   chan struct{}
 }
 
 type generationState struct {
@@ -91,10 +95,16 @@ type jobState struct {
 	body           []byte
 	outcome        Outcome // Mutable only under owner.mu; frozen once Joined.
 	input          *engineInput
+	data           dataSession
+	dataStatus     int // Fixed response class, never request text or authority.
+	dataCleaned    chan struct{}
+	inspected      bool // Private same-job phase completion, never an allow token.
+	prefixOwned    bool
+	transaction    heldTransaction // Strong reference until successful tx.Close.
 }
 
 func New() *Owner {
-	return &Owner{state: &ownerState{slots: capacity.New(), jobs: make(map[*jobState]struct{})}}
+	return &Owner{state: &ownerState{slots: capacity.New(), jobs: make(map[*jobState]struct{}), dataAvailable: make(chan struct{}, 1), stoppedSignal: make(chan struct{}), dataPrefixes: make(chan struct{}, 2)}}
 }
 
 func (o *Owner) NewGeneration(token string) (*Generation, error) {
@@ -135,7 +145,11 @@ func (in *Inbound) Close() error {
 	if in == nil || in.state == nil {
 		return ErrInput
 	}
-	return in.state.slot.Close()
+	err := in.state.slot.Close()
+	if err == nil {
+		in.state.owner.wakeData()
+	}
+	return err
 }
 
 func (o *Owner) Usage() capacity.Usage {
@@ -152,7 +166,11 @@ func (g *Generation) Begin(ctx context.Context, in *Inbound, source io.ReadClose
 }
 
 func (g *Generation) begin(ctx context.Context, in *Inbound, source io.ReadCloser, declaredLength int, input *engineInput) (*Job, error) {
-	if g == nil || g.state == nil || in == nil || in.state == nil || in.state.owner != g.state.owner || ctx == nil || source == nil || declaredLength < 0 || declaredLength > MaxBody {
+	return g.beginOwned(ctx, in, source, declaredLength, input, nil, false)
+}
+
+func (g *Generation) beginOwned(ctx context.Context, in *Inbound, source io.ReadCloser, declaredLength int, input *engineInput, data dataSession, prefixOwned bool) (*Job, error) {
+	if g == nil || g.state == nil || in == nil || in.state == nil || in.state.owner != g.state.owner || ctx == nil || source == nil && data == nil || declaredLength < 0 || declaredLength > MaxBody {
 		return nil, ErrInput
 	}
 	deadline, bounded := ctx.Deadline()
@@ -165,9 +183,11 @@ func (g *Generation) begin(ctx context.Context, in *Inbound, source io.ReadClose
 	s.mu.Lock()
 	var err error
 	switch {
-	case (s.engine == nil) != (input == nil):
+	case data == nil && (s.engine == nil) != (input == nil):
 		err = ErrInput // Engine jobs cannot escape through the standalone API.
-	case s.engine != nil && s.engine.policy != nil && input.policyPin != s.engine.policy.pin:
+	case data != nil && (s.engine == nil || s.engine.policy == nil):
+		err = ErrInput // DATA requires the closed source-owned policy constructor.
+	case input != nil && s.engine != nil && s.engine.policy != nil && input.policyPin != s.engine.policy.pin:
 		err = ErrInput // Equality binds data to this profile; it authenticates no peer.
 	case s.stopped:
 		err = ErrStopped
@@ -192,7 +212,7 @@ func (g *Generation) begin(ctx context.Context, in *Inbound, source io.ReadClose
 	j := &jobState{owner: s, generation: gen, lease: lease, source: source,
 		declared: declaredLength, deadline: deadline, parentDone: parentDone,
 		ctx: private, cancel: cancel, readDone: make(chan struct{}), done: make(chan struct{}),
-		input: input, outcome: Outcome{ReadFailure: None}}
+		input: input, data: data, prefixOwned: prefixOwned, outcome: Outcome{ReadFailure: None}}
 	if input != nil {
 		j.outcome.Engine.RequestID = input.id
 		j.outcome.Engine.Generation = lease.Generation()
@@ -205,6 +225,12 @@ func (g *Generation) begin(ctx context.Context, in *Inbound, source io.ReadClose
 	}
 	s.jobs[j] = struct{}{}
 	s.mu.Unlock()
+	if data != nil {
+		j.dataCleaned = make(chan struct{})
+		go j.readData()
+		go j.closeData()
+		return &Job{state: j}, nil
+	}
 	go j.read()
 	go j.close()
 	return &Job{state: j}, nil
@@ -302,6 +328,7 @@ func (j *jobState) finish() {
 	j.body = nil
 	if !j.outcome.CloseFailed {
 		j.lease.Close()
+		s.wakeData()
 		j.source = nil
 		delete(s.jobs, j)
 	}
@@ -334,6 +361,9 @@ func (g *Generation) Retire() {
 
 // stopLocked marks all jobs unavailable before cancellation is delivered.
 func (s *ownerState) stopLocked() []context.CancelFunc {
+	if !s.stopped {
+		close(s.stoppedSignal)
+	}
 	s.stopped = true
 	s.slots.Stop()
 	if s.engine != nil && s.engine.mode == engineActive {
@@ -344,6 +374,13 @@ func (s *ownerState) stopLocked() []context.CancelFunc {
 		cancels = append(cancels, j.cancel)
 	}
 	return cancels
+}
+
+func (s *ownerState) wakeData() {
+	select {
+	case s.dataAvailable <- struct{}{}:
+	default:
+	}
 }
 
 func cancelAll(cancels []context.CancelFunc) {

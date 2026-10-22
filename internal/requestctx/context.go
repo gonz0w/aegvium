@@ -80,6 +80,7 @@ type Record struct {
 	// Public frontend observations under H1/3 only; detached data, not proof
 	// of the frontend connection or permission to inspect/forward.
 	Remote, Local netip.AddrPort
+	PublicPort    uint16
 }
 
 // Recorder retains at most four contexts without eviction or a callback. There
@@ -303,7 +304,7 @@ func (s *Snapshot) project(peer Peer, in Request) (Record, error) {
 			return zero, ErrInput
 		}
 	}
-	return Record{Peer: strings.Clone(peer.identity), Route: strings.Clone(meta["aegvium-route"]), Generation: s.generation, PolicyPin: r.pin, RequestID: strings.Clone(meta["aegvium-request"]), SNI: r.name, Client: client.String(), Remote: remote, Local: local, Protocol: strings.Clone(in.Protocol), Method: strings.Clone(in.Method), Authority: strings.Clone(single["host"]), Target: strings.Clone(in.Target), Fields: public, Body: append([]byte(nil), in.Body...)}, nil
+	return Record{Peer: strings.Clone(peer.identity), Route: strings.Clone(meta["aegvium-route"]), Generation: s.generation, PolicyPin: r.pin, RequestID: strings.Clone(meta["aegvium-request"]), SNI: r.name, Client: client.String(), Remote: remote, Local: local, PublicPort: r.port, Protocol: strings.Clone(in.Protocol), Method: strings.Clone(in.Method), Authority: strings.Clone(single["host"]), Target: strings.Clone(in.Target), Fields: public, Body: append([]byte(nil), in.Body...)}, nil
 }
 
 func hex(s string, n int) bool {

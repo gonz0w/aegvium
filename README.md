@@ -1,6 +1,6 @@
 # Aegvium
 
-Lean, auditable OpenBSD WAF research for a dedicated VM behind EdgeWall. BSD-3-Clause; independent of the OpenBSD project. Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
+Lean, auditable OpenBSD WAF research for a dedicated VM behind an operator-controlled perimeter. EdgeWall is an optional suite integration. BSD-3-Clause; independent of the OpenBSD project. Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
 
 A runnable lab companion now forwards owned HTTP/HTTPS applications through pinned Coraza/OWASP CRS. It supports verified HTTPS backends, strict route allowlists, transactional SIGHUP route replacement and four-request admission. Stock relayd can terminate TLS in the retained control or pass TCP/TLS to the companion, where actual SNI/HTTP authority binding is enforced. The [M2 boundary](docs/architecture/adr-0010-frontend-key-mandatory-inspector.md) is now selected for reviewed source adoption; runtime integration remains unimplemented/unqualified. This is not an installable WAF.
 
@@ -8,6 +8,7 @@ The optional sender-containment experiment uses stock PF to restrict fresh conne
 
 | Capability | Current evidence and limits |
 | --- | --- |
+| Owned authenticated DATA source | [Source path](docs/milestones/M2/DATA-REQUEST-SOURCE.md): same-connection context/body, continuous Coraza transaction and C02 lease through one fixed backend exchange and terminal cleanup. Operational gate remains false; no live TLS, listener, engine or native qualification. Any conforming frontend can implement the explicit protocol; Vectivium is the optional suite adapter. |
 | Inert M2-C01 context admission | [Source component](docs/milestones/M2/M2-C01.md): immutable bounded peer/route/generation/request recording with synthetic portable tests. No production peer constructor, actual TLS/inspection, allow verdict, backend call or required-WAF enablement. |
 | Inert M2-C02 capacity ownership | [Source design](docs/milestones/M2/CAPACITY-OWNER.md): shared four-request/eight-socket reservation accounting across generations, including pre-authentication inbound slots. No actual socket, authentication, inspection or forwarding operation; full qualification remains open. |
 | A01a body Read/Close ownership | [Body owner](docs/milestones/M2/BODY-OWNER.md): actual bounded body capture into detached memory records, private shared C02 leases, cancellation/retirement and retained charges while cleanup is incomplete or uncertain. No peer, raw-framing proof, engine transaction or dial/forward operation; Draft qualification remains open. |

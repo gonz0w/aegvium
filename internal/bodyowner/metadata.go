@@ -11,7 +11,7 @@ import (
 )
 
 // engineInput is private copied data, not C01 peer/route/framing authority. A
-// future authenticated receiver must retain its own authority and resource join.
+// authenticated DATA receiver retains its own authority and resource join.
 type engineInput struct {
 	id, sni, protocol, method, target, policyPin string
 	client, server                               netip.AddrPort

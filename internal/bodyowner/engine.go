@@ -21,6 +21,7 @@ type EngineOutcome struct {
 	Fault                                                         EngineFailure
 	RequestID, Generation, PolicyPin, IntendedMode, BackendEffect string
 	RuleCount                                                     uint32
+	ExchangeReturned, ResponseWritten                             bool
 }
 
 type EngineFailure string
@@ -42,6 +43,8 @@ const (
 type transactionFactory interface {
 	NewTransactionWithID(string) types.Transaction
 }
+
+type heldTransaction = types.Transaction
 
 type transactionState interface {
 	Variables() plugintypes.TransactionVariables
@@ -158,6 +161,7 @@ func (j *jobState) inspect() {
 			if create {
 				panicked := invoke(func() { tx = e.factory.NewTransactionWithID(j.input.id) })
 				s.mu.Lock()
+				j.transaction = tx
 				var cancels []context.CancelFunc
 				if panicked || tx == nil {
 					cancels = j.unsafeLocked()
@@ -172,8 +176,21 @@ func (j *jobState) inspect() {
 	}
 	if tx != nil {
 		j.requestPhases(tx)
-		j.logTransaction(tx)
-		j.closeTransaction(tx)
+		if j.data != nil {
+			j.exchangeData()
+		}
+	}
+	if j.data != nil {
+		j.joinData()
+	}
+	if tx != nil {
+		s.mu.Lock()
+		terminal := j.data == nil || !j.outcome.CloseFailed
+		s.mu.Unlock()
+		if terminal {
+			j.logTransaction(tx)
+			j.closeTransaction(tx)
+		}
 		tx = nil // Never inspect/retry the possibly returned-to-pool object.
 	}
 	j.finishInspection()
@@ -268,7 +285,7 @@ func (j *jobState) requestPhases(tx types.Transaction) {
 	}) {
 		return
 	}
-	j.checkState(tx, state, vars, types.PhaseRequestBody)
+	j.inspected = j.checkState(tx, state, vars, types.PhaseRequestBody)
 }
 
 func (j *jobState) checkState(tx types.Transaction, state transactionState, vars plugintypes.TransactionVariables, phase types.RulePhase) bool {
@@ -353,6 +370,7 @@ func (j *jobState) closeTransaction(tx types.Transaction) {
 			cancels = s.stopLocked()
 		} else {
 			e.references--
+			j.transaction = nil // Only a known successful Close permits forgetting it.
 		}
 	}
 	s.mu.Unlock()
@@ -376,7 +394,9 @@ func (j *jobState) finishInspection() {
 	j.outcome.Engine.CleanupCertain = !j.outcome.CloseFailed && !j.outcome.Engine.Uncertain
 	if j.outcome.Engine.CleanupCertain {
 		j.lease.Close()
+		s.wakeData()
 		j.source = nil
+		j.data = nil
 		delete(s.jobs, j)
 		j.outcome.Engine.Released = true
 	}

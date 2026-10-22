@@ -4,6 +4,8 @@
 package bodyowner
 
 import (
+	"context"
+	"github.com/gonz0w/aegvium/internal/requestctx"
 	"io"
 	"sync/atomic"
 )
@@ -11,8 +13,10 @@ import (
 // InspectorEngineSource binds the actual pinned engine and retirement owner to
 // one startup generation. It issues no request, authentication or allow handle.
 type InspectorEngineSource struct {
-	owner      *Owner
-	generation *Generation
+	owner         *Owner
+	generation    *Generation
+	failedData    *requestctx.DataSessionSource
+	failedInbound *Inbound
 }
 
 var inspectorEngineSource struct {
@@ -65,4 +69,45 @@ func (s *InspectorEngineSource) StopSource() {
 			s.generation.Retire()
 		}
 	}
+}
+
+// WaitDataSource joins known jobs/cache only. Success is not process or full
+// network reclamation proof; S still owns physical wait/reaping.
+func (s *InspectorEngineSource) WaitDataSource(ctx context.Context) error {
+	if s == nil || s.owner == nil || ctx == nil {
+		return ErrInput
+	}
+	state := s.owner.state
+	state.mu.Lock()
+	jobs := make([]<-chan struct{}, 0, len(state.jobs))
+	for j := range state.jobs {
+		jobs = append(jobs, j.done)
+	}
+	state.mu.Unlock()
+	for _, done := range jobs {
+		select {
+		case <-done:
+		case <-ctx.Done():
+			return ErrStopped
+		}
+	}
+	state.mu.Lock()
+	clean := len(state.jobs) == 0 && state.engine.references == 0 && s.failedData == nil && s.failedInbound == nil
+	cache := state.engine.cacheDone
+	state.mu.Unlock()
+	if !clean {
+		return ErrStopped
+	}
+	select {
+	case <-cache:
+	case <-ctx.Done():
+		return ErrStopped
+	}
+	state.mu.Lock()
+	clean = state.engine.cacheReleased && !state.engine.cacheUncertain
+	state.mu.Unlock()
+	if !clean {
+		return ErrStopped
+	}
+	return nil
 }

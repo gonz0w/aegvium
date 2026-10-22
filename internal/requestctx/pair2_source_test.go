@@ -200,3 +200,22 @@ func TestPairSourceVersion2CrossRouteBinding(t *testing.T) {
 		t.Fatal("control path was renegotiated")
 	}
 }
+
+func TestPairSourceFrontendRoleDoesNotRequireSuiteProduct(t *testing.T) {
+	_, raw, _ := pair2Fixture(t, "joint")
+	// Same explicit protocol and operator role namespace; no Vectivium name,
+	// executable or suite service is special-cased by the receiver.
+	raw = bytes.ReplaceAll(raw, []byte("front-a.internal.test"), []byte("other-a.internal.test"))
+	raw = bytes.ReplaceAll(raw, []byte("front-b.internal.test"), []byte("other-b.internal.test"))
+	s, err := newPairedSnapshot(raw)
+	if err != nil {
+		t.Fatal("non-suite configured role refused", err)
+	}
+	in := connectionRequest(t)
+	if _, err := s.context.project(Peer{identity: "other-a.internal.test"}, in); err != nil {
+		t.Fatal("non-suite structural conformance refused", err)
+	}
+	if _, err := s.context.project(Peer{identity: "front-a.internal.test"}, in); err != ErrPeer {
+		t.Fatal("old unconfigured role bypassed explicit pairing")
+	}
+}

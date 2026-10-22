@@ -58,24 +58,27 @@ authorizes retry. There is no TerminalClean/U→C writer, recovery or replacemen
 
 ## Qualification and remaining product connections
 
-The exec-surviving `stdio rpath prot_exec` restriction is an **unqualified inert
-startup candidate**, derived from this no-network command's file/loader reads,
-memory/timer/thread/FD use and executable mapping. It excludes inet, proc, exec,
-id and descriptor passing after exec. It is not the serving leaf profile. Actual
+The [approved DATA source](DATA-REQUEST-SOURCE.md) now derives the exec-surviving
+`stdio rpath inet prot_exec` candidate from fixed numeric listeners/backend TLS,
+file/loader reads, memory/timer/thread/FD use and executable mapping. This adds
+only the required network source promise; it excludes dns, proc, exec, id and
+descriptor passing after exec. The immutable network-qualification gate remains
+false before credential/engine/listener initialization. No pledge call ran. Actual
 Go/loader/Coraza/X509 syscall compatibility, exec survival and no-descendant/
 no-export behavior must qualify before any operational entry is admitted.
 
-The initializer has no listener, application request path, backend connection,
-Ready or forwarding authority. Supervisor build/placement and dedicated account/
-role installation are connected source only. Remaining source connections are
-the actual Vectivium owner's paired handoff and complete authenticated request/
-backend/isolation integration. Matching descriptor bytes and a retained target
-FD cannot stand in for Vectivium's real ownership/acceptance. BootWeave is unchanged.
+The DATA source now owns one same-connection request, one fixed backend attempt,
+and transaction/lease lifetime through terminal cleanup. It has no operational
+Ready or launch authority. Supervisor build/placement and dedicated account/role
+installation are source only. Matching descriptor bytes and a retained target
+FD cannot stand in for actual frontend ownership/acceptance. BootWeave is unchanged.
 
 The [private backend loader](PRIVATE-BACKENDS.md) now joins fixed startup and
 fresh-builder placement. It prepares exact route/role/root-bound TLS state only;
-it grants no backend attempt. The common control/DATA endpoint decision remains
-unadopted, and no DATA listener or new pairing version is inferred.
+it grants no independent backend attempt. [AGPAIR2](AGPAIR2.md) explicitly binds
+CONTROL/DATA; the closed network source never infers another endpoint. All
+installed custody, listener privileges, confinement and native resource/4s gates
+remain unqualified, including the changed exec-surviving promise set.
 
 Native acceptance still needs exact installed S/I/loader/compiler/cache lineage,
 fresh-image and matching pair custody, protected material read/failure controls,

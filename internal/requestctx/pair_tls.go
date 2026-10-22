@@ -202,29 +202,29 @@ func (r *pairReceiver) serverValidity(now time.Time) (pairValidity, bool) {
 	}
 	return pairValidity{}, false
 }
-func (r *pairReceiver) frontend(c *tls.Conn, now time.Time) (pairValidity, bool) {
+func (r *pairReceiver) frontendRole(c *tls.Conn, now time.Time) (string, pairValidity, bool) {
 	state := c.ConnectionState() // ONLY the same receiver-owned completed Conn.
 	if !state.HandshakeComplete || state.Version != tls.VersionTLS13 || state.NegotiatedProtocol != "http/1.1" || state.DidResume || state.ServerName != r.owner.snapshot.serverName || len(state.PeerCertificates) == 0 || len(state.VerifiedChains) == 0 {
-		return pairValidity{}, false
+		return "", pairValidity{}, false
 	}
 	leaf := state.PeerCertificates[0]
 	if !intendedUsage(leaf, x509.ExtKeyUsageClientAuth) {
-		return pairValidity{}, false
+		return "", pairValidity{}, false
 	}
 	role := ""
 	for _, name := range leaf.DNSNames {
 		if !dns(name) || name == r.owner.snapshot.serverName {
-			return pairValidity{}, false
+			return "", pairValidity{}, false
 		}
 		if r.owner.snapshot.roles[name] != nil {
 			if role != "" {
-				return pairValidity{}, false
+				return "", pairValidity{}, false
 			}
 			role = name
 		}
 	}
 	if role == "" {
-		return pairValidity{}, false
+		return "", pairValidity{}, false
 	}
 	for _, chain := range state.VerifiedChains {
 		if len(chain) == 0 || !bytes.Equal(chain[0].Raw, leaf.Raw) {
@@ -235,10 +235,14 @@ func (r *pairReceiver) frontend(c *tls.Conn, now time.Time) (pairValidity, bool)
 			continue
 		}
 		if v, ok := chainValidity(chain, now); ok {
-			return v, true
+			return role, v, true
 		}
 	}
-	return pairValidity{}, false
+	return "", pairValidity{}, false
+}
+func (r *pairReceiver) frontend(c *tls.Conn, now time.Time) (pairValidity, bool) {
+	_, window, ok := r.frontendRole(c, now)
+	return window, ok
 }
 func earlier(a, b time.Time) time.Time {
 	if a.Before(b) {

@@ -42,6 +42,7 @@ Their matching acceptance IDs and evidence levels are in the Test Design.
 | M2-06 | WAF-03/06 | Validate before ready; complete replacement preparation before publication; preserve old configuration on prepublication failure; bound drain/retirement and stop safely on postpublication ownership failure. |
 | M2-07 | WAF-05/06 | Bounded redacted outcomes distinguish rejection, inspected forwarding and unknown/failed response completion; retain exact candidate evidence and failures without raw secrets or traffic. |
 | M2-08 | WAF-01–06 | Independent disposable OpenBSD enforcement, bypass, failure, recovery and resource evidence for the exact candidate, with known-good restoration and complete owned teardown. |
+| M2-09 | WAF-09 | Independently installed Aegvium with a conforming non-suite frontend and operator-controlled perimeter; no suite control-plane/runtime prerequisite. Explicit protocol configuration and conformance vectors; requested inspection failure never becomes bypass. Standalone and optional-suite integration scenarios both require acceptance. |
 
 ## Scope and compatibility profile
 

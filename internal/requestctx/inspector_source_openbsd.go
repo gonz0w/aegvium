@@ -35,6 +35,8 @@ type InspectorSource struct {
 	rootCloseTried                                         bool
 	prepared, uncertain                                    bool
 	confirmTried, confirmed, controlClaimed, controlClosed bool
+	networkClaimed                                         bool
+	network                                                *SourceListeners
 }
 
 type inspectorSourceFile struct {

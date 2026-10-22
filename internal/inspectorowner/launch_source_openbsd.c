@@ -39,10 +39,11 @@ pid_t aeg_start_fork(void) {
 int aeg_start_exec(void) {
     char *const argv[]={"/usr/local/libexec/aegvium/inspector",NULL};
     char *const envp[]={NULL};
-    /* Unqualified INERT startup candidate only: no listener/backend code is
-     * reachable. Actual loader/runtime/exec-survival must qualify separately.
-     * Future serving requires its complete reviewed network/isolation closure. */
-    if (pledge("stdio rpath prot_exec exec","stdio rpath prot_exec")!=0) return -1;
+    /* Approved DATA SOURCE requires fixed numeric listeners/backend TLS. The
+     * network qualification gate in I still refuses before any initialization.
+     * No dns/proc/id/fdpass or further exec survives this one fixed exec.
+     * Actual loader/runtime/pledge/isolation closure remains unqualified. */
+    if (pledge("stdio rpath inet prot_exec exec","stdio rpath inet prot_exec")!=0) return -1;
     return execve(argv[0],argv,envp);
 }
 _Noreturn void aeg_start_child_exit(void) { _exit(77); }
