@@ -18,8 +18,9 @@ graph rather than the default refusal stub. Operational admission is still close
 The fixed local build derives installer media containing the Aeg-only `install.site`
 and source-built OpenBSD placement helper. The stock pre-first-boot hook executes
 that helper against the mounted target. It authenticates payload consistency under
-the owning build/media chain and writes only the five existing runtime file names
-through exclusive creation. It performs file hash readback, ownership/mode checks,
+the owning build/media chain and writes the five existing payload file names
+through exclusive creation. The source extension below also places S and the
+dedicated inspector principal/material. It performs file hash readback, ownership/mode checks,
 file fsync and directory fsync, then reports the exact observed generation and
 descriptor/payload digests through the actual owned VM console. This observation
 alone creates no image lifetime or launch authority. On any partial state/fault,
@@ -41,8 +42,33 @@ the retained stock 8GiB/twoCPU/2GiB installer shape as an unqualified fixture, n
 an accepted WAF capacity. No credentials are generated; the stock-recognized
 disabled password marker is used and no SSH/NIC is configured.
 
-Remaining source/input obligations include supervisor build/placement, dedicated
-account/role installation and the actual frontend-owner handoff. Native gates
+The source extension carries exactly eight C units, seven headers and one include
+from the signed export. The fixed target `/usr/bin/cc` command builds S in a newly
+exclusive private directory; it never executes S. Only the fixed supervisor path
+is installed, root:wheel0555/nlink1, with bounded readback and file/directory sync.
+`AGSUPERVISOR1` reports the observed output digest before `AGPLACED1`; it is not
+release authenticity or an admitted executable. Compiler/loader/descendant closure
+and native output behavior still need qualification.
+
+The fixed target `useradd` call creates only `_aegvium`, with a unique equal UID/GID,
+disabled literal `*` password and `/sbin/nologin`, without a home or service start.
+Both account and group must be absent first. Exact target database readback rejects
+root, aliases, reused IDs, extra group members and secondary memberships. Failure
+retains the partially built target; it never repairs an existing image. Command
+return/readback is not atomic account-database publication or descendant-cleanup proof.
+
+Role bytes originate only from protected operator inputs below the private
+`commission-inputs/inspector` directory. Fixed names/bounds match the real I reader;
+the target requires exactly the descriptor-bound server and client DER anchors,
+and places root:dedicated-GID0440/nlink1 files in protected root-owned directories.
+No credential issuer or public endpoint key is added. **The work directory, role
+copies and derived installer media now contain private key material when actually
+used and must remain private, non-reusable and unexported.** Provisioning, parsing,
+copying and image operations have not run. Pure checks use only public descriptors,
+opaque strings and intercepted owner failures.
+
+Remaining source/input obligations include the actual frontend-owner handoff and
+authenticated serving/backend integration. Native gates
 include exact compiler/cache and source-export closure, derived media boot/set
 selection, fdset access/identity and no-export behavior, payload/header/filesystem
 failure controls, all synchronization/durability, no first boot, exclusive wait/
@@ -51,3 +77,17 @@ help documents
 `-no-reboot` as exit instead of rebooting; that is not observed behavior. Actual
 loader/firmware/runtime closure remains unqualified. No positive installed
 profile, inspector activation, recovery, deployment or four-second proof follows.
+
+## Consumed frontend-owner boundary
+
+The current private builder retains its actual exclusively created target and
+directory FDs, detached AGPAIR bytes, nonzero generation and observed payload/S
+digests after actual installer terminal wait and successful owned endpoint/input
+closure. Vectivium must provide its real paired-build ownership API; no Aegvium
+adapter may create that authority from a pathname, supplied FD, hash or receipt.
+Handoff is one-attempt and must preserve continuous no-start/no-export/no-duplication
+custody of both fresh targets. It compares the complete descriptor, generation
+and capability tuple; uncertainty retains both partial owners and forbids reset,
+retry or replacement. Acceptance means paired staging custody only. Runtime
+AGCHECK104 still requires actual role mTLS on that same connection, and neither
+handoff nor preflight grants Ready, a backend attempt or an allow verdict.

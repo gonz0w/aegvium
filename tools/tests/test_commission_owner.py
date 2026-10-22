@@ -15,6 +15,20 @@ SPEC.loader.exec_module(OWNER)
 
 
 class CommissionOwnerTests(unittest.TestCase):
+    def test_fixed_supervisor_source_closure(self):
+        expected = {
+            'main.c', 'controller.c', 'controller.h', 'control_frame.c', 'control_frame.h',
+            'launch_storage.c', 'launch_storage.h', 'storage_openbsd.c', 'storage_os.h',
+            'native_construction.c', 'native_construction.h', 'native_openbsd.c',
+            'native_os.h', 'launch_source.inc', 'launch_source_openbsd.c', 'launch_source_os.h',
+        }
+        self.assertEqual(len(OWNER.SUPERVISOR_INPUTS), 16)
+        self.assertEqual({Path(p).name for p in OWNER.SUPERVISOR_INPUTS}, expected)
+        self.assertEqual(sum(p.endswith('.c') for p in OWNER.SUPERVISOR_INPUTS), 8)
+        for name in OWNER.SUPERVISOR_INPUTS:
+            self.assertFalse(Path(name).is_absolute())
+            self.assertNotIn('..', Path(name).parts)
+
     def test_default_entry_and_supplied_owner_have_no_effects(self):
         code = compile(SOURCE.read_bytes(), str(SOURCE), 'exec')
         with patch.object(OWNER.tempfile, 'mkdtemp') as create, \

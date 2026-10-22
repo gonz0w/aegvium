@@ -26,8 +26,9 @@ nlink1; no ambient roots or public-endpoint key is used. Existing bounds are
 at most eight client anchors. Cap+1 reads, independent readback, current named/
 opened identity checks and once-only Close precede actual credential parsing.
 Read buffers and uncertain handles stay process-owned. Account/material
-installation is still a separate missing commissioning connection; no real
-account or role file was inspected, created or changed.
+installation now has an unexecuted fixed fresh-builder source connection; no real
+account or role file was inspected, created or changed. See
+[fixed commissioning](FIXED-COMMISSION-OWNER.md) for its private-media obligations.
 
 AGSTART112 is eight ASCII bytes `AGSTART1` followed by existing AGCHECK104.
 For the retained public fixture its SHA256 is
@@ -65,9 +66,9 @@ Go/loader/Coraza/X509 syscall compatibility, exec survival and no-descendant/
 no-export behavior must qualify before any operational entry is admitted.
 
 The initializer has no listener, application request path, backend connection,
-Ready or forwarding authority. Remaining source connections are the supervisor
-build/placement and dedicated account/role installation in the fresh builder,
-the actual Vectivium owner's paired handoff, and complete authenticated request/
+Ready or forwarding authority. Supervisor build/placement and dedicated account/
+role installation are connected source only. Remaining source connections are
+the actual Vectivium owner's paired handoff and complete authenticated request/
 backend/isolation integration. Matching descriptor bytes and a retained target
 FD cannot stand in for Vectivium's real ownership/acceptance. BootWeave is unchanged.
 

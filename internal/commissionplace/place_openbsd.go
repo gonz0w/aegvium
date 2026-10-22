@@ -162,6 +162,7 @@ func Run() error {
 	r := tar.NewReader(payload)
 	names := []string{"usr/local/libexec/aegvium/inspector", "var/db/aegvium/inspector.pin", "var/db/aegvium/pair.snapshot", "var/db/aegvium/launch.intent", "var/db/aegvium/launch.state"}
 	var imageDigest [32]byte
+	var descriptor []byte
 	for i, name := range names {
 		header, e := r.Next()
 		mode := int64(0600)
@@ -192,6 +193,7 @@ func Run() error {
 				if hex.EncodeToString(d[:]) != string(want[98:162]) {
 					return errPlacement
 				}
+				descriptor = bytes.Clone(data)
 			case 3:
 				if !bytes.Equal(data, append(bytes.Clone(want[65:97]), '\n')) {
 					return errPlacement
@@ -241,6 +243,10 @@ func Run() error {
 	if _, e = r.Next(); e != io.EOF || payload.Close() != nil {
 		return errPlacement
 	}
+	supervisorDigest, e := placeExtension(root, dirs, descriptor)
+	if e != nil {
+		return errPlacement
+	}
 	for _, name := range []string{"var/db/aegvium", "usr/local/libexec/aegvium", "var/db", "var", "usr/local/libexec", "usr/local", "usr", "aegvium.install"} {
 		if dirs[name].Sync() != nil || dirs[name].Close() != nil {
 			return errPlacement
@@ -249,7 +255,7 @@ func Run() error {
 	if root.Close() != nil {
 		return errPlacement
 	}
-	line := fmt.Sprintf("AGPLACED1 %s %s %s\n", want[65:97], want[98:162], want[:64])
+	line := fmt.Sprintf("AGSUPERVISOR1 %x\nAGPLACED1 %s %s %s\n", supervisorDigest, want[65:97], want[98:162], want[:64])
 	if n, e := io.WriteString(os.Stdout, line); e != nil || n != len(line) {
 		return errPlacement
 	}

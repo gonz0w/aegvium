@@ -25,6 +25,14 @@ BIOS_PIN = 'ae6f6aa973aaccc143f57aa960fb035fd9de4daee4ad0cd713322f8c259e7650'
 GO_PIN = '516c1fbb53b5f8f4852f0c3c379d45bcff53a1032e5cd1a9ca1738f03ba07cb1'
 DISK_BYTES = 8 * 1024**3  # Fixed candidate fixture, not product capacity admission.
 _ACTIVE = []  # Retain every uncertain process/FD owner; no reset or disposal path.
+SUPERVISOR_INPUTS = (
+    'cmd/aegvium-supervisor/main.c',
+    *(f'internal/inspectorowner/{name}' for name in (
+        'controller.c', 'controller.h', 'control_frame.c', 'control_frame.h',
+        'launch_storage.c', 'launch_storage.h', 'storage_openbsd.c', 'storage_os.h',
+        'native_construction.c', 'native_construction.h', 'native_openbsd.c',
+        'native_os.h', 'launch_source.inc', 'launch_source_openbsd.c', 'launch_source_os.h')),
+)
 
 
 class Incomplete(Exception):
@@ -234,6 +242,7 @@ class _Owner:
                        '-output', str(self.work / 'payload.tar')], seconds=120)
         self.payload = self._input(self.work / 'payload.tar')
         self.payload_pin = _digest(self.payload).encode()
+        self._role_inputs()
         # Reuse only read-only stock release verification, not baseline/SSH or
         # its booted-image admission. This path has no download fallback.
         pins = json.loads((source / 'research/native/official-release-pins.json').read_text())
@@ -259,6 +268,43 @@ class _Owner:
             raise Incomplete('stock source changed')
         self._derived_media(source, stock)
 
+    def _role_inputs(self):
+        # This source path is never called by pure tests. Real provisioning is
+        # held. Material remains private throughout derived media and retention.
+        directory = ROOT / '.tools/commission-inputs/inspector'
+        for path in (directory, directory.parent):
+            s = path.stat(follow_symlinks=False)
+            if (not stat.S_ISDIR(s.st_mode) or s.st_uid not in (0, os.getuid()) or
+                    s.st_mode & 0o022):
+                raise Incomplete('protected role directory')
+        names = []
+        with os.scandir(directory) as entries:
+            for entry in entries:
+                names.append(entry.name)
+                if len(names) > 11:
+                    raise Incomplete('role input count')
+        names.sort()
+        if len(names) < 4 or len(names) > 11 or not {'cert.pem', 'key.pem', 'server.der'} <= set(names):
+            raise Incomplete('role input set')
+        (self.work / 'roles').mkdir(mode=0o700)
+        self.roles = []
+        for name in names:
+            limit = 65536 if name == 'cert.pem' else 16384
+            if name not in ('cert.pem', 'key.pem', 'server.der'):
+                pin = name[7:-4]
+                if (not name.startswith('client-') or not name.endswith('.der') or
+                        len(pin) != 64 or any(c not in '0123456789abcdef' for c in pin)):
+                    raise Incomplete('role input name')
+            incoming = self._input(directory / name)
+            s = os.fstat(incoming)
+            if (s.st_uid not in (0, os.getuid()) or s.st_mode & 0o7777 not in (0o400, 0o600) or
+                    s.st_size < 1 or s.st_size > limit):
+                raise Incomplete('protected role input')
+            output = self._copy(directory / name, 'roles/' + name, _digest(incoming))
+            if os.fstat(output).st_size != s.st_size:
+                raise Incomplete('role input changed')
+            self.roles.append((name, output, s.st_size))
+
     def _derived_media(self, source, stock):
         tree = self.work / 'media'
         tree.mkdir(mode=0o700)
@@ -273,11 +319,27 @@ class _Owner:
                     ('aegvium.install', 0o700, None),
                     ('aegvium.install/place', 0o500, (self.work / 'place').read_bytes()),
                     ('aegvium.install/expected', 0o400, expected),
+                    ('aegvium.install/supervisor-source', 0o700, None),
+                    ('aegvium.install/roles', 0o700, None),
                 ):
                     h = tarfile.TarInfo(name); h.uid = h.gid = 0; h.mode = mode
                     h.type = tarfile.DIRTYPE if blob is None else tarfile.REGTYPE
                     h.size = 0 if blob is None else len(blob)
                     archive.addfile(h, None if blob is None else io.BytesIO(blob))
+                total_source = 0
+                for name in SUPERVISOR_INPUTS:
+                    blob = (source / name).read_bytes()
+                    total_source += len(blob)
+                    if not blob or len(blob) > 65536 or total_source > 262144:
+                        raise Incomplete('fixed supervisor source bound')
+                    h = tarfile.TarInfo('aegvium.install/supervisor-source/' + Path(name).name)
+                    h.uid = h.gid = 0; h.mode = 0o400; h.size = len(blob)
+                    archive.addfile(h, io.BytesIO(blob))
+                for name, fd, size in self.roles:
+                    h = tarfile.TarInfo('aegvium.install/roles/' + name)
+                    h.uid = h.gid = 0; h.mode = 0o400; h.size = size
+                    with os.fdopen(os.dup(fd), 'rb') as incoming:
+                        incoming.seek(0); archive.addfile(h, incoming)
                 h = tarfile.TarInfo('aegvium.install/payload.tar')
                 h.uid = h.gid = 0; h.mode = 0o400; h.size = os.fstat(self.payload).st_size
                 with os.fdopen(os.dup(self.payload), 'rb') as incoming:
@@ -355,6 +417,11 @@ Location of sets = done
         pending = self._until(marker, deadline, pending)
         if pending.count(marker) != 1:
             raise Incomplete('ambiguous placement observation')
+        supervisor = [line[14:] for line in pending.splitlines() if line.startswith(b'AGSUPERVISOR1 ')]
+        if (len(supervisor) != 1 or len(supervisor[0]) != 64 or
+                any(c not in b'0123456789abcdef' for c in supervisor[0])):
+            raise Incomplete('supervisor placement observation')
+        self.supervisor_pin = supervisor[0]  # Observed compiler output, not release admission.
         self.child.stdin.close()
         # QEMU exits on the stock installer's reboot request. No target boot,
         # restart, snapshot, QMP reset or import is submitted by this owner.
@@ -367,7 +434,8 @@ Location of sets = done
                 if not tail:
                     break
                 pending = (pending + tail).replace(b'\r\n', b'\n')
-                if len(pending) > 8 * 1024**2 or pending.count(marker) != 1:
+                if (len(pending) > 8 * 1024**2 or pending.count(marker) != 1 or
+                        pending.count(b'AGSUPERVISOR1 ') != 1):
                     raise Incomplete('duplicate placement observation')
         if self.child.wait(timeout=max(0.001, deadline - time.monotonic())) != 0:
             raise Incomplete('owned VM termination failed')
