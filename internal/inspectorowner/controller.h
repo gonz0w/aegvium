@@ -7,7 +7,7 @@
 #include <stdint.h>
 
 /* Private S event-loop component, not a native authority or concurrent API.
- * Inputs are trusted adapter observations; no production adapter exists.
+ * Inputs are trusted adapter observations; the explicit source adapter is unqualified.
  * No reset: one initialization attempt per process, including failed attempts.
  * See the frozen M2-S01/1 contract and its independent literal fixtures. */
 enum aeg_owner_error { AEG_OK = 0, AEG_INPUT = 1, AEG_STATE = 2 };

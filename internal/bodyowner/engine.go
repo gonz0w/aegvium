@@ -36,9 +36,9 @@ const (
 	EngineBodyClose EngineFailure = "EngineBodyClose"
 )
 
-// Exact pinned API, not a generic closer-shaped engine. No exported constructor,
-// default factory or production bootstrap caller exists. The future bootstrap
-// must bind factory/closer to the same exclusively owned prepared WAF once.
+// Exact pinned API, not a generic closer-shaped engine. The untagged constructor
+// remains private; no default factory exists. Source startup binds factory/closer to
+// the same exclusively owned prepared WAF once; native admission is absent.
 type transactionFactory interface {
 	NewTransactionWithID(string) types.Transaction
 }

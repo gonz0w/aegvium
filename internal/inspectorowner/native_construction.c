@@ -13,6 +13,9 @@ static struct {
     bool close_tried[4];
     int parent, child, nullfd;
     unsigned targets;
+#ifdef AEG_INSPECTOR_SOURCE
+    unsigned char expected_start[104];
+#endif
 } construction = { .fd = { -1, -1, -1, -1 } };
 _Static_assert(sizeof(construction) <= 256, "construction logical storage");
 
@@ -125,6 +128,9 @@ aeg_native_bootstrap_emit(void)
     if(aeg_os_bootstrap_send(construction.fd[construction.parent],p,size)!=(ssize_t)size)
         return fail(AEG_NATIVE_UNCERTAIN,true,false);
     construction.view.bootstrap_written=true;
+#ifdef AEG_INSPECTOR_SOURCE
+    memcpy(construction.expected_start,p+10,104);
+#endif
     return AEG_NATIVE_OK; /* Local bytes only, never Owned/Ready/authentication. */
 }
 
@@ -201,3 +207,6 @@ aeg_native_get_view(void)
         view.known_owned_descriptors++;
     return view; /* Known references only; uncertainty never establishes a cap. */
 }
+#ifdef AEG_INSPECTOR_SOURCE
+#include "launch_source.inc"
+#endif

@@ -14,11 +14,12 @@ import (
 // source is the fixed inherited-FD acquisition. Neither a successful read nor
 // this snapshot can call newPairReceiver, create a Peer, or authorize serving.
 type inheritedPairBootstrap struct {
-	mu        sync.Mutex
-	endpoint  io.Reader
-	claimed   bool
-	uncertain bool
-	snapshot  *pairedSnapshot
+	mu         sync.Mutex
+	endpoint   io.Reader
+	claimed    bool
+	uncertain  bool
+	snapshot   *pairedSnapshot
+	descriptor []byte
 }
 
 // Keep the same endpoint on every outcome for the future sole-launch/control
@@ -68,6 +69,7 @@ func (b *inheritedPairBootstrap) consume() (err error) {
 	}
 	b.mu.Lock()
 	b.snapshot = snapshot // Configuration equality only, never S identity.
+	b.descriptor = bytes.Clone(frame[114:n])
 	b.mu.Unlock()
 	complete = true
 	return nil

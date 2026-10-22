@@ -2,7 +2,7 @@
 """Closed-entry Aeg-only first-image source coordinator, not an image importer.
 
 Nothing runs at import. Candidate construction is private and has no CLI override.
-The absent operational inspector and unqualified native/input profile keep the
+The incomplete operational integration and unqualified native/input profile keep the
 installed entry closed. A hash, archive or serialized receipt cannot create Owner.
 """
 import hashlib
@@ -195,8 +195,8 @@ class _Owner:
                        '..' in Path(m.name).parts for m in members):
                     raise Incomplete('source export shape')
                 archive.extractall(source, members=members, filter='data')
-        # This fixed real command is intentionally absent today. It MUST fail
-        # before a raw target is created; no inert artifact replaces inspector.
+        # Build the actual source entry, never the default refusal stub. Missing
+        # graph/input/role prerequisites must refuse before creating a target.
         compiler = primary / '.tools/go/bin/go'
         gofd = self._input(compiler)
         if _digest(gofd) != GO_PIN:
@@ -204,12 +204,12 @@ class _Owner:
         self._copy(compiler, 'go', GO_PIN, 0o500)
         compiler = self.work / 'go'
         env = dict(PATH='/usr/bin:/bin', GOENV='off', GOFLAGS='', GOTOOLCHAIN='local',
-                   GOPROXY=(primary / '.tools/go-mod/cache/download').as_uri(), GOSUMDB='off',
+                   GOPROXY=(Path.home() / 'go/pkg/mod/cache/download').as_uri(), GOSUMDB='off',
                    GOMODCACHE=str(self.work / 'go-mod'),
                    CGO_ENABLED='0', GOMAXPROCS='2', GOCACHE=str(self.work / 'go-cache'),
                    GOROOT=str(primary / '.tools/go'), GOOS='openbsd', GOARCH='amd64')
         for package, name, tags in (
-            ('./cmd/aegvium-inspector', 'inspector', 'aegvium_transport_source'),
+            ('./cmd/aegvium-inspector', 'inspector', 'aegvium_transport_source,aegvium_engine_source,no_fs_access'),
             ('./cmd/aegvium-place', 'place', 'aegvium_commission_source'),
         ):
             self._command([str(compiler), 'build', '-mod=readonly', '-p=2', '-trimpath',
@@ -400,4 +400,4 @@ Location of sets = done
 
 
 if __name__ == '__main__':
-    raise SystemExit('commissioning entry closed: operational inspector/input/native qualification absent')
+    raise SystemExit('commissioning entry closed: role placement/frontend handoff/native qualification incomplete')

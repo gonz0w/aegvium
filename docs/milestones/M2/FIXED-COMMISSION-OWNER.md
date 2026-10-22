@@ -11,8 +11,9 @@ outputs from the pinned local tool, and stock ISO authentication using the
 existing release-verification policy. This is candidate build
 lineage, not release authenticity, production admission or execution permission.
 There is no new signing key/publisher, imported image, SSH, snapshot or generic
-BootWeave writer. The actual missing `cmd/aegvium-inspector` build fails before
-target creation; it is never replaced by a dummy image or a supplied hash factory.
+BootWeave writer. The [actual inspector source entry](INSPECTOR-EXECUTABLE.md)
+now exists; the builder selects its complete source tags and retained module
+graph rather than the default refusal stub. Operational admission is still closed.
 
 The fixed local build derives installer media containing the Aeg-only `install.site`
 and source-built OpenBSD placement helper. The stock pre-first-boot hook executes
@@ -40,8 +41,9 @@ the retained stock 8GiB/twoCPU/2GiB installer shape as an unqualified fixture, n
 an accepted WAF capacity. No credentials are generated; the stock-recognized
 disabled password marker is used and no SSH/NIC is configured.
 
-Remaining native/input obligations include actual operational inspector and role
-materials, exact compiler/cache and source-export closure, derived media boot/set
+Remaining source/input obligations include supervisor build/placement, dedicated
+account/role installation and the actual frontend-owner handoff. Native gates
+include exact compiler/cache and source-export closure, derived media boot/set
 selection, fdset access/identity and no-export behavior, payload/header/filesystem
 failure controls, all synchronization/durability, no first boot, exclusive wait/
 FD reclamation and the still-missing actual frontend-owner handoff. QEMU embedded

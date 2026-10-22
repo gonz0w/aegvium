@@ -4,7 +4,8 @@
 package bodyowner
 
 // Source implementation compiled only until separately authorized qualification.
-// No init/entrypoint calls it. No actual constructor runs in portable fixtures.
+// Only the explicit OpenBSD source entry calls it. Portable fixtures never run
+// the actual constructor; operational acceptance and default entry remain closed.
 import (
 	"io"
 
