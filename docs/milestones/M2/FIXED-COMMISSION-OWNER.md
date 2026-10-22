@@ -67,6 +67,12 @@ used and must remain private, non-reusable and unexported.** Provisioning, parsi
 copying and image operations have not run. Pure checks use only public descriptors,
 opaque strings and intercepted owner failures.
 
+[Private backend inputs](PRIVATE-BACKENDS.md) now use the same placement path,
+bound to exact generation and full pair digest with complete private route/anchor
+coverage. The total role-file cap is23; neither additional files nor TLS preparation
+creates DATA admission. The backend-client key is separate from the inspector
+server key. No credential provisioning authority or network-isolation claim is added.
+
 Remaining source/input obligations include the actual frontend-owner handoff and
 authenticated serving/backend integration. Native gates
 include exact compiler/cache and source-export closure, derived media boot/set

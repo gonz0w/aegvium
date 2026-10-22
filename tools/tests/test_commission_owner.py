@@ -15,6 +15,34 @@ SPEC.loader.exec_module(OWNER)
 
 
 class CommissionOwnerTests(unittest.TestCase):
+    def test_private_backend_roles_are_bounded_without_reading_material(self):
+        names = ['cert.pem', 'key.pem', 'server.der', 'client-'+'f'*64+'.der',
+                 'backend.conf', 'backend-cert.pem', 'backend-key.pem',
+                 'backend-client-root.der', 'backend-'+'4'*64+'.der']
+        for extra, valid in [([], True), (['unknown.pem'], False),
+                             (['backend-'+'A'*64+'.der'], False),
+                             (['client-'+'a'*64+'.der'] * 16, False)]:
+            owner = object.__new__(OWNER._Owner)
+            owner.work = Path('/not-created')
+            directory = SimpleNamespace(st_uid=1000, st_mode=0o40700)
+            file = SimpleNamespace(st_uid=1000, st_mode=0o100600, st_size=1)
+            with patch.object(Path, 'stat', return_value=directory), \
+                    patch.object(Path, 'mkdir'), \
+                    patch.object(OWNER.os, 'getuid', return_value=1000), \
+                    patch.object(OWNER.os, 'scandir') as scan, \
+                    patch.object(OWNER.os, 'fstat', return_value=file), \
+                    patch.object(OWNER._Owner, '_input', return_value=71), \
+                    patch.object(OWNER._Owner, '_copy', return_value=72) as copied, \
+                    patch.object(OWNER, '_digest', return_value='opaque'):
+                scan.return_value.__enter__.return_value = iter(SimpleNamespace(name=n) for n in names+extra)
+                if valid:
+                    owner._role_inputs()
+                    self.assertEqual(len(owner.roles), 9)
+                    self.assertEqual(copied.call_count, 9)
+                else:
+                    with self.assertRaises(OWNER.Incomplete):
+                        owner._role_inputs()
+
     def test_fixed_supervisor_source_closure(self):
         expected = {
             'main.c', 'controller.c', 'controller.h', 'control_frame.c', 'control_frame.h',

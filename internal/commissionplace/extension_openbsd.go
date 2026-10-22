@@ -196,7 +196,16 @@ func placeExtension(root *os.Root, dirs map[string]*os.File, descriptor []byte) 
 		}
 		dirs[name] = f
 	}
-	entries, e := dirs["aegvium.install/roles"].ReadDir(12)
+	privateData, e := sourceBytes(root, "aegvium.install/roles/backend.conf", 8192, 0400)
+	if e != nil {
+		return zero, errPlacement
+	}
+	privatePlan, e := commission.BackendFiles(descriptor, privateData)
+	if e != nil {
+		return zero, errPlacement
+	}
+	plan = append(plan, privatePlan...)
+	entries, e := dirs["aegvium.install/roles"].ReadDir(24)
 	if e != nil || len(entries) != len(plan) {
 		return zero, errPlacement
 	}
@@ -213,6 +222,9 @@ func placeExtension(root *os.Root, dirs map[string]*os.File, descriptor []byte) 
 	for i, file := range plan {
 		materials[i], e = sourceBytes(root, "aegvium.install/roles/"+file.Name, file.Limit, 0400)
 		if e != nil || strings.HasSuffix(file.Name, ".der") && sha256.Sum256(materials[i]) != file.Anchor {
+			return zero, errPlacement
+		}
+		if file.Name == "backend.conf" && !bytes.Equal(materials[i], privateData) {
 			return zero, errPlacement
 		}
 	}

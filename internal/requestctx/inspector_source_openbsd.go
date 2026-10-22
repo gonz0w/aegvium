@@ -12,6 +12,8 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/gonz0w/aegvium/internal/backendconfig"
 )
 
 const inspectorRoleDirectory = "/etc/aegvium/inspector"
@@ -25,6 +27,8 @@ type InspectorSource struct {
 	channel                                                *os.File
 	receiver                                               *pairReceiver
 	materials                                              pairMaterials
+	backendMaterials                                       backendMaterials
+	backends                                               *backendSet
 	directories                                            []*inspectorSourceFile
 	reads                                                  []*inspectorSourceFile
 	root                                                   *os.Root
@@ -97,6 +101,10 @@ func PrepareInspectorSource() (owner *InspectorSource, err error) {
 	if err != nil || owner.receiver == nil {
 		return owner, errPair
 	}
+	owner.backends, err = newBackendSet(owner.receiver, bootstrap.descriptor, owner.backendMaterials)
+	if err != nil || owner.backends == nil {
+		return owner, errPair
+	}
 	owner.prepared = true
 	complete = true
 	return owner, nil
@@ -167,6 +175,33 @@ func (s *InspectorSource) readRoleMaterial(gid int) error {
 			return errPair
 		}
 		s.materials.clientRootDER = append(s.materials.clientRootDER, material)
+	}
+	if s.backendMaterials.configuration, err = s.readRoleFile("backend.conf", 8192, gid); err != nil {
+		return errPair
+	}
+	private, err := backendconfig.Parse(s.backendMaterials.configuration, s.bootstrap.descriptor)
+	if err != nil {
+		return errPair
+	}
+	if s.backendMaterials.certificatePEM, err = s.readRoleFile("backend-cert.pem", 65536, gid); err != nil {
+		return errPair
+	}
+	if s.backendMaterials.privateKeyPEM, err = s.readRoleFile("backend-key.pem", 16384, gid); err != nil {
+		return errPair
+	}
+	if s.backendMaterials.clientRootDER, err = s.readRoleFile("backend-client-root.der", 16384, gid); err != nil {
+		return errPair
+	}
+	s.backendMaterials.serverRoots = make(map[[32]byte][]byte)
+	for _, route := range private.Routes {
+		if _, ok := s.backendMaterials.serverRoots[route.ServerAnchor]; ok {
+			continue
+		}
+		data, e := s.readRoleFile("backend-"+stdhex.EncodeToString(route.ServerAnchor[:])+".der", 16384, gid)
+		if e != nil {
+			return errPair
+		}
+		s.backendMaterials.serverRoots[route.ServerAnchor] = data
 	}
 	if !s.checkDirectories() {
 		return errPair

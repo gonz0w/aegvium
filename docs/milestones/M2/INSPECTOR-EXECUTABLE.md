@@ -72,6 +72,11 @@ the actual Vectivium owner's paired handoff and complete authenticated request/
 backend/isolation integration. Matching descriptor bytes and a retained target
 FD cannot stand in for Vectivium's real ownership/acceptance. BootWeave is unchanged.
 
+The [private backend loader](PRIVATE-BACKENDS.md) now joins fixed startup and
+fresh-builder placement. It prepares exact route/role/root-bound TLS state only;
+it grants no backend attempt. The common control/DATA endpoint decision remains
+unadopted, and no DATA listener or new pairing version is inferred.
+
 Native acceptance still needs exact installed S/I/loader/compiler/cache lineage,
 fresh-image and matching pair custody, protected material read/failure controls,
 SIGCHLD/exclusive wait/PID reuse controls, stuck startup/control/engine faults,

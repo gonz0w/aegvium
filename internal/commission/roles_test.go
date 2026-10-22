@@ -4,6 +4,8 @@ package commission
 import (
 	"bytes"
 	"encoding/hex"
+	"encoding/json"
+	"os"
 	"testing"
 )
 
@@ -31,5 +33,40 @@ func TestRoleFilesExactDescriptorBoundPlacement(t *testing.T) {
 		if _, e := RoleFiles(bad); e == nil {
 			t.Fatal("invalid descriptor selected role files")
 		}
+	}
+}
+
+func TestBackendFilesExactPrivatePlacement(t *testing.T) {
+	d, _, _ := fixture(t)
+	raw, e := os.ReadFile("../backendconfig/testdata/binding.json")
+	if e != nil {
+		t.Fatal(e)
+	}
+	var f struct {
+		Hex string `json:"backend_hex"`
+	}
+	if json.Unmarshal(raw, &f) != nil {
+		t.Fatal("invalid public literal")
+	}
+	b, e := hex.DecodeString(f.Hex)
+	if e != nil {
+		t.Fatal(e)
+	}
+	files, e := BackendFiles(d, b)
+	want := []string{"backend.conf", "backend-cert.pem", "backend-key.pem", "backend-client-root.der", "backend-404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f.der"}
+	if e != nil || len(files) != len(want) {
+		t.Fatal("private placement refused")
+	}
+	for i, file := range files {
+		if file.Name != want[i] || file.Limit != []int64{8192, 65536, 16384, 16384, 16384}[i] {
+			t.Fatal("private path or cap changed")
+		}
+	}
+	if files[3].Anchor[0] != 32 || files[3].Anchor[31] != 63 || files[4].Anchor[0] != 64 || files[4].Anchor[31] != 95 {
+		t.Fatal("private anchor not config bound")
+	}
+	b[40] ^= 1
+	if _, e := BackendFiles(d, b); e == nil {
+		t.Fatal("foreign pairing selected private files")
 	}
 }

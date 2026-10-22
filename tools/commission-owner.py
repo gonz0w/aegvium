@@ -281,18 +281,21 @@ class _Owner:
         with os.scandir(directory) as entries:
             for entry in entries:
                 names.append(entry.name)
-                if len(names) > 11:
+                if len(names) > 23:
                     raise Incomplete('role input count')
         names.sort()
-        if len(names) < 4 or len(names) > 11 or not {'cert.pem', 'key.pem', 'server.der'} <= set(names):
+        fixed = {'cert.pem', 'key.pem', 'server.der', 'backend.conf',
+                 'backend-cert.pem', 'backend-key.pem', 'backend-client-root.der'}
+        if len(names) < 9 or len(names) > 23 or not fixed <= set(names):
             raise Incomplete('role input set')
         (self.work / 'roles').mkdir(mode=0o700)
         self.roles = []
         for name in names:
-            limit = 65536 if name == 'cert.pem' else 16384
-            if name not in ('cert.pem', 'key.pem', 'server.der'):
-                pin = name[7:-4]
-                if (not name.startswith('client-') or not name.endswith('.der') or
+            limit = 8192 if name == 'backend.conf' else 65536 if name in ('cert.pem', 'backend-cert.pem') else 16384
+            if name not in fixed:
+                prefix = 'backend-' if name.startswith('backend-') else 'client-'
+                pin = name[len(prefix):-4]
+                if (not name.startswith(prefix) or not name.endswith('.der') or
                         len(pin) != 64 or any(c not in '0123456789abcdef' for c in pin)):
                     raise Incomplete('role input name')
             incoming = self._input(directory / name)
