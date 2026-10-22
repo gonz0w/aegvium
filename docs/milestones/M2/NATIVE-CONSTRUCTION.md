@@ -1,4 +1,11 @@
-# Aegvium private native construction source — pre-code packet
+# Aegvium private native construction source — original packet
+
+Current adoption: [ADR0014](../../architecture/adr-0014-launch-namespace-durable-admission.md)
+now selects the namespace/updater exclusion and WAF-local checkpoint direction;
+[launch storage](LAUNCH-STORAGE.md) connects the next source step. The proposal
+below is retained historical context, not the current adoption boundary. The
+256-attempt journal is superseded; a WAF-local bounded counter/pairing contract
+needs no cross-product issuer. S-loss physical recovery remains unselected.
 
 Base504fccdcec1b182d664d9c640a453ce60e168f48 clean. ADR0011 adopted sole-root-S /
 one-unprivileged-I semantics. This slice adds actual private OS call paths for
@@ -160,8 +167,8 @@ proposal authorizes no repair/fencing or secret operation. Unannounced snapshot
 rollback/live cloning remain unsupported: local files/locks cannot detect both
 being restored. An external nonrollbackable witness is the practical alternative
 if that capability is required, adding trusted service and availability coupling.
-A compact counter checkpoint could avoid journal exhaustion but requires a new
-cross-product paired-generation issuer/format contract; do not silently invent it.
+A compact WAF-local counter checkpoint avoids arbitrary journal exhaustion,
+subject to a reviewed pairing/format contract. No cross-product issuer is needed.
 
 The major adoption question is the WAF-specific namespace/updater exclusion and
 local-history/cold-recovery availability tradeoff. Fixed byte layout/caps and OS

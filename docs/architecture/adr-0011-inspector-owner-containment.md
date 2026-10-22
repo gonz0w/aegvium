@@ -61,8 +61,10 @@ There is no automatic restart. A replacement requires old-process cleanup and
 validated fresh operator-paired generation, durable consumption/history and
 exclusive launch ownership. A failed launch burns its generation. S failure,
 missing history or ambiguous wait identity blocks a new S; no PID adoption or
-in-memory reset repairs those facts. Concrete durable history/storage and native
-launch construction still require a reviewed design before implementation.
+in-memory reset repairs those facts. [ADR0014](adr-0014-launch-namespace-durable-admission.md) selects WAF-local
+namespace/updater exclusion and durable admission for scoped source only. Its
+minimum checkpoint connects local controller/pair preparation but adds no positive
+launch/cleanup issuer; full native composition and S-loss recovery remain absent.
 
 S's proposed logical source envelope is one child, eight descriptors and 16 KiB
 of owned logical state, including 8192 bytes of metadata, control storage and a
