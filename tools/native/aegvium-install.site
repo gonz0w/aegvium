@@ -1,0 +1,5 @@
+#!/bin/ksh
+# SPDX-License-Identifier: BSD-3-Clause
+# Fixed authenticated pre-first-boot hook; no substituted command or argument.
+set -eu
+exec /aegvium.install/place

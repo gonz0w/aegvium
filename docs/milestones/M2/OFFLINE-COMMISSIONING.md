@@ -32,8 +32,9 @@ fixed USTAR regular-file members in order:
 
 Member UID/GID are0/root:wheel, timestamps are fixed, and no link, directory,
 extended header or extra path is emitted. In particular the archive never
-rewrites shared system-directory metadata. The generic builder must create the
-WAF-owned directories with protected ownership/modes and all required ancestors.
+rewrites shared system-directory metadata. The Aegvium commissioning owner must
+create the WAF-owned directories with protected ownership/modes and all required
+ancestors, using the stock installer without a new generic installer interface.
 The resulting C/intent/snapshot/pin bytes feed the existing fixed runtime reader;
 they do not change its U commitment, no-wrap or failure behavior.
 
@@ -59,17 +60,15 @@ No generic BootWeave extension schema or attestation format is invented here.
 
 Retained BootWeave README/author-guide and project-trust EDD identify an adopted
 read-only planner, with production installer/profile/adapter interfaces still
-unselected. The installed-payload research flow is not a fresh-image handoff
-provider. The minimum connection is one newly created Aeg target continuously
-owned by the actual builder through authenticated offline placement, durability
-and exact frontend/inspector snapshot handoff, before any target start or export.
-The target-lifetime/adapter interface remains unspecified; a supplied "fresh"
-Boolean cannot replace it. Read-only cross-owner review must determine whether
-a bounded Aeg-specific offline builder can use existing qualified primitives
-without adopting a generic production installer or imposing a new BootWeave
-milestone. Defining the narrow interface is routine coordination within the
-approved direction; importing old images, resetting state or adding host control
-would change the scope.
+unselected. Cross-owner review places this narrow writer within Aegvium; the
+BootWeave planner and its different payload limits remain intact. The
+[fixed commissioning source](FIXED-COMMISSION-OWNER.md) now composes actual new
+target creation, a retained target descriptor, one installer child and protected
+five-file placement/readback. Its default entry remains closed. The real
+operational inspector artifact and actual frontend-owner handoff are still
+missing; candidate bytes, a console observation or an in-memory prepared flag
+create no launch authority. Native media, ownership, durability and never-started
+lineage remain unqualified. No image, installer or placement helper was run.
 
 Existing-image initialization/reset, U→C, normal TerminalClean writing, snapshot
 restore/live cloning and supervisor-loss cleanup are not supplied. Local counters
