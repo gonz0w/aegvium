@@ -2,6 +2,8 @@
 #include "native_construction.h"
 #include "native_os.h"
 #include "controller.h"
+#include "launch_storage.h"
+#include <string.h>
 
 /* Private sources originate only in successful fixed OS acquisition calls.
  * Slots never escape through a view. No reset, raw FD input or positive issuer. */
@@ -99,6 +101,28 @@ aeg_native_pair_prepare(void)
             !construction.view.uncertain);
     construction.view.phase = AEG_NATIVE_PAIR;
     return AEG_NATIVE_OK;
+}
+
+int
+aeg_native_bootstrap_emit(void)
+{
+    struct aeg_owner_view owner;
+    const unsigned char *p;
+    if(construction.view.bootstrap_attempted) return AEG_NATIVE_STATE;
+    construction.view.bootstrap_attempted=true;
+    if(!construction.view.attempted) construction.view.attempted=true;
+    owner=aeg_owner_get_view();
+    if(construction.view.phase!=AEG_NATIVE_PAIR || construction.view.branch_attempted ||
+        construction.view.uncertain || owner.phase!=AEG_RESERVED || !owner.held ||
+        owner.stopped || owner.clock_fault || owner.identity_fault || owner.unsafe_fault)
+        return fail(AEG_NATIVE_STATE,true,false);
+    p=aeg_launch_bootstrap_take();
+    if(p==NULL || memcmp(p+8,owner.generation,32)!=0)
+        return fail(AEG_NATIVE_STATE,true,false);
+    if(aeg_os_bootstrap_send(construction.fd[construction.parent],p)!=104)
+        return fail(AEG_NATIVE_UNCERTAIN,true,false);
+    construction.view.bootstrap_written=true;
+    return AEG_NATIVE_OK; /* Local bytes only, never Owned/Ready/authentication. */
 }
 
 static bool

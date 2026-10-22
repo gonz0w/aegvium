@@ -9,6 +9,7 @@
 #include <unistd.h>
 
 int aeg_os_pair(int fd[2]) { return socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC | SOCK_NONBLOCK, 0, fd); }
+ssize_t aeg_os_bootstrap_send(int fd, const unsigned char p[104]) { return send(fd,p,104,MSG_NOSIGNAL); }
 int aeg_os_null(void) { return open("/dev/null", O_RDWR | O_CLOEXEC | O_NOFOLLOW); }
 int aeg_os_null_kind(int fd) {
     struct stat st;

@@ -9,8 +9,10 @@ static struct {
     struct aeg_storage_view view;
     int fd[4];
     bool close_tried[4];
+    unsigned char bootstrap[104];
+    bool bootstrap_prepared;
 } store = { .fd = { -1,-1,-1,-1 } };
-_Static_assert(sizeof(store) <= 128, "storage owner logical state");
+_Static_assert(sizeof(store) <= 256, "storage owner logical state");
 
 static int fail(int rc) {
     store.view.phase = AEG_STORAGE_FAILED;
@@ -116,6 +118,41 @@ static bool verify_image(int namespace_fd) {
      * cooperating ALL writers carry custody; no qualified loader/exec issuer. */
     return close_slot(image) && close_slot(dir);
 }
+static bool pair_identity(int dir, int fd, struct stat *out) {
+    struct stat a,b;
+    if(aeg_store_stat(fd,&a)!=0 || a.st_size<47 || a.st_size>8192 ||
+        !file_kind(&a,a.st_size) || aeg_store_pair_stat(dir,&b)!=0 ||
+        !file_kind(&b,a.st_size) || a.st_dev!=b.st_dev || a.st_ino!=b.st_ino)
+        return false;
+    *out=a;return true;
+}
+static bool prepare_bootstrap(int dir, const unsigned char next[32]) {
+    /* Base-contract digest is the independently frozen SHA256(M2-H1/1). */
+    static const unsigned char contract[32]={
+        0x1d,0x98,0x71,0x34,0x08,0x64,0x20,0xd4,
+        0x8b,0x30,0x0a,0x4c,0xfd,0xa0,0x16,0xff,
+        0xc5,0x50,0xa0,0xbd,0xa6,0xa6,0xf2,0x0c,
+        0x58,0x28,0x2d,0xb1,0xb7,0xd4,0x2d,0xca
+    };
+    unsigned char snapshot[8193];
+    struct stat initial, final;
+    int slot=adopt(aeg_store_pair_snapshot(dir));
+    if(slot<0 || !pair_identity(dir,store.fd[slot],&initial) ||
+        aeg_store_read(store.fd[slot],snapshot,(size_t)initial.st_size+1)!=initial.st_size ||
+        memcmp(snapshot,"AGPAIR1\n",8)!=0 || memcmp(snapshot+8,next,32)!=0 ||
+        memcmp(snapshot+40,"M2-H1/1",7)!=0 ||
+        !pair_identity(dir,store.fd[slot],&final) ||
+        initial.st_dev!=final.st_dev || initial.st_ino!=final.st_ino ||
+        initial.st_size!=final.st_size || !close_slot(slot)) return false;
+    /* Only full grammar in I's existing parser can construct an owned snapshot.
+     * This prefix check and hash cannot establish frontend or launch authority. */
+    memcpy(store.bootstrap,"AGCHECK1",8);
+    memcpy(store.bootstrap+8,next,32);
+    aeg_store_pair_hash(snapshot,(size_t)initial.st_size,store.bootstrap+40);
+    memcpy(store.bootstrap+72,contract,32);
+    store.bootstrap_prepared=true;
+    return true;
+}
 static bool increment(unsigned char out[32], const unsigned char in[32]) {
     int i;
     memcpy(out,in,32);
@@ -164,7 +201,8 @@ static int prepare(bool update) {
     for (i=0;i<32;i++) if (!hex(intent[i])) return fail(AEG_STORAGE_INPUT);
     if (intent[32]!='\n' || memcmp(intent,next,32)!=0 || !close_slot(intentfd))
         return fail(AEG_STORAGE_INPUT);
-    if(!verify_image(store.fd[dir])) return fail(AEG_STORAGE_OS);
+    if(!verify_image(store.fd[dir]) || !prepare_bootstrap(store.fd[dir],next))
+        return fail(AEG_STORAGE_OS);
     frame[8]='U'; memcpy(frame+16,next,32); aeg_store_hash(frame,frame+48);
     /* No admission or child can precede this full durability/readback boundary.
      * Short/error writes never continue; fsync failure never readbacks as repair. */
@@ -178,10 +216,18 @@ static int prepare(bool update) {
     if (aeg_owner_prepare((const char *)next,32,now)!=AEG_OK ||
         aeg_native_pair_prepare()!=AEG_NATIVE_OK) return fail(AEG_STORAGE_UNCERTAIN);
     store.view.phase=AEG_STORAGE_LOCAL_PAIR;
+    if(aeg_native_bootstrap_emit()!=AEG_NATIVE_OK) return fail(AEG_STORAGE_UNCERTAIN);
     return AEG_STORAGE_OK; /* Unqualified local pair, never Owned/Ready/launch. */
 }
 int aeg_launch_storage_prepare(void) { return prepare(false); }
 int aeg_update_exclusion_prepare(void) { return prepare(true); }
+const unsigned char *aeg_launch_bootstrap_take(void) {
+    if(store.view.bootstrap_claimed || !store.bootstrap_prepared ||
+        !store.view.committed || store.view.uncertain ||
+        store.view.phase!=AEG_STORAGE_LOCAL_PAIR) return NULL;
+    store.view.bootstrap_claimed=true;
+    return store.bootstrap;
+}
 struct aeg_storage_view aeg_storage_get_view(void) {
     struct aeg_storage_view v=store.view; int i;
     v.known_descriptors=0;

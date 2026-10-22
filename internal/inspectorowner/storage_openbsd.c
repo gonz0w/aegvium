@@ -17,6 +17,8 @@ int aeg_store_dir(int fd, unsigned n) {
 }
 int aeg_store_state(int fd) { return openat(fd, "launch.state", O_RDWR|O_NOFOLLOW|O_CLOEXEC); }
 int aeg_store_intent(int fd) { return openat(fd, "launch.intent", O_RDONLY|O_NOFOLLOW|O_CLOEXEC); }
+int aeg_store_pair_snapshot(int fd) { return openat(fd,"pair.snapshot",O_RDONLY|O_NOFOLLOW|O_CLOEXEC); }
+int aeg_store_pair_stat(int fd, struct stat *s) { return fstatat(fd,"pair.snapshot",s,AT_SYMLINK_NOFOLLOW); }
 int aeg_store_pin(int fd) { return openat(fd,"inspector.pin",O_RDONLY|O_NOFOLLOW|O_CLOEXEC); }
 int aeg_store_pin_stat(int fd, struct stat *s) { return fstatat(fd,"inspector.pin",s,AT_SYMLINK_NOFOLLOW); }
 int aeg_store_image_dir(int fd, unsigned n) {
@@ -39,6 +41,12 @@ void aeg_store_hash(const unsigned char p[128], unsigned char out[32]) {
     SHA256Init(&ctx);
     SHA256Update(&ctx,p,48);
     SHA256Update(&ctx,p+80,48);
+    SHA256Final(out,&ctx);
+}
+void aeg_store_pair_hash(const unsigned char *p, size_t n, unsigned char out[32]) {
+    SHA2_CTX ctx;
+    SHA256Init(&ctx);
+    SHA256Update(&ctx,p,n);
     SHA256Final(out,&ctx);
 }
 int aeg_store_image_hash(int fd, off_t bytes, unsigned char out[32]) {

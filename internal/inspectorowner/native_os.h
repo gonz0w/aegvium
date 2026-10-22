@@ -4,6 +4,7 @@
 #include <sys/types.h>
 /* Fixed-link private OS boundary. No runtime replacement/registration API. */
 int aeg_os_pair(int [2]);
+ssize_t aeg_os_bootstrap_send(int, const unsigned char [104]);
 int aeg_os_null(void);
 int aeg_os_null_kind(int);
 int aeg_os_dup_high(int);

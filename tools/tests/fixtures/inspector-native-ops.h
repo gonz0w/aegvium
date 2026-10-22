@@ -18,6 +18,10 @@
 #ifndef SOCK_NONBLOCK
 #define SOCK_NONBLOCK 0x20000
 #endif
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0x400
+#endif
+ssize_t aeg_test_send(int, const void *, size_t, int);
 int aeg_test_socketpair(int, int, int, int [2]);
 int aeg_test_open(const char *, int, ...);
 int aeg_test_fstat(int, struct stat *);
@@ -31,6 +35,7 @@ int aeg_test_setresuid(uid_t, uid_t, uid_t);
 int aeg_test_getgroups(int, gid_t *);
 int aeg_test_getresgid(gid_t *, gid_t *, gid_t *);
 int aeg_test_getresuid(uid_t *, uid_t *, uid_t *);
+#define send aeg_test_send
 #define socketpair aeg_test_socketpair
 #define open aeg_test_open
 #define fstat aeg_test_fstat

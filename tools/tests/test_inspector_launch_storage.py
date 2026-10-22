@@ -27,18 +27,24 @@ IMAGE_PREFIX = ['pin:43', 'stat:46', 'path-pin:43', 'read:46:65', 'stat:46',
                 'sha-update:17', 'image-read:4113:1', 'sha-final', 'stat:52',
                 'path-image:51', 'close:52', 'close:51']
 STORAGE = STORAGE[:25] + IMAGE_PREFIX + STORAGE[25:]
+# Frozen protected snapshot order, before U encoding. Exact size+1 request rejects
+# growth; digest consumes retained bytes only after successful source Close.
+SNAPSHOT_PREFIX = ['snapshot:43', 'stat:53', 'path-snapshot:43', 'read:53:314',
+                   'stat:53', 'path-snapshot:43', 'close:53',
+                   'sha-init', 'sha-update:313', 'sha-final']
+STORAGE = STORAGE[:60] + SNAPSHOT_PREFIX + STORAGE[60:]
 PAIR = ['pair', 'null', 'stat:1', 'high:0', 'close:0', 'high:3', 'close:3', 'high:1', 'close:1']
-BASELINE = STORAGE + PAIR
+BASELINE = STORAGE + PAIR + ['send:4:104']
 # Reviewer-derived literal outputs; not computed with the production encoder/hash.
 U1 = '4145474f574e310a55000000000000003030303030303030303030303030303030303030303030303030303030303031a93801f9a665510e0ca24b6ba66c79c618252890d9722850002fe1ef4eef86bb000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
 UFF = '4145474f574e310a55000000000000006666666666666666666666666666666666666666666666666666666666666666105c28a634df45fa0e2bf6d9b38cef5b64d493da5aaf9c504538199c18b47492000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
 # Every non-void OS edge on the success trace. SHA's base API is void: the
 # separate mismatch case tests digest refusal; interception checks both48 inputs.
-FAIL_EDGES = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,21,22,23,24,25,
+LEGACY_FAIL_EDGES = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,21,22,23,24,25,
               65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,
               26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,
               45,46,47,48,49,51,53,55,57,58,59,60]
-CUTOFF = {
+LEGACY_CUTOFF = {
     'root-uid':2, 'dir-uid':4, 'dir-write':4, 'dir-type':4,
     'state-uid':14, 'state-gid':14, 'state-type':14, 'state-mode':14,
     'state-link':14, 'state-size':14, 'path-dev':15, 'path-inode':15, 'path-mode':15,
@@ -68,6 +74,24 @@ CUTOFF = {
     'image-tail-short':53, 'image-tail-over':53,
     'image-eof-negative':55, 'image-eof-data':55, 'image-data':56, 'image-digest':56,
 }
+# Existing172 modes retain their original edge semantics with the ten-call
+# snapshot prefix inserted. The old literal trace is preserved above.
+FAIL_EDGES = [n if n<=60 else n+10 for n in LEGACY_FAIL_EDGES] + [61,62,63,64,65,66,67,91]
+CUTOFF = {name: n if n<=60 else n+10 for name,n in LEGACY_CUTOFF.items()}
+CUTOFF.update({
+    'snapshot-alias':61, 'snapshot-invalid':61,
+    'snapshot-uid':62, 'snapshot-gid':62, 'snapshot-type':62, 'snapshot-mode':62,
+    'snapshot-link':62, 'snapshot-small':62, 'snapshot-large':62,
+    'snapshot-path-dev':63, 'snapshot-path-inode':63, 'snapshot-path-link':63,
+    'snapshot-path-size':63, 'snapshot-path-mode':63,
+    'snapshot-post-inode':66, 'snapshot-post-size':66, 'snapshot-post-path':66,
+    'snapshot-read-negative':64, 'snapshot-read-zero':64, 'snapshot-read-short':64,
+    'snapshot-read-growth':64, 'snapshot-read-over':64,
+    'snapshot-magic':64, 'snapshot-generation':64, 'snapshot-upper':64,
+    'snapshot-version':64, 'emitter-precommit':0,
+})
+GOLDEN_U = '4145474f574e310a550000000000000030313233343536373839616263646566303132333435363738396162636465664ccb134f46c1e316980f39725b921be937f230c86e18e61c43abc3105e3d14d9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
+
 
 
 class InspectorLaunchStorageTests(unittest.TestCase):
@@ -106,26 +130,40 @@ class InspectorLaunchStorageTests(unittest.TestCase):
         return row
 
     def test_fixed_storage_and_construction(self):
-        modes = ['launch', 'edge', 'update', 'reentrant'] + [f'fail-{n}' for n in FAIL_EDGES] + list(CUTOFF)
-        self.assertEqual(len(modes), 172)
+        self.assertEqual(4+len(LEGACY_FAIL_EDGES)+len(LEGACY_CUTOFF),172)
+        extra_success = ['bootstrap-golden','snapshot-minimum','snapshot-maximum','snapshot-badgrammar','producer-precommit']
+        send_failures = ['send-negative','send-error','send-zero','send-short','send-over']
+        modes = ['launch', 'edge', 'update', 'reentrant'] + [f'fail-{n}' for n in FAIL_EDGES] + list(CUTOFF) + extra_success + send_failures
+        self.assertEqual(len(modes), 217)
         for mode in modes:
             with self.subTest(mode=mode):
                 r = self.run_mode(mode)
                 trace = r['trace']
-                if mode in ('launch','edge','reentrant'):
-                    self.assertEqual(trace, BASELINE)
+                if mode in ('launch','edge','reentrant') or mode in extra_success:
+                    expected=list(BASELINE)
+                    if mode in ('snapshot-minimum','snapshot-maximum'):
+                        n=47 if mode=='snapshot-minimum' else 8192
+                        expected[63]=f'read:53:{n+1}'
+                        expected[68]=f'sha-update:{n}'
+                    self.assertEqual(trace, expected)
                     self.assertEqual((r['rc'],r['phase'],r['committed'],r['uncertain'],r['known'],r['owner'],r['native']), (0,2,1,0,1,2,1))
-                    self.assertEqual(r['disk'], UFF if mode=='edge' else U1)
+                    self.assertEqual(r['disk'], GOLDEN_U if mode=='bootstrap-golden' else UFF if mode=='edge' else U1)
+                    self.assertEqual((r['send_calls'],r['emit_again'],r['bootstrap_written']),(1,2,1))
                     self.assertEqual(r['writes'],1)
                     self.assertEqual(r['reentrant'],1 if mode=='reentrant' else -1)
                 elif mode=='update':
                     self.assertEqual(trace, STORAGE[:20]+['close:43'])
                     self.assertEqual((r['rc'],r['phase'],r['committed'],r['known'],r['owner'],r['native'],r['writes']), (0,3,0,1,0,0,0))
+                elif mode in send_failures:
+                    self.assertEqual(trace,BASELINE)
+                    self.assertEqual((r['phase'],r['committed'],r['uncertain'],r['owner'],r['native'],r['send_calls'],r['emit_again'],r['branch_after'],r['bootstrap_written']),(1,1,1,2,4,1,2,2,0))
+                    self.assertNotEqual(r['rc'],0)
+                    self.assertEqual(r['disk'],U1)
                 elif mode.startswith('fail-'):
                     n=int(mode[5:])
                     self.assertEqual(trace[:n],BASELINE[:n])
-                    if n in (73,74,75,77,79):
-                        expected={73:{0,3},74:{0,3,1},75:{0,3,1},77:{4,3,1},79:{4,5,1}}[n]
+                    if n in (83,84,85,87,89):
+                        expected={83:{0,3},84:{0,3,1},85:{0,3,1},87:{4,3,1},89:{4,5,1}}[n]
                         self.assertEqual(set(trace[n:]),{f'close:{fd}' for fd in expected})
                         self.assertEqual(len(trace[n:]),len(expected))
                     else:
@@ -133,9 +171,9 @@ class InspectorLaunchStorageTests(unittest.TestCase):
                     self.assertNotEqual(r['rc'],0)
                     self.assertEqual(r['phase'],1)
                     self.assertTrue(r['uncertain'])
-                    self.assertEqual(r['committed'],n>=70)
-                    self.assertEqual(r['owner'],2 if n>=72 else 0)
-                    if n>=70:
+                    self.assertEqual(r['committed'],n>=80)
+                    self.assertEqual(r['owner'],2 if n>=82 else 0)
+                    if n>=80:
                         self.assertEqual(r['disk'],U1)
                 else:
                     self.assertEqual(trace, BASELINE[:CUTOFF[mode]])
@@ -149,7 +187,8 @@ class InspectorLaunchStorageTests(unittest.TestCase):
                         self.assertFalse(r['committed'])
                     if mode in ('clock-negative','clock-nsec','controller-late'):
                         self.assertEqual(r['disk'],U1)
-                    self.assertEqual(r['native'],4 if mode=='native-prestate' else 0)
-                    if mode.startswith(('pin-','image-')):
+                    self.assertEqual(r['native'],4 if mode in ('native-prestate','emitter-precommit') else 0)
+                    if mode.startswith(('pin-','image-','snapshot-')):
                         self.assertEqual((r['writes'],r['committed'],r['owner'],r['native']),(0,0,0,0))
                         self.assertTrue(r['lock'])
+                        self.assertEqual(r['send_calls'],0)

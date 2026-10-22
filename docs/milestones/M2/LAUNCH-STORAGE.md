@@ -40,9 +40,20 @@ metadata plus original-inode equality. No short-write continuation, fsync-error
 readback, repair or retry. Base SHA256Init/Update/Final allocates no product buffer
 outside its fixed stack context; actual target behavior remains unqualified.
 
+Before U, read existing protected `pair.snapshot` in the same namespace with
+NOFOLLOW/CLOEXEC, root:wheel0600/nlink1 and size47..8192. Require matching current
+descriptor/path/original inode and size around one declared-size+1 read, exact
+declared bytes, AGPAIR prefix/contract and selected next generation. Close once
+and hash the owned bytes into AGCHECK104; full grammar remains Go's parser.
+Snapshot failure therefore prevents U; a later Go grammar rejection burns U.
+
 Only after full commitment mark known consumed, close namespace handle once,
 sample checked monotonic milliseconds, call existing `aeg_owner_prepare`, then
 existing `aeg_native_pair_prepare`. The checkpoint EX descriptor remains held.
+The zero-input committed-state producer then feeds one nonblocking104-byte send
+through the privately owned S endpoint. Short/error/invalid send retains U and
+uncertainty without retry. This adds no child, receiver or authentication issuer;
+see [bootstrap preparation](OWNED-PAIR-RECEIVER.md#committed-bootstrap-preparation).
 A namespace-close/clock/controller/pair failure after commitment retains U burned;
 no clean rewrite. No storage calls occur after controller/pair preparation or
 on stop/escalation/wait. Pair construction is local source only: no fork/exec,
@@ -55,7 +66,8 @@ On ANY failure known references/exclusion and uncertainty remain; a failed close
 is never retried. No raw descriptor/counter capability escapes the bounded view.
 
 The source owner has at most4 overlapping known storage/image descriptors, at most1
-after clean local preparation, <=128-byte static owner state and fixed stack
+after clean local preparation, <=256-byte static owner state and a fixed8193-byte
+snapshot stack buffer in addition to the existing fixed stack
 frames. These are local source accounting only, not whole-S FD/RSS or native
 no-export proof. A future child closes inherited checkpoint copies, never
 LOCK_UN (which would unlock the parent's shared flock). The actual fork/image/
@@ -73,9 +85,9 @@ refusal and the fake validates exactly both48-byte inputs. Metadata, aliases,
 invalid counts, U, nowrap, intent mismatch, prestate, reentry and postcommit
 failure are explicit. 'Committed=false' means unestablished, never reusable C.
 
-Only the new C module is compiled with ALL storage/SHA/clock and existing native
-OS boundaries intercepted. The original96 storage cases remain as regression
-expectations; the image prefix adds76 fixed cases (172 total), normal-exit under5s each, compiler
+The C storage/native modules are compiled with ALL storage/SHA/clock and native
+OS boundaries intercepted. The original96 storage cases and76 image cases remain
+as regression expectations; the snapshot/bootstrap prefix adds45 cases (217 total), normal-exit under5s each, compiler
 30s, fresh retained task-local TMPDIR. No host file/descriptor/socket/identity/
 permission/launch/process/engine effects occur. Independent exact fixture/source
 review precedes checks; ordinary source/secret hooks/signature/DCO remain.

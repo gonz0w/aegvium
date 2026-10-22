@@ -8,12 +8,15 @@ enum aeg_native_phase { AEG_NATIVE_EMPTY = 0, AEG_NATIVE_PAIR, AEG_NATIVE_PARENT
 struct aeg_native_view {
     enum aeg_native_phase phase;
     bool attempted, branch_attempted, uncertain, identity_checked;
+    bool bootstrap_attempted, bootstrap_written;
     unsigned known_owned_descriptors;
 };
 /* Private one-process/one-event-loop primitives; no caller exists. Neither branch
  * call proves a fork, child identity, authenticated peer or launch-history gate.
  * Future real child caller MUST terminate on failure; no exec/readiness here. */
 int aeg_native_pair_prepare(void);
+/* Zero-input committed-storage coupling. One nonblocking send, no FD getter. */
+int aeg_native_bootstrap_emit(void);
 int aeg_native_parent_prepare(void);
 int aeg_native_child_prepare(uid_t, gid_t);
 struct aeg_native_view aeg_native_get_view(void);

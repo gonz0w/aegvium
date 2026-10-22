@@ -6,7 +6,7 @@ enum aeg_storage_error { AEG_STORAGE_OK = 0, AEG_STORAGE_STATE, AEG_STORAGE_OS, 
 enum aeg_storage_phase { AEG_STORAGE_EMPTY = 0, AEG_STORAGE_FAILED, AEG_STORAGE_LOCAL_PAIR, AEG_STORAGE_UPDATE_GUARD };
 struct aeg_storage_view {
     enum aeg_storage_phase phase;
-    bool attempted, uncertain, committed;
+    bool attempted, uncertain, committed, bootstrap_claimed;
     unsigned known_descriptors;
 };
 /* Private, single event-loop/process attempt. No installed caller, initializer,
@@ -14,5 +14,8 @@ struct aeg_storage_view {
  * C provenance and qualified native construction remain operational gates. */
 int aeg_launch_storage_prepare(void);
 int aeg_update_exclusion_prepare(void);
+/* Private native-emitter coupling: output-only immutable bytes, never caller
+ * input or a qualified launch/channel/receiver capability. One claim after U. */
+const unsigned char *aeg_launch_bootstrap_take(void);
 struct aeg_storage_view aeg_storage_get_view(void);
 #endif
