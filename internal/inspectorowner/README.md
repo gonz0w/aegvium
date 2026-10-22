@@ -45,3 +45,14 @@ authenticated inherited channel, durable fresh paired-generation consumption
 and exclusive launch history, engine transaction ownership, and full native
 four-second qualification. No storage/IPC codec or restart authority is silently
 selected here. Draft126 remains a draft and affected validation remains paused.
+
+## Connected stop and admission-retirement frames
+
+The later [control connection](../../docs/milestones/M2/CONTROL-RETIREMENT.md)
+adds fixed64-byte Stop encoding and a one-attempt canonical ACK consumer around
+this controller. The private Go inspector handler calls the actual bodyowner
+Stop/Retire before writing the matching ACK. This adds source codec selection;
+it provides no authenticated channel constructor, native read/wait/signal/close
+provider, durable launch history, allow verdict or process reclamation. Eight
+fresh bounded ordinary host codec traces and memory-only fake I/O qualify source
+behavior only. Whole-child ownership and mandatory four-second proof remain open.

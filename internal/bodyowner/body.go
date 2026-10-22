@@ -6,6 +6,7 @@ package bodyowner
 import (
 	"context"
 	"io"
+	"strings"
 	"sync"
 	"time"
 
@@ -55,17 +56,20 @@ type Inbound struct{ state *inboundState }
 type Job struct{ state *jobState }
 
 type ownerState struct {
-	mu      sync.Mutex
-	slots   *capacity.Owner
-	stopped bool
-	jobs    map[*jobState]struct{}
-	engine  *engineState // Nil in the compatible standalone body owner.
+	mu             sync.Mutex
+	slots          *capacity.Owner
+	stopped        bool
+	jobs           map[*jobState]struct{}
+	engine         *engineState // Nil in the compatible standalone body owner.
+	controlClaimed bool
+	control        io.ReadWriteCloser // One admitted endpoint; uncertainty stays held.
 }
 
 type generationState struct {
 	owner   *ownerState
 	slots   *capacity.Generation
 	retired bool
+	token   string // Detached canonical identity; equality is not authentication.
 }
 
 type inboundState struct {
@@ -110,7 +114,7 @@ func (o *Owner) NewGeneration(token string) (*Generation, error) {
 	if s.engine != nil {
 		s.engine.generationBound = true
 	}
-	return &Generation{state: &generationState{owner: s, slots: g}}, nil
+	return &Generation{state: &generationState{owner: s, slots: g, token: strings.Clone(token)}}, nil
 }
 
 func (o *Owner) ReserveInbound() (*Inbound, error) {
