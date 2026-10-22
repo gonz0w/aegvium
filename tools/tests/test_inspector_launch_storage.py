@@ -129,6 +129,31 @@ class InspectorLaunchStorageTests(unittest.TestCase):
         self.assertLessEqual(row['known'], 4)
         return row
 
+    def test_versioned_snapshot_retains_generation_namespace(self):
+        # Same cleanC0 -> consumedU1 transition, with the independent AGPAIR2
+        # descriptor/Q from before source edits. All subject operations remain
+        # intercepted; no filesystem ownership, socket or process action occurs.
+        r = self.run_mode('snapshot-v2')
+        expected = list(BASELINE)
+        expected[63] = 'read:53:327'
+        expected[68] = 'sha-update:326'
+        expected[-1] = 'send:4:440'
+        self.assertEqual(r['trace'], expected)
+        self.assertEqual((r['rc'], r['phase'], r['committed'], r['uncertain'],
+                          r['known'], r['owner'], r['native'], r['writes']),
+                         (0, 2, 1, 0, 1, 2, 1, 1))
+        self.assertEqual(r['disk'], U1)
+        self.assertEqual((r['send_calls'], r['bootstrap_written']), (1, 1))
+        for mode in ('snapshot-v2-profile1', 'snapshot-v2-profile2', 'snapshot-v1-profile3'):
+            r = self.run_mode(mode)
+            expected = list(BASELINE[:64])
+            if mode.startswith('snapshot-v2'):
+                expected[63] = 'read:53:327'
+            self.assertEqual(r['trace'], expected)
+            self.assertNotEqual(r['rc'], 0)
+            self.assertEqual((r['writes'], r['committed'], r['send_calls']), (0, 0, 0))
+            self.assertTrue(r['uncertain'])
+
     def test_fixed_storage_and_construction(self):
         self.assertEqual(4+len(LEGACY_FAIL_EDGES)+len(LEGACY_CUTOFF),172)
         extra_success = ['bootstrap-golden','snapshot-minimum','snapshot-maximum','snapshot-badgrammar','producer-precommit']

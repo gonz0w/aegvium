@@ -84,7 +84,8 @@ func dns(s string) bool {
 }
 
 // Parse binds exact private route coverage to the actual inherited descriptor.
-// This representation is private to Aegvium; it changes neither AGPAIR1 nor H1/1.
+// This representation is private to Aegvium; it binds the complete validated
+// AGPAIR1/2 descriptor without supplying a public endpoint or profile override.
 func Parse(input, descriptor []byte) (Config, error) {
 	var zero Config
 	if len(input) < 1 || len(input) > 8192 {

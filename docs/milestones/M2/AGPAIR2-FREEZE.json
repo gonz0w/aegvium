@@ -1,0 +1,34 @@
+{
+  "schema": "Aegvium-Vectivium-AGPAIR2-source-freeze/1",
+  "scope": "Matching joint source bytes and private binding only; no authentication, history custody, Ready, serving or runtime acceptance.",
+  "magic": "AGPAIR2\n",
+  "profile": "M2-H1/3",
+  "profile_sha256": "78fc979225e6781530d791eb6156d06949a083313d02f6cf3cc0b1b68bbd0b35",
+  "legacy": "AGPAIR1/M2-H1/1 unchanged CONTROL-only; no DATA inferred.",
+  "control_path": "/_aegvium/m2-h1-1/pair",
+  "control_body_bytes": 104,
+  "descriptor_cap": 8192,
+  "fixture": {
+    "path": "internal/requestctx/testdata/pair2_joint.json",
+    "sha256": "c9413d2d511c1be8c3db2fef6fac7bebe91e499da4f332a0dd5d2d3fd83926c6",
+    "descriptor_bytes": 326,
+    "D_sha256": "334ff7e69de1598668ba91dc4e99a9436aa78587018ddfc0bcfabe0c8365d31e",
+    "Q_sha256": "f1e37b36c95ed59ee32a83a55f4e76595bc75c22ffaf8add7f05cf15570d98b6"
+  },
+  "connection_vectors": {
+    "path": "internal/requestctx/testdata/connection_facts.json",
+    "sha256": "5af8b524e208bf326aceec2c895077f54f6f1f41983429d4d7c2ac4b37f7fd4d"
+  },
+  "retained_caps": {
+    "fields": 64,
+    "context_fields": 6,
+    "application_fields": 58,
+    "context": 1024,
+    "public": 4096,
+    "combined": 5120,
+    "context_max_literal": 546,
+    "combined_max_literal": 4642
+  },
+  "history": "One consumed-G namespace across C1/C3; no reset/delete/reuse or rollback-free proof.",
+  "authority": "Validated local descriptor selects P/C, BOTH endpoints and full D. A parsed carrier, inherited bytes or matching Q grants no Peer, frontend acceptance, backend effect or reclamation authority."
+}

@@ -23,7 +23,7 @@ func main() {
 }
 
 func run() error {
-	pairPath := flag.String("pair", "", "public AGPAIR1 descriptor")
+	pairPath := flag.String("pair", "", "public AGPAIR1/2 descriptor")
 	imagePath := flag.String("inspector", "", "reviewed inspector artifact")
 	pin := flag.String("sha256", "", "expected inspector SHA256 (equality only)")
 	outputPath := flag.String("output", "", "new staging archive; never an installed path")

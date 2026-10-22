@@ -79,17 +79,13 @@ The independent pre-code213-byte opaque configuration literal has SHA256
 Pure tests use this public descriptor/configuration and intercepted builder I/O;
 they never parse credentials, perform TLS or connect to an application.
 
-## Pending common endpoint decision
+## Common endpoint source binding
 
-The selected adapter design requires a separate fixed control listener. Current
-AGPAIR1 has one inspector endpoint, now consumed by the real pairing client.
-Actual DATA construction cannot infer another port or share that control listener.
-
-Recommendation for adoption: an explicitly versioned successor common descriptor
-binds distinct control and DATA numeric endpoints/ports, preserving M2-H1/1 HTTP
-fields, AGCHECK104 semantics, server role/trust, fresh generation, complete digest
-and the8192-byte cap. Existing AGPAIR1 remains control-only. This changes the
-cross-product/operator encoding and needs a coordinated source decision before
-implementation. No successor encoding is implemented or selected here. The
-alternative is sharing one listener and changing the selected isolation/budget
-contract. Neither option permits actual listeners, credentials or native execution.
+The [approved AGPAIR2 source successor](AGPAIR2.md) now binds explicit CONTROL
+and DATA endpoints with H1/3; the current source parses/prepares it without
+serving. AGPAIR1 remains unchanged and CONTROL-only; DATA cannot infer another
+port or share that control listener. Both versions preserve the fixed control
+HTTP path, AGCHECK104 semantics, server role/trust, fresh generation, complete
+digest and8192-byte cap. Private AGBACK1 still binds exact full descriptor bytes,
+so an endpoint/profile change requires an explicitly matching private input.
+No actual listener, credential, TLS or native operation is enabled by this source.

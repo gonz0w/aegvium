@@ -63,6 +63,34 @@ func TestPairBootstrapExactSnapshotRetainsSameEndpoint(t *testing.T) {
 	}
 }
 
+func TestPairBootstrapVersion2ExactDescriptorAndTuple(t *testing.T) {
+	_, descriptor, tuple := pair2Fixture(t, "same_address_distinct_ports")
+	// Independent326-byte prefix and packet hash, frozen before source edits.
+	prefix, err := hexbytes.DecodeString("4147424f4f54310a0146")
+	if err != nil {
+		t.Fatal(err)
+	}
+	packet := append(append(prefix, tuple...), descriptor...)
+	if sum := sha256.Sum256(packet); len(packet) != 440 || hexbytes.EncodeToString(sum[:]) != "8ac237d672b44ac5aacf76e028ca03041e135660cd3c410d048c0f336e4f75ff" {
+		t.Fatal("independent P3 packet mismatch")
+	}
+	r := &bootstrapRead{frame: packet, n: 440}
+	b := &inheritedPairBootstrap{endpoint: r}
+	if b.consume() != nil || b.snapshot == nil || b.endpoint != r || r.calls != 1 || b.snapshot.dataPort != 9443 || b.snapshot.port != 8443 || !bytes.Equal(b.snapshot.tuple[:], tuple) {
+		t.Fatal("P3 bootstrap lost binding")
+	}
+	if b.consume() == nil || r.calls != 1 {
+		t.Fatal("P3 bootstrap read twice")
+	}
+	// Old C cannot be paired with new descriptor bytes even with matching G.
+	_, _, oldTuple := pairFixture(t)
+	copy(packet[82:114], oldTuple[72:])
+	bad := &bootstrapRead{frame: packet, n: 440}
+	if (&inheritedPairBootstrap{endpoint: bad}).consume() == nil || bad.calls != 1 {
+		t.Fatal("old capability accepted with new descriptor")
+	}
+}
+
 func TestPairBootstrapSupervisorGenerationLiteral(t *testing.T) {
 	_, descriptor, _ := pairFixture(t)
 	copy(descriptor[8:40], "00000000000000000000000000000001")

@@ -71,6 +71,45 @@ func TestBackendConfigIndependentBoundBinding(t *testing.T) {
 	}
 }
 
+func TestBackendConfigVersion2BindsFullDescriptor(t *testing.T) {
+	b, _ := literal(t)
+	raw, err := os.ReadFile("../requestctx/testdata/pair2_prepared.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var f struct {
+		Row struct {
+			Descriptor string `json:"descriptor_hex"`
+			Prepared   string `json:"prepared_hex"`
+		} `json:"same_address_distinct_ports"`
+	}
+	if json.Unmarshal(raw, &f) != nil {
+		t.Fatal("public literal")
+	}
+	d, err := hex.DecodeString(f.Row.Descriptor)
+	if err != nil {
+		t.Fatal(err)
+	}
+	q, err := hex.DecodeString(f.Row.Prepared)
+	if err != nil || len(q) != 104 {
+		t.Fatal("public tuple")
+	}
+	if _, err := Parse(b, d); err == nil {
+		t.Fatal("old private binding accepted")
+	}
+	copy(b[40:72], q[40:72]) // Independent full-D literal, not production hashing.
+	c, err := Parse(b, d)
+	if err != nil || len(c.Routes) != 1 || c.Routes[0].Address.String() != "192.0.2.81:9443" {
+		t.Fatal("new exact private binding refused", err)
+	}
+	// Alter DATA alone; immutable backend material must be explicitly rebound.
+	at := bytes.LastIndex(d, []byte("192.0.2.10")) + len("192.0.2.10") + 1
+	d[at] ^= 1
+	if _, err := Parse(b, d); err == nil {
+		t.Fatal("DATA-only descriptor change kept private binding")
+	}
+}
+
 func TestBackendConfigRefusesUnboundAndUnsupportedInput(t *testing.T) {
 	b, d := literal(t)
 	for _, n := range []int{0, 7, 8, 39, 40, 71, 72, 94, 126, 127, 212} {

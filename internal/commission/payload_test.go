@@ -232,3 +232,59 @@ func TestPayloadDetachesDescriptorBeforeImageIO(t *testing.T) {
 		}
 	}
 }
+
+func TestPayloadVersion2PreservesBothEndpointsAndRolePlan(t *testing.T) {
+	_, image, pin := fixture(t)
+	b, err := os.ReadFile("../requestctx/testdata/pair2_prepared.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var f struct {
+		Row struct {
+			Descriptor string `json:"descriptor_hex"`
+		} `json:"same_address_distinct_ports"`
+	}
+	if json.Unmarshal(b, &f) != nil {
+		t.Fatal("public literal")
+	}
+	descriptor, err := hex.DecodeString(f.Row.Descriptor)
+	if err != nil {
+		t.Fatal(err)
+	}
+	files, err := RoleFiles(descriptor)
+	if err != nil || len(files) != 4 {
+		t.Fatal("P3 fixed role plan")
+	}
+	var out bytes.Buffer
+	if Write(&out, descriptor, bytes.NewReader(image), 4113, pin) != nil {
+		t.Fatal("P3 payload refused")
+	}
+	r := tar.NewReader(bytes.NewReader(out.Bytes()))
+	seen := 0
+	for {
+		h, err := r.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			t.Fatal(err)
+		}
+		seen++
+		data, err := io.ReadAll(r)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if h.Name == "var/db/aegvium/pair.snapshot" && !bytes.Equal(data, descriptor) {
+			t.Fatal("builder changed version/profile/endpoints")
+		}
+		if h.Name == "var/db/aegvium/launch.state" {
+			want, _ := hex.DecodeString(states[1].frame)
+			if !bytes.Equal(data, want) {
+				t.Fatal("profile reset generation namespace")
+			}
+		}
+	}
+	if seen != 5 {
+		t.Fatal("payload member count changed")
+	}
+}

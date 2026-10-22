@@ -129,21 +129,33 @@ static bool pair_identity(int dir, int fd, struct stat *out) {
     *out=a;return true;
 }
 static bool prepare_bootstrap(int dir, const unsigned char next[32]) {
-    /* Base-contract digest is the independently frozen SHA256(M2-H1/1). */
-    static const unsigned char contract[32]={
+    /* Independently frozen profile digests. Only explicit local version/profile
+     * pairs are recognized; the complete descriptor still needs I's parser. */
+    static const unsigned char contract1[32]={
         0x1d,0x98,0x71,0x34,0x08,0x64,0x20,0xd4,
         0x8b,0x30,0x0a,0x4c,0xfd,0xa0,0x16,0xff,
         0xc5,0x50,0xa0,0xbd,0xa6,0xa6,0xf2,0x0c,
         0x58,0x28,0x2d,0xb1,0xb7,0xd4,0x2d,0xca
     };
+    static const unsigned char contract3[32]={
+        0x78,0xfc,0x97,0x92,0x25,0xe6,0x78,0x15,
+        0x30,0xd7,0x91,0xeb,0x61,0x56,0xd0,0x69,
+        0x49,0xa0,0x83,0x31,0x3d,0x02,0xf6,0xcf,
+        0x3c,0xc0,0xb1,0xb6,0x8b,0xbd,0x0b,0x35
+    };
+    const unsigned char *contract;
     unsigned char *snapshot=store.bootstrap+114;
     struct stat initial, final;
     int slot=adopt(aeg_store_pair_snapshot(dir));
     if(slot<0 || !pair_identity(dir,store.fd[slot],&initial) ||
         aeg_store_read(store.fd[slot],snapshot,(size_t)initial.st_size+1)!=initial.st_size ||
-        memcmp(snapshot,"AGPAIR1\n",8)!=0 || memcmp(snapshot+8,next,32)!=0 ||
-        memcmp(snapshot+40,"M2-H1/1",7)!=0 ||
-        !pair_identity(dir,store.fd[slot],&final) ||
+        memcmp(snapshot+8,next,32)!=0) return false;
+    if(memcmp(snapshot,"AGPAIR1\n",8)==0 && memcmp(snapshot+40,"M2-H1/1",7)==0)
+        contract=contract1;
+    else if(memcmp(snapshot,"AGPAIR2\n",8)==0 && memcmp(snapshot+40,"M2-H1/3",7)==0)
+        contract=contract3;
+    else return false;
+    if(!pair_identity(dir,store.fd[slot],&final) ||
         initial.st_dev!=final.st_dev || initial.st_ino!=final.st_ino ||
         initial.st_size!=final.st_size || !close_slot(slot)) return false;
     /* Only full grammar in I's existing parser can construct an owned snapshot.

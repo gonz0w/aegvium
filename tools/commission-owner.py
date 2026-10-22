@@ -227,7 +227,9 @@ class _Owner:
         image_pin = _digest(image)
         pair = self._input(ROOT / '.tools/commission-inputs/pair.snapshot')
         pair_data = os.pread(pair, 8193, 0)
-        if len(pair_data) > 8192 or len(pair_data) < 47 or pair_data[:8] != b'AGPAIR1\n':
+        if (len(pair_data) > 8192 or len(pair_data) < 47 or
+                (pair_data[:8], pair_data[40:47]) not in
+                ((b'AGPAIR1\n', b'M2-H1/1'), (b'AGPAIR2\n', b'M2-H1/3'))):
             raise Incomplete('paired input bound')
         self.pair = bytes(pair_data)
         self.generation = self.pair[8:40]

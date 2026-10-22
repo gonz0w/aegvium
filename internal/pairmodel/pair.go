@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-// Package pairmodel models inert AGPAIR1 bytes. It does not authenticate peers,
+// Package pairmodel models inert AGPAIR1/2 bytes. It does not authenticate peers,
 // load trust anchors, establish freshness, serve traffic or grant permission.
 package pairmodel
 
@@ -84,12 +84,28 @@ func (c *cursor) str16(max int) string {
 	}
 	return string(c.take(n))
 }
+
+// Preserve the existing numeric endpoint grammar for both operations. This is
+// configuration syntax, not evidence of a listener, destination or ownership.
+func (c *cursor) endpoint() (string, int, bool) {
+	ip := c.str8(45)
+	a, err := netip.ParseAddr(ip)
+	port := c.u16()
+	return ip, port, !c.bad && err == nil && a.String() == ip && a.Zone() == "" &&
+		!a.Is4In6() && !a.IsUnspecified() && !a.IsMulticast() && ip != "255.255.255.255" && port > 0
+}
+
 func Parse(in []byte) (*Descriptor, error) {
 	if len(in) < 1 || len(in) > 8192 {
 		return nil, ErrInput
 	}
 	c := cursor{data: in}
-	if string(c.take(8)) != "AGPAIR1\n" || !lowerHex(string(c.take(32)), 32) || string(c.take(7)) != "M2-H1/1" {
+	version := string(c.take(8))
+	if !lowerHex(string(c.take(32)), 32) {
+		return nil, ErrInput
+	}
+	profile := string(c.take(7))
+	if !(version == "AGPAIR1\n" && profile == "M2-H1/1" || version == "AGPAIR2\n" && profile == "M2-H1/3") {
 		return nil, ErrInput
 	}
 	count := c.u8()
@@ -129,12 +145,17 @@ func Parse(in []byte) (*Descriptor, error) {
 			}
 			last = peer
 		}
-		ip := c.str8(45)
-		a, e := netip.ParseAddr(ip)
-		if e != nil || a.String() != ip || a.Zone() != "" || a.Is4In6() || a.IsUnspecified() || a.IsMulticast() || ip == "255.255.255.255" {
+		controlIP, controlPort, ok := c.endpoint()
+		if !ok {
 			return nil, ErrInput
 		}
-		if c.u16() < 1 || !dns(c.str16(253)) {
+		if version == "AGPAIR2\n" {
+			dataIP, dataPort, ok := c.endpoint()
+			if !ok || dataIP == controlIP && dataPort == controlPort {
+				return nil, ErrInput
+			}
+		}
+		if !dns(c.str16(253)) {
 			return nil, ErrInput
 		}
 		c.take(32)

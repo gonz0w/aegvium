@@ -28,7 +28,7 @@ func RoleFiles(descriptor []byte) ([]RoleFile, error) {
 	first := p.Routes[0]
 	anchors := make(map[[32]byte]bool)
 	for _, r := range p.Routes {
-		if r.InspectorAddress != first.InspectorAddress || r.InspectorPort != first.InspectorPort || r.InspectorName != first.InspectorName || r.ServerAnchor != first.ServerAnchor {
+		if r.InspectorAddress != first.InspectorAddress || r.InspectorPort != first.InspectorPort || r.InspectorName != first.InspectorName || r.ServerAnchor != first.ServerAnchor || r.DataAddress != first.DataAddress || r.DataPort != first.DataPort || p.Profile == "M2-H1/3" && r.FrontendAnchor != first.FrontendAnchor {
 			return nil, ErrPayload
 		}
 		anchors[r.FrontendAnchor] = true

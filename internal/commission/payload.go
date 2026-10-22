@@ -31,7 +31,7 @@ func Write(out io.Writer, descriptor []byte, image io.Reader, imageBytes int64, 
 	if err != nil {
 		return ErrPayload
 	}
-	descriptor = parsed.Bytes() // Detached validated bytes, bounded by AGPAIR1.
+	descriptor = parsed.Bytes() // Detached validated AGPAIR1/2, same8192 cap.
 	state, err := initialState(descriptor[8:40])
 	if err != nil {
 		return ErrPayload

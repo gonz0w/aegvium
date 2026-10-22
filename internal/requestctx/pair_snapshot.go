@@ -15,6 +15,8 @@ type pairedSnapshot struct {
 	tuple               [104]byte
 	serverName, address string
 	port                uint16
+	dataAddress         string
+	dataPort            uint16
 	serverAnchor        [32]byte
 	roles               map[string]map[[32]byte]bool
 	anchors             map[[32]byte]bool
@@ -31,10 +33,10 @@ func newPairedSnapshot(input []byte) (*pairedSnapshot, error) {
 		return nil, errPair
 	}
 	first := p.Routes[0]
-	s := &pairedSnapshot{serverName: first.InspectorName, address: first.InspectorAddress, port: first.InspectorPort, serverAnchor: first.ServerAnchor, roles: make(map[string]map[[32]byte]bool), anchors: make(map[[32]byte]bool)}
+	s := &pairedSnapshot{serverName: first.InspectorName, address: first.InspectorAddress, port: first.InspectorPort, dataAddress: first.DataAddress, dataPort: first.DataPort, serverAnchor: first.ServerAnchor, roles: make(map[string]map[[32]byte]bool), anchors: make(map[[32]byte]bool)}
 	routes := make([]Route, 0, len(p.Routes))
 	for _, r := range p.Routes {
-		if r.InspectorName != s.serverName || r.InspectorAddress != s.address || r.InspectorPort != s.port || r.ServerAnchor != s.serverAnchor {
+		if r.InspectorName != s.serverName || r.InspectorAddress != s.address || r.InspectorPort != s.port || r.ServerAnchor != s.serverAnchor || r.DataAddress != s.dataAddress || r.DataPort != s.dataPort || p.Profile == "M2-H1/3" && r.FrontendAnchor != first.FrontendAnchor {
 			return nil, errPair
 		}
 		routes = append(routes, Route{ID: r.ID, PublicName: r.PublicName, Port: r.PublicPort, PolicyPin: r.PolicyPin, FrontendPeers: r.FrontendPeers})
@@ -49,12 +51,12 @@ func newPairedSnapshot(input []byte) (*pairedSnapshot, error) {
 		}
 		s.anchors[r.FrontendAnchor] = true
 	}
-	s.context, err = NewSnapshot(p.Generation, routes)
+	s.context, err = newSnapshotProfile(p.Generation, routes, p.Profile)
 	if err != nil {
 		return nil, errPair
 	}
 	common := sha256.Sum256(d.Bytes())
-	contract := sha256.Sum256([]byte("M2-H1/1"))
+	contract := sha256.Sum256([]byte(p.Profile))
 	copy(s.tuple[:8], "AGCHECK1")
 	copy(s.tuple[8:40], p.Generation)
 	copy(s.tuple[40:72], common[:])
