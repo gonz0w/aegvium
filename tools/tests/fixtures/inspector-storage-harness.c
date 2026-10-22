@@ -20,7 +20,7 @@ static const char snapshot_golden[]="5ec0935b94a4a4541abaa76768731aaccbc772a02e0
 static const char snapshot_minimum[]="b5ee46bc34100d717a0af3e666d2b2abead2a0ed5f2501f748fc08e6fceadc91";
 static const char snapshot_maximum[]="476718db002b7c77e19157ed2a8039636f32263816599e469e967f5081d52d88";
 static const char snapshot_badgrammar[]="b679e1321d62ee0d605102034316fa42b935e86a3723ed1d9d2195c692ec853a";
-static unsigned char disk[128], intent_data[33], snapshot_data[8192], bootstrap_wanted[104];
+static unsigned char disk[128], intent_data[33], snapshot_data[8192], bootstrap_wanted[8306];
 static size_t snapshot_length=313;
 static const char *snapshot_digest;
 static int snapshot_reads;
@@ -313,14 +313,19 @@ int main(int argc,char **argv) {
     if(is("snapshot-minimum")) { snapshot_length=47;snapshot_digest=snapshot_minimum; }
     if(is("snapshot-maximum")) { snapshot_length=8192;snapshot_digest=snapshot_maximum; }
     if(is("snapshot-badgrammar")) { snapshot_data[47]=0;snapshot_digest=snapshot_badgrammar; }
-    decode_n(golden_bootstrap,bootstrap_wanted,104);
-    memcpy(bootstrap_wanted+8,intent_data,32);decode_n(snapshot_digest,bootstrap_wanted+40,32);
+    memcpy(bootstrap_wanted,"AGBOOT1\n",8);
+    bootstrap_wanted[8]=(unsigned char)(snapshot_length>>8);
+    bootstrap_wanted[9]=(unsigned char)snapshot_length;
+    decode_n(golden_bootstrap,bootstrap_wanted+10,104);
+    memcpy(bootstrap_wanted+18,intent_data,32);decode_n(snapshot_digest,bootstrap_wanted+50,32);
+    memcpy(bootstrap_wanted+114,snapshot_data,snapshot_length);
+    expected_bootstrap_size=114+snapshot_length;
     expected_bootstrap=bootstrap_wanted;
     if(is("snapshot-magic")) snapshot_data[0]^=1;
     if(is("snapshot-generation")) snapshot_data[39]='2';
     if(is("snapshot-upper")) snapshot_data[8]='A';
     if(is("snapshot-version")) snapshot_data[40]^=1;
-    if(is("producer-precommit") && aeg_launch_bootstrap_take()!=NULL) bad++;
+    { size_t n=1;if(is("producer-precommit") && (aeg_launch_bootstrap_take(&n)!=NULL || n!=0)) bad++; }
     if(is("emitter-precommit")) (void)aeg_native_bootstrap_emit();
     memcpy(pin_data,image_pin,64);pin_data[64]='\n';
     if(is("pin-upper")) pin_data[0]='D';
@@ -344,7 +349,7 @@ int main(int argc,char **argv) {
     native=aeg_native_get_view();
     if(native.bootstrap_attempted) emit_again=aeg_native_bootstrap_emit();
     if(send_calls && !native.bootstrap_written) branch_after=aeg_native_parent_prepare();
-    if(aeg_launch_bootstrap_take()!=NULL) bad++;
+    { size_t n=1;if(aeg_launch_bootstrap_take(&n)!=NULL || n!=0) bad++; }
     v=aeg_storage_get_view();o=aeg_owner_get_view();native=aeg_native_get_view();
     (void)printf("{\"rc\":%d,\"bad\":%d,\"phase\":%d,\"attempted\":%d,\"committed\":%d,\"uncertain\":%d,\"known\":%u,\"writes\":%d,\"reads\":%d,\"lock\":%d,\"owner\":%d,\"held\":%d,\"native\":%d,\"duplicates\":[%d,%d],\"duplicate_calls\":%d,\"reentrant\":%d,\"disk\":\"",
         rc,bad,v.phase,v.attempted,v.committed,v.uncertain,v.known_descriptors,writes,state_reads,lock_held,o.phase,o.held,native.phase,again1,again2,calls-before,reentrant_rc);

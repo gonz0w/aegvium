@@ -34,7 +34,7 @@ SNAPSHOT_PREFIX = ['snapshot:43', 'stat:53', 'path-snapshot:43', 'read:53:314',
                    'sha-init', 'sha-update:313', 'sha-final']
 STORAGE = STORAGE[:60] + SNAPSHOT_PREFIX + STORAGE[60:]
 PAIR = ['pair', 'null', 'stat:1', 'high:0', 'close:0', 'high:3', 'close:3', 'high:1', 'close:1']
-BASELINE = STORAGE + PAIR + ['send:4:104']
+BASELINE = STORAGE + PAIR + ['send:4:427']
 # Reviewer-derived literal outputs; not computed with the production encoder/hash.
 U1 = '4145474f574e310a55000000000000003030303030303030303030303030303030303030303030303030303030303031a93801f9a665510e0ca24b6ba66c79c618252890d9722850002fe1ef4eef86bb000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
 UFF = '4145474f574e310a55000000000000006666666666666666666666666666666666666666666666666666666666666666105c28a634df45fa0e2bf6d9b38cef5b64d493da5aaf9c504538199c18b47492000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
@@ -145,6 +145,7 @@ class InspectorLaunchStorageTests(unittest.TestCase):
                         n=47 if mode=='snapshot-minimum' else 8192
                         expected[63]=f'read:53:{n+1}'
                         expected[68]=f'sha-update:{n}'
+                        expected[-1]=f'send:4:{114+n}'
                     self.assertEqual(trace, expected)
                     self.assertEqual((r['rc'],r['phase'],r['committed'],r['uncertain'],r['known'],r['owner'],r['native']), (0,2,1,0,1,2,1))
                     self.assertEqual(r['disk'], GOLDEN_U if mode=='bootstrap-golden' else UFF if mode=='edge' else U1)

@@ -49,11 +49,13 @@ descriptor/path/original inode and size around one declared-size+1 read, exact
 declared bytes, AGPAIR prefix/contract and selected next generation. Close once
 and hash the owned bytes into AGCHECK104; full grammar remains Go's parser.
 Snapshot failure therefore prevents U; a later Go grammar rejection burns U.
+The retained bytes now occupy the descriptor portion of the private AGBOOT
+envelope, avoiding a second full snapshot copy or a caller-provided I descriptor.
 
 Only after full commitment mark known consumed, close namespace handle once,
 sample checked monotonic milliseconds, call existing `aeg_owner_prepare`, then
 existing `aeg_native_pair_prepare`. The checkpoint EX descriptor remains held.
-The zero-input committed-state producer then feeds one nonblocking104-byte send
+The zero-input committed-state producer then feeds one nonblocking161..8306-byte send
 through the privately owned S endpoint. Short/error/invalid send retains U and
 uncertainty without retry. This adds no child, receiver or authentication issuer;
 see [bootstrap preparation](OWNED-PAIR-RECEIVER.md#committed-bootstrap-preparation).
@@ -69,8 +71,9 @@ On ANY failure known references/exclusion and uncertainty remain; a failed close
 is never retried. No raw descriptor/counter capability escapes the bounded view.
 
 The source owner has at most4 overlapping known storage/image descriptors, at most1
-after clean local preparation, <=256-byte static owner state and a fixed8193-byte
-snapshot stack buffer in addition to the existing fixed stack
+after clean local preparation, <=8704-byte static owner state including the
+8307-byte envelope/read-sentinel buffer, with no separate8193-byte snapshot stack
+copy, in addition to existing fixed stack
 frames. These are local source accounting only, not whole-S FD/RSS or native
 no-export proof. A future child closes inherited checkpoint copies, never
 LOCK_UN (which would unlock the parent's shared flock). The actual fork/image/

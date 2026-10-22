@@ -9,10 +9,12 @@ static struct {
     struct aeg_storage_view view;
     int fd[4];
     bool close_tried[4];
-    unsigned char bootstrap[104];
+    /* AGBOOT1 + u16 length + AGCHECK104 + descriptor + one read sentinel. */
+    unsigned char bootstrap[8307];
+    size_t bootstrap_size;
     bool bootstrap_prepared;
 } store = { .fd = { -1,-1,-1,-1 } };
-_Static_assert(sizeof(store) <= 256, "storage owner logical state");
+_Static_assert(sizeof(store) <= 8704, "storage owner logical state");
 
 static int fail(int rc) {
     store.view.phase = AEG_STORAGE_FAILED;
@@ -134,7 +136,7 @@ static bool prepare_bootstrap(int dir, const unsigned char next[32]) {
         0xc5,0x50,0xa0,0xbd,0xa6,0xa6,0xf2,0x0c,
         0x58,0x28,0x2d,0xb1,0xb7,0xd4,0x2d,0xca
     };
-    unsigned char snapshot[8193];
+    unsigned char *snapshot=store.bootstrap+114;
     struct stat initial, final;
     int slot=adopt(aeg_store_pair_snapshot(dir));
     if(slot<0 || !pair_identity(dir,store.fd[slot],&initial) ||
@@ -146,10 +148,14 @@ static bool prepare_bootstrap(int dir, const unsigned char next[32]) {
         initial.st_size!=final.st_size || !close_slot(slot)) return false;
     /* Only full grammar in I's existing parser can construct an owned snapshot.
      * This prefix check and hash cannot establish frontend or launch authority. */
-    memcpy(store.bootstrap,"AGCHECK1",8);
-    memcpy(store.bootstrap+8,next,32);
-    aeg_store_pair_hash(snapshot,(size_t)initial.st_size,store.bootstrap+40);
-    memcpy(store.bootstrap+72,contract,32);
+    memcpy(store.bootstrap,"AGBOOT1\n",8);
+    store.bootstrap[8]=(unsigned char)((size_t)initial.st_size>>8);
+    store.bootstrap[9]=(unsigned char)initial.st_size;
+    memcpy(store.bootstrap+10,"AGCHECK1",8);
+    memcpy(store.bootstrap+18,next,32);
+    aeg_store_pair_hash(snapshot,(size_t)initial.st_size,store.bootstrap+50);
+    memcpy(store.bootstrap+82,contract,32);
+    store.bootstrap_size=114+(size_t)initial.st_size;
     store.bootstrap_prepared=true;
     return true;
 }
@@ -221,11 +227,14 @@ static int prepare(bool update) {
 }
 int aeg_launch_storage_prepare(void) { return prepare(false); }
 int aeg_update_exclusion_prepare(void) { return prepare(true); }
-const unsigned char *aeg_launch_bootstrap_take(void) {
+const unsigned char *aeg_launch_bootstrap_take(size_t *size) {
+    if(size==NULL) return NULL;
+    *size=0;
     if(store.view.bootstrap_claimed || !store.bootstrap_prepared ||
         !store.view.committed || store.view.uncertain ||
         store.view.phase!=AEG_STORAGE_LOCAL_PAIR) return NULL;
     store.view.bootstrap_claimed=true;
+    *size=store.bootstrap_size;
     return store.bootstrap;
 }
 struct aeg_storage_view aeg_storage_get_view(void) {

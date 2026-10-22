@@ -2,6 +2,7 @@
 #ifndef AEG_INSPECTOROWNER_LAUNCH_STORAGE_H
 #define AEG_INSPECTOROWNER_LAUNCH_STORAGE_H
 #include <stdbool.h>
+#include <stddef.h>
 enum aeg_storage_error { AEG_STORAGE_OK = 0, AEG_STORAGE_STATE, AEG_STORAGE_OS, AEG_STORAGE_INPUT, AEG_STORAGE_UNCERTAIN };
 enum aeg_storage_phase { AEG_STORAGE_EMPTY = 0, AEG_STORAGE_FAILED, AEG_STORAGE_LOCAL_PAIR, AEG_STORAGE_UPDATE_GUARD };
 struct aeg_storage_view {
@@ -16,6 +17,6 @@ int aeg_launch_storage_prepare(void);
 int aeg_update_exclusion_prepare(void);
 /* Private native-emitter coupling: output-only immutable bytes, never caller
  * input or a qualified launch/channel/receiver capability. One claim after U. */
-const unsigned char *aeg_launch_bootstrap_take(void);
+const unsigned char *aeg_launch_bootstrap_take(size_t *);
 struct aeg_storage_view aeg_storage_get_view(void);
 #endif

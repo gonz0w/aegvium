@@ -57,6 +57,20 @@ inspector snapshots without losing exclusive never-started lineage. Missing
 files, C bytes, root metadata, hashes or an operator Boolean prove none of that.
 No generic BootWeave extension schema or attestation format is invented here.
 
+Retained BootWeave README/author-guide and project-trust EDD identify an adopted
+read-only planner, with production installer/profile/adapter interfaces still
+unselected. The installed-payload research flow is not a fresh-image handoff
+provider. The minimum connection is one newly created Aeg target continuously
+owned by the actual builder through authenticated offline placement, durability
+and exact frontend/inspector snapshot handoff, before any target start or export.
+The target-lifetime/adapter interface remains unspecified; a supplied "fresh"
+Boolean cannot replace it. Read-only cross-owner review must determine whether
+a bounded Aeg-specific offline builder can use existing qualified primitives
+without adopting a generic production installer or imposing a new BootWeave
+milestone. Defining the narrow interface is routine coordination within the
+approved direction; importing old images, resetting state or adding host control
+would change the scope.
+
 Existing-image initialization/reset, U→C, normal TerminalClean writing, snapshot
 restore/live cloning and supervisor-loss cleanup are not supplied. Local counters
 cannot detect unannounced rollback or clones. The installed launch path remains
@@ -77,7 +91,8 @@ does not itself retarget a live mapping. MAP_PRIVATE is not a backing-byte
 snapshot, and later library loads are separate operations. The actual operational
 inspector's ELF/interpreter/dependency/search-path/environment closure, no-late-load
 behavior and same-child post-loader handshake remain unqualified. The existing
-AGCHECK104 configuration match is not that handshake or supervisor identity.
+AGCHECK104 configuration match, now carried with the complete descriptor inside
+the inherited AGBOOT envelope, is not that handshake or supervisor identity.
 Uncertain retirement blocks a qualified WAF restart, not administrator patching.
 
 ## Focused source evidence

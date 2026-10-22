@@ -13,22 +13,23 @@ static char trace[128][40];
 static const char *mode;
 static int note(const char *,int,int,int);
 static const unsigned char *expected_bootstrap;
+static size_t expected_bootstrap_size;
 static int send_calls;
 #ifndef AEG_STORAGE_FIXTURE
 /* Standalone primitive fixtures have no committed storage/launch issuer. */
-const unsigned char *aeg_launch_bootstrap_take(void) { return NULL; }
+const unsigned char *aeg_launch_bootstrap_take(size_t *n) { *n=0;return NULL; }
 #endif
 ssize_t aeg_test_send(int fd,const void *p,size_t n,int flags) {
     send_calls++;
-    if(fd!=4 || !owned[fd] || n!=104 || flags!=MSG_NOSIGNAL ||
-        expected_bootstrap==NULL || memcmp(p,expected_bootstrap,104)!=0) bad++;
+    if(fd!=4 || !owned[fd] || n!=expected_bootstrap_size || flags!=MSG_NOSIGNAL ||
+        expected_bootstrap==NULL || memcmp(p,expected_bootstrap,n)!=0) bad++;
     if(note("send",fd,(int)n,2)) return -1;
     if(strcmp(mode,"send-negative")==0) return -2;
     if(strcmp(mode,"send-error")==0) return -1;
     if(strcmp(mode,"send-zero")==0) return 0;
-    if(strcmp(mode,"send-short")==0) return 103;
-    if(strcmp(mode,"send-over")==0) return 105;
-    return 104;
+    if(strcmp(mode,"send-short")==0) return (ssize_t)n-1;
+    if(strcmp(mode,"send-over")==0) return (ssize_t)n+1;
+    return (ssize_t)n;
 }
 
 static int

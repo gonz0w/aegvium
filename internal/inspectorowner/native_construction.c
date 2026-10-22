@@ -108,6 +108,7 @@ aeg_native_bootstrap_emit(void)
 {
     struct aeg_owner_view owner;
     const unsigned char *p;
+    size_t size=0;
     if(construction.view.bootstrap_attempted) return AEG_NATIVE_STATE;
     construction.view.bootstrap_attempted=true;
     if(!construction.view.attempted) construction.view.attempted=true;
@@ -116,10 +117,12 @@ aeg_native_bootstrap_emit(void)
         construction.view.uncertain || owner.phase!=AEG_RESERVED || !owner.held ||
         owner.stopped || owner.clock_fault || owner.identity_fault || owner.unsafe_fault)
         return fail(AEG_NATIVE_STATE,true,false);
-    p=aeg_launch_bootstrap_take();
-    if(p==NULL || memcmp(p+8,owner.generation,32)!=0)
+    p=aeg_launch_bootstrap_take(&size);
+    if(p==NULL || size<161 || size>8306 || memcmp(p,"AGBOOT1\n",8)!=0 ||
+        114+(size_t)p[8]*256+p[9]!=size || memcmp(p+10,"AGCHECK1",8)!=0 ||
+        memcmp(p+18,owner.generation,32)!=0)
         return fail(AEG_NATIVE_STATE,true,false);
-    if(aeg_os_bootstrap_send(construction.fd[construction.parent],p)!=104)
+    if(aeg_os_bootstrap_send(construction.fd[construction.parent],p,size)!=(ssize_t)size)
         return fail(AEG_NATIVE_UNCERTAIN,true,false);
     construction.view.bootstrap_written=true;
     return AEG_NATIVE_OK; /* Local bytes only, never Owned/Ready/authentication. */

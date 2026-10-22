@@ -73,10 +73,10 @@ func acquireInheritedPairFD3() (owner *inheritedPairBootstrap, err error) {
 
 // The trusted real-launch entry is still unissued. A local match prepares only
 // the same-channel configuration; it deliberately constructs no TLS receiver.
-func prepareInheritedPairSnapshot(descriptor []byte) error {
+func prepareInheritedPairSnapshot() error {
 	owner, err := acquireInheritedPairFD3()
 	if err != nil {
 		return errPair
 	}
-	return owner.consume(descriptor)
+	return owner.consume()
 }

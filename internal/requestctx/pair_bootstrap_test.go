@@ -5,6 +5,7 @@ package requestctx
 
 import (
 	"bytes"
+	"crypto/sha256"
 	hexbytes "encoding/hex"
 	"io"
 	"testing"
@@ -27,18 +28,33 @@ func (r *bootstrapRead) Read(p []byte) (int, error) {
 	return r.n, r.err
 }
 
+func bootstrapPacket(t *testing.T, descriptor, tuple []byte) []byte {
+	t.Helper()
+	// Independent frozen prefix for the retained313-byte descriptor. No
+	// production bootstrap encoder is used to manufacture the expectation.
+	prefix, err := hexbytes.DecodeString("4147424f4f54310a0139")
+	if err != nil || len(descriptor) != 313 || len(tuple) != 104 {
+		t.Fatal("invalid public bootstrap fixture")
+	}
+	return append(append(prefix, tuple...), descriptor...)
+}
+
 func TestPairBootstrapExactSnapshotRetainsSameEndpoint(t *testing.T) {
 	_, descriptor, expected := pairFixture(t)
-	r := &bootstrapRead{frame: expected, n: 104}
+	packet := bootstrapPacket(t, descriptor, expected)
+	if sum := sha256.Sum256(packet); hexbytes.EncodeToString(sum[:]) != "753758fa42082025c4f1d37ca496e641145de397071c22f904bcaa2480c0b366" {
+		t.Fatal("independently frozen whole-packet fixture mismatch")
+	}
+	r := &bootstrapRead{frame: packet, n: 427}
 	b := &inheritedPairBootstrap{endpoint: r}
-	if err := b.consume(descriptor); err != nil {
+	if err := b.consume(); err != nil {
 		t.Fatal(err)
 	}
-	descriptor[0] = 'X'
+	clear(packet)
 	if !b.claimed || b.uncertain || b.snapshot == nil || !bytes.Equal(b.snapshot.tuple[:], expected) || b.endpoint != r || r.calls != 1 {
 		t.Fatal("bootstrap did not preserve owned configuration/endpoint")
 	}
-	if b.consume(nil) == nil || r.calls != 1 {
+	if b.consume() == nil || r.calls != 1 {
 		t.Fatal("bootstrap was read twice")
 	}
 	// Matching configuration still supplies no Peer or receiver/launch issuer.
@@ -58,9 +74,9 @@ func TestPairBootstrapSupervisorGenerationLiteral(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := append([]byte("AGCHECK1"+"00000000000000000000000000000001"), tail...)
-	r := &bootstrapRead{frame: want, n: 104}
+	r := &bootstrapRead{frame: bootstrapPacket(t, descriptor, want), n: 427}
 	b := &inheritedPairBootstrap{endpoint: r}
-	if b.consume(descriptor) != nil || b.snapshot == nil || !bytes.Equal(b.snapshot.tuple[:], want) {
+	if b.consume() != nil || b.snapshot == nil || !bytes.Equal(b.snapshot.tuple[:], want) {
 		t.Fatal("supervisor/inspector frozen tuple mismatch")
 	}
 }
@@ -74,47 +90,71 @@ func TestPairBootstrapRefusalKeepsOwnedEndpoint(t *testing.T) {
 		at     int
 		panics bool
 	}{
-		{"short", 103, nil, -1, false}, {"invalid-count", 105, nil, -1, false},
+		{"short", 426, nil, -1, false}, {"invalid-count", 8308, nil, -1, false},
 		{"negative-count", -1, nil, -1, false}, {"empty", 0, nil, -1, false},
-		{"full-error", 104, io.ErrUnexpectedEOF, -1, false}, {"full-eof", 104, io.EOF, -1, false},
-		{"magic", 104, nil, 0, false}, {"generation", 104, nil, 8, false},
-		{"common-digest", 104, nil, 40, false}, {"contract", 104, nil, 72, false},
+		{"full-error", 427, io.ErrUnexpectedEOF, -1, false}, {"full-eof", 427, io.EOF, -1, false},
+		{"magic", 427, nil, 0, false}, {"length", 427, nil, 8, false},
+		{"tuple-magic", 427, nil, 10, false}, {"generation", 427, nil, 18, false},
+		{"common-digest", 427, nil, 50, false}, {"contract", 427, nil, 82, false},
+		{"descriptor-magic", 427, nil, 114, false}, {"descriptor-grammar", 427, nil, 161, false},
 		{"panic", 0, nil, -1, true},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			frame := bytes.Clone(expected)
+			frame := bootstrapPacket(t, descriptor, expected)
 			if tc.at >= 0 {
 				frame[tc.at] ^= 1
 			}
 			r := &bootstrapRead{frame: frame, n: tc.n, err: tc.err, panics: tc.panics}
 			b := &inheritedPairBootstrap{endpoint: r}
-			if b.consume(descriptor) == nil || !b.claimed || !b.uncertain || b.snapshot != nil || b.endpoint != r || r.calls != 1 {
+			if b.consume() == nil || !b.claimed || !b.uncertain || b.snapshot != nil || b.endpoint != r || r.calls != 1 {
 				t.Fatal("uncertain bootstrap escaped/refunded ownership")
 			}
-			if b.consume(descriptor) == nil || r.calls != 1 {
+			if b.consume() == nil || r.calls != 1 {
 				t.Fatal("failed bootstrap retried")
 			}
 		})
 	}
 }
 
-func TestPairBootstrapInvalidInputConsumesAttemptWithoutIO(t *testing.T) {
+func TestPairBootstrapFramingRefusalConsumesActualRead(t *testing.T) {
 	_, descriptor, expected := pairFixture(t)
-	r := &bootstrapRead{frame: expected, n: 104}
-	b := &inheritedPairBootstrap{endpoint: r}
-	if b.consume(nil) == nil || b.consume(descriptor) == nil || r.calls != 0 || !b.uncertain || b.endpoint != r {
-		t.Fatal("invalid descriptor did I/O or reopened attempt")
+	packet := bootstrapPacket(t, descriptor, expected)
+	for _, size := range [][2]byte{{0, 0}, {0, 46}, {0x20, 1}, {0x39, 1}, {0, 47}, {0x20, 0}} {
+		bad := bytes.Clone(packet)
+		copy(bad[8:10], size[:])
+		r := &bootstrapRead{frame: bad, n: len(bad)}
+		b := &inheritedPairBootstrap{endpoint: r}
+		if b.consume() == nil || b.consume() == nil || r.calls != 1 || !b.uncertain || b.snapshot != nil || b.endpoint != r {
+			t.Fatal("invalid descriptor size retried or escaped ownership")
+		}
 	}
-	// S intentionally validates only the prefix before burning U. The full Go
-	// parser must still refuse an invalid route-count suffix before reading.
-	badGrammar := bytes.Clone(descriptor)
-	badGrammar[47] = 0
-	badOwner := &inheritedPairBootstrap{endpoint: r}
-	if badOwner.consume(badGrammar) == nil || r.calls != 0 || !badOwner.uncertain {
-		t.Fatal("invalid AGPAIR suffix reached bootstrap I/O")
+	// Old104, observed cap+1, extra byte, and coalesced later control all refuse.
+	for _, frame := range [][]byte{expected, make([]byte, 8307), append(bytes.Clone(packet), 0), append(bytes.Clone(packet), make([]byte, 64)...)} {
+		r := &bootstrapRead{frame: frame, n: len(frame)}
+		b := &inheritedPairBootstrap{endpoint: r}
+		if b.consume() == nil || !b.uncertain || b.snapshot != nil || r.calls != 1 {
+			t.Fatal("invalid stream framing accepted")
+		}
+	}
+	zero := bytes.Clone(packet)
+	copy(zero[18:50], "00000000000000000000000000000000")
+	copy(zero[122:154], "00000000000000000000000000000000")
+	// Independent valid digest for that exact zero-generation descriptor:
+	// isolate the zero guard rather than accidentally rejecting a stale hash.
+	zeroDigest, err := hexbytes.DecodeString("fb1cbb6303fef567b601df7016a07e456abc8749215da8783abf316981c44fb4")
+	if err != nil {
+		t.Fatal(err)
+	}
+	copy(zero[50:82], zeroDigest)
+	if sum := sha256.Sum256(zero); hexbytes.EncodeToString(sum[:]) != "0a10205d9a2ec54407978c36011a748f5fd6aaeb0c27d422a91a37ba8bfb346e" {
+		t.Fatal("independent zero-packet fixture mismatch")
+	}
+	r := &bootstrapRead{frame: zero, n: len(zero)}
+	if (&inheritedPairBootstrap{endpoint: r}).consume() == nil {
+		t.Fatal("zero launch generation accepted")
 	}
 	nilEndpoint := &inheritedPairBootstrap{}
-	if nilEndpoint.consume(descriptor) == nil || !nilEndpoint.uncertain {
+	if nilEndpoint.consume() == nil || !nilEndpoint.uncertain || nilEndpoint.consume() == nil {
 		t.Fatal("nil endpoint accepted")
 	}
 }

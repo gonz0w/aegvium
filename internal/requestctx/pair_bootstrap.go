@@ -5,6 +5,7 @@ package requestctx
 
 import (
 	"bytes"
+	"encoding/binary"
 	"io"
 	"sync"
 )
@@ -23,7 +24,7 @@ type inheritedPairBootstrap struct {
 // Keep the same endpoint on every outcome for the future sole-launch/control
 // composition. This function never duplicates, reopens, closes or refunds it.
 // Production reads are one raw nonblocking FD3 read, without a polling worker.
-func (b *inheritedPairBootstrap) consume(descriptor []byte) (err error) {
+func (b *inheritedPairBootstrap) consume() (err error) {
 	if b == nil {
 		return errPair
 	}
@@ -46,13 +47,23 @@ func (b *inheritedPairBootstrap) consume(descriptor []byte) (err error) {
 			err = errPair
 		}
 	}()
-	snapshot, parseErr := newPairedSnapshot(descriptor)
-	if parseErr != nil || endpoint == nil {
+	if endpoint == nil {
 		return errPair
 	}
-	var frame [104]byte
+	// Distinct outer magic prevents an old104-byte consumer from accepting a
+	// prefix and leaving the new descriptor unread. The extra byte rejects
+	// oversized input; no caller supplies descriptor bytes or a provider.
+	var frame [8307]byte
 	n, readErr := endpoint.Read(frame[:])
-	if readErr != nil || n != len(frame) || !bytes.Equal(frame[:], snapshot.tuple[:]) {
+	if readErr != nil || n < 161 || n > 8306 || string(frame[:8]) != "AGBOOT1\n" {
+		return errPair
+	}
+	size := int(binary.BigEndian.Uint16(frame[8:10]))
+	if size < 47 || size > 8192 || n != 114+size || string(frame[18:50]) == "00000000000000000000000000000000" {
+		return errPair
+	}
+	snapshot, parseErr := newPairedSnapshot(frame[114:n])
+	if parseErr != nil || !bytes.Equal(frame[10:114], snapshot.tuple[:]) {
 		return errPair
 	}
 	b.mu.Lock()
