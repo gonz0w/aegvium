@@ -7,6 +7,12 @@ responded to the concrete source-only question
 credentials, native effects or deployment follow. Draft126's validation pause
 and mandatory, unqualified four-second target remain unchanged.
 
+The later approved [first-image/maintenance boundary](../milestones/M2/OFFLINE-COMMISSIONING.md)
+adds offline fresh-pair payload production and ordinary stopped-service OS
+maintenance. WAF namespace exclusion below does not grant control over
+administrator OS updates; hot updates are unsupported, and uncertain cleanup
+blocks qualified WAF restart rather than administrator maintenance.
+
 ## Decision and consequence
 
 Use a WAF-controlled executable namespace. Every supported updater participates

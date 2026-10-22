@@ -13,8 +13,10 @@ regular0600/nlink1/size65, actual descriptor/path matching identity and metadata
 before and after an exact read. Require64 lowercasehex SHA256 digits plusLF,
 decode32 bytes, then close once. Root mode and this digest are configuration/
 equality data, not release authenticity, commissioning provenance or mTLS.
-There is no pin producer, update channel, supplied path/digest/FD or runtime
-provider. A qualified installer/operator pipeline must eventually supply it.
+The later [offline payload assembler](OFFLINE-COMMISSIONING.md) produces the pin,
+intent, snapshot and initial C as staging data. There is no installed initializer,
+update channel, supplied path/digest/FD or runtime provider. A qualified fresh
+paired-image builder must still install and hand over those bytes.
 
 Open fixed `/usr/local/libexec/aegvium/inspector` through `/`,usr,local,libexec,
 aegvium with DIRECTORY|NOFOLLOW|CLOEXEC. Every ancestor must be UID0-owned,

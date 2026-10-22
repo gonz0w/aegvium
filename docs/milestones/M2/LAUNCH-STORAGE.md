@@ -1,7 +1,10 @@
 # Private normal launch storage composition
 
 The approved [ADR0014](../../architecture/adr-0014-launch-namespace-durable-admission.md)
-selects local namespace/updater exclusion and durable no-reuse ownership. This
+selects local namespace/updater exclusion and durable no-reuse ownership. The
+approved [offline assembler](OFFLINE-COMMISSIONING.md) now produces the initial
+C, intent, snapshot and pin in a staging archive, without installing or granting
+freshness. This
 source connects protected storage to actual controller/pair preparation; it
 has no operational caller or positive startup/history/cleanup issuer.
 
