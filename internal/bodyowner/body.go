@@ -44,6 +44,7 @@ type Outcome struct {
 	Joined, Recorded, Canceled, Retired, Stopped, CloseFailed bool
 	ReadFailure                                               Failure
 	Record                                                    Record
+	Engine                                                    EngineOutcome
 }
 
 // All public values are handles. Copying one aliases its private state.
@@ -58,6 +59,7 @@ type ownerState struct {
 	slots   *capacity.Owner
 	stopped bool
 	jobs    map[*jobState]struct{}
+	engine  *engineState // Nil in the compatible standalone body owner.
 }
 
 type generationState struct {
@@ -84,6 +86,7 @@ type jobState struct {
 	readDone, done chan struct{}
 	body           []byte
 	outcome        Outcome // Mutable only under owner.mu; frozen once Joined.
+	input          *engineInput
 }
 
 func New() *Owner {
@@ -97,9 +100,15 @@ func (o *Owner) NewGeneration(token string) (*Generation, error) {
 	s := o.state
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if s.engine != nil && s.engine.generationBound {
+		return nil, ErrRetired // One startup-bound generation; never reset/replaced.
+	}
 	g, err := s.slots.NewGeneration(token)
 	if err != nil {
 		return nil, err
+	}
+	if s.engine != nil {
+		s.engine.generationBound = true
 	}
 	return &Generation{state: &generationState{owner: s, slots: g}}, nil
 }
@@ -135,6 +144,10 @@ func (o *Owner) Usage() capacity.Usage {
 // Begin transfers source only on success. The original receiver deadline and
 // cancellation channel are observed without invoking caller methods under locks.
 func (g *Generation) Begin(ctx context.Context, in *Inbound, source io.ReadCloser, declaredLength int) (*Job, error) {
+	return g.begin(ctx, in, source, declaredLength, nil)
+}
+
+func (g *Generation) begin(ctx context.Context, in *Inbound, source io.ReadCloser, declaredLength int, input *engineInput) (*Job, error) {
 	if g == nil || g.state == nil || in == nil || in.state == nil || in.state.owner != g.state.owner || ctx == nil || source == nil || declaredLength < 0 || declaredLength > MaxBody {
 		return nil, ErrInput
 	}
@@ -148,6 +161,8 @@ func (g *Generation) Begin(ctx context.Context, in *Inbound, source io.ReadClose
 	s.mu.Lock()
 	var err error
 	switch {
+	case (s.engine == nil) != (input == nil):
+		err = ErrInput // Engine jobs cannot escape through the standalone API.
 	case s.stopped:
 		err = ErrStopped
 	case gen.retired:
@@ -171,7 +186,7 @@ func (g *Generation) Begin(ctx context.Context, in *Inbound, source io.ReadClose
 	j := &jobState{owner: s, generation: gen, lease: lease, source: source,
 		declared: declaredLength, deadline: deadline, parentDone: parentDone,
 		ctx: private, cancel: cancel, readDone: make(chan struct{}), done: make(chan struct{}),
-		outcome: Outcome{ReadFailure: None}}
+		input: input, outcome: Outcome{ReadFailure: None}}
 	s.jobs[j] = struct{}{}
 	s.mu.Unlock()
 	go j.read()
@@ -249,7 +264,11 @@ func (j *jobState) close() {
 		cancelAll(cancels)
 	}
 	<-j.readDone
-	j.finish()
+	if j.input != nil {
+		j.inspect()
+	} else {
+		j.finish()
+	}
 	j.cancel() // Release only the private timer; no source I/O/capacity work remains.
 }
 
@@ -283,6 +302,9 @@ func (g *Generation) Retire() {
 	s.mu.Lock()
 	gen.retired = true
 	gen.slots.Retire()
+	if s.engine != nil {
+		s.engine.retired = true
+	}
 	var cancels []context.CancelFunc
 	for j := range s.jobs {
 		if j.generation == gen {
@@ -291,12 +313,16 @@ func (g *Generation) Retire() {
 	}
 	s.mu.Unlock()
 	cancelAll(cancels)
+	s.maybeRetireEngine()
 }
 
 // stopLocked marks all jobs unavailable before cancellation is delivered.
 func (s *ownerState) stopLocked() []context.CancelFunc {
 	s.stopped = true
 	s.slots.Stop()
+	if s.engine != nil && s.engine.mode == engineActive {
+		s.engine.mode = engineCleanupOnly
+	}
 	cancels := make([]context.CancelFunc, 0, len(s.jobs))
 	for j := range s.jobs {
 		cancels = append(cancels, j.cancel)
