@@ -12,13 +12,15 @@ import (
 )
 
 // EngineOutcome is inert lifecycle evidence. InspectionComplete is deliberately
-// never set by this slice: no effective policy/writer profile is prepared here.
+// never set by this slice: the effective policy/writer profile is unqualified.
 // WorkersDone does not imply CleanupCertain, OS resources joined or shutdown.
 type EngineOutcome struct {
-	WorkersDone, CleanupCertain, Released, InspectionComplete bool
-	CloseStarted, CloseReturned, Uncertain                    bool
-	PhasesReturned                                            bool
-	Fault                                                     EngineFailure
+	WorkersDone, CleanupCertain, Released, InspectionComplete     bool
+	CloseStarted, CloseReturned, Uncertain                        bool
+	PhasesReturned                                                bool
+	Fault                                                         EngineFailure
+	RequestID, Generation, PolicyPin, IntendedMode, BackendEffect string
+	RuleCount                                                     uint32
 }
 
 type EngineFailure string
@@ -63,6 +65,7 @@ type engineState struct {
 	cacheUncertain                                             bool
 	references                                                 int
 	cacheDone                                                  chan struct{}
+	policy                                                     *ownedPolicy
 }
 
 func newEngineOwner(factory transactionFactory, closer io.Closer) (*Owner, error) {

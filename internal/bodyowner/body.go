@@ -163,6 +163,8 @@ func (g *Generation) begin(ctx context.Context, in *Inbound, source io.ReadClose
 	switch {
 	case (s.engine == nil) != (input == nil):
 		err = ErrInput // Engine jobs cannot escape through the standalone API.
+	case s.engine != nil && s.engine.policy != nil && input.policyPin != s.engine.policy.pin:
+		err = ErrInput // Equality binds data to this profile; it authenticates no peer.
 	case s.stopped:
 		err = ErrStopped
 	case gen.retired:
@@ -187,6 +189,16 @@ func (g *Generation) begin(ctx context.Context, in *Inbound, source io.ReadClose
 		declared: declaredLength, deadline: deadline, parentDone: parentDone,
 		ctx: private, cancel: cancel, readDone: make(chan struct{}), done: make(chan struct{}),
 		input: input, outcome: Outcome{ReadFailure: None}}
+	if input != nil {
+		j.outcome.Engine.RequestID = input.id
+		j.outcome.Engine.Generation = lease.Generation()
+		j.outcome.Engine.BackendEffect = "NoBackendAttempt"
+		if policy := s.engine.policy; policy != nil {
+			j.outcome.Engine.PolicyPin = policy.pin
+			j.outcome.Engine.IntendedMode = "OnUnqualified"
+			j.outcome.Engine.RuleCount = policy.ruleCount
+		}
+	}
 	s.jobs[j] = struct{}{}
 	s.mu.Unlock()
 	go j.read()

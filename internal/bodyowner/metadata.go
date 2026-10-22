@@ -13,13 +13,16 @@ import (
 // engineInput is private copied data, not C01 peer/route/framing authority. A
 // future authenticated receiver must retain its own authority and resource join.
 type engineInput struct {
-	id, sni, protocol, method, target string
-	client, server                    netip.AddrPort
-	publicPort                        uint16
-	fields                            []requestctx.Field
+	id, sni, protocol, method, target, policyPin string
+	client, server                               netip.AddrPort
+	publicPort                                   uint16
+	fields                                       []requestctx.Field
 }
 
 func copyEngineInput(in engineInput, length int) (*engineInput, error) {
+	if in.policyPin != "" && !enginePolicyPin(in.policyPin) {
+		return nil, ErrInput
+	}
 	if !in.client.IsValid() || !in.server.IsValid() || !in.client.Addr().Is4() || !in.server.Addr().Is4() || in.client.Port() == 0 || in.server.Port() == 0 || in.publicPort == 0 || !engineDNS(in.sni) || !engineID(in.id) || in.protocol != "HTTP/1.1" || (in.method != "GET" && in.method != "HEAD" && in.method != "POST") || !engineTarget(in.target) || len(in.fields) > requestctx.MaxFields || length < 0 || length > MaxBody {
 		return nil, ErrInput
 	}
@@ -28,6 +31,7 @@ func copyEngineInput(in engineInput, length int) (*engineInput, error) {
 	}
 	copyInput := in
 	copyInput.id, copyInput.sni = strings.Clone(in.id), strings.Clone(in.sni)
+	copyInput.policyPin = strings.Clone(in.policyPin)
 	copyInput.protocol, copyInput.method, copyInput.target = strings.Clone(in.protocol), strings.Clone(in.method), strings.Clone(in.target)
 	copyInput.fields = make([]requestctx.Field, 0, len(in.fields))
 	single := make(map[string]string, 4)
@@ -79,6 +83,18 @@ func copyEngineInput(in engineInput, length int) (*engineInput, error) {
 		}
 	}
 	return &copyInput, nil
+}
+
+func enginePolicyPin(s string) bool {
+	if len(s) != 64 {
+		return false
+	}
+	for _, c := range []byte(s) {
+		if !(c >= '0' && c <= '9' || c >= 'a' && c <= 'f') {
+			return false
+		}
+	}
+	return true
 }
 
 func engineID(s string) bool {
