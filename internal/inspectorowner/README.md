@@ -56,3 +56,13 @@ it provides no authenticated channel constructor, native read/wait/signal/close
 provider, durable launch history, allow verdict or process reclamation. Eight
 fresh bounded ordinary host codec traces and memory-only fake I/O qualify source
 behavior only. Whole-child ownership and mandatory four-second proof remain open.
+
+## Private OS construction source
+
+The [native construction slice](../../docs/milestones/M2/NATIVE-CONSTRUCTION.md)
+adds an actual fixed OpenBSD socketpair and child descriptor/irreversible identity
+preparation sequence. All tests intercept every OS effect, including the real
+wrapper's flags. There is no fork/exec/history/held-namespace/leaf implementation,
+positive bootstrap or operational caller. The separate concrete local-history
+and cold-maintenance proposal remains unadopted; full native qualification and
+Draft126's validation pause are unchanged.
