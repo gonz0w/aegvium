@@ -32,7 +32,9 @@ Launch increments the128-bit watermark with no wrap, then reads protected fixed
 `launch.intent`: existing root UID0/GID0 regular0600/nlink1/size33, current inode
 and path metadata matched, exact32 lowercasehex + LF and equality with next.
 Intent is S-side operator equality data; it is not frontend pairing or identity.
-Close intent once before any checkpoint write. Encode U(next), one exact128-byte
+Close intent once before any checkpoint write. The connected [image prefix](IMAGE-CUSTODY.md)
+then verifies the fixed protected pin and executable file under the same EX and
+closes its verification descriptors. Only after that, encode U(next), one exact128-byte
 pwrite, one fsync, one exact128-byte pread with byte equality, and descriptor/path
 metadata plus original-inode equality. No short-write continuation, fsync-error
 readback, repair or retry. Base SHA256Init/Update/Final allocates no product buffer
@@ -52,7 +54,7 @@ actual update. Its local guard stage does not authorize operational mutation.
 On ANY failure known references/exclusion and uncertainty remain; a failed close
 is never retried. No raw descriptor/counter capability escapes the bounded view.
 
-The source owner has at most3 overlapping known storage descriptors, at most1
+The source owner has at most4 overlapping known storage/image descriptors, at most1
 after clean local preparation, <=128-byte static owner state and fixed stack
 frames. These are local source accounting only, not whole-S FD/RSS or native
 no-export proof. A future child closes inherited checkpoint copies, never
@@ -72,7 +74,8 @@ invalid counts, U, nowrap, intent mismatch, prestate, reentry and postcommit
 failure are explicit. 'Committed=false' means unestablished, never reusable C.
 
 Only the new C module is compiled with ALL storage/SHA/clock and existing native
-OS boundaries intercepted;96 fixed fresh modes normal-exit under5s each, compiler
+OS boundaries intercepted. The original96 storage cases remain as regression
+expectations; the image prefix adds76 fixed cases (172 total), normal-exit under5s each, compiler
 30s, fresh retained task-local TMPDIR. No host file/descriptor/socket/identity/
 permission/launch/process/engine effects occur. Independent exact fixture/source
 review precedes checks; ordinary source/secret hooks/signature/DCO remain.

@@ -9,13 +9,13 @@
 static int fail_at, calls, bad, peak, live, next_high = 4;
 static bool owned[64];
 static unsigned close_calls[64];
-static char trace[64][40];
+static char trace[128][40];
 static const char *mode;
 
 static int
 note(const char *label, int a, int b, int count)
 {
-    if (calls >= 64) { bad++; return 1; }
+    if (calls >= 128) { bad++; return 1; }
     if (count == 0) (void)snprintf(trace[calls], 40, "%s", label);
     else if (count == 1) (void)snprintf(trace[calls], 40, "%s:%d", label, a);
     else (void)snprintf(trace[calls], 40, "%s:%d:%d", label, a, b);

@@ -48,7 +48,9 @@ This source slice therefore has **no U→C, reset, repair or TerminalClean write
 
 The private existing-file-only storage path owns a fixed protected namespace and
 exclusive checkpoint descriptor, strictly consumes a clean generation to U,
-then connects to the existing controller and actual private pair constructor.
+verifies the fixed existing [image file](../milestones/M2/IMAGE-CUSTODY.md) and
+protected pin under the same exclusion, then connects to the existing controller
+and actual private pair constructor.
 Its local success is not launch admission, authenticated channel identity,
 Ready, request allow or operational updater authorization. Trusted initial-C/
 normal-clean provenance and all native/identity/held-image/leaf/pairing/resource

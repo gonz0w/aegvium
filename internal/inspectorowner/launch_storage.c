@@ -35,10 +35,10 @@ static bool close_slot(int i) {
     store.fd[i]=-1;
     return true;
 }
-static bool directory(int fd) {
+static bool directory(int fd, bool searchable) {
     struct stat s;
     return aeg_store_stat(fd,&s)==0 && S_ISDIR(s.st_mode) && s.st_uid==0 &&
-        (s.st_mode & 0022)==0;
+        (s.st_mode & 0022)==0 && (!searchable || (s.st_mode & 0001)!=0);
 }
 static bool file_kind(const struct stat *s, off_t size) {
     return S_ISREG(s->st_mode) && s->st_uid==0 && s->st_gid==0 &&
@@ -65,6 +65,57 @@ static bool parse(const unsigned char p[128]) {
     aeg_store_hash(p,digest);
     return memcmp(digest,p+48,32)==0;
 }
+static bool pin_identity(int dir, int fd, struct stat *out) {
+    struct stat a,b;
+    if(aeg_store_stat(fd,&a)!=0 || !file_kind(&a,65) ||
+        aeg_store_pin_stat(dir,&b)!=0 || !file_kind(&b,65) ||
+        a.st_dev!=b.st_dev || a.st_ino!=b.st_ino) return false;
+    *out=a;return true;
+}
+static bool image_identity(int dir, int fd, struct stat *out) {
+    struct stat a,b;
+    if(aeg_store_stat(fd,&a)!=0 || aeg_store_image_stat(dir,&b)!=0) return false;
+    if(!S_ISREG(a.st_mode) || !S_ISREG(b.st_mode) ||
+        a.st_uid!=0 || b.st_uid!=0 || a.st_gid!=0 || b.st_gid!=0 ||
+        (a.st_mode & 07777)!=0555 || (b.st_mode & 07777)!=0555 ||
+        a.st_nlink!=1 || b.st_nlink!=1 || a.st_size<1 || a.st_size>67108864 ||
+        a.st_size!=b.st_size || a.st_dev!=b.st_dev || a.st_ino!=b.st_ino)
+        return false;
+    *out=a;return true;
+}
+static unsigned char hex_value(unsigned char c) {
+    return c<='9' ? (unsigned char)(c-'0') : (unsigned char)(c-'a'+10);
+}
+static bool verify_image(int namespace_fd) {
+    unsigned char pin[65], wanted[32], digest[32];
+    struct stat initial, final;
+    int pinfd, dir, opened, image, i;
+    pinfd=adopt(aeg_store_pin(namespace_fd));
+    if(pinfd<0 || !pin_identity(namespace_fd,store.fd[pinfd],&initial) ||
+        aeg_store_read(store.fd[pinfd],pin,65)!=65) return false;
+    for(i=0;i<64;i++) if(!hex(pin[i])) return false;
+    if(pin[64]!='\n' || !pin_identity(namespace_fd,store.fd[pinfd],&final) ||
+        initial.st_dev!=final.st_dev || initial.st_ino!=final.st_ino) return false;
+    for(i=0;i<32;i++) wanted[i]=(unsigned char)((hex_value(pin[2*i])<<4)|hex_value(pin[2*i+1]));
+    if(!close_slot(pinfd)) return false;
+    dir=adopt(aeg_store_root());
+    if(dir<0 || !directory(store.fd[dir],true)) return false;
+    for(i=0;i<4;i++) {
+        opened=adopt(aeg_store_image_dir(store.fd[dir],(unsigned)i));
+        if(opened<0 || !directory(store.fd[opened],true) || !close_slot(dir)) return false;
+        dir=opened;
+    }
+    image=adopt(aeg_store_image(store.fd[dir]));
+    if(image<0 || !image_identity(store.fd[dir],store.fd[image],&initial) ||
+        aeg_store_image_hash(store.fd[image],initial.st_size,digest)!=0 ||
+        memcmp(wanted,digest,32)!=0 ||
+        !image_identity(store.fd[dir],store.fd[image],&final) ||
+        initial.st_dev!=final.st_dev || initial.st_ino!=final.st_ino ||
+        initial.st_size!=final.st_size) return false;
+    /* OpenBSD pathname execution is NOT bound by a held FD. Exclusion and
+     * cooperating ALL writers carry custody; no qualified loader/exec issuer. */
+    return close_slot(image) && close_slot(dir);
+}
 static bool increment(unsigned char out[32], const unsigned char in[32]) {
     int i;
     memcpy(out,in,32);
@@ -88,10 +139,10 @@ static int prepare(bool update) {
     if (owner.phase!=AEG_EMPTY || native.attempted)
         return fail(AEG_STORAGE_STATE);
     dir=adopt(aeg_store_root());
-    if (dir<0 || !directory(store.fd[dir])) return fail(AEG_STORAGE_OS);
+    if (dir<0 || !directory(store.fd[dir],false)) return fail(AEG_STORAGE_OS);
     for (i=0;i<3;i++) {
         opened=adopt(aeg_store_dir(store.fd[dir],(unsigned)i));
-        if (opened<0 || !directory(store.fd[opened]) || !close_slot(dir))
+        if (opened<0 || !directory(store.fd[opened],false) || !close_slot(dir))
             return fail(AEG_STORAGE_OS);
         dir=opened;
     }
@@ -113,6 +164,7 @@ static int prepare(bool update) {
     for (i=0;i<32;i++) if (!hex(intent[i])) return fail(AEG_STORAGE_INPUT);
     if (intent[32]!='\n' || memcmp(intent,next,32)!=0 || !close_slot(intentfd))
         return fail(AEG_STORAGE_INPUT);
+    if(!verify_image(store.fd[dir])) return fail(AEG_STORAGE_OS);
     frame[8]='U'; memcpy(frame+16,next,32); aeg_store_hash(frame,frame+48);
     /* No admission or child can precede this full durability/readback boundary.
      * Short/error writes never continue; fsync failure never readbacks as repair. */

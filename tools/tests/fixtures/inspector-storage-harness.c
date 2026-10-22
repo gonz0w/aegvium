@@ -10,6 +10,9 @@ static const char golden_Cfe[]="4145474f574e310a43000000000000006666666666666666
 static const char golden_Uff[]="4145474f574e310a55000000000000006666666666666666666666666666666666666666666666666666666666666666105c28a634df45fa0e2bf6d9b38cef5b64d493da5aaf9c504538199c18b47492000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 static const char golden_Cff[]="4145474f574e310a43000000000000006666666666666666666666666666666666666666666666666666666666666666db5addb79a2238b49451c0bd5c225bb042177d8a51211ba148059c5c3454cb71000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 static unsigned char disk[128], intent_data[33];
+static const char image_pin[]="d855ba636ffdfea364522538421fa585c1927fe5ef4d8065b89549c6bf744213";
+static unsigned char pin_data[65];
+static int root_calls, pin_reads, image_reads;
 static int writes, state_reads, hash_calls, reentrant_rc=-1;
 static bool lock_held;
 static void decode(const char *s,unsigned char *out) {
@@ -21,33 +24,64 @@ static int storage_mark(int fd) { mark(fd);return fd; }
 int aeg_storage_test_open(const char *path,int flags,...) {
     if(strcmp(path,"/dev/null")==0) return aeg_test_open(path,flags);
     if(strcmp(path,"/")!=0 || flags!=(O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC)) bad++;
-    if(note("root",0,0,0)) return -1;
+    root_calls++;
+    if(note(root_calls==1 ? "root" : "image-root",0,0,0)) return -1;
+    if(root_calls>1) return storage_mark(47);
     if(is("reentrant")) reentrant_rc=aeg_update_exclusion_prepare();
     if(is("root-invalid")) return -2;
     return storage_mark(40);
 }
 int aeg_storage_test_openat(int fd,const char *path,int flags,...) {
     int result=-1;const char *label="invalid";
-    if(fd<40 || fd>43 || !owned[fd]) bad++;
+    if(fd<40 || fd>51 || !owned[fd]) bad++;
     if(strcmp(path,"var")==0 && fd==40) { result=41;label="var"; }
     if(strcmp(path,"db")==0 && fd==41) { result=42;label="db"; }
     if(strcmp(path,"aegvium")==0 && fd==42) { result=43;label="aegvium"; }
+    if(strcmp(path,"usr")==0 && fd==47) { result=48;label="usr"; }
+    if(strcmp(path,"local")==0 && fd==48) { result=49;label="local"; }
+    if(strcmp(path,"libexec")==0 && fd==49) { result=50;label="libexec"; }
+    if(strcmp(path,"aegvium")==0 && fd==50) { result=51;label="image-dir"; }
     if(result>=0) {
         if(flags!=(O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC)) bad++;
     } else if(strcmp(path,"launch.state")==0 && fd==43) {
         result=44;label="state";if(flags!=(O_RDWR|O_NOFOLLOW|O_CLOEXEC)) bad++;
     } else if(strcmp(path,"launch.intent")==0 && fd==43) {
         result=45;label="intent";if(flags!=(O_RDONLY|O_NOFOLLOW|O_CLOEXEC)) bad++;
+    } else if(strcmp(path,"inspector.pin")==0 && fd==43) {
+        result=46;label="pin";if(flags!=(O_RDONLY|O_NOFOLLOW|O_CLOEXEC)) bad++;
+    } else if(strcmp(path,"inspector")==0 && fd==51) {
+        result=52;label="image";if(flags!=(O_RDONLY|O_NOFOLLOW|O_CLOEXEC)) bad++;
     } else bad++;
     if(note(label,fd,0,1)) return -1;
     if((is("dir-alias") && result==41) || (is("state-alias") && result==44)) return fd;
     if(is("intent-alias") && result==45) return 44;
+    if(is("pin-alias") && result==46) return 44;
+    if(is("image-dir-alias") && result==48) return fd;
+    if(is("image-alias") && result==52) return 44;
     return storage_mark(result);
 }
 static void meta(int fd,struct stat *s) {
     memset(s,0,sizeof(*s));s->st_dev=1;s->st_ino=(ino_t)fd;s->st_uid=0;s->st_gid=0;
-    s->st_nlink=1;s->st_mode=(fd<=43 ? S_IFDIR|0755 : S_IFREG|0600);
-    s->st_size=fd==44 ? 128 : 33;
+    s->st_nlink=1;s->st_mode=(fd<=43 || (fd>=47 && fd<=51) ? S_IFDIR|0755 : S_IFREG|0600);
+    s->st_size=fd==44 ? 128 : fd==46 ? 65 : fd==52 ? 4113 : 33;
+    if(fd==52) s->st_mode=S_IFREG|0555;
+    if(fd==48 && is("image-dir-uid")) s->st_uid=1;
+    if(fd==48 && is("image-dir-write")) s->st_mode|=0002;
+    if(fd==48 && is("image-dir-search")) s->st_mode&=~0001;
+    if(fd==48 && is("image-dir-type")) s->st_mode=S_IFREG|0755;
+    if(fd==46 || fd==52) {
+        const char *prefix=fd==46 ? "pin-" : "image-";char label[32];
+        (void)snprintf(label,sizeof(label),"%suid",prefix);if(is(label)) s->st_uid=1;
+        (void)snprintf(label,sizeof(label),"%sgid",prefix);if(is(label)) s->st_gid=1;
+        (void)snprintf(label,sizeof(label),"%stype",prefix);if(is(label)) s->st_mode=S_IFLNK|0600;
+        (void)snprintf(label,sizeof(label),"%smode",prefix);if(is(label)) s->st_mode|=04000;
+        (void)snprintf(label,sizeof(label),"%slink",prefix);if(is(label)) s->st_nlink=2;
+        (void)snprintf(label,sizeof(label),"%ssize",prefix);if(is(label)) s->st_size=0;
+    }
+    if(fd==52 && is("image-cap")) s->st_size=67108865;
+    if(fd==46 && pin_reads && is("pin-post-inode")) s->st_ino++;
+    if(fd==52 && image_reads && is("image-post-inode")) s->st_ino++;
+    if(fd==52 && image_reads && is("image-post-size")) s->st_size++;
     if(fd==40 && is("root-uid")) s->st_uid=1;
     if(fd==41 && is("dir-uid")) s->st_uid=1;
     if(fd==41 && is("dir-write")) s->st_mode|=0020;
@@ -65,20 +99,25 @@ static void meta(int fd,struct stat *s) {
 }
 int aeg_storage_test_fstat(int fd,struct stat *s) {
     if(fd<40) return aeg_test_fstat(fd,s);
-    if(fd>45 || !owned[fd] || s==NULL) bad++;
+    if(fd>52 || !owned[fd] || s==NULL) bad++;
     if(note("stat",fd,0,1)) return -1;
     meta(fd,s);return 0;
 }
 int aeg_storage_test_fstatat(int dir,const char *name,struct stat *s,int flags) {
-    int fd=strcmp(name,"launch.state")==0 ? 44 : 45;
-    if(dir!=43 || !owned[dir] || !owned[fd] || flags!=AT_SYMLINK_NOFOLLOW ||
-        (fd==45 && strcmp(name,"launch.intent")!=0)) bad++;
-    if(note(fd==44 ? "path-state" : "path-intent",dir,0,1)) return -1;
+    int fd=strcmp(name,"launch.state")==0 ? 44 : strcmp(name,"launch.intent")==0 ? 45 : strcmp(name,"inspector.pin")==0 ? 46 : 52;
+    int expected_dir=fd==52 ? 51 : 43;
+    const char *label=fd==44 ? "path-state" : fd==45 ? "path-intent" : fd==46 ? "path-pin" : "path-image";
+    if(dir!=expected_dir || !owned[dir] || !owned[fd] || flags!=AT_SYMLINK_NOFOLLOW ||
+        (fd==52 && strcmp(name,"inspector")!=0)) bad++;
+    if(note(label,dir,0,1)) return -1;
     meta(fd,s);
     if(fd==44 && is("path-dev")) s->st_dev++;
     if(fd==44 && is("path-inode")) s->st_ino++;
     if(fd==44 && is("path-mode")) s->st_mode|=0040;
     if(fd==45 && is("intent-dev")) s->st_dev++;
+    if(fd==46 && is("pin-path")) s->st_dev++;
+    if(fd==52 && is("image-path")) s->st_ino++;
+    if(fd==52 && is("image-path-link")) s->st_nlink=2;
     return 0;
 }
 int aeg_storage_test_close(int fd) {
@@ -91,8 +130,26 @@ int aeg_storage_test_flock(int fd,int op) {
     lock_held=true;return 0;
 }
 ssize_t aeg_storage_test_pread(int fd,void *out,size_t n,off_t off) {
-    if(!lock_held || off!=0 || (fd!=44 && fd!=45) || !owned[fd] ||
-        n!=(fd==44 ? 128U : 33U)) bad++;
+    if(!lock_held || fd<44 || fd>52 || !owned[fd]) bad++;
+    if(fd==52) {
+        size_t i;ssize_t requested;
+        image_reads++;
+        requested=image_reads==1 ? 4096 : image_reads==2 ? 17 : 1;
+        if(n!=(size_t)requested || off!=(image_reads==1 ? 0 : image_reads==2 ? 4096 : 4113)) bad++;
+        if(note("image-read",(int)off,(int)n,2)) return -1;
+        if(image_reads<=2) {
+            if((is("image-first-negative") && image_reads==1) || (is("image-tail-negative") && image_reads==2)) return -1;
+            if((is("image-first-zero") && image_reads==1) || (is("image-tail-zero") && image_reads==2)) return 0;
+            if((is("image-first-short") && image_reads==1) || (is("image-tail-short") && image_reads==2)) return requested-1;
+            if((is("image-first-over") && image_reads==1) || (is("image-tail-over") && image_reads==2)) return requested+1;
+            for(i=0;i<n;i++) ((unsigned char *)out)[i]=(unsigned char)(((size_t)off+i)%251);
+            if(is("image-data") && image_reads==1) ((unsigned char *)out)[0]^=1;
+            return requested;
+        }
+        if(is("image-eof-negative")) return -1;
+        return is("image-eof-data") ? 1 : 0;
+    }
+    if(off!=0 || n!=(fd==44 ? 128U : fd==45 ? 33U : 65U) || (fd!=44 && fd!=45 && fd!=46)) bad++;
     if(note("read",fd,(int)n,2)) return -1;
     if(fd==44) {
         state_reads++;
@@ -102,14 +159,20 @@ ssize_t aeg_storage_test_pread(int fd,void *out,size_t n,off_t off) {
         if(is("read129")) return 129;
         memcpy(out,disk,n);
         if(is("readback") && state_reads==2) ((unsigned char *)out)[0]^=1;
-    } else {
+    } else if(fd==45) {
         memcpy(out,intent_data,n);
         if(is("intent-short")) return 32;
+    } else {
+        pin_reads++;
+        if(is("pin-zero")) return 0;
+        if(is("pin-short")) return 64;
+        if(is("pin-over")) return 66;
+        memcpy(out,pin_data,n);
     }
     return (ssize_t)n;
 }
 ssize_t aeg_storage_test_pwrite(int fd,const void *p,size_t n,off_t off) {
-    if(fd!=44 || !owned[fd] || !lock_held || owned[45] || off!=0 || n!=128) bad++;
+    if(fd!=44 || !owned[fd] || !lock_held || owned[45] || owned[46] || owned[51] || owned[52] || off!=0 || n!=128) bad++;
     writes++;
     if(note("write",fd,0,1)) return -1;
     if(is("write-1")) return -1;
@@ -138,13 +201,29 @@ void aeg_storage_test_sha_init(SHA2_CTX *ctx) {
 }
 void aeg_storage_test_sha_update(SHA2_CTX *ctx,const unsigned char *p,size_t n) {
     (void)note("sha-update",(int)n,0,1);
+    if(ctx->updates==0 && n==4096) ctx->image=true;
+    if(ctx->image) {
+        size_t i;
+        if(!p || n!=(ctx->updates==0 ? 4096U : 17U) || ctx->updates>=2) { bad++;return; }
+        for(i=0;i<n;i++) if(p[i]!=(unsigned char)((ctx->len+i)%251)) {
+            if(is("image-data") && ctx->len+i==0) ctx->bad_data=true;else bad++;
+        }
+        ctx->len+=n;ctx->updates++;return;
+    }
     if(!p || n!=48 || ctx->updates>=2 || ctx->len+n>96) { bad++;return; }
     memcpy(ctx->input+ctx->len,p,n);ctx->len+=n;ctx->updates++;
 }
 void aeg_storage_test_sha_final(unsigned char *out,SHA2_CTX *ctx) {
     const char *const gold[]={golden_C0,golden_U1,golden_Cfe,golden_Uff,golden_Cff};
     unsigned char b[128];size_t i;
-    (void)note("sha-final",0,0,0);hash_calls++;
+    (void)note("sha-final",0,0,0);
+    if(ctx->image) {
+        if(ctx->len!=4113 || ctx->updates!=2 || image_reads!=3) bad++;
+        for(i=0;i<32;i++) { unsigned v; if(sscanf(image_pin+2*i,"%2x",&v)!=1) { bad++;return; } out[i]=(unsigned char)v; }
+        if(ctx->bad_data || is("image-digest")) out[0]^=1;
+        return;
+    }
+    hash_calls++;
     if(ctx->len!=96 || ctx->updates!=2) bad++;
     memset(out,0,32);
     for(i=0;i<5;i++) {
@@ -165,6 +244,11 @@ int main(int argc,char **argv) {
         (is("unclean") || is("update-unclean")) ? golden_U1 : golden_C0,disk);
     memcpy(intent_data,is("edge") ? "ffffffffffffffffffffffffffffffff" : "00000000000000000000000000000001",32);
     intent_data[32]='\n';
+    memcpy(pin_data,image_pin,64);pin_data[64]='\n';
+    if(is("pin-upper")) pin_data[0]='D';
+    if(is("pin-nonhex")) pin_data[0]='g';
+    if(is("pin-lf")) pin_data[64]=0;
+    if(is("pin-digest")) pin_data[0]='0';
     if(is("magic")) disk[0]^=1;
     if(is("state-tag")) disk[8]='X';
     if(is("reserved")) disk[9]=1;

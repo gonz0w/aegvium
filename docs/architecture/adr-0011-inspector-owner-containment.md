@@ -19,8 +19,11 @@ finer private C02 ledger; this creates no additional request/socket capacity.
 No replacement starts while old ownership or cleanup is uncertain.
 
 S has no network listener, public TLS key, request data, engine or application
-backend capability. It launches a fixed held executable, never a caller-selected
-command or PID. The exact native construction must prove irreversible real,
+backend capability. Its eventual launch uses a fixed executable under continuous namespace/updater
+exclusion, never a caller-selected command or PID. Here "held" means custody of
+the fixed pathname under that exclusion, not fexecve or a retained-FD proof. The
+[image source prefix](../milestones/M2/IMAGE-CUSTODY.md) closes its verification
+FD before U and does not implement or qualify pathname execution. The exact native construction must prove irreversible real,
 effective and saved UID/GID reduction, cleared supplementary groups, no authority
 descriptor in I and no data descriptor retained by S. I must be unable to create
 descendants, export descriptors or leave another data writer. OpenBSD/Go/engine
