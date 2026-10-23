@@ -164,17 +164,18 @@ See [control lifetime/accounting](../../docs/milestones/M2/LOCAL-STATUS.md#root-
 readiness. `stop` exits2 after a valid retiring reply because cancellation is pending.
 The rc stop path bypasses running-state prechecks, requests both owners even
 after partial startup, and returns failure/pending rather than
-claiming reclamation. `restart` and `reload` refuse. A subsequent rc process has
+claiming reclamation. `reload` and external-profile restart refuse; bundled restart is guarded source only. A subsequent rc process has
 no original-child wait custody: endpoint absence, a STOP reply and parsed C cannot
-issue qualified restart. The actual original-owner/settlement handoff and its native
-proof remain missing; no replacement PID/receipt authority is added.
+issue qualified restart. The guarded successor source consumes the existing qualified protected-history
+provenance under both original namespace locks; no replacement PID/receipt
+authority is added. Actual native provenance and timing proof remain missing.
 
 The rc start source reads the explicit mode, starts S and waits a bounded12 polls
 for that owner's observation before starting the bundled frontend owner. It does
 not adopt/signal a PID after a failed partial start. No crash-restart loop is added.
 This source ordering has not run, and startup polls do not prove the mandatory
-four-second shutdown target; two sequential one-second STOP exchanges leave an
-unqualified shared coordination budget, not fresh grace for each owner. The immutable S/frontend/service gates still refuse.
+four-second shutdown target; the one-way shared-epoch stop source includes notification time in that
+unqualified common budget, never fresh grace for either owner. The immutable S/frontend/service gates still refuse.
 
 
 The same existing frontend-owner executable also has the exact
@@ -184,3 +185,13 @@ It prepares g+1 under both existing exclusive locks and never resets U/C, change
 roles/keys/endpoints or grants Ready. Source gating remains false; no new package
 binary, service actor or rc restart proof is added. Actual generation preparation,
 crash/durability and successor admission remain native qualification work.
+
+
+Bundled rc restart source now invokes fixed `service stop-all`, then
+`frontend-owner prepare-successor-before <T0>`, then existing rc start. The scalar
+is bounded timing data, not an authority receipt. The normal successor acquires
+both trusted clean histories before the conservative common shutdown cutoff,
+then performs separately bounded configuration preparation. It never infers
+physical cleanup from a stop reply, absent socket or parsed C alone. See
+[shared stop source and native gaps](../../docs/milestones/M2/NORMAL-CLEAN-SETTLEMENT.md#shared-stop-and-rc-restart-source).
+All source/default native gates remain false; this package has not run a service.

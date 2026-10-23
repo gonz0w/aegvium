@@ -94,6 +94,13 @@ int aeg_native_wait_source(void) {
     return source_event(kind==1 ? AEG_WAIT_NORMAL : AEG_WAIT_SIGNAL);
 }
 
+int aeg_native_stop_epoch_source(int64_t origin) {
+    int64_t now;
+    if(source_launch.child<=0 || source_launch.terminal || source_launch.lost) return AEG_NATIVE_STATE;
+    if(aeg_start_clock(&now)!=0) return AEG_NATIVE_UNCERTAIN;
+    return aeg_owner_stop_at(origin,now)==AEG_OK ? AEG_NATIVE_OK : AEG_NATIVE_STATE;
+}
+
 int aeg_native_stop_source(void) {
     unsigned char frame[64]; int64_t now;
     if (source_launch.child<=0 || source_launch.terminal || source_launch.lost)

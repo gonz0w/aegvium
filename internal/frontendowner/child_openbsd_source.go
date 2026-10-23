@@ -22,7 +22,7 @@ type originalChild struct {
 	phase                childPhase
 	retirement           retirement
 	term, kill, exitSeen bool
-	uncertain            bool
+	uncertain, late      bool
 	startErr, waitErr    error
 	state                *os.ProcessState
 	frontend             *preparedFrontend
@@ -105,7 +105,11 @@ func (c *originalChild) pollExit() (bool, error) {
 	var events [1]unix.Kevent_t
 	zero := unix.NsecToTimespec(0)
 	n, err := unix.Kevent(c.queue.fd(), nil, events[:], &zero)
+	if err == unix.EINTR {
+		return false, nil
+	}
 	if err != nil {
+		c.phase, c.uncertain = childLost, true
 		return false, err
 	}
 	if n == 0 {
@@ -113,6 +117,7 @@ func (c *originalChild) pollExit() (bool, error) {
 	}
 	ev := events[0]
 	if n != 1 || ev.Ident != uint64(c.cmd.Process.Pid) || ev.Filter != unix.EVFILT_PROC || ev.Flags&unix.EV_ERROR != 0 || ev.Fflags&unix.NOTE_EXIT == 0 {
+		c.phase, c.uncertain = childLost, true
 		return false, ErrUnavailable
 	}
 	c.exitSeen = true // nonreaping observation on the registered original child
@@ -120,7 +125,7 @@ func (c *originalChild) pollExit() (bool, error) {
 }
 
 func (c *originalChild) stop(kill bool) error {
-	if !signalPhase(c.phase) || c.cmd == nil || c.cmd.Process == nil || !c.retirement.live(time.Now()) {
+	if !signalPhase(c.phase) || c.cmd == nil || c.cmd.Process == nil {
 		return ErrUnavailable
 	}
 	if kill {
@@ -138,7 +143,7 @@ func (c *originalChild) stop(kill bool) error {
 }
 
 func (c *originalChild) waitOnce() error {
-	if !waitPhase(c.phase) || !c.exitSeen || c.cmd == nil || c.cmd.Process == nil || !c.retirement.origin.IsZero() && !c.retirement.live(time.Now()) {
+	if !waitPhase(c.phase) || !c.exitSeen || c.cmd == nil || c.cmd.Process == nil {
 		return ErrUnavailable
 	}
 	c.phase = childWaitSealed // revoke ALL signals before the consuming wait
@@ -158,9 +163,9 @@ func (c *originalChild) waitOnce() error {
 		return ErrUnavailable // irrevocable: no signals/wait retry/Release
 	}
 	if !c.retirement.origin.IsZero() && !c.retirement.live(time.Now()) {
-		c.uncertain = true
+		c.late = true
 	}
-	if c.waitErr != nil || c.uncertain {
+	if c.waitErr != nil || c.uncertain || c.late {
 		return ErrUnavailable
 	}
 	return nil
@@ -199,32 +204,61 @@ func (c *originalChild) retire() error {
 	if c.phase != childOriginal {
 		return ErrUnavailable
 	}
-	c.frontend.withdraw()          // before first TERM; never a remote revocation claim
-	c.retirement.begin(time.Now()) // once; error paths cannot extend grace
-	if !c.term {
-		if err := c.stop(false); err != nil {
+	c.frontend.withdraw()
+	c.retirement.begin(time.Now())
+	c.pollRetiringService()
+	if !c.term && !c.retirement.killDue(time.Now()) {
+		if e := c.stop(false); e != nil {
 			c.uncertain = true
 		}
 	}
-	for c.retirement.live(time.Now()) {
-		done, err := c.pollExit()
-		if err != nil {
+	for {
+		// Keep the existing endpoint responsive while retiring. A queued earlier
+		// root epoch can shorten this same owner's deadline, never renew it.
+		// Endpoint failure is sticky but cannot discard original wait rights.
+		c.pollRetiringService()
+		now := time.Now()
+		if !c.retirement.live(now) {
+			c.late = true
+		}
+		done, e := c.pollExit()
+		if e != nil {
 			c.uncertain = true
 		}
 		if done {
 			return c.waitOnce()
 		}
-		if c.retirement.killDue(time.Now()) && !c.kill {
-			if err := c.stop(true); err != nil {
+		if c.phase != childOriginal {
+			return ErrUnavailable
+		}
+		if (c.late || c.retirement.killDue(now)) && !c.kill {
+			if e := c.stop(true); e != nil {
 				c.uncertain = true
 			}
 		}
+		// Missing the target is sticky failure, not loss of original-child wait
+		// authority. The same owner keeps cleanup outside any replacement grace.
+		// Identity loss/ambiguous kernel observation still forbids guessed signals.
+		if c.phase != childOriginal {
+			return ErrUnavailable
+		}
 		time.Sleep(10 * time.Millisecond)
 	}
-	c.phase = childLost
-	// No late signal or blocking wait after expiry. Actual owner/lock stay retained and no
-	// replacement can depend on retirement. An enclosing native boundary is
-	// still required for blocking syscalls/helper death and a final real join.
-	c.uncertain = true
-	return ErrUnavailable
+}
+
+func (c *originalChild) pollRetiringService() {
+	if c.service == nil {
+		return
+	}
+	if _, err := c.service.Poll("retiring"); err != nil {
+		c.uncertain = true
+	}
+	if c.service.StoppedSource() {
+		origin, err := c.service.StopOrigin()
+		if err != nil {
+			c.uncertain, c.late = true, true
+			return
+		}
+		c.late = c.retirement.observe(origin, time.Now()) || c.late
+	}
 }

@@ -87,10 +87,18 @@ type retirement struct {
 }
 
 func (r *retirement) begin(now time.Time) {
-	if !r.origin.IsZero() {
+	if !r.origin.IsZero() && !now.Before(r.origin) {
 		return
 	}
 	r.origin, r.killAt, r.end = now, now.Add(2*time.Second), now.Add(4*time.Second)
+}
+
+// observe is applied on every accepted stop, including during retirement.
+// Receiving an older epoch after cleanup began may make the target immediately
+// late; neither a later epoch nor continued physical cleanup grants new grace.
+func (r *retirement) observe(origin, now time.Time) bool {
+	r.begin(origin)
+	return !r.live(now)
 }
 
 func (r retirement) live(now time.Time) bool { return before(now, r.origin, r.end) }

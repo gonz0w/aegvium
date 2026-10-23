@@ -6,7 +6,9 @@ package frontendowner
 import (
 	"bytes"
 	"crypto/sha256"
+	"github.com/gonz0w/aegvium/internal/localcontrol"
 	"io"
+	"time"
 
 	"github.com/gonz0w/aegvium/internal/commission"
 	"github.com/gonz0w/aegvium/internal/frontendconfig"
@@ -48,8 +50,24 @@ func prepareSuccessorQualifiedSource() error {
 	}
 	return prepareSuccessor()
 }
-func prepareSuccessor() error {
-	h, e := openHistory()
+func prepareSuccessorBeforeQualifiedSource(origin int64) error {
+	if !nativeFrontendQualified {
+		return ErrUnavailable
+	}
+	sample := time.Now()
+	now, e := localcontrol.KernelMillisSource()
+	if e != nil {
+		return ErrUnavailable
+	}
+	left, e := localcontrol.Remaining(origin, now)
+	if e != nil || left <= 0 {
+		return ErrUnavailable
+	}
+	return prepareSuccessorBefore(sample.Add(left))
+}
+func prepareSuccessor() error { return prepareSuccessorBefore(time.Time{}) }
+func prepareSuccessorBefore(deadline time.Time) error {
+	h, e := openHistoryBefore(deadline)
 	if e != nil {
 		return ErrUnavailable
 	}
@@ -222,7 +240,7 @@ func (s *successor) prepare() error {
 		return s.fail()
 	}
 	s.checkpoint, e = h.open(h.inspectorDir, "launch.state", false, 0600, true)
-	if e != nil || unix.Flock(s.checkpoint.fd(), unix.LOCK_EX|unix.LOCK_NB) != nil {
+	if e != nil || h.lockExclusive(s.checkpoint) != nil {
 		return s.fail()
 	}
 	locked, e := h.stat(s.checkpoint)
@@ -232,6 +250,16 @@ func (s *successor) prepare() error {
 	s.checkpointRaw, e = h.readProtectedHeld(h.inspectorDir, s.checkpoint, "launch.state", 128)
 	if e != nil || !inspectorClean(s.checkpointRaw, string(old[8:40])) {
 		return s.fail()
+	}
+	if h.waitLocks {
+		// Both exclusive histories are now trusted clean before the common cutoff.
+		// Only NEW configuration preparation gets its separate existing bound.
+		if !h.live() {
+			return s.fail()
+		}
+		now := time.Now()
+		h.started, h.end = now, now.Add(4*time.Second)
+		h.waitLocks = false
 	}
 	s.checkpointFacts, e = h.stat(s.checkpoint)
 	if e != nil {

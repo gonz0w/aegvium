@@ -5,11 +5,23 @@ package main
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/gonz0w/aegvium/internal/localcontrol"
 )
 
 func main() {
+	if len(os.Args) == 2 && os.Args[1] == "stop-all" {
+		origin, e := localcontrol.StopAllSource()
+		if e != nil {
+			os.Exit(77)
+		}
+		text := strconv.FormatInt(origin, 10) + "\n"
+		if n, e := os.Stdout.WriteString(text); e != nil || n != len(text) {
+			os.Exit(1)
+		}
+		return
+	}
 	if len(os.Args) == 2 && os.Args[1] == "mode" {
 		mode, err := localcontrol.ModeSource()
 		if err != nil {

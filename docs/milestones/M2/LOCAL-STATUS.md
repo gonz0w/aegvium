@@ -145,28 +145,44 @@ and matching-inode unlink must complete before normal C/audit settlement. Failed
 close or namespace identity uncertainty is sticky, retains ownership/path and
 blocks settlement; cleanup is never retried using a pathname guess. The fixed
 client similarly retains a failed transient close. Source checks do not prove
-four-second scheduling, native endpoint behavior or qualified restart. In
-particular a later rc process cannot adopt old wait authority from socket absence
-or a parsed C. Restart/reload remain refused pending that actual bridge.
+four-second scheduling, native endpoint behavior or qualified restart. A later rc process cannot adopt old wait authority from socket absence or parsed
+C alone. The normal successor source below relies on the already required native-
+qualified protected clean-history chain, not a replacement waiter. All installed
+gates remain false; reload stays unsupported.
 
 The S, frontend owner and service-client immutable native gates remain false.
 Focused C checks replace every subject OS boundary; pure protocol tests and
 OpenBSD compile-only checks execute no product listener, credential or child.
 
 
-The rc stop dispatch calls the fixed STOP path directly, including after partial
-startup, without an rc.subr running-state precheck. Its two sequential client
-exchanges can consume up to one second each before both owners have observed
-cancellation. This is not two extra grace grants: the unchanged whole-appliance
-four-second target remains mandatory and unproved. The current source does not
-close that shared coordination/scheduling budget or issue qualified restart;
-native acceptance must establish a common start-of-stop budget through final
-original-child/FD settlement. No additional coordinator or persistent FD is added
-to pretend that proof exists.
+The rc stop dispatch bypasses rc.subr running-state prechecks, including partial
+startup. `service stop-all` submits one-way notifications to both bundled owners
+without reading replies, keeping at most one transient FD at a time. Known
+notification failures still permit trying the other selected owner; an uncertain
+close retains its FD and stops further allocation. Submission is not admission,
+physical cleanup, Ready or timing proof. rc stop still returns pending/failure.
+External mode selects only the local inspector owner; external restart is refused.
 
+The fixed additional request is `AGCTL2 STOP <canonical-positive-ms>`+LF, maximum
+32 bytes inside the existing33-byte sentinel. The scalar uses the same kernel
+CLOCK_MONOTONIC basis as S, with overflow/future/noncanonical rejection. This
+version is explicitly one-way: handlers close the accepted stream after exact
+EOF and never attempt an ACK write. Legacy AGCTL1 status/single-stop request/reply
+is unchanged. Existing root-only peer/path checks still apply. There is no new
+actor, endpoint, nonce, identity or ownership receipt.
 
-The later [normal successor source](NORMAL-CLEAN-SETTLEMENT.md#normal-generation-only-successor-preparation-source)
-connects normal C(g) to fixed generation-only preparation under both existing
-locks. It is a configuration-data step, not a STOP reply/reclamation issuer or
-working rc restart. Pending stop, whole-appliance timing and native proof remain
-unchanged; the installed gates and rc restart/reload stay closed.
+One T0 precedes both notifications. Their nonblocking retries share100ms rather
+than one timeout each; a final immediate nonblocking attempt may still fail for
+the second owner. No delivery guarantee is claimed. Both owners keep the earliest
+valid T0. S measures its existing100ms retirement-ACK,3s escalation and strict4s
+completion offsets from that common origin. The frontend conservatively maps the
+same kernel epoch into its Go monotonic clock, so notification/processing time
+never grants fresh TERM/KILL/wait grace. A missed target stays failed; the same
+owner continues only actual original-child cleanup. Identity loss consumes its
+signal/wait rights. Stop/wait stays independent of journal/audit I/O.
+
+The [normal successor source](NORMAL-CLEAN-SETTLEMENT.md#shared-stop-and-rc-restart-source)
+now joins the fixed bundled rc sequence. Qualified protected C provenance and
+exclusive locks are required, not merely a parsed C or missing endpoint. Native
+clock/IPC/scheduling/durability/FD/resource proof and the whole-appliance4s target
+remain unqualified. Every installed/default qualification gate remains false.

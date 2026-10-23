@@ -136,8 +136,53 @@ filesystem ordering is unqualified. No local hash detects rollback or cloning.
 never written by this preparer. Required U security records still must commit in
 S before any new child, and C only after true cleanup. This is not complete
 durable administrative-event coverage; that native acceptance gap remains held.
-The rc `restart`/`reload` path still refuses: separate pending STOP requests and
-source preparation do not prove the shared whole-appliance four-second budget.
+The bundled rc `restart` source now connects shared stop and guarded successor
+preparation as described below; reload and external-profile restart refuse. This
+source choreography does not prove the shared whole-appliance four-second budget.
 Source preparation also retains its existing bounded startup window; it is not
 shutdown qualification. Actual staging, locks/sync, credentials, services and
 native failure/crash tests have not run.
+
+
+## Shared stop and rc restart source
+
+Partial source under #23/#31/#32 now wires the actual fixed rc sequence:
+`service stop-all` → `frontend-owner prepare-successor-before <T0>` → existing
+rc start. The first command outputs only canonical kernel monotonic milliseconds
+after known submission/half-close/close of each selected one-way root stream. It
+reads no reply and issues no stop/cleanup success. rc stop remains pending. A failed
+submission, output write or uncertain close prevents automatic successor/start.
+The source sequence accepts bundled mode only, not an assumed external frontend.
+
+Owners retain the earliest stop origin. The C controller's private stop-at bridge
+samples current time normally, then applies the older root epoch without treating
+it as a clock rewind. The unchanged ACK-before100ms, drain-before3s and completion-
+before4s decisions include notification time. Future/overflow origins refuse.
+Frontend retirement keeps polling its same bounded endpoint, so an earlier epoch
+accepted after retirement begins still shortens the existing deadline. It never
+renews that deadline. Endpoint failure stays sticky without discarding the sole
+original-child wait/cleanup authority.
+After a missed target, timing failure stays sticky while the original owner may
+still reap its actual child and close its actual descriptors. It does not guess
+a PID or lose physical wait authority solely because time expired. Identity loss
+still seals all future signal/wait rights. Late physical C is not a timing pass.
+
+The before command conservatively maps T0+4s into its process-local monotonic clock.
+It may retry **only** known EWOULDBLOCK/EAGAIN non-acquisition from the two existing
+exclusive locks, without resetting that cutoff. An acquired-but-unclean U or any
+other error is a once-only failure; it never loops a failed constructor, mutation,
+close or recovery. Both native-qualified protected C histories must be joined
+before that cutoff. Parsed C plus lock availability alone remain insufficient;
+the actual provenance/no-descendant/no-export and terminal-provider profile is
+still mandatory and unqualified.
+
+Only after that trusted clean join does configuration preparation receive its
+separate existing four-second window. New-generation startup retains its bounded
+startup polling. Those are separate stages, not extra shutdown grace for either
+old child. All required U-before-child and terminal C security records remain in
+their existing owners. Neither deadline data, late C, a successful prep return nor
+owner-running status supplies effective WAF readiness or a timing qualification.
+The immutable native gates remain false. Pure/intercepted checks exercise policy
+data and intercepted boundaries; they do not use the native clock or lock provider.
+No product service, socket, signal, wait, lock, credential, staging or native syscall
+campaign ran for these checks.

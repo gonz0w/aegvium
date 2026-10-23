@@ -2,10 +2,20 @@
 #include "service_control.h"
 #include <string.h>
 
+int64_t aeg_service_epoch(const unsigned char *p,size_t n) {
+ int64_t value=0;size_t i;
+ if(p==NULL || n<14 || n>32 || memcmp(p,"AGCTL2 STOP ",12)!=0 || p[n-1]!='\n' || p[12]=='0') return -1;
+ for(i=12;i<n-1;i++) {
+  if(p[i]<'0' || p[i]>'9' || value>(INT64_MAX-4000-(p[i]-'0'))/10) return -1;
+  value=value*10+(p[i]-'0');
+ }
+ return value>0 ? value : -1;
+}
 int aeg_service_request(const unsigned char *p,size_t n,uint32_t uid,uint32_t gid) {
     if(p==NULL || uid!=0 || gid!=0) return 0;
     if(n==14 && memcmp(p,"AGCTL1 STATUS\n",14)==0) return 1;
     if(n==12 && memcmp(p,"AGCTL1 STOP\n",12)==0) return 2;
+    if(aeg_service_epoch(p,n)>0) return 3;
     return 0;
 }
 const char *aeg_service_reply(enum aeg_service_phase phase,bool stopping) {
@@ -39,6 +49,7 @@ static struct {
     const char *reply;
     struct timespec since,until;
     struct stat endpoint;
+    int64_t origin;
 } service={.listener=-1,.client=-1};
 _Static_assert(sizeof(service)<512,"bounded local service state");
 static const char path[]="/var/run/aegvium/inspector.sock";
@@ -121,8 +132,17 @@ int aeg_service_poll(enum aeg_service_phase phase,bool *stop) {
         if(n!=0) return 0;
         request=aeg_service_request(service.request,service.used,0,0);
         if(request==0) return drop();
-        if(request==2) service.stopping=true;
+        if(request==2 || request==3) {
+            int64_t epoch,ms;
+            if(now.tv_sec>INT64_MAX/1000 || now.tv_sec*1000>INT64_MAX-now.tv_nsec/1000000) return fault();
+            ms=now.tv_sec*1000+now.tv_nsec/1000000;
+            epoch=request==3 ? aeg_service_epoch(service.request,service.used) : ms;
+            if(epoch>ms || epoch<=0) return drop();
+            if(!service.stopping || epoch<service.origin) service.origin=epoch;
+            service.stopping=true;
+        }
         *stop=service.stopping;
+        if(request==3) return drop(); /* Explicit one-way; never write an ACK. */
         service.reply=aeg_service_reply(phase,service.stopping);
         if(service.reply==NULL) return fault();
     }
@@ -134,6 +154,7 @@ int aeg_service_poll(enum aeg_service_phase phase,bool *stop) {
 }
 /* Actual private terminal owner only. Close/unlink must succeed before C/audit
  * settlement; a failed close/path check leaves the unknown endpoint retained. */
+int64_t aeg_service_stop_origin(void) { return service.stopping ? service.origin : -1; }
 int aeg_service_close(void) {
     if(service.closed || service.uncertain || service.listener<0) return -1;
     service.closed=true;

@@ -46,6 +46,7 @@ type Frontend struct {
 	used, sent                 int
 	reply                      string
 	end                        time.Time
+	origin                     int64
 	stopped, uncertain, closed bool
 }
 
@@ -156,11 +157,35 @@ func (f *Frontend) Poll(phase string) (bool, error) {
 		if n != 0 {
 			return f.stopped, nil
 		} // exact EOF is mandatory
-		stop, err := Request(f.request[:f.used], 0, 0)
+		stop, origin, err := ParseRequest(f.request[:f.used], 0, 0)
 		if err != nil {
 			return f.stopped, f.drop()
 		}
+		oneway := origin > 0
+		if stop {
+			now, e := KernelMillisSource()
+			if e != nil {
+				f.uncertain = true
+				return f.stopped, ErrUnavailable
+			}
+			if origin > now {
+				return f.stopped, f.drop()
+			}
+			if origin == 0 {
+				origin = now
+			}
+			if origin <= 0 {
+				f.uncertain = true
+				return f.stopped, ErrUnavailable
+			}
+			if !f.stopped || origin < f.origin {
+				f.origin = origin
+			}
+		}
 		f.stopped = f.stopped || stop
+		if oneway {
+			return f.stopped, f.drop()
+		}
 		if f.stopped {
 			phase = "retiring"
 		}
@@ -206,3 +231,19 @@ func (f *Frontend) Close() error {
 	}
 	return nil
 }
+
+// StopOrigin is derived only from a canonical root request on this owner's own
+// accepted connection. Repeated commands can shorten, never renew, the budget.
+func (f *Frontend) StopOrigin() (time.Time, error) {
+	if f == nil || !f.stopped {
+		return time.Time{}, ErrUnavailable
+	}
+	sample := time.Now()
+	now, e := KernelMillisSource()
+	if e != nil {
+		return time.Time{}, e
+	}
+	return ConservativeOrigin(sample, f.origin, now)
+}
+
+func (f *Frontend) StoppedSource() bool { return f != nil && f.stopped }

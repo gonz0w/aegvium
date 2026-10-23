@@ -84,13 +84,14 @@ class OpenBSDPackageTests(unittest.TestCase):
         self.assertIn('placeFrontendFrom(root, dirs, descriptor, true)', native)
         self.assertNotIn('installBytes(root, dirs, "usr/local/libexec', native)
 
-    def test_service_source_keeps_pending_stop_and_restart_refusal(self):
+    def test_service_source_keeps_pending_stop_and_guarded_restart(self):
         client = (ROOT / 'internal/localcontrol/client_openbsd.go').read_text()
         self.assertIn('const nativeServiceQualified = false', client)
         rc = (ROOT / 'packaging/openbsd/aegvium.rc').read_text()
-        self.assertIn('"${control}" frontend stop', rc)
-        self.assertIn('"${control}" inspector stop', rc)
-        self.assertIn('restart|reload) exit 1', rc)
+        self.assertIn('"${control}" stop-all', rc)
+        self.assertIn('prepare-successor-before "${epoch}"', rc)
+        self.assertIn('restart) rc_restart', rc)
+        self.assertIn('reload) exit 1', rc)
         self.assertIn('stop) rc_stop ;;', rc)
         self.assertNotIn('start|stop|check) rc_cmd', rc)
         self.assertNotIn('pkill', rc)

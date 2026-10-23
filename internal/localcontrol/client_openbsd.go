@@ -17,11 +17,14 @@ var retainedClientFD = -1
 
 // ModeSource reads only the fixed commissioned nonsecret profile. It neither
 // infers a profile from absent files nor changes any owner or service state.
-func ModeSource() (mode string, out error) {
+func ModeSource() (string, error) {
 	if !nativeServiceQualified || clientAttempted || !root() {
 		return "", ErrUnavailable
 	}
 	clientAttempted = true
+	return readMode()
+}
+func readMode() (mode string, out error) {
 	for _, name := range []string{"/", "/etc", "/etc/aegvium"} {
 		var s unix.Stat_t
 		if unix.Lstat(name, &s) != nil || s.Mode&unix.S_IFMT != unix.S_IFDIR || s.Uid != 0 || s.Gid != 0 || s.Mode&0022 != 0 {
@@ -70,21 +73,67 @@ func QuerySource(owner, verb string) (string, error) {
 	return query(owner, verb)
 }
 
-func query(owner, verb string) (reply string, out error) {
+func query(owner, verb string) (string, error) {
 	if clientAttempted || !root() || !namespace() {
 		return "", ErrUnavailable
 	}
 	clientAttempted = true
-	path := inspectorPath
-	if owner == "frontend" {
-		path = frontendPath
-	} else if owner != "inspector" {
-		return "", ErrUnavailable
-	}
 	request := Status
 	if verb == "stop" {
 		request = Stop
 	} else if verb != "status" {
+		return "", ErrUnavailable
+	}
+	return exchange(owner, request, time.Now().Add(time.Second), false)
+}
+
+// StopAllSource submits both selected one-way commands before cleanup waiting.
+// The returned scalar is timing data only, not an ACK or reclamation proof.
+func StopAllSource() (int64, error) {
+	if !nativeServiceQualified || clientAttempted || !root() || !namespace() {
+		return 0, ErrUnavailable
+	}
+	clientAttempted = true
+	mode, e := readMode()
+	if e != nil || retainedClientFD >= 0 {
+		return 0, ErrUnavailable
+	}
+	sample := time.Now()
+	origin, e := KernelMillisSource()
+	if e != nil {
+		return 0, e
+	}
+	request, e := StopRequest(origin)
+	if e != nil {
+		return 0, e
+	}
+	end := sample.Add(100 * time.Millisecond)
+	owners := []string{"inspector"}
+	if mode == "bundled\n" {
+		owners = []string{"frontend", "inspector"}
+	}
+	failed := false
+	for _, owner := range owners {
+		if retainedClientFD >= 0 {
+			return 0, ErrUnavailable
+		}
+		if _, e := exchange(owner, request, end, true); e != nil {
+			failed = true
+		}
+	}
+	if failed {
+		return 0, ErrUnavailable
+	}
+	return origin, nil
+}
+func exchange(owner, request string, end time.Time, oneway bool) (reply string, out error) {
+	if !root() || !namespace() || retainedClientFD >= 0 {
+		return "", ErrUnavailable
+	}
+	path := inspectorPath
+	if owner == "frontend" {
+		path = frontendPath
+	} else if owner != "inspector" {
 		return "", ErrUnavailable
 	}
 	var before, current unix.Stat_t
@@ -106,7 +155,6 @@ func query(owner, verb string) (reply string, out error) {
 	if fd < 3 {
 		return "", ErrUnavailable
 	}
-	end := time.Now().Add(time.Second)
 	err = unix.Connect(fd, &unix.SockaddrUnix{Name: path})
 	if err != nil && err != unix.EINPROGRESS && err != unix.EAGAIN {
 		return "", ErrUnavailable
@@ -131,10 +179,12 @@ func query(owner, verb string) (reply string, out error) {
 	if err != nil || e != nil || uid != 0 || gid != 0 || !namespace() || unix.Lstat(path, &current) != nil || !sameSocket(before, current) {
 		return "", ErrUnavailable
 	}
+	first := true
 	for sent := 0; sent < len(request); {
-		if !time.Now().Before(end) {
+		if !time.Now().Before(end) && !(oneway && first) {
 			return "", ErrUnavailable
 		}
+		first = false
 		n, e := unix.SendmsgN(fd, []byte(request[sent:]), nil, nil, unix.MSG_NOSIGNAL|unix.MSG_DONTWAIT)
 		if e == unix.EAGAIN || e == unix.EWOULDBLOCK || e == unix.EINTR {
 			time.Sleep(time.Millisecond)
@@ -147,6 +197,12 @@ func query(owner, verb string) (reply string, out error) {
 	}
 	if unix.Shutdown(fd, unix.SHUT_WR) != nil {
 		return "", ErrUnavailable
+	}
+	if oneway {
+		if !namespace() || unix.Lstat(path, &current) != nil || !sameSocket(before, current) {
+			return "", ErrUnavailable
+		}
+		return "", nil // no reply is part of AGCTL2; defer owns the one close
 	}
 	var raw [65]byte
 	used := 0
@@ -167,7 +223,7 @@ func query(owner, verb string) (reply string, out error) {
 			if !ValidReply(owner, raw[:used]) || !namespace() || unix.Lstat(path, &current) != nil || !sameSocket(before, current) {
 				return "", ErrUnavailable
 			}
-			if verb == "stop" {
+			if request == Stop {
 				want, _ := Reply(owner, "retiring")
 				if string(raw[:used]) != want {
 					return "", ErrUnavailable

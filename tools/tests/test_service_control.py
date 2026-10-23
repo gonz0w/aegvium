@@ -28,7 +28,8 @@ class ServiceControlTests(unittest.TestCase):
     def test_fixed_owner_endpoint_boundaries(self):
         for case in ('normal', 'status', 'fragment', 'ancestor', 'stale', 'nonroot',
                      'peer', 'prefix', 'trailing', 'oversize', 'timeout', 'close',
-                     'drift', 'clock', 'unlink', 'low-listener', 'low-client', 'low-close'):
+                     'drift', 'clock', 'unlink', 'low-listener', 'low-client', 'low-close',
+                     'shared', 'future', 'epoch-zero', 'epoch-max'):
             with self.subTest(case=case):
                 result = subprocess.run([str(self.binary), case], capture_output=True,
                                         text=True, timeout=5, check=False, env=self.env)

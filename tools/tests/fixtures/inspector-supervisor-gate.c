@@ -23,6 +23,7 @@ int aeg_native_spawn_source(void) {effects++;return AEG_NATIVE_STATE;}
 int aeg_native_close_source(void) {effects++;return AEG_NATIVE_STATE;}
 int aeg_native_settle_source(void) {effects++;return AEG_NATIVE_STATE;}
 int aeg_native_prepared_source(void) {effects++;return AEG_NATIVE_STATE;}
+int aeg_native_stop_epoch_source(int64_t origin) {(void)origin;effects++;return AEG_NATIVE_STATE;}
 int aeg_native_stop_source(void) {effects++;return AEG_NATIVE_STATE;}
 int aeg_native_tick_source(void) {effects++;return AEG_NATIVE_STATE;}
 void aeg_native_diagnostics_prepare_source(void) {effects++;}

@@ -55,6 +55,8 @@ struct aeg_owner_view {
 
 int aeg_owner_prepare(const char *, size_t, int64_t);
 int aeg_owner_step(enum aeg_owner_event, int64_t, enum aeg_owner_intent *);
+/* Root local shared epoch; timing data only, never physical ownership. */
+int aeg_owner_stop_at(int64_t, int64_t);
 struct aeg_owner_view aeg_owner_get_view(void);
 
 #endif

@@ -8,12 +8,20 @@ import (
 	"crypto/sha256"
 
 	"github.com/gonz0w/aegvium/internal/backendconfig"
+	"github.com/gonz0w/aegvium/internal/localcontrol"
 	"github.com/gonz0w/aegvium/internal/pairmodel"
 )
 
 // PrepareSuccessorSource prepares only a normal, stopped bundled successor. The
 // same immutable native gate precedes all effects; this is no cleanup/reset API.
 func PrepareSuccessorSource() error { return prepareSuccessorQualifiedSource() }
+func PrepareSuccessorBeforeSource(text string) error {
+	origin, e := localcontrol.Epoch(text)
+	if e != nil {
+		return ErrUnavailable
+	}
+	return prepareSuccessorBeforeQualifiedSource(origin)
+}
 
 func nextGeneration(old string) (string, bool) {
 	if !generation(old) || old == "00000000000000000000000000000000" {

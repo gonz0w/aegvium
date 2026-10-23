@@ -28,6 +28,7 @@ int aeg_native_spawn_source(void);
 int aeg_native_prepared_source(void);
 int aeg_native_wait_source(void);
 int aeg_native_stop_source(void);
+int aeg_native_stop_epoch_source(int64_t);
 int aeg_native_tick_source(void);
 int aeg_native_close_source(void);
 int aeg_native_settle_source(void);

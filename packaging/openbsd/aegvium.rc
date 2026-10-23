@@ -44,17 +44,25 @@ rc_start() {
 	fi
 }
 rc_stop() {
-	# Both fixed owners are asked even if one endpoint is absent or uncertain.
-	"${control}" frontend stop >/dev/null 2>&1 || :
-	"${control}" inspector stop >/dev/null 2>&1 || :
-	# STOP only requests retirement. A later rc process has no original-child
-	# custody; neither ACK, socket absence nor parsed C is reclamation proof.
-	return 1
+ "${control}" stop-all >/dev/null 2>&1 || :
+ # Submission is pending, never physical cleanup/qualified stop.
+ return 1
+}
+rc_restart() {
+ local mode epoch
+ mode=$("${control}" mode 2>/dev/null) || return 1
+ [[ "${mode}" == bundled ]] || return 1 # external counterpart has its own owner
+ epoch=$("${control}" stop-all 2>/dev/null) || return 1
+ # Scalar is timing data only; the source preparer validates canonical/range.
+ case "${epoch}" in *[!0-9]*|'') return 1 ;; esac
+ "${frontend}" prepare-successor-before "${epoch}" || return 1
+ rc_start
 }
 [[ $# == 1 ]] || exit 1
 case "$1" in
 stop) rc_stop ;; # bypass rc.subr prechecks after partial startup
 start|check) rc_cmd "$1" ;;
-restart|reload) exit 1 ;; # no fabricated qualified-restart bridge
+restart) rc_restart ;; # actual clean-history join, never ACK/socket inference
+reload) exit 1 ;;
 *) exit 1 ;;
 esac

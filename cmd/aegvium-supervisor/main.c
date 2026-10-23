@@ -51,7 +51,10 @@ int main(int argc,char **argv) {
             prepared ? AEG_SERVICE_OWNED : AEG_SERVICE_STARTING,&requested)!=0) {
             stopping=1;failed=true;
         }
-        if(requested) stopping=1;
+        if(requested) {
+            stopping=1;
+            if(aeg_native_stop_epoch_source(aeg_service_stop_origin())!=AEG_NATIVE_OK) failed=true;
+        }
         if (!prepared && !stopping) {
             rc=aeg_native_prepared_source();
             if (rc==AEG_NATIVE_OK) prepared=true;

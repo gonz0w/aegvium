@@ -72,6 +72,10 @@ int main(int argc,char **argv) {
     CHECK(aeg_service_request((const unsigned char *)"AGCTL1 STOP\nX",13,0,0)==0);
     CHECK(aeg_service_request((const unsigned char *)"AGCTL1 STOP\n",12,0,1)==0);
     if(is("status")) wire="AGCTL1 STATUS\n";
+    if(is("shared")) wire="AGCTL2 STOP 99900\n";
+    if(is("future")) wire="AGCTL2 STOP 100001\n";
+    if(is("epoch-zero")) wire="AGCTL2 STOP 0\n";
+    if(is("epoch-max")) wire="AGCTL2 STOP 9223372036854771807\n";
     if(is("prefix")) wire="AGCTL1 STOP";
     if(is("trailing")) wire="AGCTL1 STOP\nX";
     if(is("oversize")) wire="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
@@ -85,7 +89,9 @@ int main(int argc,char **argv) {
         int before=closes;
         CHECK(rc!=0 && aeg_service_close()!=0 && closes==before && unlinks==0);
     } else {
-        if(is("status")) CHECK(!stop && strcmp(reply,"AGCTL1 inspector owned-running qualified=0\n")==0);
+        if(is("shared")) CHECK(stop && written==0 && aeg_service_stop_origin()==99900);
+        else if(is("future") || is("epoch-zero") || is("epoch-max")) CHECK(!stop && written==0);
+        else if(is("status")) CHECK(!stop && strcmp(reply,"AGCTL1 inspector owned-running qualified=0\n")==0);
         else if(is("prefix") || is("trailing") || is("oversize") || is("peer") || is("timeout") || is("low-client")) CHECK(!stop && written==0);
         else CHECK(stop && strcmp(reply,"AGCTL1 inspector retiring qualified=0\n")==0);
         rc=aeg_service_close();

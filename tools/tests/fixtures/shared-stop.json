@@ -1,0 +1,80 @@
+{
+  "basis": "Literal shared-clock/controller expectations fixed before C stop-at implementation; Go codec/late-wait expectations are post-implementation regressions, not pre-code proof",
+  "wire": {
+    "valid": "AGCTL2 STOP 123456\n",
+    "origin": 123456,
+    "max_request_bytes": 32,
+    "invalid": [
+      "AGCTL2 STOP 0\n",
+      "AGCTL2 STOP 01\n",
+      "AGCTL2 STOP -1\n",
+      "AGCTL2 STOP +1\n",
+      "AGCTL2 STOP 1\r\n",
+      "AGCTL2 STOP 1\nX",
+      "AGCTL2 STOP 9223372036854771808\n"
+    ]
+  },
+  "controller": [
+    {
+      "name": "fresh",
+      "origin": 1000,
+      "now": 1050,
+      "take_stop": 1,
+      "take_kill": 0,
+      "target": 1
+    },
+    {
+      "name": "ack_boundary",
+      "origin": 1000,
+      "now": 1100,
+      "take_stop": 0,
+      "take_kill": 2,
+      "target": 1
+    },
+    {
+      "name": "deadline",
+      "origin": 1000,
+      "now": 5000,
+      "take_stop": 0,
+      "take_kill": 2,
+      "target": 3
+    },
+    {
+      "name": "repeat_later",
+      "origin": 1000,
+      "repeat_origin": 1050,
+      "repeat_now": 1060,
+      "final_now": 5000,
+      "target": 3
+    },
+    {
+      "name": "repeat_earlier",
+      "origin": 1000,
+      "repeat_origin": 900,
+      "repeat_now": 1060,
+      "final_now": 4900,
+      "target": 3
+    },
+    {
+      "name": "future",
+      "origin": 1051,
+      "now": 1050,
+      "result": 1,
+      "stopped": false
+    },
+    {
+      "name": "overflow",
+      "origin": 9223372036854771808,
+      "now": 9223372036854771808,
+      "result": 1,
+      "stopped": false
+    }
+  ],
+  "ownership": [
+    "missed deadline preserves childOriginal signal/wait authority until actual consuming wait",
+    "late terminal closure may settle physical C while target remains failed",
+    "wait identity loss is sticky childLost; never signal or wait adopted PID",
+    "common remaining budget0 at equality, never new owner-local grace",
+    "known busy flock retries only before acquisition and common deadline; U/unknown/failed mutation never retries"
+  ]
+}

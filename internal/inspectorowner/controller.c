@@ -208,6 +208,16 @@ aeg_owner_step(enum aeg_owner_event event, int64_t now_ms,
     return AEG_OK;
 }
 
+int aeg_owner_stop_at(int64_t origin, int64_t now) {
+ if(origin<0 || origin>INT64_MAX-4000 || now<origin) return AEG_INPUT;
+ if(!legal(AEG_STOP)) return AEG_STATE;
+ sample(now);
+ request_stop();
+ if(origin<owner.stop_ms) owner.stop_ms=origin;
+ sample(now); /* A prior epoch can make the existing target immediately missed. */
+ return AEG_OK;
+}
+
 struct aeg_owner_view
 aeg_owner_get_view(void)
 {

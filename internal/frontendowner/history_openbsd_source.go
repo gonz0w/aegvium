@@ -39,6 +39,7 @@ func (f *heldFile) close() error {
 }
 
 type history struct {
+	waitLocks                                      bool
 	started, end                                   time.Time
 	files                                          []*heldFile
 	consumedDir, lock, token                       *heldFile
@@ -156,7 +157,8 @@ func (h *history) open(parent *heldFile, name string, directory bool, perm uint3
 	return f, nil
 }
 
-func openHistory() (h *history, err error) {
+func openHistory() (*history, error) { return openHistoryBefore(time.Time{}) }
+func openHistoryBefore(deadline time.Time) (h *history, err error) {
 	historyConstruction.Lock()
 	defer historyConstruction.Unlock()
 	if historyConstruction.attempted {
@@ -164,7 +166,10 @@ func openHistory() (h *history, err error) {
 	}
 	historyConstruction.attempted = true
 	now := time.Now()
-	h = &history{started: now, end: now.Add(4 * time.Second)}
+	h = &history{started: now, end: now.Add(4 * time.Second), waitLocks: !deadline.IsZero()}
+	if !deadline.IsZero() && deadline.Before(h.end) {
+		h.end = deadline
+	}
 	historyConstruction.owner = h
 	complete := false
 	defer func() {
@@ -213,7 +218,7 @@ func openHistory() (h *history, err error) {
 		return h, e
 	}
 	st, e = h.stat(h.lock)
-	if e != nil || st.size != 0 || unix.Flock(h.lock.fd(), unix.LOCK_EX|unix.LOCK_NB) != nil || !h.named(parent, h.lock, "writer.lock", st) {
+	if e != nil || st.size != 0 || h.lockExclusive(h.lock) != nil || !h.named(parent, h.lock, "writer.lock", st) {
 		return h, ErrUnavailable
 	}
 	h.consumedDir, e = h.open(parent, "consumed", true, 0700, true)
@@ -480,4 +485,22 @@ func (h *history) currentIntent(record [104]byte) error {
 		return h.fail(ErrUnavailable)
 	}
 	return nil
+}
+
+// Only known non-acquisition EWOULDBLOCK is retried, before the immutable
+// common deadline. No acquired lock, C/U state, mutation or close is retried.
+func (h *history) lockExclusive(f *heldFile) error {
+	for {
+		if !h.live() || f.fd() < 3 {
+			return h.fail(ErrUnavailable)
+		}
+		e := unix.Flock(f.fd(), unix.LOCK_EX|unix.LOCK_NB)
+		if e == nil {
+			return nil
+		}
+		if !h.waitLocks || (e != unix.EWOULDBLOCK && e != unix.EAGAIN) {
+			return h.fail(ErrUnavailable)
+		}
+		time.Sleep(time.Millisecond)
+	}
 }
