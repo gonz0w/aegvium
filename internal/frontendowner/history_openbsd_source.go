@@ -39,26 +39,26 @@ func (f *heldFile) close() error {
 }
 
 type history struct {
-	started, end                   time.Time
-	files                          []*heldFile
-	consumedDir, lock, token       *heldFile
-	record                         [104]byte
-	attempted, created, consumed   bool
-	uncertain                      bool
-	cause                          error
-	child                          *originalChild
-	service                        *localcontrol.Frontend
-	cancelService                  func()
-	configDir                      *heldFile
-	descriptor                     []byte
-	role                           string
-	frontend                       *preparedFrontend
-	historyDir, lifetime           *heldFile
-	stateFrame                     [160]byte
-	stateFacts                     fileFacts
-	stateRecord                    [104]byte
-	initialState, launchCommitted  bool
-	beginAttempted, cleanAttempted bool
+	started, end                                   time.Time
+	files                                          []*heldFile
+	consumedDir, lock, token                       *heldFile
+	record                                         [104]byte
+	attempted, created, consumed                   bool
+	uncertain                                      bool
+	cause                                          error
+	child                                          *originalChild
+	service                                        *localcontrol.Frontend
+	cancelService                                  func()
+	configDir, configBase, configEtc, inspectorDir *heldFile
+	descriptor                                     []byte
+	role                                           string
+	frontend                                       *preparedFrontend
+	historyDir, lifetime                           *heldFile
+	stateFrame                                     [160]byte
+	stateFacts                                     fileFacts
+	stateRecord                                    [104]byte
+	initialState, launchCommitted                  bool
+	beginAttempted, cleanAttempted                 bool
 }
 
 // Retention is intentional even on error: no finalizer, later constructor or
@@ -203,6 +203,9 @@ func openHistory() (h *history, err error) {
 		if e != nil {
 			return h, e
 		}
+		if component.name == "aegvium" {
+			h.inspectorDir = parent
+		}
 	}
 	h.historyDir = parent
 	h.lock, e = h.open(parent, "writer.lock", false, 0600, true)
@@ -303,7 +306,7 @@ func (h *history) loadRecord() ([104]byte, error) {
 	if err != nil {
 		return [104]byte{}, err
 	}
-	h.configDir = config
+	h.configEtc, h.configBase, h.configDir = etc, base, config
 	descriptor, err := h.readLocal("pair.agpair", 8192)
 	if err != nil {
 		return [104]byte{}, h.fail(err)
@@ -317,6 +320,9 @@ func (h *history) loadRecord() ([104]byte, error) {
 		return [104]byte{}, h.fail(ErrUnavailable)
 	}
 	h.descriptor, h.role = descriptor, string(role)
+	if h.currentIntent(record) != nil {
+		return [104]byte{}, h.fail(ErrUnavailable)
+	}
 	return record, nil
 }
 
@@ -451,6 +457,27 @@ func (h *history) close() error {
 	}
 	if h.cause != nil {
 		return ErrUnavailable
+	}
+	return nil
+}
+
+// The existing frontend EX prevents a cooperating successor writer from
+// changing intent/material until this original child is terminal and closed.
+func (h *history) currentIntent(record [104]byte) error {
+	if h.inspectorDir == nil || !dataProfileRecord(record[:]) {
+		return h.fail(ErrUnavailable)
+	}
+	f, e := h.open(h.inspectorDir, "launch.intent", false, 0600, false)
+	if e != nil {
+		return e
+	}
+	raw, e := h.readProtectedHeld(h.inspectorDir, f, "launch.intent", 33)
+	if f.close() != nil {
+		h.uncertain = true
+		return h.fail(ErrUnavailable)
+	}
+	if e != nil || !launchIntent(raw, string(record[8:40])) {
+		return h.fail(ErrUnavailable)
 	}
 	return nil
 }

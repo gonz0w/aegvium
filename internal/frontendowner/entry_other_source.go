@@ -4,3 +4,5 @@
 package frontendowner
 
 func runQualifiedSource() error { return ErrUnavailable }
+
+func prepareSuccessorQualifiedSource() error { return ErrUnavailable }

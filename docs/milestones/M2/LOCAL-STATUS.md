@@ -163,3 +163,10 @@ close that shared coordination/scheduling budget or issue qualified restart;
 native acceptance must establish a common start-of-stop budget through final
 original-child/FD settlement. No additional coordinator or persistent FD is added
 to pretend that proof exists.
+
+
+The later [normal successor source](NORMAL-CLEAN-SETTLEMENT.md#normal-generation-only-successor-preparation-source)
+connects normal C(g) to fixed generation-only preparation under both existing
+locks. It is a configuration-data step, not a STOP reply/reclamation issuer or
+working rc restart. Pending stop, whole-appliance timing and native proof remain
+unchanged; the installed gates and rc restart/reload stay closed.

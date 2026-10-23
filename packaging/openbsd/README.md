@@ -175,3 +175,12 @@ not adopt/signal a PID after a failed partial start. No crash-restart loop is ad
 This source ordering has not run, and startup polls do not prove the mandatory
 four-second shutdown target; two sequential one-second STOP exchanges leave an
 unqualified shared coordination budget, not fresh grace for each owner. The immutable S/frontend/service gates still refuse.
+
+
+The same existing frontend-owner executable also has the exact
+`prepare-successor` source command for a stopped bundled generation-only successor.
+See [the fixed source transaction and inputs](../../docs/milestones/M2/NORMAL-CLEAN-SETTLEMENT.md#normal-generation-only-successor-preparation-source).
+It prepares g+1 under both existing exclusive locks and never resets U/C, changes
+roles/keys/endpoints or grants Ready. Source gating remains false; no new package
+binary, service actor or rc restart proof is added. Actual generation preparation,
+crash/durability and successor admission remain native qualification work.

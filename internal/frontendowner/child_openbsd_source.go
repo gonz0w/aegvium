@@ -66,7 +66,7 @@ func (h *history) launchForeground() error {
 	if !h.live() || !h.frontendLive() {
 		return h.fail(ErrUnavailable)
 	}
-	if h.pollService("starting") != nil || !h.frontendLive() {
+	if h.pollService("starting") != nil || !h.frontendLive() || h.currentIntent(h.record) != nil {
 		return h.fail(ErrUnavailable)
 	}
 	child.phase = childStartAttempt

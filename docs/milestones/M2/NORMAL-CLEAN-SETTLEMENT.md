@@ -63,3 +63,81 @@ credentials/TLS, real storage lock/sync, process control or image operation runs
 Exact OpenBSD namespace/durability, same-child/no-export/leaf/resource and4s
 qualification, first paired ownership and independent standalone installation
 acceptance remain required before the operational gate can change.
+
+
+## Normal generation-only successor preparation source
+
+The same existing root frontend-owner executable now accepts the exact source
+command `prepare-successor`. Its immutable native qualification gate is false
+before all effects. This is ordinary configuration-data preparation after normal
+clean settlement, not an image reset, U repair, new identity issuer, automatic
+restart or effective policy activation. It is partial source delivery for
+#23/#31/#32. No new persistent actor, endpoint or protocol is introduced.
+
+The private preparer acquires the existing frontend writer EX and inspector's
+stable checkpoint EX. It requires explicit canonical frontend C(g), matching
+consumed DATA tuple/inventory and inspector C(g), plus old descriptor/intent
+agreement and qualified continuous namespace/history provenance. C parsing and
+a free lock alone prove no physical cleanup. The original owners' terminal and
+once-close writers establish that provenance only under the still-unqualified
+native no-descendant/no-export, filesystem and loader profile. It never repairs
+initial-zero, U, malformed, missing or uncertain histories.
+
+Only the bundled profile is supported. Fixed protected `/aegvium.next`0700
+contains exactly `pair.snapshot` and `backend.conf`, root:wheel0400. The operator
+supplies the complete immutable canonical AGPAIR2/M2-H1/3 g+1 descriptor and
+AGBACK1 backend binding. The descriptor must be byte-identical to the installed
+one except its exact next128-bit generation, with no wrap or same-g replay. The
+backend must be byte-identical except the existing generation/full-pair-digest
+binding. No roles, keys, anchors, route/policy, network endpoint, public listener,
+executable, account or identity changes are accepted. There is no input argument,
+path selector, credential generation or supported external-pair updater.
+
+The actual current inspector/backend fixed role inventory, permissions, positive
+common inspector GID, DER pins and exact bytes/inodes are retained and rechecked.
+The existing frontend role/key/anchor material is likewise guarded without parsing
+private keys; its fixed frontend configuration is recompiled. Those files carry
+no generation field themselves. I continues to obtain the complete descriptor
+from S's committed inherited bootstrap and parse `backend.conf` against its exact
+generation/digest before preparing TLS/serving; unchanged role material still must
+pass the actual loader's validity checks. The preparer grants none of those facts.
+
+Under both uninterrupted locks, one exact existing `launch.intent` write first
+places32 zeroes+LF. Both launch paths refuse that value: S requires exact g+1
+under its retained checkpoint EX, and the frontend now checks matching nonzero
+intent before generation consumption and again immediately before child birth.
+The invalidation's file sync, exact readback, current named/inode/metadata checks,
+parent-directory sync and second readback must all succeed before **any** target
+replacement. Uncertain invalidation leaves every replacement untouched. No
+caller failure triggers a retry, rollback or disposal.
+
+Then four existing files are replaced by exact same-size writes only:
+`/var/db/aegvium/pair.snapshot`, `/etc/aegvium/frontend/pair.agpair`,
+`/etc/aegvium/inspector/backend.conf`, and `/etc/aegvium/frontend/frontend.cfg`.
+Each uses one direct pinned `unix.Pwrite` and `unix.Fsync` per boundary; no Go
+WriteAt/Sync short-write/EINTR continuation is used in this new transaction.
+Each preserves regular-file type, owner/group/mode, nlink1, device/inode and size;
+each gets exact readback, file/parent sync and current identity checks. There is
+no creation, rename, truncation or state-file rewrite. Unchanged materials and
+both clean histories are rechecked between writes, then every replacement is
+reopened/read back and its owned write handle closed before final preparation
+commit. Only then can the existing intent become exact g+1+LF. That final intent
+means a completely prepared candidate, never Ready or effective security activation.
+
+Any partial/uncertain step retains process-owned handles/locks and reports failure,
+without retry or repair. A final-write uncertainty can leave a fully prepared
+candidate despite the failed reply; it does not authorize another preparer run.
+Later launch still independently needs the entire qualified provenance, current
+matching intent/descriptor/config/material invariant and fresh generation. Locks
+are advisory, root writers must cooperate, and the actual fail-closed crash/
+filesystem ordering is unqualified. No local hash detects rollback or cloning.
+
+`launch.state`, frontend lifetime C, consumed history and `security.records` are
+never written by this preparer. Required U security records still must commit in
+S before any new child, and C only after true cleanup. This is not complete
+durable administrative-event coverage; that native acceptance gap remains held.
+The rc `restart`/`reload` path still refuses: separate pending STOP requests and
+source preparation do not prove the shared whole-appliance four-second budget.
+Source preparation also retains its existing bounded startup window; it is not
+shutdown qualification. Actual staging, locks/sync, credentials, services and
+native failure/crash tests have not run.
