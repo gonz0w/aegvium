@@ -63,6 +63,8 @@ Host checks and cross-builds are tooling evidence only. Disposable native experi
 
 Each experiment owns and tears down its VM, sockets, daemons and synthetic TLS assets. Never point it at a live gateway, storage or application. Raw keys, source/vendor inventories and logs stay ignored; shared observations retain source/tree/input/output hashes. [Native evidence index](research/native/README.md) preserves earlier scopes, failed HTTP pipelines, half-close effects, unsafe checker behavior and the initial cold-build timeout. Later passing profiles do not reclassify those results; plain-TERM attribution remains [#69](https://github.com/gonz0w/aegvium/issues/69).
 
+The [Bootweave appliance requirements](docs/milestones/M2/BOOTWEAVE-APPLIANCE-PROFILE.md) target prospective OpenBSD 8.0 installation, minimal setup and required logging/monitoring. Production installer integration is not delivered; the closed 7.9 private builder and historical evidence are retained.
+
 ## Adoption and project structure
 
 Still open: selected trust/privilege/startup policy, product client-identity policy, certificate distribution/rotation, supported persistent/streaming protocols, full CRS/application tuning, measured resource/soak budgets, complete candidate provenance/acceptance and distribution obligations. The new stock baseline establishes selected installed-file lineage; historical inherited-image lineage remains unproven. Local UID containment excludes root/PF administrators and compromised allowed-UID processes. No live deployment, service enablement or release is implied by research.

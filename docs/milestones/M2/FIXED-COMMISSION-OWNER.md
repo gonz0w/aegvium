@@ -1,5 +1,7 @@
 # Fixed first-image source composition
 
+The later [appliance direction](BOOTWEAVE-APPLIANCE-PROFILE.md) assigns production installation to Bootweave on prospective OpenBSD 8.0. The closed 7.9 coordinator below is retained experimental source, not a second production installer or an 8.0 migration. Its source evidence remains at its original scope.
+
 This is source-only under the approved offline fresh-image direction. Neither
 the coordinator nor placement helper has been executed or qualified. The default
 builder entry refuses; there is no force flag or serialized freshness receipt.
@@ -60,7 +62,7 @@ return/readback is not atomic account-database publication or descendant-cleanup
 Role bytes originate only from protected operator inputs below the private
 `commission-inputs/inspector` directory. Fixed names/bounds match the real I reader;
 the target requires exactly the descriptor-bound server and client DER anchors,
-and places root:dedicated-GID0440/nlink1 files in protected root-owned directories.
+and places root:dedicated-GID, mode 0440/nlink1 files in protected root-owned directories.
 No credential issuer or public endpoint key is added. **The work directory, role
 copies and derived installer media now contain private key material when actually
 used and must remain private, non-reusable and unexported.** Provisioning, parsing,
