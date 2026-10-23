@@ -10,6 +10,7 @@ import (
 
 	"github.com/gonz0w/aegvium/internal/frontendclient"
 	"github.com/gonz0w/aegvium/internal/frontendconfig"
+	"github.com/gonz0w/aegvium/internal/localcontrol"
 )
 
 type preparedFrontend struct {
@@ -116,19 +117,35 @@ func runPreparedSource(ctx context.Context) (out error) {
 	if ctx == nil || ctx.Err() != nil {
 		return ErrUnavailable
 	}
+	owned, cancel := context.WithCancel(ctx)
+	defer cancel()
+	ctx = owned
 	h, err := openHistory()
 	if err != nil {
 		return ErrUnavailable
+	}
+	h.service, err = localcontrol.OpenFrontendSource()
+	h.cancelService = cancel
+	if err != nil {
+		h.uncertain = true
+		return h.fail(ErrUnavailable)
 	}
 	defer func() {
 		if h.frontend != nil {
 			h.frontend.withdraw()
 		}
+		if h.child == nil || h.child.phase == childUnused || h.child.phase == childConsumed {
+			if h.service.Close() != nil {
+				h.uncertain = true
+			}
+		}
 		if h.close() != nil {
 			out = ErrUnavailable
 		}
 	}()
-	if h.consumeLocal() != nil || h.prepareFrontend(ctx) != nil || h.beginLaunchHistory() != nil || h.launchForeground() != nil {
+	if h.pollService("starting") != nil || h.consumeLocal() != nil || h.pollService("starting") != nil ||
+		ctx.Err() != nil || h.prepareFrontend(ctx) != nil || h.pollService("starting") != nil || ctx.Err() != nil ||
+		h.beginLaunchHistory() != nil || h.launchForeground() != nil {
 		return ErrUnavailable
 	}
 	if h.child.supervise(ctx) != nil {
@@ -172,6 +189,20 @@ func (h *history) checkFrontendPrincipal() error {
 	}
 	if !frontendconfig.PackagePrincipalData(databases[0], databases[1]) {
 		return h.fail(ErrUnavailable)
+	}
+	return nil
+}
+
+// Same event loop only; no new actor or storage I/O. Accepted STOP cancels the
+// private preparation context and never renews a child retirement deadline.
+func (h *history) pollService(phase string) error {
+	stop, err := h.service.Poll(phase)
+	if err != nil {
+		h.uncertain = true
+		return h.fail(ErrUnavailable)
+	}
+	if stop && h.cancelService != nil {
+		h.cancelService()
 	}
 	return nil
 }

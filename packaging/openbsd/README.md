@@ -12,7 +12,7 @@ gates remain false. This does not make Draft126 an accepted appliance.
 Its default target refuses77. It requires a new private `.source-package`,
 nonroot build, exact project Go version and independently authenticated local
 source/tool/module inputs. Module fetching and toolchain downloads are off.
-It builds the existing real I, C supervisor S, frontend owner and commissioning
+It builds the existing real I, C supervisor S, frontend owner, commissioning and fixed service-client
 source entries; their operational gates are retained. The Go source and C units
 are the same runtime code, not package-specific refusal replacements.
 
@@ -21,9 +21,10 @@ stage, `/usr/local` prefix, the literal PLIST/DESCR and
 `-P net/haproxy:=:haproxy-3.2.25`. That identifies the selected default dependency,
 not authenticated package bytes or its recursively resolved closure. No Vectivium
 package is required. The recipe creates no account, credential, per-instance
-state, rc script, listener or autostart and has no fetch/install/cleanup target.
+state, account or autostart. It packages the fixed rc source asset without
+enabling/starting it; no listener is opened and has no fetch/install/cleanup target.
 
-PLIST installs the four executable paths root:wheel0555 and
+PLIST installs the five executable paths root:wheel0555 and
 `/usr/local/share/aegvium/package.images` root:wheel0444. Its fixed equality format
 is `AEGBIN1` plus LF, then three LF-terminated lines in the order `inspector`,
 `supervisor`, `frontend-owner`, each `name canonical-decimal-size lowercase-sha256`.
@@ -136,9 +137,41 @@ none of its ISO pins, arbitrary root-hook delivery or execution authority is
 promoted to production by this ABI. No new generic installer schema is defined.
 
 Still missing are actual native package artifacts/recursive signatures and closure,
-the real Boot-owned fresh-target invocation/handoff, service ordering/enable/readback,
+the real installer-owned fresh-target invocation/handoff, native service ordering/enable/readback,
 complete required frontend audit/health, same-appliance principal/network/key/backend
 isolation, strict original-wire and inspection/backend fidelity, aggregate resource
 limits, crash/recovery and mandatory four-second shutdown acceptance. The source
 recipe/commission body closes an internally owned implementation gap; it provides
 none of that native qualification and does not activate a service.
+
+
+## Local service-control source
+
+The packaged `/etc/rc.d/aegvium`0555 and `/usr/local/libexec/aegvium/service`0555
+connect fixed start/status/stop source paths in the existing owners. Commissioning
+persists the explicit nonsecret profile as `/etc/aegvium/frontend-mode`,
+root:wheel0600, exactly `bundled`+LF or `external`+LF. Absence is a refusal, never
+an implicit external mode. The six-member initial payload archive is unchanged.
+
+The client accepts only `mode` or `<inspector|frontend> <status|stop>`. It reads
+only the fixed profile, or opens one transient root-only Unix connection to the
+selected owner. Its immutable native gate is false before all file/socket effects.
+Each owner opens its own protected fixed endpoint and validates same-connection
+root credentials; the fixed protocol has no arbitrary path, PID, signal or command.
+See [control lifetime/accounting](../../docs/milestones/M2/LOCAL-STATUS.md#root-only-owner-control-source).
+
+`status` reports the actual owner's phase with `qualified=0`; it is not serving
+readiness. `stop` exits2 after a valid retiring reply because cancellation is pending.
+The rc stop path bypasses running-state prechecks, requests both owners even
+after partial startup, and returns failure/pending rather than
+claiming reclamation. `restart` and `reload` refuse. A subsequent rc process has
+no original-child wait custody: endpoint absence, a STOP reply and parsed C cannot
+issue qualified restart. The actual original-owner/settlement handoff and its native
+proof remain missing; no replacement PID/receipt authority is added.
+
+The rc start source reads the explicit mode, starts S and waits a bounded12 polls
+for that owner's observation before starting the bundled frontend owner. It does
+not adopt/signal a PID after a failed partial start. No crash-restart loop is added.
+This source ordering has not run, and startup polls do not prove the mandatory
+four-second shutdown target; two sequential one-second STOP exchanges leave an
+unqualified shared coordination budget, not fresh grace for each owner. The immutable S/frontend/service gates still refuse.

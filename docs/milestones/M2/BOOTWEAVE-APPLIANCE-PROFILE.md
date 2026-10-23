@@ -92,9 +92,11 @@ no collector or suite product may be mandatory.
 Base local logging is connected in source with explicit six-descriptor private
 acquisition accounting and two additional S integration descriptors. This is not
 a whole-process/kernel/storage bound. Periodic rotation is not a hard disk cap.
-An explicit read-only health interface, complete retention and the installed
-8.0 resource profile remain unqualified; no health/control socket is adopted.
-Do not infer Aegvium control-socket authority from Vectivium's separate decision.
+The [fixed root-only owner-control source](LOCAL-STATUS.md#root-only-owner-control-source)
+now connects status/STOP inside the existing owners without a new actor or remote
+access. Its operational gates remain false, replies carry qualified=0, and rc
+restart/reload refuse. Complete health, retention, native endpoint behavior and
+the installed8.0 resource profile remain unqualified. No Vectivium runtime is required.
 
 The next integration step is mapping Aegvium-owned placement/account/service/
 logging configuration to Bootweave's concrete generic schema when provided,

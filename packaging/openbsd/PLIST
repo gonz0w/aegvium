@@ -7,6 +7,9 @@ libexec/aegvium/inspector
 libexec/aegvium/supervisor
 libexec/aegvium/frontend-owner
 libexec/aegvium/commission
+libexec/aegvium/service
+@rcscript /etc/rc.d/aegvium
+@cwd /usr/local
 @mode 0755
 @dir share/aegvium
 @mode 0444

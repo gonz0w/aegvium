@@ -14,8 +14,9 @@ Use `golang.org/x/sys/unix` v0.49.0 for actual OpenBSD Openat/Fstatat/Flock,
 Fstatfs/Fsync, Fcntl and Kqueue/Kevent bindings. Public os.Root does not supply
 the exact no-follow component opens used here, and raw syscall-number shortcuts
 are not a substitute for supported OpenBSD libc entry points. The retained
-compatible Vect source already uses this version. There is no new network,
-listener, account, setuid bit, delegated apply API or credential issuer.
+compatible Vect source already uses this version. The original dependency
+selection adds no listener, account, setuid bit, delegated apply API or credential
+issuer; the separately authorized local owner-control continuation is described below.
 
 The existing cached module ZIP was copied into the isolated Aeg module cache
 without its ziphash shortcut; Go recomputed/verified the exact signed retained
@@ -41,3 +42,13 @@ source checks do not establish native compatibility or security qualification.
 Removal of the frontend native owner removes its unix binding usage; remove the
 module only after checking the selected graph. Any replacement must preserve
 same-child ownership, generation nonreuse and no bypass on failed inspection.
+
+
+The local owner-control continuation uses the same pinned bindings for protected
+metadata, nonblocking Unix I/O and poll. Its narrow OpenBSD `getpeereid`/`accept4`
+libc trampolines follow the retained Go Authors x/sys pattern and compatible
+private Vect source; complete unchanged notices are also retained under
+`internal/localcontrol`. No dependency version or public license grant changes.
+The local root-only endpoint lives in each already adopted owner, not a separate
+privileged service. This extension has source-only permission; no socket or
+native operation is executed by the immutable false qualification gates.

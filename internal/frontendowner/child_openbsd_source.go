@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gonz0w/aegvium/internal/localcontrol"
 	"golang.org/x/sys/unix"
 )
 
@@ -25,6 +26,7 @@ type originalChild struct {
 	startErr, waitErr    error
 	state                *os.ProcessState
 	frontend             *preparedFrontend
+	service              *localcontrol.Frontend
 }
 
 // launchForeground is a private lifetime operation below the immutable false
@@ -38,7 +40,7 @@ func (h *history) launchForeground() error {
 	if h.checkFrontendPrincipal() != nil {
 		return h.fail(ErrUnavailable)
 	}
-	child := &originalChild{phase: childUnused, frontend: h.frontend}
+	child := &originalChild{phase: childUnused, frontend: h.frontend, service: h.service}
 	h.child = child // the attempt cannot be repeated after any error
 	qfd, err := unix.Kqueue()
 	if err != nil {
@@ -62,6 +64,9 @@ func (h *history) launchForeground() error {
 		Dir:        "/", Stdin: os.Stdin, Stdout: os.Stdout, Stderr: os.Stderr,
 	}
 	if !h.live() || !h.frontendLive() {
+		return h.fail(ErrUnavailable)
+	}
+	if h.pollService("starting") != nil || !h.frontendLive() {
 		return h.fail(ErrUnavailable)
 	}
 	child.phase = childStartAttempt
@@ -169,7 +174,12 @@ func (c *originalChild) supervise(ctx context.Context) error {
 		return ErrUnavailable
 	}
 	for {
-		if ctx.Err() != nil {
+		stop, err := c.service.Poll("owned-running")
+		if err != nil {
+			c.uncertain = true
+			return c.retire()
+		}
+		if stop || ctx.Err() != nil {
 			return c.retire()
 		}
 		done, err := c.pollExit()

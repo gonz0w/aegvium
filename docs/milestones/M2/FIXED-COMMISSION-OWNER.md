@@ -44,7 +44,7 @@ the retained stock 8GiB/twoCPU/2GiB installer shape as an unqualified fixture, n
 an accepted WAF capacity. No credentials are generated; the stock-recognized
 disabled password marker is used and no SSH/NIC is configured.
 
-The source extension carries exactly eight C units, seven headers and one include
+The source extension carries exactly nine C units, eight headers and two includes
 from the signed export. The fixed target `/usr/bin/cc` command builds S in a newly
 exclusive private directory; it never executes S. Only the fixed supervisor path
 is installed, root:wheel0555/nlink1, with bounded readback and file/directory sync.

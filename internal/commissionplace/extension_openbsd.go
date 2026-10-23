@@ -22,7 +22,7 @@ var supervisorInputs = []string{
 	"launch_storage.c", "launch_storage.h", "storage_openbsd.c", "storage_os.h",
 	"native_construction.c", "native_construction.h", "native_openbsd.c", "native_os.h",
 	"launch_source.inc", "launch_source_openbsd.c", "launch_source_os.h",
-	"diagnostics_source.inc",
+	"diagnostics_source.inc", "service_control.c", "service_control.h",
 }
 
 // Reads owned private media only. No credential is parsed or emitted. Every
@@ -263,7 +263,7 @@ func placeExtension(root *os.Root, dirs map[string]*os.File, descriptor []byte) 
 		return zero, errPlacement
 	}
 	args := []string{"-std=c11", "-Wall", "-Wextra", "-Werror", "-pedantic", "-DAEG_INSPECTOR_SOURCE", "-I/aegvium.install/supervisor-source"}
-	for _, name := range []string{"main.c", "controller.c", "control_frame.c", "launch_storage.c", "storage_openbsd.c", "native_construction.c", "native_openbsd.c", "launch_source_openbsd.c"} {
+	for _, name := range []string{"main.c", "controller.c", "control_frame.c", "launch_storage.c", "storage_openbsd.c", "native_construction.c", "native_openbsd.c", "launch_source_openbsd.c", "service_control.c"} {
 		args = append(args, "/aegvium.install/supervisor-source/"+name)
 	}
 	args = append(args, "-o", "/aegvium.install/build/supervisor")

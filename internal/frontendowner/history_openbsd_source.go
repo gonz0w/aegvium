@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gonz0w/aegvium/internal/frontendclient"
+	"github.com/gonz0w/aegvium/internal/localcontrol"
 	"golang.org/x/sys/unix"
 )
 
@@ -46,6 +47,8 @@ type history struct {
 	uncertain                      bool
 	cause                          error
 	child                          *originalChild
+	service                        *localcontrol.Frontend
+	cancelService                  func()
 	configDir                      *heldFile
 	descriptor                     []byte
 	role                           string

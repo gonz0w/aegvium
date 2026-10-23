@@ -13,6 +13,7 @@ class OpenBSDPackageTests(unittest.TestCase):
         self.assertEqual(files, [
             'libexec/aegvium/inspector', 'libexec/aegvium/supervisor',
             'libexec/aegvium/frontend-owner', 'libexec/aegvium/commission',
+            'libexec/aegvium/service',
             'share/aegvium/package.images', 'share/doc/aegvium/LICENSE',
             'share/doc/aegvium/LICENSE.Vectivium', 'share/doc/aegvium/LICENSE.x-sys'] +
             ['share/doc/aegvium/licenses/' + name for name in (
@@ -53,8 +54,9 @@ class OpenBSDPackageTests(unittest.TestCase):
                 'protobuf-v1.36.11.PATENTS',
                 'binaryregexp-v0.2.0.LICENSE',
             )])
-        self.assertFalse(any(line.startswith(('@exec', '@unexec', '@rcscript', '@newuser', '@newgroup')) for line in lines))
-        self.assertFalse(any('/etc/' in line or '/var/db/' in line for line in lines))
+        self.assertEqual([line for line in lines if line.startswith('@rcscript')], ['@rcscript /etc/rc.d/aegvium'])
+        self.assertFalse(any(line.startswith(('@exec', '@unexec', '@newuser', '@newgroup')) for line in lines))
+        self.assertFalse(any('/etc/' in line or '/var/db/' in line for line in files))
 
     def test_closed_commission_and_offline_native_recipe(self):
         recipe = (ROOT / 'packaging/openbsd/Makefile').read_text()
@@ -81,6 +83,24 @@ class OpenBSDPackageTests(unittest.TestCase):
         self.assertIn('readRoleMaterials(root, dirs, descriptor)', native)
         self.assertIn('placeFrontendFrom(root, dirs, descriptor, true)', native)
         self.assertNotIn('installBytes(root, dirs, "usr/local/libexec', native)
+
+    def test_service_source_keeps_pending_stop_and_restart_refusal(self):
+        client = (ROOT / 'internal/localcontrol/client_openbsd.go').read_text()
+        self.assertIn('const nativeServiceQualified = false', client)
+        rc = (ROOT / 'packaging/openbsd/aegvium.rc').read_text()
+        self.assertIn('"${control}" frontend stop', rc)
+        self.assertIn('"${control}" inspector stop', rc)
+        self.assertIn('restart|reload) exit 1', rc)
+        self.assertIn('stop) rc_stop ;;', rc)
+        self.assertNotIn('start|stop|check) rc_cmd', rc)
+        self.assertNotIn('pkill', rc)
+        self.assertNotIn('pgrep', rc)
+        self.assertNotIn('kill ', rc)
+        placement = (ROOT / 'internal/commissionplace/frontend_openbsd.go').read_text()
+        self.assertIn('frontend-mode', placement)
+        closure = (ROOT / 'internal/commissionplace/extension_openbsd.go').read_text()
+        self.assertIn('service_control.c', closure)
+        self.assertIn('service_control.h', closure)
 
 
 if __name__ == '__main__':

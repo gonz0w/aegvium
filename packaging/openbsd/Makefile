@@ -26,8 +26,9 @@ source-package:
 	cd '${ROOT}' && ${GO_BUILD_ENV} go build -mod=readonly -p=2 -buildvcs=false -trimpath -tags 'aegvium_transport_source,aegvium_engine_source,no_fs_access' -o '${STAGE}/usr/local/libexec/aegvium/inspector' ./cmd/aegvium-inspector
 	cd '${ROOT}' && ${GO_BUILD_ENV} go build -mod=readonly -p=2 -buildvcs=false -trimpath -tags aegvium_frontend_source -o '${STAGE}/usr/local/libexec/aegvium/frontend-owner' ./cmd/aegvium-frontend-owner
 	cd '${ROOT}' && ${GO_BUILD_ENV} go build -mod=readonly -p=2 -buildvcs=false -trimpath -tags aegvium_commission_source -o '${STAGE}/usr/local/libexec/aegvium/commission' ./cmd/aegvium-commission
-	cd '${ROOT}' && cc -std=c11 -Wall -Wextra -Werror -pedantic -DAEG_INSPECTOR_SOURCE -Iinternal/inspectorowner cmd/aegvium-supervisor/main.c internal/inspectorowner/controller.c internal/inspectorowner/control_frame.c internal/inspectorowner/launch_storage.c internal/inspectorowner/storage_openbsd.c internal/inspectorowner/native_construction.c internal/inspectorowner/native_openbsd.c internal/inspectorowner/launch_source_openbsd.c -o '${STAGE}/usr/local/libexec/aegvium/supervisor'
-	chmod 0555 '${STAGE}/usr/local/libexec/aegvium/inspector' '${STAGE}/usr/local/libexec/aegvium/supervisor' '${STAGE}/usr/local/libexec/aegvium/frontend-owner' '${STAGE}/usr/local/libexec/aegvium/commission'
+	cd '${ROOT}' && ${GO_BUILD_ENV} go build -mod=readonly -p=2 -buildvcs=false -trimpath -tags aegvium_service_source -o '${STAGE}/usr/local/libexec/aegvium/service' ./cmd/aegvium-service
+	cd '${ROOT}' && cc -std=c11 -Wall -Wextra -Werror -pedantic -DAEG_INSPECTOR_SOURCE -Iinternal/inspectorowner cmd/aegvium-supervisor/main.c internal/inspectorowner/controller.c internal/inspectorowner/control_frame.c internal/inspectorowner/launch_storage.c internal/inspectorowner/storage_openbsd.c internal/inspectorowner/native_construction.c internal/inspectorowner/native_openbsd.c internal/inspectorowner/launch_source_openbsd.c internal/inspectorowner/service_control.c -o '${STAGE}/usr/local/libexec/aegvium/supervisor'
+	chmod 0555 '${STAGE}/usr/local/libexec/aegvium/inspector' '${STAGE}/usr/local/libexec/aegvium/supervisor' '${STAGE}/usr/local/libexec/aegvium/frontend-owner' '${STAGE}/usr/local/libexec/aegvium/commission' '${STAGE}/usr/local/libexec/aegvium/service'
 	{ set -eu; printf 'AEGBIN1\n'; for name in inspector supervisor frontend-owner; do file='${STAGE}/usr/local/libexec/aegvium/'$$name; size=$$(stat -f %z "$$file") || exit 77; limit=67108864; [ "$$name" != supervisor ] || limit=1048576; { [ "$$size" -ge 1 ] && [ "$$size" -le "$$limit" ]; } || exit 77; digest=$$(sha256 -q "$$file") || exit 77; [ "$${#digest}" -eq 64 ] || exit 77; case "$$digest" in *[!0-9a-f]*) exit 77 ;; esac; printf '%s %s %s\n' "$$name" "$$size" "$$digest"; done; } > '${STAGE}/usr/local/share/aegvium/package.images'
 	chmod 0444 '${STAGE}/usr/local/share/aegvium/package.images'
 	install -m 0444 '${ROOT}/LICENSE' '${STAGE}/usr/local/share/doc/aegvium/LICENSE'
@@ -71,5 +72,7 @@ source-package:
 	install -m 0444 "$$(cat '${WORK}/build.modcache')/google.golang.org/protobuf@v1.36.11/LICENSE" '${STAGE}/usr/local/share/doc/aegvium/licenses/protobuf-v1.36.11.LICENSE'
 	install -m 0444 "$$(cat '${WORK}/build.modcache')/google.golang.org/protobuf@v1.36.11/PATENTS" '${STAGE}/usr/local/share/doc/aegvium/licenses/protobuf-v1.36.11.PATENTS'
 	install -m 0444 "$$(cat '${WORK}/build.modcache')/rsc.io/binaryregexp@v0.2.0/LICENSE" '${STAGE}/usr/local/share/doc/aegvium/licenses/binaryregexp-v0.2.0.LICENSE'
+	install -d -m 0755 '${STAGE}/etc/rc.d'
+	install -m 0555 aegvium.rc '${STAGE}/etc/rc.d/aegvium'
 	# Separate native stock/product signature and exact recursive closure acceptance remain mandatory.
 	pkg_create -B '${STAGE}' -p /usr/local -d DESCR -f PLIST -P 'net/haproxy:=:haproxy-3.2.25' -W "$$(cat '${WORK}/libc.wantlib')" -D COMMENT='Standalone WAF source candidate' -D FULLPKGPATH=local/aegvium -D PORTSDIR=/usr/ports '${WORK}/${PACKAGE}'

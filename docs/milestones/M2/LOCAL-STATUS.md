@@ -111,3 +111,55 @@ wait for audit I/O. Native durable retention is still an appliance acceptance
 gap. Periodic base-log rotation is not a hard disk ceiling. Exact native buffer,
 FD/CPU/kernel-memory/storage/full-disk/retention and four-second scheduling proof
 remain required; immutable source/default qualification gates stay false.
+
+
+## Root-only owner-control source
+
+Partial source delivery under #23/#31/#32 connects a fixed local endpoint inside
+each existing owner: `/var/run/aegvium/inspector.sock` in S and
+`/var/run/aegvium/frontend.sock` in the separate frontend owner. No additional
+persistent actor, goroutine or remote interface is added. The directory is
+root:wheel0700; endpoints are root:wheel0600. Protected nonsymlink ancestors are
+validated before directory creation and on use. Existing endpoints refuse; there
+is no stale-path disposal. Each accepted peer must be uid0/gid0 on that actual
+connection. Listener, accepted and transient client descriptors below3 refuse
+and receive one close attempt so they cannot become a later child's standard I/O.
+
+`AGCTL1 STATUS`+LF and `AGCTL1 STOP`+LF require exact framing and EOF. Each owner
+keeps one listener and at most one accepted client, backlog1, a33-byte request
+sentinel, response at most64 bytes and a one-second client deadline. The C state
+is below512 bytes; Go keeps the same bounded buffers but runtime/kernel overhead
+is unqualified. The command keeps one transient FD and a65-byte reply sentinel.
+These are explicit added subsets, not an admitted complete FD/RSS/kernel profile.
+The source constructor/fork and loader transient closure still need native proof.
+
+Each ordinary owner loop performs bounded nonblocking accept/read/send work.
+Root STOP cancels only the existing same-child lifetime, never selects a PID or
+resets a retirement deadline. S continues to use its dedicated inspector fd3 stop
+channel. Stop/wait is independent of journal I/O. A retiring reply acknowledges
+only cancellation; status always says `qualified=0`. Neither response supplies
+frontend acceptance, original-wire fidelity, readiness or reaping proof.
+
+After actual original-child terminal/no-birth proof, owned client/listener closure
+and matching-inode unlink must complete before normal C/audit settlement. Failed
+close or namespace identity uncertainty is sticky, retains ownership/path and
+blocks settlement; cleanup is never retried using a pathname guess. The fixed
+client similarly retains a failed transient close. Source checks do not prove
+four-second scheduling, native endpoint behavior or qualified restart. In
+particular a later rc process cannot adopt old wait authority from socket absence
+or a parsed C. Restart/reload remain refused pending that actual bridge.
+
+The S, frontend owner and service-client immutable native gates remain false.
+Focused C checks replace every subject OS boundary; pure protocol tests and
+OpenBSD compile-only checks execute no product listener, credential or child.
+
+
+The rc stop dispatch calls the fixed STOP path directly, including after partial
+startup, without an rc.subr running-state precheck. Its two sequential client
+exchanges can consume up to one second each before both owners have observed
+cancellation. This is not two extra grace grants: the unchanged whole-appliance
+four-second target remains mandatory and unproved. The current source does not
+close that shared coordination/scheduling budget or issue qualified restart;
+native acceptance must establish a common start-of-stop budget through final
+original-child/FD settlement. No additional coordinator or persistent FD is added
+to pretend that proof exists.

@@ -32,9 +32,12 @@ func placeFrontendFrom(root *os.Root, dirs map[string]*os.File, descriptor []byt
 		if _, err := root.Lstat("aegvium.install/frontend"); !os.IsNotExist(err) {
 			return errPlacement
 		}
-		return nil
+		return installBytes(root, dirs, "etc/aegvium/frontend-mode", mode, 0600, 0)
 	case "bundled\n":
 	default:
+		return errPlacement
+	}
+	if installBytes(root, dirs, "etc/aegvium/frontend-mode", mode, 0600, 0) != nil {
 		return errPlacement
 	}
 	media, err := root.OpenFile("aegvium.install/frontend", os.O_RDONLY|syscall.O_DIRECTORY|syscall.O_NOFOLLOW, 0)
