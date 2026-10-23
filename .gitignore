@@ -13,3 +13,4 @@ artifacts/
 *.img
 *.iso
 *.qcow2
+packaging/openbsd/.source-package/

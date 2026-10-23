@@ -184,31 +184,33 @@ func dedicatedAccount(root *os.Root) (int, error) {
 	return gid, nil
 }
 
-func placeExtension(root *os.Root, dirs map[string]*os.File, descriptor []byte) ([32]byte, error) {
-	var zero [32]byte
+func readRoleMaterials(root *os.Root, dirs map[string]*os.File, descriptor []byte) ([]commission.RoleFile, [][]byte, error) {
 	plan, e := commission.RoleFiles(descriptor)
 	if e != nil {
-		return zero, errPlacement
+		return nil, nil, errPlacement
 	}
-	for _, name := range []string{"etc", "aegvium.install/roles", "aegvium.install/supervisor-source"} {
+	for _, name := range []string{"etc", "aegvium.install/roles"} {
+		if dirs[name] != nil {
+			continue
+		}
 		f, e := root.OpenFile(name, os.O_RDONLY|syscall.O_DIRECTORY|syscall.O_NOFOLLOW, 0)
 		if e != nil || !directory(keep(f)) {
-			return zero, errPlacement
+			return nil, nil, errPlacement
 		}
 		dirs[name] = f
 	}
 	privateData, e := sourceBytes(root, "aegvium.install/roles/backend.conf", 8192, 0400)
 	if e != nil {
-		return zero, errPlacement
+		return nil, nil, errPlacement
 	}
 	privatePlan, e := commission.BackendFiles(descriptor, privateData)
 	if e != nil {
-		return zero, errPlacement
+		return nil, nil, errPlacement
 	}
 	plan = append(plan, privatePlan...)
 	entries, e := dirs["aegvium.install/roles"].ReadDir(24)
 	if e != nil || len(entries) != len(plan) {
-		return zero, errPlacement
+		return nil, nil, errPlacement
 	}
 	allowed := make(map[string]bool)
 	for _, file := range plan {
@@ -216,21 +218,35 @@ func placeExtension(root *os.Root, dirs map[string]*os.File, descriptor []byte) 
 	}
 	for _, entry := range entries {
 		if !allowed[entry.Name()] || !entry.Type().IsRegular() {
-			return zero, errPlacement
+			return nil, nil, errPlacement
 		}
 	}
 	materials := make([][]byte, len(plan))
 	for i, file := range plan {
 		materials[i], e = sourceBytes(root, "aegvium.install/roles/"+file.Name, file.Limit, 0400)
 		if e != nil || strings.HasSuffix(file.Name, ".der") && sha256.Sum256(materials[i]) != file.Anchor {
-			return zero, errPlacement
+			return nil, nil, errPlacement
 		}
 		if file.Name == "backend.conf" && !bytes.Equal(materials[i], privateData) {
-			return zero, errPlacement
+			return nil, nil, errPlacement
 		}
 	}
+	return plan, materials, nil
+}
+
+func placeExtension(root *os.Root, dirs map[string]*os.File, descriptor []byte) ([32]byte, error) {
+	var zero [32]byte
+	plan, materials, e := readRoleMaterials(root, dirs, descriptor)
+	if e != nil {
+		return zero, errPlacement
+	}
+	f, e := root.OpenFile("aegvium.install/supervisor-source", os.O_RDONLY|syscall.O_DIRECTORY|syscall.O_NOFOLLOW, 0)
+	if e != nil || !directory(keep(f)) {
+		return zero, errPlacement
+	}
+	dirs["aegvium.install/supervisor-source"] = f
 	inputs := make(map[string][32]byte)
-	entries, e = dirs["aegvium.install/supervisor-source"].ReadDir(len(supervisorInputs) + 1)
+	entries, e := dirs["aegvium.install/supervisor-source"].ReadDir(len(supervisorInputs) + 1)
 	if e != nil || len(entries) != len(supervisorInputs) {
 		return zero, errPlacement
 	}
@@ -261,7 +277,7 @@ func placeExtension(root *os.Root, dirs map[string]*os.File, descriptor []byte) 
 		}
 	}
 	// The compiler owns one fresh private output; make it read-only before readback.
-	f, e := root.OpenFile("aegvium.install/build/supervisor", os.O_RDONLY|syscall.O_NOFOLLOW, 0)
+	f, e = root.OpenFile("aegvium.install/build/supervisor", os.O_RDONLY|syscall.O_NOFOLLOW, 0)
 	if e != nil {
 		return zero, errPlacement
 	}

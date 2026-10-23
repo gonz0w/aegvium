@@ -17,6 +17,11 @@ import (
 // not install HAProxy, create its account, parse private keys, start a process,
 // enable a service, authenticate a peer or grant serving authority.
 func placeFrontend(root *os.Root, dirs map[string]*os.File, descriptor []byte) error {
+	return placeFrontendFrom(root, dirs, descriptor, false)
+}
+
+// packaged selects only the private production call path, never caller authority.
+func placeFrontendFrom(root *os.Root, dirs map[string]*os.File, descriptor []byte, packaged bool) error {
 	mode, err := sourceBytes(root, "aegvium.install/frontend-mode", 9, 0400)
 	if err != nil {
 		return errPlacement
@@ -49,11 +54,18 @@ func placeFrontend(root *os.Root, dirs map[string]*os.File, descriptor []byte) e
 	if err != nil {
 		return errPlacement
 	}
-	entries, err := media.ReadDir(len(plan) + 4)
-	if err != nil || len(entries) != len(plan)+3 {
+	extra := 3
+	if packaged {
+		extra = 2 // owner is already installed by the authenticated package.
+	}
+	entries, err := media.ReadDir(len(plan) + extra + 1)
+	if err != nil || len(entries) != len(plan)+extra {
 		return errPlacement
 	}
-	allowed := map[string]bool{"frontend-role": true, "frontend-listen": true, "frontend-owner": true}
+	allowed := map[string]bool{"frontend-role": true, "frontend-listen": true}
+	if !packaged {
+		allowed["frontend-owner"] = true
+	}
 	for _, file := range plan {
 		allowed[file.Name] = true
 	}
@@ -79,9 +91,12 @@ func placeFrontend(root *os.Root, dirs map[string]*os.File, descriptor []byte) e
 	if !commission.MatchFrontendRoot(material["inspector-root.pem"], material["server.der"], server) {
 		return errPlacement
 	}
-	image, err := sourceBytes(root, "aegvium.install/frontend/frontend-owner", commission.MaxImageBytes, 0400)
-	if err != nil {
-		return errPlacement
+	var image []byte
+	if !packaged {
+		image, err = sourceBytes(root, "aegvium.install/frontend/frontend-owner", commission.MaxImageBytes, 0400)
+		if err != nil {
+			return errPlacement
+		}
 	}
 	master, group, err := accountFiles(root)
 	if err != nil || !frontendAccountIdentity(master, group) {
@@ -107,8 +122,10 @@ func placeFrontend(root *os.Root, dirs map[string]*os.File, descriptor []byte) e
 			return errPlacement
 		}
 	}
+	if !packaged && installBytes(root, dirs, "usr/local/libexec/aegvium/frontend-owner", image, 0555, 0) != nil {
+		return errPlacement
+	}
 	if installBytes(root, dirs, "etc/aegvium/frontend/pair.agpair", descriptor, 0600, 0) != nil ||
-		installBytes(root, dirs, "usr/local/libexec/aegvium/frontend-owner", image, 0555, 0) != nil ||
 		makeDirectory(root, dirs, "var/db/aegvium/frontend", 0700) != nil ||
 		makeDirectory(root, dirs, "var/db/aegvium/frontend/consumed", 0700) != nil {
 		return errPlacement

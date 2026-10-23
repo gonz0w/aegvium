@@ -59,7 +59,7 @@ profile is qualified here; generic GOOS/GOARCH compilation does not qualify a bo
 - Fixed Aegvium supervisor and inspector locations under
   `/usr/local/libexec/aegvium`, root:wheel, mode 0555, single-link; private namespace
   `/var/db/aegvium` with protected `launch.state`, `launch.intent`, `pair.snapshot`
-  and `inspector.pin`. The current archive has five files and an inspector cap
+  and `inspector.pin`. The current archive has six files and an inspector cap
   of 64 MiB; its hash/metadata are staging equality, never release authenticity.
 - Exactly one dedicated `_aegvium` principal, disabled login, no secondary groups;
   protected role-local files below `/etc/aegvium/inspector`, root:dedicated-GID, mode 0440,
@@ -101,3 +101,14 @@ logging interface plus a genuine paired-target handoff provider. Then connect
 Aegvium's production profile without a second installer. Initial private inputs,
 8.0 qualification, resource/four-second proof and standalone installation remain required;
 no image here is presently hardened, ready to run or deployable.
+
+## Product-side production source mapping
+
+The fixed [OpenBSD8.0 package/commissioning source](../../../packaging/openbsd/README.md)
+now supplies PLIST/closed native recipe and `/usr/local/libexec/aegvium/commission`
+with no arguments, connected to the existing protected per-instance placement.
+Its qualification gate remains false before effects. A bundled standalone profile
+needs ONE actual fresh never-started target containing both separate owners/roles;
+BOTH target lifetime applies only to optional external paired-image integration.
+No package was built, signed, installed or commissioned. Boot-owned actual target
+lifetime/hand-off and full8.0 package/service/native acceptance remain undelivered.

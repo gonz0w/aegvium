@@ -47,7 +47,7 @@ Fixed files are `backend.conf`8192, `backend-cert.pem`65536,
 These join the existing role files: at most23 files total. The fresh builder
 copies only protected operator inputs into its private media and the placement
 helper validates exact coverage/anchor bytes before exclusive protected writes,
-readback and file/directory sync. The original five-file payload is unchanged.
+readback and file/directory sync. The six-member payload is unchanged.
 Actual provisioning and every private media/image/account operation remain held.
 
 ## TLS preparation and remaining lifetime

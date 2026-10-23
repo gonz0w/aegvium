@@ -1,0 +1,4 @@
+Aegvium is an independent OpenBSD WAF appliance using stock HAProxy and separate
+Coraza/CRS inspection. Neither Vectivium nor Bootweave is a runtime dependency.
+This private development package contains operational refusal gates. It is not
+a qualified release, permission to install, or an automatically enabled service.

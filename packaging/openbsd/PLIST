@@ -1,0 +1,58 @@
+@owner root
+@group wheel
+@mode 0755
+@dir libexec/aegvium
+@mode 0555
+libexec/aegvium/inspector
+libexec/aegvium/supervisor
+libexec/aegvium/frontend-owner
+libexec/aegvium/commission
+@mode 0755
+@dir share/aegvium
+@mode 0444
+share/aegvium/package.images
+@mode 0755
+@dir share/doc/aegvium
+@mode 0444
+share/doc/aegvium/LICENSE
+share/doc/aegvium/LICENSE.Vectivium
+share/doc/aegvium/LICENSE.x-sys
+@mode 0755
+@dir share/doc/aegvium/licenses
+@mode 0444
+share/doc/aegvium/licenses/Go.LICENSE
+share/doc/aegvium/licenses/Go.PATENTS
+share/doc/aegvium/licenses/Go-vendor-x-crypto.LICENSE
+share/doc/aegvium/licenses/Go-vendor-x-crypto.PATENTS
+share/doc/aegvium/licenses/Go-vendor-x-net.LICENSE
+share/doc/aegvium/licenses/Go-vendor-x-net.PATENTS
+share/doc/aegvium/licenses/Go-vendor-x-sys.LICENSE
+share/doc/aegvium/licenses/Go-vendor-x-sys.PATENTS
+share/doc/aegvium/licenses/Go-vendor-x-text.LICENSE
+share/doc/aegvium/licenses/Go-vendor-x-text.PATENTS
+share/doc/aegvium/licenses/coraza-coreruleset-v4.25.0.LICENSE
+share/doc/aegvium/licenses/coraza-coreruleset-v4.25.0.rules-LICENSE
+share/doc/aegvium/licenses/coraza-v3.8.1.LICENSE
+share/doc/aegvium/licenses/libinjection-go-v0.3.3.LICENSE
+share/doc/aegvium/licenses/go-json-v0.10.5.LICENSE
+share/doc/aegvium/licenses/go-yaml-v1.19.2.LICENSE
+share/doc/aegvium/licenses/makeplural-a5f48d94d976.LICENSE
+share/doc/aegvium/licenses/messageformat-dfe49f1eb092.LICENSE
+share/doc/aegvium/licenses/go-i18n-v0.1.4.LICENSE
+share/doc/aegvium/licenses/jsonschema-v0.4.6.LICENSE
+share/doc/aegvium/licenses/aho-corasick-463d218d4745.LICENSE
+share/doc/aegvium/licenses/gjson-v1.18.0.LICENSE
+share/doc/aegvium/licenses/match-v1.1.1.LICENSE
+share/doc/aegvium/licenses/pretty-v1.2.1.LICENSE
+share/doc/aegvium/licenses/ocsf-schema-golang-v1.0.3.LICENSE
+share/doc/aegvium/licenses/x-net-v0.60.0.LICENSE
+share/doc/aegvium/licenses/x-net-v0.60.0.PATENTS
+share/doc/aegvium/licenses/x-sync-v0.23.0.LICENSE
+share/doc/aegvium/licenses/x-sync-v0.23.0.PATENTS
+share/doc/aegvium/licenses/x-sys-v0.49.0.LICENSE
+share/doc/aegvium/licenses/x-sys-v0.49.0.PATENTS
+share/doc/aegvium/licenses/x-text-v0.42.0.LICENSE
+share/doc/aegvium/licenses/x-text-v0.42.0.PATENTS
+share/doc/aegvium/licenses/protobuf-v1.36.11.LICENSE
+share/doc/aegvium/licenses/protobuf-v1.36.11.PATENTS
+share/doc/aegvium/licenses/binaryregexp-v0.2.0.LICENSE

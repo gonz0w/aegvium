@@ -20,7 +20,7 @@ graph rather than the default refusal stub. Operational admission is still close
 The fixed local build derives installer media containing the Aeg-only `install.site`
 and source-built OpenBSD placement helper. The stock pre-first-boot hook executes
 that helper against the mounted target. It authenticates payload consistency under
-the owning build/media chain and writes the five existing payload file names
+the owning build/media chain and writes the six existing payload file names
 through exclusive creation. The source extension below also places S and the
 dedicated inspector principal/material. It performs file hash readback, ownership/mode checks,
 file fsync and directory fsync, then reports the exact observed generation and

@@ -7,7 +7,6 @@ import (
 	"archive/tar"
 	"bytes"
 	"crypto/sha256"
-	"encoding/hex"
 	"errors"
 	"io"
 	"time"
@@ -32,11 +31,10 @@ func Write(out io.Writer, descriptor []byte, image io.Reader, imageBytes int64, 
 		return ErrPayload
 	}
 	descriptor = parsed.Bytes() // Detached validated AGPAIR1/2, same8192 cap.
-	state, err := initialState(descriptor[8:40])
+	files, err := InitialFiles(descriptor, expected)
 	if err != nil {
 		return ErrPayload
 	}
-	records := initialRecords(state)
 	tw := tar.NewWriter(exactOutput{out})
 	header := func(name string, mode, size int64) error {
 		return tw.WriteHeader(&tar.Header{
@@ -58,22 +56,11 @@ func Write(out io.Writer, descriptor []byte, image io.Reader, imageBytes int64, 
 	if n, err := image.Read(extra[:]); n != 0 || err != io.EOF || !bytes.Equal(hash.Sum(nil), expected[:]) {
 		return ErrPayload
 	}
-	pin := append([]byte(hex.EncodeToString(expected[:])), '\n')
-	intent := append(bytes.Clone(descriptor[8:40]), '\n')
-	for _, file := range []struct {
-		name string
-		data []byte
-	}{
-		{"var/db/aegvium/inspector.pin", pin},
-		{"var/db/aegvium/pair.snapshot", descriptor},
-		{"var/db/aegvium/launch.intent", intent},
-		{"var/db/aegvium/security.records", records[:]},
-		{"var/db/aegvium/launch.state", state[:]},
-	} {
-		if header(file.name, 0600, int64(len(file.data))) != nil {
+	for _, file := range files {
+		if header("var/db/aegvium/"+file.Name, 0600, int64(len(file.Data))) != nil {
 			return ErrPayload
 		}
-		if n, err := tw.Write(file.data); err != nil || n != len(file.data) {
+		if n, err := tw.Write(file.Data); err != nil || n != len(file.Data) {
 			return ErrPayload
 		}
 	}
