@@ -381,6 +381,7 @@ func (j *jobState) closeTransaction(tx types.Transaction) {
 func (j *jobState) finishInspection() {
 	s, e := j.owner, j.owner.engine
 	s.mu.Lock()
+	dataJob := j.data != nil
 	j.outcome.Canceled = j.canceled() || j.generation.retired || s.stopped
 	j.outcome.Retired, j.outcome.Stopped = j.generation.retired, s.stopped
 	if e.mode == engineUnsafe {
@@ -402,6 +403,9 @@ func (j *jobState) finishInspection() {
 	}
 	// No Record/InspectionComplete path exists, including clean nil-error phases.
 	j.outcome.Joined = true
+	if dataJob {
+		s.recordDataOutcome(j.outcome)
+	}
 	close(j.done)
 	s.mu.Unlock()
 	s.maybeRetireEngine()

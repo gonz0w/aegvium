@@ -65,6 +65,8 @@ Each experiment owns and tears down its VM, sockets, daemons and synthetic TLS a
 
 The [Bootweave appliance requirements](docs/milestones/M2/BOOTWEAVE-APPLIANCE-PROFILE.md) target prospective OpenBSD 8.0 installation, minimal setup and required logging/monitoring. Production installer integration is not delivered; the closed 7.9 private builder and historical evidence are retained.
 
+The DATA owner now retains [bounded local outcomes and read-only status](docs/milestones/M2/LOCAL-STATUS.md): sixteen redacted returned-job events plus current charged work, transaction and cleanup state. Reports carry no readiness or forwarding authority. External audit transport, health endpoints and native qualification remain separate work.
+
 ## Adoption and project structure
 
 Still open: selected trust/privilege/startup policy, product client-identity policy, certificate distribution/rotation, supported persistent/streaming protocols, full CRS/application tuning, measured resource/soak budgets, complete candidate provenance/acceptance and distribution obligations. The new stock baseline establishes selected installed-file lineage; historical inherited-image lineage remains unproven. Local UID containment excludes root/PF administrators and compromised allowed-UID processes. No live deployment, service enablement or release is implied by research.

@@ -71,6 +71,15 @@ func (s *InspectorEngineSource) StopSource() {
 	}
 }
 
+// OperationalReportSource is a read-only copy of actual private DATA ownership.
+// It opens no health endpoint and carries no readiness or forwarding authority.
+func (s *InspectorEngineSource) OperationalReportSource() string {
+	if s == nil {
+		return (*Owner)(nil).OperationalReport()
+	}
+	return s.owner.OperationalReport()
+}
+
 // WaitDataSource joins known jobs/cache only. Success is not process or full
 // network reclamation proof; S still owns physical wait/reaping.
 func (s *InspectorEngineSource) WaitDataSource(ctx context.Context) error {

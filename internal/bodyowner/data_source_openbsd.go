@@ -85,6 +85,7 @@ func (s *InspectorEngineSource) ServeDataSource(n *requestctx.SourceListeners) e
 			s.owner.state.mu.Lock()
 			s.failedData = session
 			s.failedInbound = in // Retain uncertain pre-job ownership.
+			s.owner.state.audit.prejob = true
 			s.owner.state.mu.Unlock()
 			s.StopSource()
 			return ErrStopped

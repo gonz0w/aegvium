@@ -67,6 +67,7 @@ type ownerState struct {
 	dataAvailable  chan struct{}      // Wake the sole unaccepted DATA accept actor.
 	stoppedSignal  chan struct{}
 	dataPrefixes   chan struct{}
+	audit          auditHistory
 }
 
 type generationState struct {
