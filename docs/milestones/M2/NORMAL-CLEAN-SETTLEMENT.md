@@ -83,15 +83,18 @@ once-close writers establish that provenance only under the still-unqualified
 native no-descendant/no-export, filesystem and loader profile. It never repairs
 initial-zero, U, malformed, missing or uncertain histories.
 
-Only the bundled profile is supported. Fixed protected `/aegvium.next`0700
-contains exactly `pair.snapshot` and `backend.conf`, root:wheel0400. The operator
-supplies the complete immutable canonical AGPAIR2/M2-H1/3 g+1 descriptor and
-AGBACK1 backend binding. The descriptor must be byte-identical to the installed
-one except its exact next128-bit generation, with no wrap or same-g replay. The
-backend must be byte-identical except the existing generation/full-pair-digest
-binding. No roles, keys, anchors, route/policy, network endpoint, public listener,
-executable, account or identity changes are accepted. There is no input argument,
-path selector, credential generation or supported external-pair updater.
+Only the bundled profile is supported. Under both existing clean-history locks,
+the owner derives the canonical AGPAIR2/M2-H1/3 g+1 descriptor and AGBACK1 binding
+in detached memory from the actual protected current descriptor and backend file.
+There is no external staging directory or manually supplied successor material.
+The descriptor stays byte-identical except its exact next128-bit generation,
+with no wrap or same-g replay. The backend stays byte-identical except the
+existing generation/full-pair-digest binding. The existing complete parsers and
+generation-only validator must accept both before any write. No roles, keys,
+anchors, route/policy, network endpoint, public listener, executable, account or
+identity changes are accepted. There is no material/path input, credential
+generation or supported external-pair updater. The before variant's scalar is
+only the shared shutdown epoch, never successor material or cleanup authority.
 
 The actual current inspector/backend fixed role inventory, permissions, positive
 common inspector GID, DER pins and exact bytes/inodes are retained and rechecked.
@@ -138,9 +141,10 @@ S before any new child, and C only after true cleanup. This is not complete
 durable administrative-event coverage; that native acceptance gap remains held.
 The bundled rc `restart` source now connects shared stop and guarded successor
 preparation as described below; reload and external-profile restart refuse. This
-source choreography does not prove the shared whole-appliance four-second budget.
+source choreography derives the next binding itself and does not require manual
+staging; it does not prove the shared whole-appliance four-second budget.
 Source preparation also retains its existing bounded startup window; it is not
-shutdown qualification. Actual staging, locks/sync, credentials, services and
+shutdown qualification. Actual protected-file reads/writes, locks/sync, credentials, services and
 native failure/crash tests have not run.
 
 

@@ -86,6 +86,28 @@ func successorData(old, next, backend, nextBackend []byte, record [104]byte) boo
 	return bytes.Equal(backend[:8], nextBackend[:8]) && bytes.Equal(backend[72:], nextBackend[72:])
 }
 
+// deriveSuccessor is data-only. The private normal-clean owner calls it with
+// current protected files under both existing locks; these bytes cannot supply
+// that custody or physical cleanup provenance. No caller supplies new material.
+func deriveSuccessor(old, backend []byte, record [104]byte) ([]byte, []byte, error) {
+	if len(old) < 48 || len(old) > 8192 || len(backend) < 72 || len(backend) > 8192 {
+		return nil, nil, ErrUnavailable
+	}
+	g, ok := nextGeneration(string(old[8:40]))
+	if !ok {
+		return nil, nil, ErrUnavailable
+	}
+	next, nextBackend := bytes.Clone(old), bytes.Clone(backend)
+	copy(next[8:40], g)
+	digest := sha256.Sum256(next)
+	copy(nextBackend[8:40], g)
+	copy(nextBackend[40:72], digest[:])
+	if !successorData(old, next, backend, nextBackend, record) {
+		return nil, nil, ErrUnavailable
+	}
+	return next, nextBackend, nil
+}
+
 func successorRoleFacts(f fileFacts, gid uint32) bool {
 	return gid != 0 && f.gid == gid && f.uid == 0 && f.inode != 0 && f.mode == 0100440 && f.links == 1 && f.size > 0
 }

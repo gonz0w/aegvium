@@ -77,6 +77,64 @@ func TestNormalSuccessorChangesOnlyExactNextBinding(t *testing.T) {
 		}
 	}
 }
+
+// Frozen before the in-memory derivation implementation. The existing public
+// successor literal fixes g+1 and its full digest independently of the producer.
+func TestNormalSuccessorDerivesExactDetachedBindings(t *testing.T) {
+	old, next, backend, nextBackend, record, _ := successorFixture(t)
+	keepOld, keepBackend := bytes.Clone(old), bytes.Clone(backend)
+	got, gotBackend, err := deriveSuccessor(old, backend, record)
+	if err != nil || !bytes.Equal(got, next) || !bytes.Equal(gotBackend, nextBackend) {
+		t.Fatal("derived bytes differ from fixed successor literals")
+	}
+	if !bytes.Equal(old, keepOld) || !bytes.Equal(backend, keepBackend) {
+		t.Fatal("derivation changed current inputs")
+	}
+	got[0] ^= 1
+	gotBackend[0] ^= 1
+	if !bytes.Equal(old, keepOld) || !bytes.Equal(backend, keepBackend) {
+		t.Fatal("derived buffers alias current inputs")
+	}
+}
+
+func TestNormalSuccessorDerivationRejectsInvalidCurrentInputs(t *testing.T) {
+	old, _, backend, _, record, _ := successorFixture(t)
+	refuse := func(name string, d, b []byte, r [104]byte) {
+		t.Helper()
+		dKeep, bKeep := bytes.Clone(d), bytes.Clone(b)
+		next, nextBackend, err := deriveSuccessor(d, b, r)
+		if err == nil || next != nil || nextBackend != nil || !bytes.Equal(d, dKeep) || !bytes.Equal(b, bKeep) {
+			t.Fatalf("%s returned candidate or changed input", name)
+		}
+	}
+	for _, d := range [][]byte{nil, old[:47], append(bytes.Clone(old), 0), bytes.Repeat([]byte{'x'}, 8193)} {
+		refuse("invalid descriptor", d, backend, record)
+	}
+	for _, b := range [][]byte{nil, backend[:71], append(bytes.Clone(backend), 0), bytes.Repeat([]byte{'x'}, 8193)} {
+		refuse("invalid backend", old, b, record)
+	}
+	for _, at := range []int{0, 8, 40, 72} {
+		b := bytes.Clone(backend)
+		b[at] ^= 1
+		refuse("invalid backend binding or body", old, b, record)
+	}
+	for _, at := range []int{0, 8, 40, 72} {
+		r := record
+		r[at] ^= 1
+		refuse("foreign consumed tuple", old, backend, r)
+	}
+	for _, g := range []string{strings.Repeat("0", 32), strings.Repeat("f", 32)} {
+		d, b, r := bytes.Clone(old), bytes.Clone(backend), record
+		copy(d[8:40], g)
+		sum := sha256.Sum256(d)
+		copy(b[8:40], g)
+		copy(b[40:72], sum[:])
+		copy(r[8:40], g)
+		copy(r[40:72], sum[:])
+		refuse("zero or wrapped generation", d, b, r)
+	}
+}
+
 func TestNormalSuccessorRefusesReplaySkipZeroAndWrap(t *testing.T) {
 	old, next, b, nb, record, l := successorFixture(t)
 	for _, g := range []string{l.Old, "0123456789abcdef0123456789abcdf1", strings.Repeat("0", 32)} {

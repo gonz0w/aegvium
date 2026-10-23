@@ -180,8 +180,10 @@ unqualified common budget, never fresh grace for either owner. The immutable S/f
 
 The same existing frontend-owner executable also has the exact
 `prepare-successor` source command for a stopped bundled generation-only successor.
-See [the fixed source transaction and inputs](../../docs/milestones/M2/NORMAL-CLEAN-SETTLEMENT.md#normal-generation-only-successor-preparation-source).
-It prepares g+1 under both existing exclusive locks and never resets U/C, changes
+See [the fixed source transaction](../../docs/milestones/M2/NORMAL-CLEAN-SETTLEMENT.md#normal-generation-only-successor-preparation-source).
+It derives g+1 and the matching full-digest backend binding in memory from the
+actual protected current files under both existing exclusive locks; no manually
+staged successor files are needed. It never resets U/C, changes
 roles/keys/endpoints or grants Ready. Source gating remains false; no new package
 binary, service actor or rc restart proof is added. Actual generation preparation,
 crash/durability and successor admission remain native qualification work.

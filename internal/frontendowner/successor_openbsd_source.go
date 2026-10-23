@@ -6,12 +6,12 @@ package frontendowner
 import (
 	"bytes"
 	"crypto/sha256"
-	"github.com/gonz0w/aegvium/internal/localcontrol"
 	"io"
 	"time"
 
 	"github.com/gonz0w/aegvium/internal/commission"
 	"github.com/gonz0w/aegvium/internal/frontendconfig"
+	"github.com/gonz0w/aegvium/internal/localcontrol"
 	"golang.org/x/sys/unix"
 )
 
@@ -30,14 +30,14 @@ type successorGuard struct {
 	digest    [32]byte
 }
 type successor struct {
-	h                        *history
-	checkpoint, stage, roles *heldFile
-	checkpointFacts          fileFacts
-	checkpointRaw            []byte
-	intent                   successorFile
-	targets                  [4]successorFile
-	guards                   []successorGuard
-	next                     [33]byte
+	h                 *history
+	checkpoint, roles *heldFile
+	checkpointFacts   fileFacts
+	checkpointRaw     []byte
+	intent            successorFile
+	targets           [4]successorFile
+	guards            []successorGuard
+	next              [33]byte
 }
 
 // Actual owners remain process-retained on every uncertain acquisition/write/
@@ -187,12 +187,6 @@ func (s *successor) namespace() error {
 			return s.fail()
 		}
 	}
-	if s.stage != nil {
-		f, e := h.stat(s.stage)
-		if e != nil || !protected(f, true, 0700) || !h.named(h.files[0], s.stage, "aegvium.next", f) {
-			return s.fail()
-		}
-	}
 	return nil
 }
 func (s *successor) verify() error {
@@ -294,30 +288,10 @@ func (s *successor) prepare() error {
 	if e != nil {
 		return e
 	}
-	stage, e := h.open(h.files[0], "aegvium.next", true, 0700, false)
+	// Derive only exact g+1 and its full descriptor digest from these current
+	// protected files. No external staging directory or new material is admitted.
+	next, backend, e := deriveSuccessor(h.descriptor, s.targets[2].raw, old)
 	if e != nil {
-		return e
-	}
-	s.stage = stage
-	names, e := stage.file.Readdirnames(3)
-	if e != io.EOF && e != nil || len(names) != 2 || !(names[0] == "pair.snapshot" && names[1] == "backend.conf" || names[1] == "pair.snapshot" && names[0] == "backend.conf") {
-		return s.fail()
-	}
-	readStage := func(name string, limit int) ([]byte, error) {
-		f, e := h.open(stage, name, false, 0400, false)
-		if e != nil {
-			return nil, e
-		}
-		raw, e := h.readProtectedHeld(stage, f, name, limit)
-		if f.close() != nil {
-			h.uncertain = true
-			return nil, s.fail()
-		}
-		return raw, e
-	}
-	next, e := readStage("pair.snapshot", 8192)
-	backend, e2 := readStage("backend.conf", 8192)
-	if e != nil || e2 != nil || !successorData(h.descriptor, next, s.targets[2].raw, backend, old) {
 		return s.fail()
 	}
 	listen, e := h.readLocal("frontend-listen", 21)
@@ -371,9 +345,6 @@ func (s *successor) prepare() error {
 		if s.guard(h.configDir, p.name, 0600, 0, p.limit, sha256.Sum256(raw)) != nil {
 			return s.fail()
 		}
-	}
-	if s.guard(stage, "pair.snapshot", 0400, 0, 8192, sha256.Sum256(next)) != nil || s.guard(stage, "backend.conf", 0400, 0, 8192, sha256.Sum256(backend)) != nil {
-		return s.fail()
 	}
 	copy(s.next[:32], next[8:40])
 	s.next[32] = '\n'
