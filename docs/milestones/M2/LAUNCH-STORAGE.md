@@ -60,8 +60,7 @@ through the privately owned S endpoint. Short/error/invalid send retains U and
 uncertainty without retry. This adds no child, receiver or authentication issuer;
 see [bootstrap preparation](OWNED-PAIR-RECEIVER.md#committed-bootstrap-preparation).
 A namespace-close/clock/controller/pair failure after commitment retains U burned;
-no clean rewrite. No storage calls occur after controller/pair preparation or
-on stop/escalation/wait. Pair construction is local source only: no fork/exec,
+no clean rewrite. No storage calls occur on active stop/escalation/wait. The [normal-clean source](NORMAL-CLEAN-SETTLEMENT.md) runs only after the same actual terminal owner joins all construction/channel handles. Pair construction is local source only: no fork/exec,
 Owned/Ready, native channel authentication, request allow or cleanup proof.
 
 Updater validates EX + strict C, closes the namespace handle once and holds the
@@ -112,5 +111,5 @@ not be retried/read back as repair. Native filesystem/directory/file initial
 installation, persistence/crypto, cooperative updater and namespace/image pinning,
 actual paired generation provenance, leaf syscall closure, no descendants/FD
 export, exclusive waiter/local closure and four-second/resource qualification
-remain mandatory. No C initializer or clean writer is included. S-loss cleanup
+remain mandatory. No C initializer or supervisor-loss clean writer is included. The normal surviving-S source now has a guarded same-generation clean writer; its operational gate remains false. S-loss cleanup
 has no selected mechanism; U blocks launch, updates and repair indefinitely.

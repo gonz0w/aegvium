@@ -21,13 +21,15 @@ int aeg_native_parent_prepare(void);
 int aeg_native_child_prepare(uid_t, gid_t);
 struct aeg_native_view aeg_native_get_view(void);
 #ifdef AEG_INSPECTOR_SOURCE
-/* Inert source entry only, no installed caller, supplied PID/FD or clean writer.
- * Actual exec-surviving leaf and four-second qualification remain mandatory. */
+/* Fixed source entry only; no supplied PID/FD or positive qualification input.
+ * Source operations are below the immutable false supervisor entry gate. */
+static inline bool aeg_supervisor_source_qualified(void) { return false; }
 int aeg_native_spawn_source(void);
 int aeg_native_prepared_source(void);
 int aeg_native_wait_source(void);
 int aeg_native_stop_source(void);
 int aeg_native_tick_source(void);
 int aeg_native_close_source(void);
+int aeg_native_settle_source(void);
 #endif
 #endif

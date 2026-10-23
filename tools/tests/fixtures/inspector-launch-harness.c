@@ -18,6 +18,7 @@ static bool starting=true;
 static size_t read_at;
 static jmp_buf child_jump;
 
+int aeg_launch_storage_clean_source(void) { return AEG_STORAGE_OK; }
 struct aeg_storage_view aeg_storage_get_view(void) {
     struct aeg_storage_view v={0};v.committed=true;return v;
 }

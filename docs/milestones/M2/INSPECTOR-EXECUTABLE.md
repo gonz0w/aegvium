@@ -1,7 +1,7 @@
 # Inert inspector and sole-supervisor source path
 
 Status: source implementation only. Default inspector and supervisor entries
-return77. No source entry, credential reader, engine constructor, actual fork,
+return77. The explicit source supervisor also refuses before signal setup, storage or launch through an immutable false gate. No source entry, credential reader, engine constructor, actual fork,
 pledge, signal or native operation was executed in this slice. Draft126's
 validation pause and mandatory four-second shutdown requirement remain.
 
@@ -54,7 +54,7 @@ wait-owned. Terminal wait or lost wait identity permanently prevents later
 signaling. Sent/missing/denied signals and ACK retain the envelope; actual known
 terminal plus one successful local parent-end Close precede logical reclamation.
 Fork failure has an actual owned-pair cleanup path. Close uncertainty never
-authorizes retry. There is no TerminalClean/U→C writer, recovery or replacement.
+authorizes retry. The [normal-clean source](NORMAL-CLEAN-SETTLEMENT.md) now settles U→same-gC only after this actual surviving supervisor’s terminal and complete local-close path. It does not repair supervisor loss or prepare a replacement.
 
 ## Qualification and remaining product connections
 

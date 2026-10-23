@@ -13,7 +13,11 @@ static struct {
     unsigned char bootstrap[8307];
     size_t bootstrap_size;
     bool bootstrap_prepared;
-} store = { .fd = { -1,-1,-1,-1 } };
+    int checkpoint;
+    dev_t checkpoint_device;
+    ino_t checkpoint_inode;
+    unsigned char consumed[128];
+} store = { .fd = { -1,-1,-1,-1 }, .checkpoint = -1 };
 _Static_assert(sizeof(store) <= 8704, "storage owner logical state");
 
 static int fail(int rc) {
@@ -229,8 +233,12 @@ static int prepare(bool update) {
         !identity(store.fd[dir],store.fd[state],false,&final) ||
         initial.st_dev!=final.st_dev || initial.st_ino!=final.st_ino) return fail(AEG_STORAGE_UNCERTAIN);
     store.view.committed=true; /* Known burned even if all later steps fail. */
+    store.checkpoint=state;
+    store.checkpoint_device=final.st_dev; store.checkpoint_inode=final.st_ino;
+    memcpy(store.consumed,frame,128);
     if (!close_slot(dir) || aeg_store_clock(&now)!=0) return fail(AEG_STORAGE_OS);
-    /* No storage I/O after this point, including stop/escalation/wait. */
+    /* No storage I/O during active stop/escalation/wait. Normal clean settlement
+     * is separate and requires the actual native terminal owner's full join. */
     if (aeg_owner_prepare((const char *)next,32,now)!=AEG_OK ||
         aeg_native_pair_prepare()!=AEG_NATIVE_OK) return fail(AEG_STORAGE_UNCERTAIN);
     store.view.phase=AEG_STORAGE_LOCAL_PAIR;
@@ -255,3 +263,49 @@ struct aeg_storage_view aeg_storage_get_view(void) {
     for (i=0;i<4;i++) if (store.fd[i]>=0) v.known_descriptors++;
     return v; /* No descriptors/generation/cleanup capabilities escape. */
 }
+
+#ifdef AEG_INSPECTOR_SOURCE
+/* Only aeg_native_settle_source calls this bridge in production. No supplied
+ * observation, PID, path, generation or parsed checkpoint can invoke it. */
+int aeg_launch_storage_clean_source(void) {
+    unsigned char check[128], clean[128];
+    struct stat current;
+    int dir, opened, fd, i;
+    if(store.view.settlement_attempted) return AEG_STORAGE_STATE;
+    store.view.settlement_attempted=true;
+    if(!store.view.committed || store.view.uncertain ||
+        store.view.phase!=AEG_STORAGE_LOCAL_PAIR || !store.view.bootstrap_claimed ||
+        store.checkpoint<0 || store.checkpoint>=4 ||
+        store.fd[store.checkpoint]<0 || store.close_tried[store.checkpoint])
+        return fail(AEG_STORAGE_STATE);
+    fd=store.fd[store.checkpoint]; /* Same original EX, never reopen the checkpoint. */
+    dir=adopt(aeg_store_root());
+    if(dir<0 || !directory(store.fd[dir],false)) return fail(AEG_STORAGE_OS);
+    for(i=0;i<3;i++) {
+        opened=adopt(aeg_store_dir(store.fd[dir],(unsigned)i));
+        if(opened<0 || !directory(store.fd[opened],false) || !close_slot(dir))
+            return fail(AEG_STORAGE_OS);
+        dir=opened;
+    }
+    if(!identity(store.fd[dir],fd,false,&current) ||
+        current.st_dev!=store.checkpoint_device || current.st_ino!=store.checkpoint_inode ||
+        aeg_store_read(fd,check,128)!=128 || memcmp(check,store.consumed,128)!=0 ||
+        !identity(store.fd[dir],fd,false,&current) ||
+        current.st_dev!=store.checkpoint_device || current.st_ino!=store.checkpoint_inode)
+        return fail(AEG_STORAGE_UNCERTAIN);
+    memcpy(clean,store.consumed,128);
+    clean[8]='C'; /* g stays consumed: next launch must use g+1, never reuseg. */
+    aeg_store_hash(clean,clean+48);
+    if(aeg_store_write(fd,clean)!=128 || aeg_store_sync(fd)!=0 ||
+        aeg_store_read(fd,check,128)!=128 || memcmp(check,clean,128)!=0 ||
+        !identity(store.fd[dir],fd,false,&current) ||
+        current.st_dev!=store.checkpoint_device || current.st_ino!=store.checkpoint_inode)
+        return fail(AEG_STORAGE_UNCERTAIN);
+    if(!close_slot(dir)) return fail(AEG_STORAGE_UNCERTAIN);
+    store.view.settled=true;
+    store.view.phase=AEG_STORAGE_CLEAN;
+    /* Retain the stable checkpoint/exclusion until S exits. This local storage
+     * fact is not S exit, a4s pass, next-pair provenance, Ready or recovery. */
+    return AEG_STORAGE_OK;
+}
+#endif

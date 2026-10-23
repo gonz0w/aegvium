@@ -3,7 +3,7 @@
 int main(void) { return 77; } /* Installed/default entry remains closed. */
 #else
 /* Fixed single-threaded source entry. No plugin, signal wait handler, foreign
- * child, PID argument, automatic restart or clean-history writer exists. */
+ * child, PID argument, automatic restart or recovery exists. */
 #include "native_construction.h"
 #include "launch_storage.h"
 #include "controller.h"
@@ -18,9 +18,9 @@ int main(int argc,char **argv) {
     struct sigaction action={0};
     struct aeg_owner_view owner;
     bool prepared=false, stop_sent=false, failed=false;
-    int rc;
+    int rc, closed, settled;
     (void)argv;
-    if (argc!=1) return 77;
+    if (argc!=1 || !aeg_supervisor_source_qualified()) return 77;
     action.sa_handler=stop_handler;
     if (sigemptyset(&action.sa_mask)!=0 || sigaction(SIGTERM,&action,NULL)!=0 ||
         sigaction(SIGINT,&action,NULL)!=0) return 77;
@@ -31,8 +31,14 @@ int main(int argc,char **argv) {
         owner=aeg_owner_get_view();
         if (owner.identity_fault) return 1; /* Cold recovery, never PID adoption. */
         if (owner.terminal!=AEG_TERMINAL_UNKNOWN) {
-            rc=aeg_native_close_source();
-            return rc==AEG_NATIVE_OK && prepared && stop_sent && !failed ? 0 : 1;
+            closed=aeg_native_close_source();
+            /* Only after actual terminal + local closure. Storage may block
+             * here; it never competes with active stop/escalation/wait. */
+            settled=aeg_native_settle_source();
+            owner=aeg_owner_get_view();
+            return closed==AEG_NATIVE_OK && settled==AEG_NATIVE_OK &&
+                owner.target==AEG_MET && !owner.clock_fault &&
+                !owner.unsafe_fault && prepared && stop_sent && !failed ? 0 : 1;
         }
         if (!owner.known_child) return 1;
         if (!prepared && !stopping) {

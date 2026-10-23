@@ -10,6 +10,8 @@ static const char golden_U1[]="4145474f574e310a550000000000000030303030303030303
 static const char golden_Cfe[]="4145474f574e310a430000000000000066666666666666666666666666666666666666666666666666666666666666654dc9b55bc4774721f97520d8033b1ec9af159a3c072b0d86fe4400b04e051616000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 static const char golden_Uff[]="4145474f574e310a55000000000000006666666666666666666666666666666666666666666666666666666666666666105c28a634df45fa0e2bf6d9b38cef5b64d493da5aaf9c504538199c18b47492000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 static const char golden_Cff[]="4145474f574e310a43000000000000006666666666666666666666666666666666666666666666666666666666666666db5addb79a2238b49451c0bd5c225bb042177d8a51211ba148059c5c3454cb71000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+static const char clean_one[]="4145474f574e310a430000000000000030303030303030303030303030303030303030303030303030303030303030314f11136650c183fe71ce0c139fb76529811d8950a13b7225b27a710f5c304466000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+static const char clean_nontrivial[]="4145474f574e310a43000000000000003031323334353637383961626364656630313233343536373839616263646566f86f2691678b60a24ae51d150c9921edb9ca90e77c21679906c4e405ff62e5cd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 static const char golden_pair[]="414750414952310a30313233343536373839616263646566303132333435363738396162636465664d322d48312f31010b6170705f7072696d61727900106170702e6578616d706c652e7465737401bb3031303130313031303130313031303130313031303130313031303130313031303130313031303130313031303130313031303130313031303130313031303102001566726f6e742d612e696e7465726e616c2e74657374001566726f6e742d622e696e7465726e616c2e746573740a3139322e302e322e313020fb0015696e73706563742e696e7465726e616c2e74657374000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1ffffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e000001000000014000000080000001000000010000408";
 static const char golden_bootstrap[]="4147434845434b3130313233343536373839616263646566303132333435363738396162636465665ec0935b94a4a4541abaa76768731aaccbc772a02e0dd926b36dde2660ef6e9d1d987134086420d48b300a4cfda016ffc550a0bda6a6f20c58282db1b7d42dca";
 static const char golden_pair2[]="414750414952320a30303030303030303030303030303030303030303030303030303030303030314d322d48312f33010b6170705f7072696d61727900106170702e6578616d706c652e7465737401bb3031303130313031303130313031303130313031303130313031303130313031303130313031303130313031303130313031303130313031303130313031303102001566726f6e742d612e696e7465726e616c2e74657374001566726f6e742d622e696e7465726e616c2e746573740a3139322e302e322e313020fb0a3139322e302e322e313024e30015696e73706563742e696e7465726e616c2e74657374000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1ffffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e000001000000014000000080000001000000010000408";
@@ -32,6 +34,7 @@ static unsigned char pin_data[65];
 static int root_calls, pin_reads, image_reads;
 static int writes, state_reads, hash_calls, reentrant_rc=-1;
 static bool lock_held;
+static bool clean_active;
 static void decode(const char *s,unsigned char *out) {
     unsigned i,v;
     for(i=0;i<128;i++) { if(sscanf(s+2*i,"%2x",&v)!=1) { bad++;return; } out[i]=(unsigned char)v; }
@@ -40,12 +43,16 @@ static void decode_n(const char *s,unsigned char *out,size_t n) {
     size_t i;unsigned v;
     for(i=0;i<n;i++) { if(sscanf(s+2*i,"%2x",&v)!=1) { bad++;return; } out[i]=(unsigned char)v; }
 }
-static bool is(const char *s) { return strcmp(mode,s)==0; }
-static int storage_mark(int fd) { mark(fd);return fd; }
+static bool is(const char *s) { return strcmp(mode,s)==0 || (clean_active && strncmp(mode,"clean-",6)==0 && strcmp(mode+6,s)==0); }
+static int storage_mark(int fd) { mark(fd);close_calls[fd]=0;return fd; }
 int aeg_storage_test_open(const char *path,int flags,...) {
     if(strcmp(path,"/dev/null")==0) return aeg_test_open(path,flags);
     if(strcmp(path,"/")!=0 || flags!=(O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC)) bad++;
     root_calls++;
+    if(clean_active) {
+        if(note("clean-root",0,0,0)) return -1;
+        return is("root-alias") ? 44 : storage_mark(40);
+    }
     if(note(root_calls==1 ? "root" : "image-root",0,0,0)) return -1;
     if(root_calls>1) return storage_mark(47);
     if(is("reentrant")) reentrant_rc=aeg_update_exclusion_prepare();
@@ -132,7 +139,7 @@ static void meta(int fd,struct stat *s) {
         (void)snprintf(label,sizeof(label),"%slink",prefix);if(is(label)) s->st_nlink=2;
         (void)snprintf(label,sizeof(label),"%ssize",prefix);if(is(label)) s->st_size--;
     }
-    if(fd==44 && writes && is("post-inode")) s->st_ino++;
+    if(fd==44 && writes>=(clean_active ? 2 : 1) && is("post-inode")) s->st_ino++;
 }
 int aeg_storage_test_fstat(int fd,struct stat *s) {
     if(fd<40) return aeg_test_fstat(fd,s);
@@ -214,7 +221,12 @@ ssize_t aeg_storage_test_pread(int fd,void *out,size_t n,off_t off) {
         if(is("read127")) return 127;
         if(is("read129")) return 129;
         memcpy(out,disk,n);
-        if(is("readback") && state_reads==2) ((unsigned char *)out)[0]^=1;
+        if(is("readback") && state_reads==(clean_active ? 4 : 2)) ((unsigned char *)out)[0]^=1;
+        if(clean_active && state_reads==4) {
+            if(is("post-read-negative")) return -1;
+            if(is("post-read-short")) return 127;
+            if(is("post-read-over")) return 129;
+        }
     } else if(fd==45) {
         memcpy(out,intent_data,n);
         if(is("intent-short")) return 32;
@@ -240,7 +252,7 @@ ssize_t aeg_storage_test_pwrite(int fd,const void *p,size_t n,off_t off) {
     return 128;
 }
 int aeg_storage_test_fsync(int fd) {
-    if(fd!=44 || !lock_held || writes!=1) bad++;
+    if(fd!=44 || !lock_held || writes!=(clean_active ? 2 : 1)) bad++;
     return note("sync",fd,0,1) ? -1 : 0;
 }
 int aeg_storage_test_clock(int id,struct timespec *t) {
@@ -275,7 +287,7 @@ void aeg_storage_test_sha_update(SHA2_CTX *ctx,const unsigned char *p,size_t n) 
     memcpy(ctx->input+ctx->len,p,n);ctx->len+=n;ctx->updates++;
 }
 void aeg_storage_test_sha_final(unsigned char *out,SHA2_CTX *ctx) {
-    const char *const gold[]={golden_C0,golden_U1,golden_Cfe,golden_Uff,golden_Cff,golden_Cg,golden_Ug};
+    const char *const gold[]={golden_C0,golden_U1,golden_Cfe,golden_Uff,golden_Cff,golden_Cg,golden_Ug,clean_one,clean_nontrivial};
     unsigned char b[128];size_t i;
     (void)note("sha-final",0,0,0);
     if(ctx->snapshot) {
@@ -291,20 +303,17 @@ void aeg_storage_test_sha_final(unsigned char *out,SHA2_CTX *ctx) {
     hash_calls++;
     if(ctx->len!=96 || ctx->updates!=2) bad++;
     memset(out,0,32);
-    for(i=0;i<7;i++) {
+    for(i=0;i<9;i++) {
         decode(gold[i],b);
         if(memcmp(b,ctx->input,48)==0 && memcmp(b+80,ctx->input+48,48)==0) {
             memcpy(out,b+48,32);break;
         }
     }
-    if(i==7) bad++; /* Detect wrong wrapper input, never an oracle Boolean. */
+    if(i==9) bad++; /* Detect wrong wrapper input, never an oracle Boolean. */
     if(is("hash-mismatch") && hash_calls==1) out[0]^=1;
 }
-int main(int argc,char **argv) {
-    int rc,again1,again2,before,emit_again=-1,branch_after=-1;unsigned i;
-    struct aeg_storage_view v;struct aeg_owner_view o;struct aeg_native_view native;
-    if(argc!=2) return 2;
-    mode=argv[1];if(strncmp(mode,"fail-",5)==0) fail_at=atoi(mode+5);
+static int storage_fixture_prepare(const char *selected_mode) {
+    mode=selected_mode;if(strncmp(mode,"fail-",5)==0) fail_at=atoi(mode+5);
     decode(is("bootstrap-golden") ? golden_Cg : is("edge") ? golden_Cfe : is("nowrap") ? golden_Cff :
         (is("unclean") || is("update-unclean")) ? golden_U1 : golden_C0,disk);
     memcpy(intent_data,is("edge") ? "ffffffffffffffffffffffffffffffff" : "00000000000000000000000000000001",32);
@@ -354,7 +363,16 @@ int main(int argc,char **argv) {
     if(is("intent-lf")) intent_data[32]=0;
     if(is("owner-prestate")) (void)aeg_owner_prepare("00000000000000000000000000000001",32,0);
     if(is("native-prestate")) (void)aeg_native_parent_prepare();
-    rc=strncmp(mode,"update",6)==0 ? aeg_update_exclusion_prepare() : aeg_launch_storage_prepare();
+    return strncmp(mode,"update",6)==0 ? aeg_update_exclusion_prepare() : aeg_launch_storage_prepare();
+}
+#ifndef AEG_STORAGE_FIXTURE_MAIN
+#define AEG_STORAGE_FIXTURE_MAIN main
+#endif
+int AEG_STORAGE_FIXTURE_MAIN(int argc,char **argv) {
+    int rc,again1,again2,before,emit_again=-1,branch_after=-1;unsigned i;
+    struct aeg_storage_view v;struct aeg_owner_view o;struct aeg_native_view native;
+    if(argc!=2) return 2;
+    rc=storage_fixture_prepare(argv[1]);
     before=calls;again1=aeg_launch_storage_prepare();again2=aeg_update_exclusion_prepare();
     native=aeg_native_get_view();
     if(native.bootstrap_attempted) emit_again=aeg_native_bootstrap_emit();

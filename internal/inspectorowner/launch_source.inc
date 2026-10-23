@@ -1,13 +1,15 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /* Included only in explicit AEG_INSPECTOR_SOURCE builds. It owns the actual
  * fork receipt and private parent endpoint; no supplied PID/FD/provider exists.
- * This source has no installed caller and creates no clean-history record. */
+ * The fixed source caller remains below an immutable false qualification gate. */
 #include "launch_source_os.h"
 #include "control_frame.h"
 #include <errno.h>
 
 static struct {
     bool attempted, terminal, no_child, lost, prepared, start_failed;
+    bool closed, settlement_attempted;
+    int terminal_kind;
     pid_t child;
     size_t start_at, ack_at;
     unsigned char start[112], ack[64];
@@ -88,6 +90,7 @@ int aeg_native_wait_source(void) {
     }
     if (kind==3) return source_event(AEG_WAIT_STOPPED);
     source_launch.terminal=true;
+    source_launch.terminal_kind=kind;
     return source_event(kind==1 ? AEG_WAIT_NORMAL : AEG_WAIT_SIGNAL);
 }
 
@@ -139,13 +142,46 @@ int aeg_native_tick_source(void) {
 
 int aeg_native_close_source(void) {
     int i; bool clean=true;
+    if(source_launch.closed) return AEG_NATIVE_STATE;
     if (source_launch.no_child && !construction.view.uncertain) {
         for (i=0;i<4;i++) if (!close_slot(i)) clean=false;
-        return clean ? source_event(AEG_CLOSED) : AEG_NATIVE_UNCERTAIN;
+        if(!clean) return AEG_NATIVE_UNCERTAIN;
+        source_launch.closed=true; /* Actual closes, independent of clock. */
+        return source_event(AEG_CLOSED);
     }
     if (!source_launch.terminal || source_launch.lost ||
         construction.view.uncertain || construction.view.phase!=AEG_NATIVE_PARENT)
         return AEG_NATIVE_STATE;
     if (!close_slot(construction.parent)) return AEG_NATIVE_UNCERTAIN;
+    source_launch.closed=true;
     return source_event(AEG_CLOSED); /* Actual local close plus retained terminal. */
+}
+
+/* The sole production clean-history bridge. Diagnostic views/ACK/stop/exitcode
+ * cannot create source_launch's actual fork/wait/close facts. No reset/recovery. */
+int aeg_native_settle_source(void) {
+    struct aeg_owner_view owner;
+    int i;
+    if(source_launch.settlement_attempted) return AEG_NATIVE_STATE;
+    source_launch.settlement_attempted=true;
+    if(!source_launch.attempted || !source_launch.closed || source_launch.lost ||
+        construction.view.uncertain || construction.targets!=0 ||
+        source_launch.terminal==source_launch.no_child)
+        return AEG_NATIVE_STATE;
+    if(source_launch.terminal && (source_launch.child<=0 ||
+        (source_launch.terminal_kind!=1 && source_launch.terminal_kind!=2)))
+        return AEG_NATIVE_STATE;
+    if(source_launch.no_child && source_launch.child!=0) return AEG_NATIVE_STATE;
+    for(i=0;i<4;i++) if(construction.fd[i]>=0) return AEG_NATIVE_STATE;
+    owner=aeg_owner_get_view();
+    if(owner.phase!=AEG_RECLAIMED || owner.held || owner.known_child ||
+        owner.identity_fault || !owner.protocol_closed ||
+        memcmp(owner.generation,construction.expected_start+8,32)!=0 ||
+        owner.terminal!=(source_launch.no_child ? AEG_NO_CHILD_PROVED :
+            source_launch.terminal_kind==1 ? AEG_NORMAL_EXIT : AEG_SIGNAL_EXIT))
+        return AEG_NATIVE_STATE;
+    /* Clock/target/control faults remain unchanged. This records only qualified
+     * physical cleanup, never timing success or service readiness. */
+    return aeg_launch_storage_clean_source()==AEG_STORAGE_OK ?
+        AEG_NATIVE_OK : AEG_NATIVE_UNCERTAIN;
 }

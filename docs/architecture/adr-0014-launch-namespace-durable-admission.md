@@ -48,7 +48,7 @@ has NO selected physical-cleanup mechanism. Launch, updater activation AND
 authority repair remain blocked. No PID adoption/guessed termination, reboot,
 hypervisor fence or new recovery actor is selected. A separately specified
 physical-retirement mechanism is a prerequisite for any cold recovery effects.
-This source slice therefore has **no U→C, reset, repair or TerminalClean writer**.
+The initial source slice had no clean writer. The subsequent [normal settlement](../milestones/M2/NORMAL-CLEAN-SETTLEMENT.md) connects only the same surviving supervisor’s actual terminal/close path to U→same-gC below an immutable false operational gate. No reset, repair or supervisor-loss TerminalClean writer exists.
 
 ## Minimum source boundary
 

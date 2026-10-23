@@ -1,0 +1,107 @@
+{
+  "schema": "aegvium-normal-clean-independent/1",
+  "pre_edit_review_sha256": "3b75c75bff3f9e494bddc864ab7bde1ed5157225b1e05378faa0d2127b6256ba",
+  "vectors": [
+    {
+      "C_digest_hex": "4f11136650c183fe71ce0c139fb76529811d8950a13b7225b27a710f5c304466",
+      "expected_C_same_generation_hex": "4145474f574e310a430000000000000030303030303030303030303030303030303030303030303030303030303030314f11136650c183fe71ce0c139fb76529811d8950a13b7225b27a710f5c304466000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "generation": "00000000000000000000000000000001",
+      "known_U_hex": "4145474f574e310a55000000000000003030303030303030303030303030303030303030303030303030303030303031a93801f9a665510e0ca24b6ba66c79c618252890d9722850002fe1ef4eef86bb000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "label": "one",
+      "next_generation": "00000000000000000000000000000002"
+    },
+    {
+      "C_digest_hex": "f86f2691678b60a24ae51d150c9921edb9ca90e77c21679906c4e405ff62e5cd",
+      "expected_C_same_generation_hex": "4145474f574e310a43000000000000003031323334353637383961626364656630313233343536373839616263646566f86f2691678b60a24ae51d150c9921edb9ca90e77c21679906c4e405ff62e5cd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "generation": "0123456789abcdef0123456789abcdef",
+      "known_U_hex": "4145474f574e310a550000000000000030313233343536373839616263646566303132333435363738396162636465664ccb134f46c1e316980f39725b921be937f230c86e18e61c43abc3105e3d14d9000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "label": "nontrivial",
+      "next_generation": "0123456789abcdef0123456789abcdf0"
+    },
+    {
+      "C_digest_hex": "db5addb79a2238b49451c0bd5c225bb042177d8a51211ba148059c5c3454cb71",
+      "expected_C_same_generation_hex": "4145474f574e310a43000000000000006666666666666666666666666666666666666666666666666666666666666666db5addb79a2238b49451c0bd5c225bb042177d8a51211ba148059c5c3454cb71000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "generation": "ffffffffffffffffffffffffffffffff",
+      "known_U_hex": "4145474f574e310a55000000000000006666666666666666666666666666666666666666666666666666666666666666105c28a634df45fa0e2bf6d9b38cef5b64d493da5aaf9c504538199c18b47492000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "label": "maximum",
+      "next_generation": "refuse_no_wrap"
+    }
+  ],
+  "expectations": [
+    {
+      "expect": "Only then attempt exact C(g); keep original EX, never rewrite C(g-1) or advanceg.",
+      "given": "Same positive actual fork, continuous sole waiter obtains matching normal terminal status, all S construction/channel handles once-close successfully, same known U and lock",
+      "id": "N01"
+    },
+    {
+      "expect": "Terminal status is physical fact independent of diagnostics; C still forbidden until actual local closure and all other qualification/storage gates. Stop/ACK/exitcode never substitutes for it.",
+      "given": "Same exclusive matching signaled terminal status without ACK/AGSTART",
+      "id": "N02"
+    },
+    {
+      "expect": "Qualified NoChild may settle same burnedg, not reuseg. Pre-fork invalid ordering or merely empty PID is not this proof.",
+      "given": "Actual sole fork returns negative and no child could exist; all actual pair/null handles once-close successfully",
+      "id": "N03"
+    },
+    {
+      "expect": "No settlement storage I/O and no released uncertainty; never infer terminal or absence.",
+      "given": "Pending/stopped/interrupted wait, stop or ACK, signal success/ESRCH/EPERM only",
+      "id": "N04"
+    },
+    {
+      "expect": "No C writer, no adopted PID/new waiter, no guessed signals or recovery. U remains blocking.",
+      "given": "ECHILD, wrong wait PID, lost exclusive waiter, S loss or unknown identity",
+      "id": "N05"
+    },
+    {
+      "expect": "No C write, close retry or receipt reconstruction; retain known references and uncertainty.",
+      "given": "Any failed/ambiguous local close, alias/ownership fault, or unjoined actual handle",
+      "id": "N06"
+    },
+    {
+      "expect": "Immutable false gate refuses before storage, identity, fork, signals or channel effects; no configuration/provider can turn it true.",
+      "given": "Default or explicit source supervisor before native acceptance",
+      "id": "N07"
+    },
+    {
+      "expect": "Refuse before clean write; views, root mode, parsed C/U and hashes cannot create provenance.",
+      "given": "No known committed U, different generation/Ubytes, missing continuous original lock/FD, replaced inode or malformed frame",
+      "id": "N08"
+    },
+    {
+      "expect": "No clean write and no retry/repair. Only independently acquired current traversal descriptors may receive their once-close; original checkpoint lifetime remains held.",
+      "given": "Fixed namespace traversal/stat/path/metadata/close acquisition failure",
+      "id": "N09"
+    },
+    {
+      "expect": "Trace is prevalidation/exact U read, one exact C128 write, fsync, exact C128 readback, original-inode+named metadata verification; known clean only after entire sequence.",
+      "given": "Clean writer success",
+      "id": "N10"
+    },
+    {
+      "expect": "No continuation or second write; no readback-as-repair after failed fsync; state is uncertain, never assert unchanged U or known durable C.",
+      "given": "Negative/short clean write or fsync failure",
+      "id": "N11"
+    },
+    {
+      "expect": "C may have reached storage but clean commitment is unestablished; no retry or restart permission from local result.",
+      "given": "Clean reread mismatch/short/error or final named/FD/original inode drift",
+      "id": "N12"
+    },
+    {
+      "expect": "No duplicate I/O, close, rearm or later use as recovery. One process/native generation remains finite.",
+      "given": "Duplicate/reentrant/invalid-order settlement attempt",
+      "id": "N13"
+    },
+    {
+      "expect": "Never erase actual terminal receipt or turn target into Met. C only records retired burned generation, not timing qualification/Ready; failed timing evidence/status remains independently visible.",
+      "given": "Clock fault or4s missed/unverifiable target together with separately known complete physical retirement",
+      "id": "N14"
+    },
+    {
+      "expect": "Clean maximum generation is valid but next launch refuses wrap. Existing launch.intent/pair.snapshot are not automatically rewritten and require their genuine fresh pairing path.",
+      "given": "Cffffffffffffffffffffffffffffffff after complete qualified physical settlement",
+      "id": "N15"
+    }
+  ]
+}
