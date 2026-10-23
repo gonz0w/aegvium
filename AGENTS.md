@@ -17,3 +17,22 @@
 14. Inspect open PRs and unblocked Ready issues on continue; keep issue state, native blockers and Project fields consistent.
 
 15. Present security validation as concise statuses, counts and hashes instead of raw request fixtures or verbose findings. Respect security access notices; never request broader cyber access or hide/repackage restricted content to bypass a safeguard. Stop affected validation and record it as blocked while continuing ordinary engineering.
+
+## Backlog delivery
+
+Follow the authoritative [central delivery contract](https://github.com/gonz0w/suite-standards/blob/4aeb70ae4d7423c4ae7d52c025f94af4fb53ff22/docs/backlog-delivery.md)
+and [rollout](https://github.com/gonz0w/suite-standards/blob/4aeb70ae4d7423c4ae7d52c025f94af4fb53ff22/docs/backlog-delivery-rollout.md)
+at Suite-Standards `4aeb70ae4d7423c4ae7d52c025f94af4fb53ff22`.
+Adoption owner: delegated LAB product lane; [issue #128](https://github.com/gonz0w/aegvium/issues/128).
+
+Next outcome/queue: Standalone install/start/inspect/backend/restart: #22/#23/#28/#31; existing Draft126.
+WIP:2 active batches per repo,1 per implementer; Blocked/Review count.
+Draft125/126 remain visible held/review work, not accepted WAF appliances. Standalone frontend/required-record decisions, actual TLS/credentials/native launch and four-second qualification remain held.
+Checks/holds: make check lint secrets; targeted pure/intercepted tests, scoped vet and cross-builds. Full/native/engine campaigns and activation remain held; Actions/runners stay prohibited.
+
+Local mapping: legacy Validation means source awaiting acceptance; issue text names
+Blocked reasons and it still counts as WIP. Inherited-WIP exception permits only
+this instruction/backlog maintenance within existing batches; no new custom
+architecture batch. Owner: delegated LAB lane; review at2026-10-24 handoff.
+Existing safety, independent review, signatures, evidence and acceptance rules
+remain; this pointer does not enforce unrelated advisory profiles or grant effects.
