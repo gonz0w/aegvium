@@ -2,7 +2,8 @@
 
 Source/design direction, 2026-10-23. The maintainer selected Bootweave to turn
 stock OpenBSD into hardened, preconfigured appliances with little setup and
-useful logging/monitoring. OpenBSD 8.0/amd64 is the new prospective baseline;
+useful logging/monitoring. OpenBSD 8.0 is the prospective release baseline;
+amd64 is an initial qualification candidate, not a product-wide architecture limit;
 [the official release page](https://www.openbsd.org/80.html) identifies 8.0.
 No 8.0 image/source acquisition, build, installation, setting, credential or native
 execution is authorized or qualified by this document. Preserve all 7.9 evidence.
@@ -14,6 +15,38 @@ Bootweave schema or authority issuer**. `tools/commission-owner.py` and the priv
 `site79.tgz`, set paths, answer file and target compiler assumptions must not be
 ported by string replacement or shipped as arbitrary product-provided root hooks.
 Bootweave is an installation integration, not an Aegvium runtime dependency.
+
+## Product and supported-target acceptance
+
+Bootweave's three appliance profiles are **Aegvium, Nomvium and Arxwall**.
+Vectivium retains its independent package/service product; it is neither a fourth
+required ISO profile nor an Aegvium prerequisite. Aegvium's goal is a WAF image
+for a VM or supported bare metal, not merely an inspector component or research
+bundle. Actual inspection, rejection without bypass, application/backend isolation,
+protected startup/restart, operational logging and honest health must pass for the
+installed profile. Hardened defaults are an acceptance target, not absolute security.
+
+Only necessary site inputs should remain: interface/management binding, application
+authorities/backends and protected per-instance identity/trust material. Their absence
+must produce a clear unconfigured/refusing state, never an uninspected fallback.
+The installer must not bake common keys or infer operational credential authority
+from this product clarification. A conforming non-suite frontend must be accepted
+and tested; optional Vectivium integration cannot replace standalone acceptance.
+The image also needs a concrete supplied public frontend and its owned startup/
+pairing path: a protocol specification or private inspector endpoint alone is not
+a ready-to-protect standalone WAF. Reusing a standard frontend component is allowed
+in principle, but its actual generation/lifetime handoff must be delivered without
+requiring the Vectivium product. This paragraph selects no new launch authority.
+
+The architecture/media interface must permit independently qualified amd64/arm64
+VM and bare-metal profiles, plus board-specific media where supported. An ISO is
+not a universal board boot image. The versioned [OpenBSD 8.0 arm64 installation
+instructions](https://ftp.openbsd.org/pub/OpenBSD/8.0/arm64/INSTALL.arm64) list Pi
+3/3 B+/4/400/Compute Module 4/5; the [arm64 page](https://www.openbsd.org/arm64.html)
+explains firmware and board differences. This is OS support evidence, **not WAF
+compatibility**. Exact boot firmware/device tree, console, NIC/storage, confinement,
+resource and protection behavior require profile-specific qualification. No hardware
+profile is qualified here; generic GOOS/GOARCH compilation does not qualify a board.
 
 ## Required product inputs and target operations
 

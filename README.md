@@ -1,6 +1,6 @@
 # Aegvium
 
-Lean, auditable OpenBSD WAF research for a dedicated VM behind an operator-controlled perimeter. EdgeWall is an optional suite integration. BSD-3-Clause; independent of the OpenBSD project. Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
+Aegvium is being built as a preconfigured OpenBSD WAF appliance for a VM or supported bare metal, with hardened defaults, useful local logging/health and minimal site-specific setup. It must protect applications without requiring Vectivium or another suite runtime. EdgeWall is an optional suite integration. BSD-3-Clause; independent of the OpenBSD project. Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
 
 A runnable lab companion now forwards owned HTTP/HTTPS applications through pinned Coraza/OWASP CRS. It supports verified HTTPS backends, strict route allowlists, transactional SIGHUP route replacement and four-request admission. Stock relayd can terminate TLS in the retained control or pass TCP/TLS to the companion, where actual SNI/HTTP authority binding is enforced. The [M2 boundary](docs/architecture/adr-0010-frontend-key-mandatory-inspector.md) is now selected for reviewed source adoption; runtime integration remains unimplemented/unqualified. This is not an installable WAF.
 
