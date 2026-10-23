@@ -5,6 +5,7 @@ go 1.27.2
 require (
 	github.com/corazawaf/coraza-coreruleset/v4 v4.25.0
 	github.com/corazawaf/coraza/v3 v3.8.1
+	golang.org/x/sys v0.49.0
 )
 
 require (

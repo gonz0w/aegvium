@@ -88,8 +88,8 @@ class CommissionOwnerTests(unittest.TestCase):
                 scan.return_value.__enter__.return_value = iter(SimpleNamespace(name=n) for n in names+extra)
                 if valid:
                     owner._frontend_inputs()
-                    self.assertEqual(len(owner.frontend),7)
-                    self.assertEqual(copied.call_count,8)
+                    self.assertEqual(len(owner.frontend),8)
+                    self.assertEqual(copied.call_count,9)
                 else:
                     with self.assertRaises(OWNER.Incomplete):
                         owner._frontend_inputs()

@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/gonz0w/aegvium/internal/commission"
+	"github.com/gonz0w/aegvium/internal/frontendowner"
 )
 
 // Fixed protected placement only. The installed entry still refuses. This does
@@ -48,11 +49,11 @@ func placeFrontend(root *os.Root, dirs map[string]*os.File, descriptor []byte) e
 	if err != nil {
 		return errPlacement
 	}
-	entries, err := media.ReadDir(len(plan) + 3)
-	if err != nil || len(entries) != len(plan)+2 {
+	entries, err := media.ReadDir(len(plan) + 4)
+	if err != nil || len(entries) != len(plan)+3 {
 		return errPlacement
 	}
-	allowed := map[string]bool{"frontend-role": true, "frontend-listen": true}
+	allowed := map[string]bool{"frontend-role": true, "frontend-listen": true, "frontend-owner": true}
 	for _, file := range plan {
 		allowed[file.Name] = true
 	}
@@ -78,6 +79,10 @@ func placeFrontend(root *os.Root, dirs map[string]*os.File, descriptor []byte) e
 	if !commission.MatchFrontendRoot(material["inspector-root.pem"], material["server.der"], server) {
 		return errPlacement
 	}
+	image, err := sourceBytes(root, "aegvium.install/frontend/frontend-owner", commission.MaxImageBytes, 0400)
+	if err != nil {
+		return errPlacement
+	}
 	master, group, err := accountFiles(root)
 	if err != nil || !frontendAccountIdentity(master, group) {
 		return errPlacement
@@ -99,6 +104,22 @@ func placeFrontend(root *os.Root, dirs map[string]*os.File, descriptor []byte) e
 		{"frontend-role", role}, {"frontend-listen", listen}, {"frontend.cfg", candidate.Bytes()},
 	} {
 		if installBytes(root, dirs, "etc/aegvium/frontend/"+file.name, file.data, 0600, 0) != nil {
+			return errPlacement
+		}
+	}
+	if installBytes(root, dirs, "etc/aegvium/frontend/pair.agpair", descriptor, 0600, 0) != nil ||
+		installBytes(root, dirs, "usr/local/libexec/aegvium/frontend-owner", image, 0555, 0) != nil ||
+		makeDirectory(root, dirs, "var/db/aegvium/frontend", 0700) != nil ||
+		makeDirectory(root, dirs, "var/db/aegvium/frontend/consumed", 0700) != nil {
+		return errPlacement
+	}
+	initial := frontendowner.InitialHistorySource()
+	if installBytes(root, dirs, "var/db/aegvium/frontend/writer.lock", nil, 0600, 0) != nil ||
+		installBytes(root, dirs, "var/db/aegvium/frontend/launch.state", initial[:], 0600, 0) != nil {
+		return errPlacement
+	}
+	for _, name := range []string{"var/db/aegvium/frontend/consumed", "var/db/aegvium/frontend"} {
+		if dirs[name].Sync() != nil || dirs[name].Close() != nil {
 			return errPlacement
 		}
 	}

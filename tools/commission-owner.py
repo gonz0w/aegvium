@@ -220,6 +220,7 @@ class _Owner:
         for package, name, tags in (
             ('./cmd/aegvium-inspector', 'inspector', 'aegvium_transport_source,aegvium_engine_source,no_fs_access'),
             ('./cmd/aegvium-place', 'place', 'aegvium_commission_source'),
+            ('./cmd/aegvium-frontend-owner', 'frontend-owner', 'aegvium_frontend_source'),
         ):
             self._command([str(compiler), 'build', '-mod=readonly', '-p=2', '-trimpath',
                            '-tags=' + tags, '-o', str(self.work / name), package],
@@ -357,6 +358,17 @@ class _Owner:
             if os.fstat(output).st_size != st.st_size:
                 raise Incomplete('frontend input changed')
             self.frontend.append((name, output, st.st_size))
+        # This image comes from the same private signed source export and pinned
+        # compiler, never from a supplied role/archive/pin claiming authority.
+        incoming = self._input(self.work / 'frontend-owner')
+        image = os.fstat(incoming)
+        if image.st_size < 1 or image.st_size > 67108864:
+            raise Incomplete('frontend owner image bound')
+        output = self._copy(self.work / 'frontend-owner', 'frontend/frontend-owner',
+                            _digest(incoming))
+        if os.fstat(output).st_size != image.st_size:
+            raise Incomplete('frontend owner image changed')
+        self.frontend.append(('frontend-owner', output, image.st_size))
 
     def _derived_media(self, source, stock):
         tree = self.work / 'media'

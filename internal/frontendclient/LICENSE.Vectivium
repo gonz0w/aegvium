@@ -1,0 +1,12 @@
+Original Vectivium foundation material is privately held and not publicly released.
+No public license grant is made by this foundation. The owner has approved private
+foundation publication only, not public release, a final original-material license,
+or relicensing of existing work.
+An open-source release is intended after homelab validation, subject to that
+explicit decision. Do not present this repository as released open source yet.
+
+Third-party material keeps its own license. In particular,
+design/bsd-classic-v1.json is copied unchanged from the pinned Suite Standards
+revision; its complete notice is retained in LICENSES/Suite-Standards-BSD-3-Clause.txt.
+This status notice does not restrict or replace that third-party license.
+See docs/PROVENANCE.md for the separate upstream/package obligations ledger.

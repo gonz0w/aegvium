@@ -93,3 +93,100 @@ placement, authenticated TLS/material lifecycle, distinct-principal backend
 isolation, original-wire/inspection/backend fidelity, installed start/restart,
 whole-appliance CPU/RSS/FD/disk bounds, and mandatory four-second shutdown.
 The compiler, hashes and placement observation prove none of these gates.
+
+## Separate frontend owner source continuation
+
+The separate source owner now composes the installed fixed configuration and
+material with actual CONTROL and original-child ownership. It does not expand
+inspector S or touch its child protocol, U/C state, required security records or
+four-second boundary. `cmd/aegvium-frontend-owner` is a distinct fixed root-invoked
+entry. Every installed/default/source entry currently returns77 before native,
+file, credential, signal, TLS or child operations; there is no enable argument,
+caller receipt or test provider. The private native path is typechecked only.
+
+The source owner opens protected no-follow root components and its own
+`var/db/aegvium/frontend` namespace on local FFS. A nonblocking exclusive
+`writer.lock` remains held through the actual child/cleanup lifetime. At most4096
+canonical generation files are retained; malformed, partial, unreadable or full
+history refuses. The selected full104-byte G/D/Q record is created exclusively,
+read back and file/directory synced before it is consumed. A name remains burned
+on failure. There is no unlink, reset, imported PID/FD, repair or automatic restart.
+
+An additional fixed160-byte `launch.state` is this frontend owner's interlock,
+separate from the inspector checkpoint and required audit log. Its format is
+`AEGFRN1` plus LF, C/U phase, reserved zeros, the full104-byte record, checksum
+and reserved zeros. The initial C has no prior record. Independent Python
+literals were frozen before its Go codec. The actual same owner writes/readbacks/
+syncs U before Start can be attempted. U or malformed state blocks another launch
+and requires the already selected cold-recovery treatment; it never guesses
+retirement after helper loss. Counters/files cannot detect unannounced rollback
+or clones. C is written only after its original child was actually waited, or
+private source ordering proves Start was never called, and non-storage handles
+are certainly closed. Unknown birth/wait/close remains retained. State/namespace/
+writer handles stay through settlement, with the writer closed last. These C bytes
+are not owner-process retirement, timing, image freshness or serving proof.
+
+The fixed loader recompiles exact `frontend.cfg`, retains that actual read-only
+configuration FD, rechecks the protected package-principal databases and obtains
+only its own configured frontend client material. It uses the existing Aeg
+`pairmodel` and `frontendconfig`, rather than copying another descriptor parser
+or renderer. The client validates bounded local chains/keys, exact role/EKU,
+DER pins, validity, TLS1.3/h1 and nonresumption, on its own actual numeric CONTROL
+connection. Its exact request/response/EOF carries the common G/full D/Q tuple.
+The endpoint receives one close attempt and active operations must finish before
+successful historical comparison. Parsing and TLS have not been executed here.
+
+Only that private successful operation permits the next source step: fixed
+`/usr/local/sbin/haproxy -db -f /dev/fd/3`, inheriting only the exact held config
+as fd3. No raw configuration/argv/PID, shell, daemon/master-worker mode, reload,
+foreign process or direct application destination is accepted. The actual
+successful Cmd.Process is the sole child origin; private kqueue NOTE_EXIT precedes
+the one consuming Wait. Stop withdraws local preparation before at most one TERM
+and one KILL. Signal rights are sealed before Wait and never reconstructed after
+loss. The original retirement deadline is not renewed by errors. Expiry or any
+unknown cleanup retains the owner/U/lock and blocks replacement. No state or log
+I/O participates in active stop/wait. Actual blocking calls, helper loss and the
+unchanged mandatory appliance shutdown bound still need native qualification.
+
+Successful CONTROL is historical prepared-data comparison, not Ready/allow or
+frontend acceptance. HAProxy's own DATA TLS and Aeg's same-request transaction/
+lease/backend barrier remain mandatory. Inspector loss or stale generation must
+still refuse rather than select an application fallback. Strict original-wire,
+O/I/B fidelity, same-appliance principal/network isolation and actual key/loader/
+chroot behavior remain unqualified. No code-only result enables public serving.
+
+For bundled mode the existing fresh writer additionally places its same signed
+source-built frontend-owner image root:wheel0555, the exact paired descriptor in
+its private configuration directory, and an exclusively new frontend history
+namespace with empty lock/consumed directory and initial160-byte C data. No state
+is adopted from a serialized freshness receipt; the existing builder must still
+own the actual never-started target continuously. External mode creates none of
+this namespace or owner placement and retains the explicit non-suite interface.
+The retained7.9 coordinator remains experimental, and exact8.0 production payload/
+Bootweave/package/first-start/stop/restart integration is still incomplete.
+
+The owner/client reuse immutable Vect e289598 original source with complete
+private notices; the original file fingerprints are recorded below. The only
+new module is the reviewed source binding in
+[ADR0015](../../architecture/adr-0015-frontend-openbsd-bindings.md). Full required
+frontend audit coverage, package/executable/update custody, service composition,
+complete aggregate CPU/RSS/FD/disk accounting and actual native enforcement/
+shutdown remain delivery gates. U/C interlock data is not a substitute for the
+required security audit stream or its selected clean-boundary retention policy.
+
+| Reused original file at e289598 | SHA256 |
+|---|---|
+| `internal/inspectorpair/client_source.go` | `1f47111799c81c4e3a3c8d5e5de9319c06518a5dd182f3ed82785d1b1bd505ba` |
+| `internal/inspectorpair/endpoint_source.go` | `881baea5a29802b2369b7fbd8a8df788cf2ac29e3831dd5bca985118b496de93` |
+| `internal/inspectorpair/record_source.go` | `1da30f3e5229fed5a28eabae5d8cc9e41aeb4056593ab92f074765365fe6a57b` |
+| `internal/inspectorpair/client_source_test.go` | `78c73810242789d4c6f0d3b7e8da7b28ae1b4c1aa6218e46bf50b0a7b1cc3667` |
+| `internal/inspectorpair/descriptor2_binding_source_test.go` | `5551eacf60856c476257c55331059663118f26f5ee3a7484b36973a4a9cb7110` |
+| `internal/inspectorpair/record_source_test.go` | `5abfb8351b06290273e2e004c6fcb8413aa85121997e6cc3d4e9f60b23309d6d` |
+| `internal/startupowner/policy_source.go` | `34869dad592326beabb2c5765dc7340e32fdc3081018097567cc7cc895b296e1` |
+| `internal/startupowner/material_source.go` | `1b836f9d89df2f5df380d46abddeec56c1bc59b946fa482fc2598fd3a574e1c7` |
+| `internal/startupowner/policy_source_test.go` | `c321a22fbed8c15b611ca8d83a7f1b74cfdf6d04210f487432e816da7293b6f8` |
+| `internal/startupowner/material_source_test.go` | `3418918ffcda21903a1d4e34f86c3a23e84b8f626ff9164c4e0d6b5c61c71a25` |
+| `internal/startupowner/profile_history_source_test.go` | `c7948182d08a7a824f44b6e4ed7f8d5256cc10d7589909b31db4f7cb1a1292b5` |
+| `internal/startupowner/history_openbsd_source.go` | `f33c926bc27d63664293b688cf4f0b07dd2b476a845220b2b8d4b3c144301b15` |
+| `internal/startupowner/frontend_openbsd_source.go` | `b456368bf4191b59b6bbf50339f6092b743d13f98c141994b3cd42bc3b9e4145` |
+| `internal/startupowner/child_openbsd_source.go` | `96878408e5bcbe69f1bcb32ea5c7eae46be6772c391ab84cbc05a9bb04d9d225` |

@@ -45,7 +45,7 @@ func sourceBytes(root *os.Root, name string, limit int64, mode os.FileMode) ([]b
 	if !current() {
 		return nil, errPlacement
 	}
-	a, b := make([]byte, limit+1), make([]byte, limit+1)
+	a, b := make([]byte, initial.Size()+1), make([]byte, initial.Size()+1)
 	n, e := f.ReadAt(a, 0)
 	m, e2 := f.ReadAt(b, 0)
 	if e != io.EOF || e2 != io.EOF || int64(n) != initial.Size() || n != m || !bytes.Equal(a[:n], b[:m]) || !current() || f.Close() != nil {

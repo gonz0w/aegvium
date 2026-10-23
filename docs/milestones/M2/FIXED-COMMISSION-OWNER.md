@@ -109,3 +109,10 @@ installation. It does not provide HAProxy package authentication, actual fronten
 startup/CONTROL ownership, image handoff or operational admission. Requested
 bundled inputs fail closed instead of silently selecting the external profile.
 The public endpoint key remains outside the inspector's material namespace.
+
+The bundled continuation now stages the separate frontend-owner executable from
+the same signed source export/compiler, installs its private paired snapshot and
+exclusively creates its own empty generation/lifetime namespace. External mode
+does not place that executable/namespace. This is actual source wiring only; no
+builder, target, credential, executable or image operation has run. Fresh-target
+custody, package8.0 and production Bootweave handoff remain unqualified.

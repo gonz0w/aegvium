@@ -82,3 +82,12 @@ The code imports only Aegvium's descriptor parser and Go standard library; it
 requires no Vectivium runtime. Stock HAProxy remains separately licensed and
 requires exact authenticated OpenBSD8.0 package/dependency/notice, loader,
 privilege and native acceptance. No binary/package was acquired or executed.
+
+## Separate frontend owner source bindings (2026-10-23)
+
+[ADR0015](../architecture/adr-0015-frontend-openbsd-bindings.md) adds the retained
+`golang.org/x/sys` v0.49.0 direct requirement for actual OpenBSD file/kqueue bindings
+in the separate source-tagged frontend owner. The cached module was verified
+against signed retained Go sums with network disabled; the full BSD notice is
+retained separately from private Vect source notices. This is not an advisory or
+native qualification pass. The inspector C owner and its authority are unchanged.
