@@ -99,3 +99,13 @@ and capability tuple; uncertainty retains both partial owners and forbids reset,
 retry or replacement. Acceptance means paired staging custody only. Runtime
 AGCHECK104 still requires actual role mTLS on that same connection, and neither
 handoff nor preflight grants Ready, a backend attempt or an allow verdict.
+
+## Adopted bundled-frontend source continuation (2026-10-23)
+
+The [bounded frontend source](BUNDLED-FRONTEND-SOURCE.md) now connects explicit
+bundled/external selection and fixed DATA-only configuration/material placement
+to this retained coordinator. This is separate from production Bootweave8.0
+installation. It does not provide HAProxy package authentication, actual frontend
+startup/CONTROL ownership, image handoff or operational admission. Requested
+bundled inputs fail closed instead of silently selecting the external profile.
+The public endpoint key remains outside the inspector's material namespace.

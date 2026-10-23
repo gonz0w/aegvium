@@ -41,3 +41,28 @@ func TestFreshAccountReadback(t *testing.T) {
 		}
 	}
 }
+
+func TestFrontendPackageAccountIsSeparateAndNeverInvented(t *testing.T) {
+	master := "root:*:0:0::0:0:System:/root:/bin/ksh\n_aegvium:*:456:456::0:0:Aegvium inspector:/var/empty:/sbin/nologin\n_haproxy:*:604:604:daemon:0:0:HAProxy daemon:/var/empty:/sbin/nologin\n"
+	group := "wheel:*:0:root\n_aegvium:*:456:\n_haproxy:*:604:\n"
+	if !frontendAccountIdentity(master, group) {
+		t.Fatal("existing fixed package principal refused")
+	}
+	for _, bad := range []string{
+		strings.Replace(master, "_haproxy:*:604:604:", "_haproxy:*:456:456:", 1),
+		strings.Replace(master, "_haproxy:*:604:604:", "_haproxy:*:0604:0604:", 1),
+		strings.Replace(master, "_haproxy:*:", "_haproxy:unlocked:", 1),
+		master + "alias:*:604:789::0:0:Alias:/var/empty:/sbin/nologin\n",
+		master + "alias:*:789:0604::0:0:Alias:/var/empty:/sbin/nologin\n",
+		strings.Replace(master, "HAProxy daemon:/var/empty:/sbin/nologin", "HAProxy daemon:/root:/bin/ksh", 1),
+	} {
+		if frontendAccountIdentity(bad, group) {
+			t.Fatal("unsafe package account accepted")
+		}
+	}
+	for _, bad := range []string{"", group + "other:*:789:_haproxy\n", group + "other:*:604:\n", strings.Replace(group, "604:\n", "604:other\n", 1)} {
+		if frontendAccountIdentity(master, bad) {
+			t.Fatal("unsafe package group accepted")
+		}
+	}
+}

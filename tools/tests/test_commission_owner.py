@@ -43,6 +43,57 @@ class CommissionOwnerTests(unittest.TestCase):
                     with self.assertRaises(OWNER.Incomplete):
                         owner._role_inputs()
 
+    def test_frontend_mode_is_explicit_and_never_silent_bypass(self):
+        for raw, valid in [(b'external\n', True), (b'', False),
+                           (b'bundled', False), (b'external\nextra', False)]:
+            owner = object.__new__(OWNER._Owner)
+            owner.work = Path('/not-created')
+            record = SimpleNamespace(st_uid=1000, st_mode=0o100600, st_size=len(raw))
+            with patch.object(OWNER._Owner, '_input', return_value=71), \
+                    patch.object(OWNER.os, 'fstat', return_value=record), \
+                    patch.object(OWNER.os, 'getuid', return_value=1000), \
+                    patch.object(OWNER.os, 'pread', return_value=raw), \
+                    patch.object(OWNER._Owner, '_copy', return_value=72) as copied, \
+                    patch.object(OWNER, '_digest', return_value='opaque'), \
+                    patch.object(Path, 'lstat', side_effect=FileNotFoundError):
+                if valid:
+                    owner._frontend_inputs()
+                    self.assertEqual(owner.frontend, [])
+                    copied.assert_called_once()
+                else:
+                    with self.assertRaises(OWNER.Incomplete):
+                        owner._frontend_inputs()
+
+    def test_bundled_frontend_inputs_are_bounded_and_data_only(self):
+        names = ['frontend-role', 'frontend-listen', 'public.pem', 'frontend.pem',
+                 'inspector-root.pem', 'server.der', 'client.der']
+        for pair, extra, valid in [(b'AGPAIR2\n'+b'0'*32+b'M2-H1/3', [], True),
+                                   (b'AGPAIR1\n'+b'0'*32+b'M2-H1/1', [], False),
+                                   (b'AGPAIR2\n'+b'0'*32+b'M2-H1/3', ['unknown'], False)]:
+            owner = object.__new__(OWNER._Owner)
+            owner.work, owner.pair = Path('/not-created'), pair
+            directory = SimpleNamespace(st_uid=1000, st_mode=0o40700)
+            # _frontend_inputs reads the8-byte mode first; subsequent opaque
+            # records have the same synthetic size. No file/credential is read.
+            record = SimpleNamespace(st_uid=1000, st_mode=0o100600, st_size=8)
+            with patch.object(OWNER._Owner, '_input', return_value=71), \
+                    patch.object(OWNER.os, 'fstat', return_value=record), \
+                    patch.object(OWNER.os, 'getuid', return_value=1000), \
+                    patch.object(OWNER.os, 'pread', return_value=b'bundled\n'), \
+                    patch.object(OWNER._Owner, '_copy', return_value=72) as copied, \
+                    patch.object(OWNER, '_digest', return_value='opaque'), \
+                    patch.object(Path, 'stat', return_value=directory), \
+                    patch.object(Path, 'mkdir'), \
+                    patch.object(OWNER.os, 'scandir') as scan:
+                scan.return_value.__enter__.return_value = iter(SimpleNamespace(name=n) for n in names+extra)
+                if valid:
+                    owner._frontend_inputs()
+                    self.assertEqual(len(owner.frontend),7)
+                    self.assertEqual(copied.call_count,8)
+                else:
+                    with self.assertRaises(OWNER.Incomplete):
+                        owner._frontend_inputs()
+
     def test_fixed_supervisor_source_closure(self):
         expected = {
             'main.c', 'controller.c', 'controller.h', 'control_frame.c', 'control_frame.h',

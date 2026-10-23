@@ -246,6 +246,7 @@ class _Owner:
         self.payload = self._input(self.work / 'payload.tar')
         self.payload_pin = _digest(self.payload).encode()
         self._role_inputs()
+        self._frontend_inputs()
         # Reuse only read-only stock release verification, not baseline/SSH or
         # its booted-image admission. This path has no download fallback.
         pins = json.loads((source / 'research/native/official-release-pins.json').read_text())
@@ -311,6 +312,52 @@ class _Owner:
                 raise Incomplete('role input changed')
             self.roles.append((name, output, s.st_size))
 
+    def _frontend_inputs(self):
+        # Explicit composition: requested standalone protection cannot silently
+        # fall back to the externally supplied frontend profile. No key is parsed.
+        parent = ROOT / '.tools/commission-inputs'
+        mode = self._input(parent / 'frontend-mode')
+        st = os.fstat(mode)
+        if (st.st_uid not in (0, os.getuid()) or st.st_mode & 0o7777 not in (0o400, 0o600) or
+                st.st_size < 1 or st.st_size > 9):
+            raise Incomplete('frontend composition input')
+        raw = os.pread(mode, 10, 0)
+        if raw not in (b'external\n', b'bundled\n'):
+            raise Incomplete('frontend composition mode')
+        self._copy(parent / 'frontend-mode', 'frontend-mode', _digest(mode))
+        self.frontend = []
+        directory = parent / 'frontend'
+        if raw == b'external\n':
+            try:
+                directory.lstat()
+            except FileNotFoundError:
+                return
+            raise Incomplete('unexpected bundled frontend inputs')
+        if self.pair[:8] != b'AGPAIR2\n' or self.pair[40:47] != b'M2-H1/3':
+            raise Incomplete('bundled frontend requires DATA descriptor')
+        for path in (directory, parent):
+            st = path.stat(follow_symlinks=False)
+            if (not stat.S_ISDIR(st.st_mode) or st.st_uid not in (0, os.getuid()) or st.st_mode & 0o022):
+                raise Incomplete('protected frontend input directory')
+        limits = {'frontend-role': 253, 'frontend-listen': 21, 'public.pem': 81920,
+                  'frontend.pem': 81920, 'inspector-root.pem': 32768,
+                  'server.der': 16384, 'client.der': 16384}
+        with os.scandir(directory) as entries:
+            names = [entry.name for _, entry in zip(range(8), entries)]
+        if len(names) != len(limits) or set(names) != set(limits):
+            raise Incomplete('frontend input set')
+        (self.work / 'frontend').mkdir(mode=0o700)
+        for name in sorted(limits):
+            incoming = self._input(directory / name)
+            st = os.fstat(incoming)
+            if (st.st_uid not in (0, os.getuid()) or st.st_mode & 0o7777 not in (0o400, 0o600) or
+                    st.st_size < 1 or st.st_size > limits[name]):
+                raise Incomplete('bounded frontend input')
+            output = self._copy(directory / name, 'frontend/' + name, _digest(incoming))
+            if os.fstat(output).st_size != st.st_size:
+                raise Incomplete('frontend input changed')
+            self.frontend.append((name, output, st.st_size))
+
     def _derived_media(self, source, stock):
         tree = self.work / 'media'
         tree.mkdir(mode=0o700)
@@ -327,11 +374,21 @@ class _Owner:
                     ('aegvium.install/expected', 0o400, expected),
                     ('aegvium.install/supervisor-source', 0o700, None),
                     ('aegvium.install/roles', 0o700, None),
+                    ('aegvium.install/frontend-mode', 0o400, (self.work / 'frontend-mode').read_bytes()),
                 ):
                     h = tarfile.TarInfo(name); h.uid = h.gid = 0; h.mode = mode
                     h.type = tarfile.DIRTYPE if blob is None else tarfile.REGTYPE
                     h.size = 0 if blob is None else len(blob)
                     archive.addfile(h, None if blob is None else io.BytesIO(blob))
+                if self.frontend:
+                    h = tarfile.TarInfo('aegvium.install/frontend')
+                    h.uid = h.gid = 0; h.mode = 0o700; h.type = tarfile.DIRTYPE
+                    archive.addfile(h)
+                    for name, fd, size in self.frontend:
+                        h = tarfile.TarInfo('aegvium.install/frontend/' + name)
+                        h.uid = h.gid = 0; h.mode = 0o400; h.size = size
+                        with os.fdopen(os.dup(fd), 'rb') as incoming:
+                            incoming.seek(0); archive.addfile(h, incoming)
                 total_source = 0
                 for name in SUPERVISOR_INPUTS:
                     blob = (source / name).read_bytes()

@@ -288,6 +288,9 @@ func placeExtension(root *os.Root, dirs map[string]*os.File, descriptor []byte) 
 			return zero, errPlacement
 		}
 	}
+	if placeFrontend(root, dirs, descriptor) != nil {
+		return zero, errPlacement
+	}
 	for _, name := range []string{"etc/aegvium/inspector", "etc/aegvium", "etc", "aegvium.install/build", "aegvium.install/roles", "aegvium.install/supervisor-source"} {
 		if dirs[name].Sync() != nil || dirs[name].Close() != nil {
 			return zero, errPlacement

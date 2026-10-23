@@ -68,3 +68,17 @@ x/net v0.60.0 and the OpenTelemetry log family v0.21.0 remove the seven prior sy
 [ADR-0004](../architecture/adr-0004-configured-caddy-comparison.md) reviews explicit Caddy reverse-proxy/filesystem registration. The actual transport adds github.com/pires/go-proxyproto v0.12.0 to loaded inputs; it was already in the selected graph. Its Apache-2.0 LICENSE, archive/module sums and VCS commit are in the [updated inventory](../../research/coraza/connector-dependencies.json). All old versions/legal bytes and the companion graph remain unchanged. Target inputs now include 153 modules/204 legal files; the extra module does not enable upstream PROXY output in this fixture. Private unmodified execution remains the review boundary; distribution obligations persist.
 
 [Fresh native/advisory receipts](../../research/native/configured-caddy-observations.json) retain complete host/target loaded-source scans with zero symbol-level IDs and the two prior residuals. The configured server adds native TLS/reload evidence without declaring either residual resolved or certifying the broader selected graph.
+
+## Private bundled frontend source reuse (2026-10-23)
+
+The [standalone frontend source](../milestones/M2/BUNDLED-FRONTEND-SOURCE.md) adapts
+two exact files from user-owned Vectivium e289598; full source hashes and the
+unchanged private status notice are retained there and in
+`internal/frontendconfig/LICENSE.Vectivium`. This is private original material
+with no public license grant, not an additional BSD-licensed upstream dependency.
+Do not treat Aegvium's root license as relicensing those files. Public source or
+appliance distribution needs the owner's existing release/licensing decision.
+The code imports only Aegvium's descriptor parser and Go standard library; it
+requires no Vectivium runtime. Stock HAProxy remains separately licensed and
+requires exact authenticated OpenBSD8.0 package/dependency/notice, loader,
+privilege and native acceptance. No binary/package was acquired or executed.

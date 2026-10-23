@@ -27,7 +27,7 @@ Adoption owner: delegated LAB product lane; [issue #128](https://github.com/gonz
 
 Next outcome/queue: Standalone install/start/inspect/backend/restart: #22/#23/#28/#31; existing Draft126.
 WIP:2 active batches per repo,1 per implementer; Blocked/Review count.
-Draft125/126 remain visible held/review work, not accepted WAF appliances. Standalone frontend/required-record decisions, actual TLS/credentials/native launch and four-second qualification remain held.
+Draft125/126 remain visible held/review work, not accepted WAF appliances. Bundled standalone frontend and bounded durable security-record source directions were adopted2026-10-23; actual TLS/credentials/native launch, four-second qualification and activation remain held.
 Checks/holds: make check lint secrets; targeted pure/intercepted tests, scoped vet and cross-builds. Full/native/engine campaigns and activation remain held; Actions/runners stay prohibited.
 
 Local mapping: legacy Validation means source awaiting acceptance; issue text names

@@ -8,6 +8,7 @@ The optional sender-containment experiment uses stock PF to restrict fresh conne
 
 | Capability | Current evidence and limits |
 | --- | --- |
+| Bundled standalone frontend source | [Fixed stock-HAProxy configuration/placement](docs/milestones/M2/BUNDLED-FRONTEND-SOURCE.md): explicit bundled/external mode, descriptor-bound DATA-only configuration and separate protected frontend materials. No Vectivium runtime dependency; actual frontend launch/CONTROL, package8.0 and native acceptance remain unavailable. |
 | Owned authenticated DATA source | [Source path](docs/milestones/M2/DATA-REQUEST-SOURCE.md): same-connection context/body, continuous Coraza transaction and C02 lease through one fixed backend exchange and terminal cleanup. Operational gate remains false; no live TLS, listener, engine or native qualification. Any conforming frontend can implement the explicit protocol; Vectivium is the optional suite adapter. |
 | Inert M2-C01 context admission | [Source component](docs/milestones/M2/M2-C01.md): immutable bounded peer/route/generation/request recording with synthetic portable tests. No production peer constructor, actual TLS/inspection, allow verdict, backend call or required-WAF enablement. |
 | Inert M2-C02 capacity ownership | [Source design](docs/milestones/M2/CAPACITY-OWNER.md): shared four-request/eight-socket reservation accounting across generations, including pre-authentication inbound slots. No actual socket, authentication, inspection or forwarding operation; full qualification remains open. |
