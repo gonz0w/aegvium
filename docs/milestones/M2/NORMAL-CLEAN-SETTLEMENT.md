@@ -30,6 +30,12 @@ remain failures. C is neither a four-second pass, S-exit receipt, Ready nor an
 allow verdict. An uncertain write/sync/readback/inode/close never reports known
 clean and is not retried; C may have reached storage after a failed operation.
 
+The approved [required security-record source](SECURITY-RECORDS.md) now uses this
+same guard and retained EX: its terminal-boundary record and any oldest sealed
+segment rotation must commit before the C write. A record failure refuses normal
+settlement. Neither segment contents nor successful rotation can create the
+physical facts required to reach this path.
+
 This closes the source history step needed after normal known retirement. It
 does not automatically restart or prepare the next pair: the next launch still
 needs genuinely fresh paired generation g+1 and its real intent/snapshot handoff.

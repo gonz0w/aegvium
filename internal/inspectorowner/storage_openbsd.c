@@ -36,6 +36,21 @@ ssize_t aeg_store_read(int fd, unsigned char *p, size_t n) { return pread(fd,p,n
 ssize_t aeg_store_write(int fd, const unsigned char *p) { return pwrite(fd,p,128,0); }
 int aeg_store_sync(int fd) { return fsync(fd); }
 int aeg_store_close(int fd) { return close(fd); }
+int aeg_store_records(int fd) { return openat(fd,"security.records",O_RDWR|O_NOFOLLOW|O_CLOEXEC); }
+int aeg_store_records_stat(int fd, struct stat *s) { return fstatat(fd,"security.records",s,AT_SYMLINK_NOFOLLOW); }
+ssize_t aeg_store_records_read(int fd, unsigned char *p, size_t n, off_t offset) {
+    return pread(fd,p,n,offset);
+}
+ssize_t aeg_store_records_write(int fd, const unsigned char p[4096], off_t offset) {
+    return pwrite(fd,p,4096,offset);
+}
+void aeg_store_records_hash(const unsigned char p[4096], unsigned char out[32]) {
+    SHA2_CTX ctx;
+    SHA256Init(&ctx);
+    SHA256Update(&ctx,p,48);
+    SHA256Update(&ctx,p+80,4016);
+    SHA256Final(out,&ctx);
+}
 void aeg_store_hash(const unsigned char p[128], unsigned char out[32]) {
     SHA2_CTX ctx;
     SHA256Init(&ctx);

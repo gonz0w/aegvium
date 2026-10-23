@@ -20,7 +20,7 @@ ssize_t aeg_storage_test_pread(int,void *,size_t,off_t);
 ssize_t aeg_storage_test_pwrite(int,const void *,size_t,off_t);
 int aeg_storage_test_fsync(int);
 int aeg_storage_test_clock(int,struct timespec *);
-typedef struct { unsigned char input[8192];size_t len;unsigned updates;bool image,snapshot,bad_data; } SHA2_CTX;
+typedef struct { unsigned char input[8192];size_t len;unsigned updates;bool image,snapshot,records,bad_data; } SHA2_CTX;
 void aeg_storage_test_sha_init(SHA2_CTX *);
 void aeg_storage_test_sha_update(SHA2_CTX *,const unsigned char *,size_t);
 void aeg_storage_test_sha_final(unsigned char *,SHA2_CTX *);

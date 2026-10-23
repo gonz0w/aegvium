@@ -36,6 +36,7 @@ func Write(out io.Writer, descriptor []byte, image io.Reader, imageBytes int64, 
 	if err != nil {
 		return ErrPayload
 	}
+	records := initialRecords(state)
 	tw := tar.NewWriter(exactOutput{out})
 	header := func(name string, mode, size int64) error {
 		return tw.WriteHeader(&tar.Header{
@@ -66,6 +67,7 @@ func Write(out io.Writer, descriptor []byte, image io.Reader, imageBytes int64, 
 		{"var/db/aegvium/inspector.pin", pin},
 		{"var/db/aegvium/pair.snapshot", descriptor},
 		{"var/db/aegvium/launch.intent", intent},
+		{"var/db/aegvium/security.records", records[:]},
 		{"var/db/aegvium/launch.state", state[:]},
 	} {
 		if header(file.name, 0600, int64(len(file.data))) != nil {

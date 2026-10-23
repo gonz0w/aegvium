@@ -35,6 +35,7 @@ static int root_calls, pin_reads, image_reads;
 static int writes, state_reads, hash_calls, reentrant_rc=-1;
 static bool lock_held;
 static bool clean_active;
+#include "inspector-records-fixture.inc"
 static void decode(const char *s,unsigned char *out) {
     unsigned i,v;
     for(i=0;i<128;i++) { if(sscanf(s+2*i,"%2x",&v)!=1) { bad++;return; } out[i]=(unsigned char)v; }
@@ -43,7 +44,9 @@ static void decode_n(const char *s,unsigned char *out,size_t n) {
     size_t i;unsigned v;
     for(i=0;i<n;i++) { if(sscanf(s+2*i,"%2x",&v)!=1) { bad++;return; } out[i]=(unsigned char)v; }
 }
-static bool is(const char *s) { return strcmp(mode,s)==0 || (clean_active && strncmp(mode,"clean-",6)==0 && strcmp(mode+6,s)==0); }
+static bool is(const char *s) { return strcmp(mode,s)==0 ||
+    (strcmp(s,"edge")==0 && strncmp(mode,"record-",7)==0) ||
+    (clean_active && strncmp(mode,"clean-",6)==0 && strcmp(mode+6,s)==0); }
 static int storage_mark(int fd) { mark(fd);close_calls[fd]=0;return fd; }
 int aeg_storage_test_open(const char *path,int flags,...) {
     if(strcmp(path,"/dev/null")==0) return aeg_test_open(path,flags);
@@ -61,7 +64,13 @@ int aeg_storage_test_open(const char *path,int flags,...) {
 }
 int aeg_storage_test_openat(int fd,const char *path,int flags,...) {
     int result=-1;const char *label="invalid";
-    if(fd<40 || fd>53 || !owned[fd]) bad++;
+    if(fd<40 || fd>54 || !owned[fd]) bad++;
+    if(strcmp(path,"security.records")==0) {
+        if(fd!=43 || flags!=(O_RDWR|O_NOFOLLOW|O_CLOEXEC)) bad++;
+        if(rec_note("open")) return -1;
+        if(rec_is("alias")) return 44;
+        return storage_mark(54);
+    }
     if(strcmp(path,"var")==0 && fd==40) { result=41;label="var"; }
     if(strcmp(path,"db")==0 && fd==41) { result=42;label="db"; }
     if(strcmp(path,"aegvium")==0 && fd==42) { result=43;label="aegvium"; }
@@ -143,11 +152,17 @@ static void meta(int fd,struct stat *s) {
 }
 int aeg_storage_test_fstat(int fd,struct stat *s) {
     if(fd<40) return aeg_test_fstat(fd,s);
+    if(fd==54) { if(!owned[54]) bad++;if(rec_note("stat")) return -1;rec_meta(s);return 0; }
     if(fd>53 || !owned[fd] || s==NULL) bad++;
     if(note("stat",fd,0,1)) return -1;
     meta(fd,s);return 0;
 }
 int aeg_storage_test_fstatat(int dir,const char *name,struct stat *s,int flags) {
+    if(strcmp(name,"security.records")==0) {
+        if(dir!=43 || !owned[dir] || !owned[54] || flags!=AT_SYMLINK_NOFOLLOW) bad++;
+        if(rec_note("path")) return -1;
+        rec_meta(s);if(rec_is("path-inode")) s->st_ino++;return 0;
+    }
     int fd=strcmp(name,"launch.state")==0 ? 44 : strcmp(name,"launch.intent")==0 ? 45 : strcmp(name,"inspector.pin")==0 ? 46 : strcmp(name,"pair.snapshot")==0 ? 53 : 52;
     int expected_dir=fd==52 ? 51 : 43;
     const char *label=fd==44 ? "path-state" : fd==45 ? "path-intent" : fd==46 ? "path-pin" : fd==53 ? "path-snapshot" : "path-image";
@@ -173,6 +188,11 @@ int aeg_storage_test_fstatat(int dir,const char *name,struct stat *s,int flags) 
 }
 int aeg_storage_test_close(int fd) {
     if(fd<40) return aeg_test_close(fd);
+    if(fd==54) {
+        if(!owned[fd] || close_calls[fd]++) bad++;
+        rec_close_count++;
+        unmark(fd);return rec_note("close") ? -1 : 0;
+    }
     return aeg_test_close(fd); /* Same ledger, at-most-once, error may consume. */
 }
 int aeg_storage_test_flock(int fd,int op) {
@@ -181,6 +201,7 @@ int aeg_storage_test_flock(int fd,int op) {
     lock_held=true;return 0;
 }
 ssize_t aeg_storage_test_pread(int fd,void *out,size_t n,off_t off) {
+    if(fd==54) return rec_read(out,n,off);
     if(!lock_held || fd<44 || fd>53 || !owned[fd]) bad++;
     if(fd==53) {
         if(n!=snapshot_length+1 || off!=0) bad++;
@@ -240,6 +261,7 @@ ssize_t aeg_storage_test_pread(int fd,void *out,size_t n,off_t off) {
     return (ssize_t)n;
 }
 ssize_t aeg_storage_test_pwrite(int fd,const void *p,size_t n,off_t off) {
+    if(fd==54) return rec_write(p,n,off);
     if(fd!=44 || !owned[fd] || !lock_held || owned[45] || owned[46] || owned[51] || owned[52] || owned[53] || off!=0 || n!=128) bad++;
     writes++;
     if(note("write",fd,0,1)) return -1;
@@ -252,6 +274,7 @@ ssize_t aeg_storage_test_pwrite(int fd,const void *p,size_t n,off_t off) {
     return 128;
 }
 int aeg_storage_test_fsync(int fd) {
+    if(fd==54) { if(!lock_held || !owned[54]) bad++;return rec_note("sync") ? -1 : 0; }
     if(fd!=44 || !lock_held || writes!=(clean_active ? 2 : 1)) bad++;
     return note("sync",fd,0,1) ? -1 : 0;
 }
@@ -268,6 +291,14 @@ void aeg_storage_test_sha_init(SHA2_CTX *ctx) {
     (void)note("sha-init",0,0,0);memset(ctx,0,sizeof(*ctx));
 }
 void aeg_storage_test_sha_update(SHA2_CTX *ctx,const unsigned char *p,size_t n) {
+    if(ctx->updates==0 && n==48 && memcmp(p,"AEGSEC1\n",8)==0) {
+        calls--; /* New records keep a separate, independently asserted trace. */
+        ctx->records=true;
+    }
+    if(ctx->records) {
+        if(n!=(ctx->updates==0 ? 48U : 4016U) || ctx->updates>=2) bad++;
+        ctx->updates++;ctx->len+=n;return;
+    }
     (void)note("sha-update",(int)n,0,1);
     if(ctx->updates==0 && n==4096) ctx->image=true;
     if(ctx->updates==0 && n==snapshot_length) ctx->snapshot=true;
@@ -289,6 +320,10 @@ void aeg_storage_test_sha_update(SHA2_CTX *ctx,const unsigned char *p,size_t n) 
 void aeg_storage_test_sha_final(unsigned char *out,SHA2_CTX *ctx) {
     const char *const gold[]={golden_C0,golden_U1,golden_Cfe,golden_Uff,golden_Cff,golden_Cg,golden_Ug,clean_one,clean_nontrivial};
     unsigned char b[128];size_t i;
+    if(ctx->records) {
+        if(ctx->len!=4064 || ctx->updates!=2) bad++;
+        rec_hashes++;memset(out,0xa5,32);return;
+    }
     (void)note("sha-final",0,0,0);
     if(ctx->snapshot) {
         if(ctx->len!=snapshot_length || ctx->updates!=1 || owned[53]) bad++;
@@ -363,6 +398,7 @@ static int storage_fixture_prepare(const char *selected_mode) {
     if(is("intent-lf")) intent_data[32]=0;
     if(is("owner-prestate")) (void)aeg_owner_prepare("00000000000000000000000000000001",32,0);
     if(is("native-prestate")) (void)aeg_native_parent_prepare();
+    rec_initialize(disk+16);
     return strncmp(mode,"update",6)==0 ? aeg_update_exclusion_prepare() : aeg_launch_storage_prepare();
 }
 #ifndef AEG_STORAGE_FIXTURE_MAIN
@@ -384,5 +420,5 @@ int AEG_STORAGE_FIXTURE_MAIN(int argc,char **argv) {
     for(i=0;i<128;i++) (void)printf("%02x",disk[i]);
     (void)printf("\",\"send_calls\":%d,\"emit_again\":%d,\"branch_after\":%d,\"bootstrap_written\":%d,\"trace\":[",send_calls,emit_again,branch_after,native.bootstrap_written);
     for(i=0;i<(unsigned)calls;i++) (void)printf("%s\"%s\"",i ? "," : "",trace[i]);
-    (void)puts("]}");return 0;
+    (void)printf("],\"records\":");rec_report();(void)puts("}");return 0;
 }

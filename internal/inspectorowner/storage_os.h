@@ -26,6 +26,11 @@ ssize_t aeg_store_read(int, unsigned char *, size_t);
 ssize_t aeg_store_write(int, const unsigned char *);
 int aeg_store_sync(int);
 int aeg_store_close(int);
+int aeg_store_records(int);
+int aeg_store_records_stat(int, struct stat *);
+ssize_t aeg_store_records_read(int, unsigned char *, size_t, off_t);
+ssize_t aeg_store_records_write(int, const unsigned char [4096], off_t);
+void aeg_store_records_hash(const unsigned char [4096], unsigned char [32]);
 void aeg_store_hash(const unsigned char [128], unsigned char [32]);
 int aeg_store_clock(int64_t *);
 #endif

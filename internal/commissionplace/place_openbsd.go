@@ -160,7 +160,7 @@ func Run() error {
 		}
 	}
 	r := tar.NewReader(payload)
-	names := []string{"usr/local/libexec/aegvium/inspector", "var/db/aegvium/inspector.pin", "var/db/aegvium/pair.snapshot", "var/db/aegvium/launch.intent", "var/db/aegvium/launch.state"}
+	names := []string{"usr/local/libexec/aegvium/inspector", "var/db/aegvium/inspector.pin", "var/db/aegvium/pair.snapshot", "var/db/aegvium/launch.intent", "var/db/aegvium/security.records", "var/db/aegvium/launch.state"}
 	var imageDigest [32]byte
 	var descriptor []byte
 	for i, name := range names {
@@ -199,6 +199,10 @@ func Run() error {
 					return errPlacement
 				}
 			case 4:
+				if !commission.InitialRecordsMatch(want[65:97], data) {
+					return errPlacement
+				}
+			case 5:
 				if !commission.InitialMatches(want[65:97], data) {
 					return errPlacement
 				}

@@ -103,9 +103,11 @@ queryable status endpoint, remote logger or new actor is supplied.
 
 This is **best-effort operational diagnostics**, not complete forensic audit.
 Required protected durable enrollment/configuration/policy/generation records
-remain separate, including mandatory current U/C ownership history. An action
+remain separate. The connected [bounded security-record source](SECURITY-RECORDS.md)
+now covers existing launch and normal-clean transitions, alongside mandatory
+current U/C ownership history. Remaining administrative actions are undelivered. An action
 whose required record cannot commit must refuse; containment/stop/wait must not
-wait for audit I/O. Complete durable retention is still an appliance acceptance
+wait for audit I/O. Native durable retention is still an appliance acceptance
 gap. Periodic base-log rotation is not a hard disk ceiling. Exact native buffer,
 FD/CPU/kernel-memory/storage/full-disk/retention and four-second scheduling proof
 remain required; immutable source/default qualification gates stay false.

@@ -36,6 +36,7 @@ int main(int argc,char **argv) {
     unsigned i;struct aeg_owner_view owner;struct aeg_storage_view storage;
     if(argc!=2 || strlen(argv[1])>64) return 2;
     scenario=argv[1];
+    if(strncmp(scenario,"record-",7)==0) base=scenario;
     if(strcmp(scenario,"vector-nontrivial")==0) base="bootstrap-golden";
     if(strcmp(scenario,"vector-maximum")==0) base="edge";
     if(strcmp(scenario,"native-empty")==0) {
@@ -82,6 +83,6 @@ report:
     for(i=(unsigned)settle_start;i<(unsigned)after;i++) printf("%s\"%s\"",i==(unsigned)settle_start ? "" : ",",trace[i]);
     printf("],\"setup_calls\":%d,\"disk\":\"",setup_end);
     for(i=0;i<128;i++) printf("%02x",disk[i]);
-    puts("\"}");
+    printf("\",\"records\":");rec_report();puts("}");
     rc=bad;return rc ? 6 : 0;
 }

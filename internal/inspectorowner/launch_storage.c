@@ -17,8 +17,13 @@ static struct {
     dev_t checkpoint_device;
     ino_t checkpoint_inode;
     unsigned char consumed[128];
+    unsigned char records[8192], image_digest[32];
+    dev_t records_device;
+    ino_t records_inode;
+    unsigned active_segment;
+    bool records_prepared;
 } store = { .fd = { -1,-1,-1,-1 }, .checkpoint = -1 };
-_Static_assert(sizeof(store) <= 8704, "storage owner logical state");
+_Static_assert(sizeof(store) <= 17408, "storage owner logical state");
 
 static int fail(int rc) {
     store.view.phase = AEG_STORAGE_FAILED;
@@ -120,6 +125,7 @@ static bool verify_image(int namespace_fd) {
         !image_identity(store.fd[dir],store.fd[image],&final) ||
         initial.st_dev!=final.st_dev || initial.st_ino!=final.st_ino ||
         initial.st_size!=final.st_size) return false;
+    memcpy(store.image_digest,digest,32);
     /* OpenBSD pathname execution is NOT bound by a held FD. Exclusion and
      * cooperating ALL writers carry custody; no qualified loader/exec issuer. */
     return close_slot(image) && close_slot(dir);
@@ -185,6 +191,128 @@ static bool increment(unsigned char out[32], const unsigned char in[32]) {
     }
     return false;
 }
+/* Two fixed logical segments in one existing protected8192-byte file. No
+ * directory scan, arbitrary path, create, truncate, unlink, repair or worker.
+ * These records never supply checkpoint or physical-retirement authority. */
+static bool records_identity(int dir, int fd, struct stat *out) {
+    struct stat a,b;
+    if(aeg_store_stat(fd,&a)!=0 || !file_kind(&a,8192) ||
+        aeg_store_records_stat(dir,&b)!=0 || !file_kind(&b,8192) ||
+        a.st_dev!=b.st_dev || a.st_ino!=b.st_ino) return false;
+    *out=a;return true;
+}
+static bool zeroes(const unsigned char *p, size_t n) {
+    size_t i;
+    for(i=0;i<n;i++) if(p[i]!=0) return false;
+    return true;
+}
+static bool record_segment(const unsigned char *p) {
+    unsigned char digest[32], next[32];
+    unsigned i;bool nonzero=false;
+    if(memcmp(p,"AEGSEC1\n",8)!=0 || (p[8]!='A' && p[8]!='S') ||
+        p[9]>30 || (p[9]&1)!=0 || (p[8]=='S' && p[9]!=30) ||
+        !zeroes(p+10,6) || !zeroes(p+112,16)) return false;
+    for(i=16;i<48;i++) { if(!hex(p[i])) return false;nonzero |= p[i]!='0'; }
+    for(i=80;i<112;i++) if(!hex(p[i])) return false;
+    if(!nonzero) return false;
+    aeg_store_records_hash(p,digest);
+    if(memcmp(digest,p+48,32)!=0 ||
+        !zeroes(p+128+(size_t)p[9]*128,4096-128-(size_t)p[9]*128)) return false;
+    for(i=0;i<p[9];i++) {
+        const unsigned char *r=p+128+(size_t)i*128;
+        unsigned j;bool used=false;
+        if(memcmp(r,"AEGREQ1\n",8)!=0 || r[8]!=(i%2==0 ? 'U' : 'C') ||
+            !zeroes(r+9,7) || (r[112]!=1 && r[112]!=3) || !zeroes(r+113,15)) return false;
+        for(j=16;j<48;j++) { if(!hex(r[j])) return false;used |= r[j]!='0'; }
+        if(!used) return false;
+        if(i==0 && (!increment(next,p+80) || memcmp(next,r+16,32)!=0)) return false;
+        if(i%2!=0 && memcmp(r+16,r-128+16,97)!=0) return false;
+        if(i>0 && i%2==0 && (!increment(next,r-128+16) || memcmp(next,r+16,32)!=0)) return false;
+    }
+    return true;
+}
+static bool records_parse(const unsigned char current[32]) {
+    unsigned char next[32];
+    unsigned a=store.records[8]=='A' ? 0 : 1, b=1-a;
+    const unsigned char *active=store.records+a*4096, *old=store.records+b*4096;
+    const unsigned char *last=active+80;
+    if(!record_segment(active) || active[8]!='A' || active[9]>28) return false;
+    if(!zeroes(old,4096)) {
+        if(!record_segment(old) || old[8]!='S' || !increment(next,old+16) ||
+            memcmp(next,active+16,32)!=0) return false;
+        last=old+128+29*128+16;
+        if(memcmp(last,active+80,32)!=0) return false;
+    } else if(memcmp(active+16,"00000000000000000000000000000001",32)!=0) return false;
+    if(active[9]>0) last=active+128+((size_t)active[9]-1)*128+16;
+    if(memcmp(last,current,32)!=0) return false;
+    store.active_segment=a;return true;
+}
+static bool records_commit(int dir, int fd, unsigned segment) {
+    unsigned char check[4096];
+    unsigned char *p=store.records+segment*4096;
+    struct stat now;
+    aeg_store_records_hash(p,p+48);
+    if(aeg_store_records_write(fd,p,(off_t)segment*4096)!=4096 ||
+        aeg_store_sync(fd)!=0 ||
+        aeg_store_records_read(fd,check,sizeof(check),(off_t)segment*4096)!=4096 ||
+        memcmp(check,p,sizeof(check))!=0 || !records_identity(dir,fd,&now) ||
+        now.st_dev!=store.records_device || now.st_ino!=store.records_inode) return false;
+    return true; /* No continuation, retry or sync-error readback. */
+}
+static void record_append(unsigned char kind, const unsigned char generation[32]) {
+    unsigned char *p=store.records+store.active_segment*4096;
+    unsigned char *r=p+128+(size_t)p[9]*128;
+    memset(r,0,128);memcpy(r,"AEGREQ1\n",8);r[8]=kind;
+    memcpy(r+16,generation,32);memcpy(r+48,store.bootstrap+50,32);
+    memcpy(r+80,store.image_digest,32);
+    r[112]=store.bootstrap[160]=='3' ? 3 : 1;
+    ++p[9];
+}
+static bool records_admit(int dir, const unsigned char current[32], const unsigned char next[32]) {
+    struct stat initial, final;
+    int slot=adopt(aeg_store_records(dir));
+    if(slot<0 || !records_identity(dir,store.fd[slot],&initial) ||
+        aeg_store_records_read(store.fd[slot],store.records,sizeof(store.records),0)!=8192 ||
+        !records_identity(dir,store.fd[slot],&final) || initial.st_dev!=final.st_dev ||
+        initial.st_ino!=final.st_ino || !records_parse(current)) return false;
+    store.records_device=initial.st_dev;store.records_inode=initial.st_ino;
+    record_append('U',next); /* Intent only: cannot assert U reached launch.state. */
+    if(!records_commit(dir,store.fd[slot],store.active_segment) || !close_slot(slot)) return false;
+    store.records_prepared=true;return true;
+}
+#ifdef AEG_INSPECTOR_SOURCE
+/* Called only after the existing private same-child terminal/close guard and
+ * exact retained U validation. At most one oldest sealed segment is recycled. */
+static bool records_clean(int dir) {
+    unsigned char check[8192], next[32];
+    struct stat now;
+    unsigned a=store.active_segment, b=1-a;
+    unsigned char *active=store.records+a*4096, *old=store.records+b*4096;
+    int slot;
+    if(!store.records_prepared || active[9]>29 || (active[9]&1)==0) return false;
+    slot=adopt(aeg_store_records(dir));
+    if(slot<0 || !records_identity(dir,store.fd[slot],&now) ||
+        now.st_dev!=store.records_device || now.st_ino!=store.records_inode ||
+        aeg_store_records_read(store.fd[slot],check,sizeof(check),0)!=8192 ||
+        memcmp(check,store.records,sizeof(check))!=0 ||
+        !records_identity(dir,store.fd[slot],&now) ||
+        now.st_dev!=store.records_device || now.st_ino!=store.records_inode) return false;
+    record_append('C',store.consumed+16); /* Physical boundary, not checkpoint-C success. */
+    if(active[9]==30) active[8]='S';
+    if(!records_commit(dir,store.fd[slot],a)) return false;
+    if(active[9]==30) {
+        if(!increment(next,active+16)) return false;
+        /* b was validated empty or the sole, older sealed segment at admission;
+         * exact retained-byte comparison above excludes changing that decision. */
+        if(!zeroes(old,4096) && (old[8]!='S' || memcmp(old+16,active+16,32)>=0)) return false;
+        memset(old,0,4096);memcpy(old,"AEGSEC1\n",8);old[8]='A';memcpy(old+16,next,32);
+        memcpy(old+80,store.consumed+16,32);
+        if(!records_commit(dir,store.fd[slot],b)) return false;
+        store.active_segment=b;
+    }
+    return close_slot(slot);
+}
+#endif
 static int prepare(bool update) {
     struct aeg_owner_view owner;
     struct aeg_native_view native;
@@ -225,6 +353,7 @@ static int prepare(bool update) {
         return fail(AEG_STORAGE_INPUT);
     if(!verify_image(store.fd[dir]) || !prepare_bootstrap(store.fd[dir],next))
         return fail(AEG_STORAGE_OS);
+    if(!records_admit(store.fd[dir],frame+16,next)) return fail(AEG_STORAGE_UNCERTAIN);
     frame[8]='U'; memcpy(frame+16,next,32); aeg_store_hash(frame,frame+48);
     /* No admission or child can precede this full durability/readback boundary.
      * Short/error writes never continue; fsync failure never readbacks as repair. */
@@ -293,6 +422,7 @@ int aeg_launch_storage_clean_source(void) {
         !identity(store.fd[dir],fd,false,&current) ||
         current.st_dev!=store.checkpoint_device || current.st_ino!=store.checkpoint_inode)
         return fail(AEG_STORAGE_UNCERTAIN);
+    if(!records_clean(store.fd[dir])) return fail(AEG_STORAGE_UNCERTAIN);
     memcpy(clean,store.consumed,128);
     clean[8]='C'; /* g stays consumed: next launch must use g+1, never reuseg. */
     aeg_store_hash(clean,clean+48);

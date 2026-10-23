@@ -77,6 +77,7 @@ func TestPayloadExactRuntimeFilesAndIndependentState(t *testing.T) {
 				{"var/db/aegvium/inspector.pin", 0600, []byte(imagePin + "\n")},
 				{"var/db/aegvium/pair.snapshot", 0600, descriptor},
 				{"var/db/aegvium/launch.intent", 0600, []byte(tc.generation + "\n")},
+				{"var/db/aegvium/security.records", 0600, recordFixture(t, tc.generation)},
 				{"var/db/aegvium/launch.state", 0600, state},
 			}
 			r := tar.NewReader(bytes.NewReader(out.Bytes()))
@@ -284,7 +285,7 @@ func TestPayloadVersion2PreservesBothEndpointsAndRolePlan(t *testing.T) {
 			}
 		}
 	}
-	if seen != 5 {
+	if seen != 6 {
 		t.Fatal("payload member count changed")
 	}
 }
