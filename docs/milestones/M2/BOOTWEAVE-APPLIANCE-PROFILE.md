@@ -18,9 +18,11 @@ Bootweave is an installation integration, not an Aegvium runtime dependency.
 
 ## Product and supported-target acceptance
 
-Bootweave's three appliance profiles are **Aegvium, Nomvium and Arxwall**.
-Vectivium retains its independent package/service product; it is neither a fourth
-required ISO profile nor an Aegvium prerequisite. Aegvium's goal is a WAF image
+Bootweave's four appliance profiles are **Aegvium, Nomvium, Arxwall and Vectivium**.
+The maintainer also selected a Vectivium appliance on 2026-10-23, using the same
+product code as its independent package/service distribution. Aegvium remains
+optional for Vectivium, and Vectivium remains optional for Aegvium. This does not
+create a required suite runtime dependency. Aegvium's goal is a WAF image
 for a VM or supported bare metal, not merely an inspector component or research
 bundle. Actual inspection, rejection without bypass, application/backend isolation,
 protected startup/restart, operational logging and honest health must pass for the
@@ -77,18 +79,22 @@ profile is qualified here; generic GOOS/GOARCH compilation does not qualify a bo
 
 ## Logging, monitoring and minimal setup are acceptance work
 
-Current I construction maps fd 0–2 to `/dev/null`; Coraza's transaction logging
-phase is not a delivered operational audit sink. Current source also supplies no
-qualified external health/status interface. These are concrete implementation gaps,
-not native evidence or optional polish. Bound/redact events and retention, separate
-service/inspection/backend/cleanup health, and keep request bodies, keys, cookies
-and query values out of logs. No collector or suite product may be mandatory.
+The approved [local diagnostics source](LOCAL-STATUS.md) maps I fd 0–1 to
+`/dev/null`, fd 2 to its private nonblocking diagnostics channel and fd 3 to
+bootstrap/Stop/ACK. The same S consumes bounded redacted frames and sends local
+logging datagrams; overload or stop may lose diagnostics. This is source only,
+not a complete forensic audit or a qualified external health/status interface.
+Required durable authority-changing security records and finite retention still
+need their scoped contract. These are concrete appliance acceptance gaps, not
+optional polish. Keep request bodies, keys, cookies and query values out of logs;
+no collector or suite product may be mandatory.
 
-Recommend base OpenBSD local logging/rotation and an explicit read-only health
-interface, coordinated with Bootweave's profile contract. The exact I log transport
-and S health/control boundary still need a scoped design: adding a descriptor or
-Unix-socket privilege cannot silently change existing leaf/S resource contracts.
-Do not infer Aegvium control-socket approval from Vectivium's separate decision.
+Base local logging is connected in source with explicit six-descriptor private
+acquisition accounting and two additional S integration descriptors. This is not
+a whole-process/kernel/storage bound. Periodic rotation is not a hard disk cap.
+An explicit read-only health interface, complete retention and the installed
+8.0 resource profile remain unqualified; no health/control socket is adopted.
+Do not infer Aegvium control-socket authority from Vectivium's separate decision.
 
 The next integration step is Bootweave's concrete typed placement/account/service/
 logging interface plus a genuine paired-target handoff provider. Then connect
