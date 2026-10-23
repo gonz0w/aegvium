@@ -1,6 +1,6 @@
 # Aegvium
 
-Lean, auditable OpenBSD WAF research for a dedicated VM behind EdgeWall. BSD-3-Clause; independent of the OpenBSD project. Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
+Aegvium is being built as a preconfigured OpenBSD WAF appliance for a VM or supported bare metal, with hardened defaults, useful local logging/health and minimal site-specific setup. It must protect applications without requiring Vectivium or another suite runtime. EdgeWall is an optional suite integration. BSD-3-Clause; independent of the OpenBSD project. Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
 
 A runnable lab companion now forwards owned HTTP/HTTPS applications through pinned Coraza/OWASP CRS. It supports verified HTTPS backends, strict route allowlists, transactional SIGHUP route replacement and four-request admission. Stock relayd can terminate TLS in the retained control or pass TCP/TLS to the companion, where actual SNI/HTTP authority binding is enforced. The [M2 boundary](docs/architecture/adr-0010-frontend-key-mandatory-inspector.md) is now selected for reviewed source adoption; runtime integration remains unimplemented/unqualified. This is not an installable WAF.
 
@@ -8,7 +8,13 @@ The optional sender-containment experiment uses stock PF to restrict fresh conne
 
 | Capability | Current evidence and limits |
 | --- | --- |
+| Owned authenticated DATA source | [Source path](docs/milestones/M2/DATA-REQUEST-SOURCE.md): same-connection context/body, continuous Coraza transaction and C02 lease through one fixed backend exchange and terminal cleanup. Operational gate remains false; no live TLS, listener, engine or native qualification. Any conforming frontend can implement the explicit protocol; Vectivium is the optional suite adapter. |
 | Inert M2-C01 context admission | [Source component](docs/milestones/M2/M2-C01.md): immutable bounded peer/route/generation/request recording with synthetic portable tests. No production peer constructor, actual TLS/inspection, allow verdict, backend call or required-WAF enablement. |
+| Inert M2-C02 capacity ownership | [Source design](docs/milestones/M2/CAPACITY-OWNER.md): shared four-request/eight-socket reservation accounting across generations, including pre-authentication inbound slots. No actual socket, authentication, inspection or forwarding operation; full qualification remains open. |
+| A01a body Read/Close ownership | [Body owner](docs/milestones/M2/BODY-OWNER.md): actual bounded body capture into detached memory records, private shared C02 leases, cancellation/retirement and retained charges while cleanup is incomplete or uncertain. No peer, raw-framing proof, engine transaction or dial/forward operation; Draft qualification remains open. |
+| Normal stop/restart history source | [Durable normal settlement](docs/milestones/M2/NORMAL-CLEAN-SETTLEMENT.md) joins the same supervisor’s actual terminal/close path to C at the same burned generation. No automatic restart, supervisor-loss repair or timing pass; operational gates remain false. |
+| External inspector ownership | [Selected architecture](docs/architecture/adr-0011-inspector-owner-containment.md) and [private C11 controller](internal/inspectorowner/README.md): retained whole-child envelope, once-claimed diagnostic intents and 32 independently frozen synthetic traces. Native launcher, privilege reduction, process/descriptor proof and mandatory four-second qualification remain absent; Draft126's validation pause stays. |
+| Inherited Stop/retirement connection | [Private control source](docs/milestones/M2/CONTROL-RETIREMENT.md): canonical one-shot S Stop → actual bodyowner Stop/Retire → matching admission-only ACK. Failed/uncertain endpoints remain owned; no authenticated launch/channel constructor, process reclamation, ready/allow verdict or native timing proof. |
 | Actual companion, CRS, HTTP/verified HTTPS routing | [Lab guide](research/coraza/LAB-PROXY.md); [163 ordinary /42 path/three load/seven startup controls](research/native/lab-concurrency-observations.json). Small synthetic corpus, not full OWASP coverage. |
 | TLS passthrough and SNI/Host binding | [29-case native matrix](research/native/tls-passthrough-observations.json), [scoped design](docs/milestones/M1/TLS-PASSTHROUGH.md). Close-only HTTP/1.1; startup-only certificate inputs. |
 | Local sender containment | [44-case/four-phase native matrix](research/native/sender-containment-observations.json), [PF design and rollback](docs/milestones/M1/SENDER-CONTAINMENT.md). Conditional on active PF and loopback filtering; fresh IPv4 data connections only. |
@@ -56,6 +62,10 @@ Host checks and cross-builds are tooling evidence only. Disposable native experi
 | `make research-configured-caddy` | Separate native connector compilation and configured Caddy comparison. |
 
 Each experiment owns and tears down its VM, sockets, daemons and synthetic TLS assets. Never point it at a live gateway, storage or application. Raw keys, source/vendor inventories and logs stay ignored; shared observations retain source/tree/input/output hashes. [Native evidence index](research/native/README.md) preserves earlier scopes, failed HTTP pipelines, half-close effects, unsafe checker behavior and the initial cold-build timeout. Later passing profiles do not reclassify those results; plain-TERM attribution remains [#69](https://github.com/gonz0w/aegvium/issues/69).
+
+The [Bootweave appliance requirements](docs/milestones/M2/BOOTWEAVE-APPLIANCE-PROFILE.md) target prospective OpenBSD 8.0 installation, minimal setup and required logging/monitoring. Production installer integration is not delivered; the closed 7.9 private builder and historical evidence are retained.
+
+The DATA owner now retains [bounded local outcomes and read-only status](docs/milestones/M2/LOCAL-STATUS.md): sixteen redacted returned-job events plus current charged work, transaction and cleanup state. Reports carry no readiness or forwarding authority. The approved source now connects bounded nonblocking local diagnostics through I fd 2 and the same S, retaining loss and descriptor uncertainty. Required durable security records, health endpoints and native qualification remain separate work; installed/default gates remain closed.
 
 ## Adoption and project structure
 

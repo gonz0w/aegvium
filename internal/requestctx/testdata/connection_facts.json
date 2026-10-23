@@ -1,0 +1,245 @@
+{
+  "schema": "connection-facts-literal-oracles/1",
+  "scope": "Inert public synthetic source/interface vectors, not authenticated facts, a parser implementation, a running fixture or native evidence.",
+  "profile": {
+    "ascii": "M2-H1/3",
+    "bytes": 7,
+    "hex": "4d322d48312f33",
+    "C_sha256_hex": "78fc979225e6781530d791eb6156d06949a083313d02f6cf3cc0b1b68bbd0b35",
+    "old_profile": "M2-H1/1",
+    "old_C_sha256_hex": "1d987134086420d48b300a4cfda016ffc550a0bda6a6f20c58282db1b7d42dca",
+    "normalization_profile_not_reused": "M2-H1/2"
+  },
+  "canonical": {
+    "fields": [
+      {
+        "name": "Aegvium-Contract",
+        "value": "M2-H1/3"
+      },
+      {
+        "name": "Aegvium-Route",
+        "value": "app_primary"
+      },
+      {
+        "name": "Aegvium-Generation",
+        "value": "0123456789abcdef0123456789abcdef"
+      },
+      {
+        "name": "Aegvium-Request",
+        "value": "req_7"
+      },
+      {
+        "name": "Aegvium-SNI",
+        "value": "app.example.test"
+      },
+      {
+        "name": "Aegvium-Connection",
+        "value": "198.51.100.7:49152/10.0.0.4:8443"
+      }
+    ],
+    "context_wire_ascii": "Aegvium-Contract: M2-H1/3\r\nAegvium-Route: app_primary\r\nAegvium-Generation: 0123456789abcdef0123456789abcdef\r\nAegvium-Request: req_7\r\nAegvium-SNI: app.example.test\r\nAegvium-Connection: 198.51.100.7:49152/10.0.0.4:8443\r\n",
+    "context_wire_hex": "4165677669756d2d436f6e74726163743a204d322d48312f330d0a4165677669756d2d526f7574653a206170705f7072696d6172790d0a4165677669756d2d47656e65726174696f6e3a2030313233343536373839616263646566303132333435363738396162636465660d0a4165677669756d2d526571756573743a207265715f370d0a4165677669756d2d534e493a206170702e6578616d706c652e746573740d0a4165677669756d2d436f6e6e656374696f6e3a203139382e35312e3130302e373a34393135322f31302e302e302e343a383434330d0a",
+    "context_wire_bytes": 218,
+    "public_request_ascii": "GET /a//b%2Fc?x=1&x=2 HTTP/1.1\r\nHost: app.example.test\r\nX-Signed: alpha+beta==\r\n\r\n",
+    "internal_request_ascii": "GET /a//b%2Fc?x=1&x=2 HTTP/1.1\r\nHost: app.example.test\r\nX-Signed: alpha+beta==\r\nAegvium-Contract: M2-H1/3\r\nAegvium-Route: app_primary\r\nAegvium-Generation: 0123456789abcdef0123456789abcdef\r\nAegvium-Request: req_7\r\nAegvium-SNI: app.example.test\r\nAegvium-Connection: 198.51.100.7:49152/10.0.0.4:8443\r\n\r\n",
+    "expected_application_request_ascii": "GET /a//b%2Fc?x=1&x=2 HTTP/1.1\r\nHost: app.example.test\r\nX-Signed: alpha+beta==\r\n\r\n",
+    "body_hex": "",
+    "engine_projection": {
+      "client_ipv4": "198.51.100.7",
+      "client_port": 49152,
+      "server_ipv4": "10.0.0.4",
+      "server_port": 8443,
+      "route_public_port": 443
+    },
+    "note": "Local8443 deliberately differs from public443; neither Host nor inspector hop replaces actual frontend socket facts. No public socket was created or observed."
+  },
+  "max_context": {
+    "fields": [
+      {
+        "name": "Aegvium-Contract",
+        "value": "M2-H1/3"
+      },
+      {
+        "name": "Aegvium-Route",
+        "value": "a0000000000000000000000000000000"
+      },
+      {
+        "name": "Aegvium-Generation",
+        "value": "00000000000000000000000000000000"
+      },
+      {
+        "name": "Aegvium-Request",
+        "value": "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
+      },
+      {
+        "name": "Aegvium-SNI",
+        "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      },
+      {
+        "name": "Aegvium-Connection",
+        "value": "255.255.255.255:65535/255.255.255.255:65535"
+      }
+    ],
+    "wire_ascii": "Aegvium-Contract: M2-H1/3\r\nAegvium-Route: a0000000000000000000000000000000\r\nAegvium-Generation: 00000000000000000000000000000000\r\nAegvium-Request: RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR\r\nAegvium-SNI: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\r\nAegvium-Connection: 255.255.255.255:65535/255.255.255.255:65535\r\n",
+    "wire_bytes": 546,
+    "old_six_field_max_bytes": 514,
+    "additional_bytes": 32,
+    "replacement_value_max_bytes": 43,
+    "context_ceiling": 1024,
+    "public_header_ceiling": 4096,
+    "combined_max_bytes": 4642,
+    "internal_header_ceiling": 5120,
+    "total_field_cap": 64,
+    "context_fields": 6,
+    "available_application_fields": 58,
+    "generic_name_max": 128,
+    "generic_value_max": 4096,
+    "three_added_headers_application_slots_would_be": 55,
+    "note": "Maximum lexical tuple is a length oracle only, not evidence of an actual TCP endpoint or a new address-range policy."
+  },
+  "canonical_connection_value_oracles": [
+    {
+      "value": "198.51.100.7:1/10.0.0.4:65535",
+      "remote": [
+        "198.51.100.7",
+        1
+      ],
+      "local": [
+        "10.0.0.4",
+        65535
+      ]
+    },
+    {
+      "value": "255.255.255.255:65535/255.255.255.255:65535",
+      "remote": [
+        "255.255.255.255",
+        65535
+      ],
+      "local": [
+        "255.255.255.255",
+        65535
+      ]
+    }
+  ],
+  "reject_value_oracles": [
+    {
+      "id": "missing_remote_port",
+      "value": "198.51.100.7/10.0.0.4:8443"
+    },
+    {
+      "id": "zero_remote_port",
+      "value": "198.51.100.7:0/10.0.0.4:8443"
+    },
+    {
+      "id": "zero_local_port",
+      "value": "198.51.100.7:49152/10.0.0.4:0"
+    },
+    {
+      "id": "large_remote_port",
+      "value": "198.51.100.7:65536/10.0.0.4:8443"
+    },
+    {
+      "id": "leading_zero_port",
+      "value": "198.51.100.7:049152/10.0.0.4:8443"
+    },
+    {
+      "id": "signed_port",
+      "value": "198.51.100.7:+49152/10.0.0.4:8443"
+    },
+    {
+      "id": "leading_zero_ipv4",
+      "value": "198.051.100.7:49152/10.0.0.4:8443"
+    },
+    {
+      "id": "out_of_range_octet",
+      "value": "198.51.100.256:49152/10.0.0.4:8443"
+    },
+    {
+      "id": "hostname",
+      "value": "client.example.test:49152/10.0.0.4:8443"
+    },
+    {
+      "id": "mapped_ipv6",
+      "value": "::ffff:198.51.100.7:49152/10.0.0.4:8443"
+    },
+    {
+      "id": "brackets",
+      "value": "[198.51.100.7]:49152/10.0.0.4:8443"
+    },
+    {
+      "id": "leading_space",
+      "value": " 198.51.100.7:49152/10.0.0.4:8443"
+    },
+    {
+      "id": "middle_space",
+      "value": "198.51.100.7:49152/ 10.0.0.4:8443"
+    },
+    {
+      "id": "trailing_space",
+      "value": "198.51.100.7:49152/10.0.0.4:8443 "
+    },
+    {
+      "id": "comma_list",
+      "value": "198.51.100.7:49152/10.0.0.4:8443,198.51.100.8:49152/10.0.0.4:8443"
+    },
+    {
+      "id": "extra_path",
+      "value": "198.51.100.7:49152/10.0.0.4:8443/x"
+    },
+    {
+      "id": "line_injection",
+      "value": "198.51.100.7:49152/10.0.0.4:8443\r\nX: y"
+    },
+    {
+      "id": "nul",
+      "value": "198.51.100.7:49152/10.0.0.4:8443\u0000"
+    }
+  ],
+  "reject_context_oracles": [
+    {
+      "id": "old_profile",
+      "change": "Contract=M2-H1/1 under new immutable P; reject, no negotiation."
+    },
+    {
+      "id": "old_client_alias",
+      "change": "Replace Connection with Aegvium-Client; reject unknown reserved name."
+    },
+    {
+      "id": "old_and_new",
+      "change": "Add Aegvium-Client to all six new fields; reject, never choose an alias."
+    },
+    {
+      "id": "three_header_aliases",
+      "change": "Aegvium-Client-Port/Aegvium-Local/Aegvium-Local-Port; reject unknown reserved names."
+    },
+    {
+      "id": "duplicate_case",
+      "change": "Add aegvium-connection with the same value; reject before map insertion."
+    },
+    {
+      "id": "missing",
+      "change": "Omit Connection; reject."
+    },
+    {
+      "id": "request_generation",
+      "change": "Foreign immutable G; reject through existing generation gate."
+    },
+    {
+      "id": "spoofed_public",
+      "change": "Any public Aegvium-* supplied by browser; reject before construction, never sanitize into a trusted value."
+    }
+  ],
+  "must_not_infer": [
+    "Authenticity of original public facts from a parsed tuple or AGCHECK response.",
+    "Original public/local tuple from the internal DATA socket, Host, route publicPort, backend or inspector endpoint.",
+    "Real producer binding or no-second-effect/resource proof from these strings."
+  ],
+  "pair_binding": {
+    "AGPAIR1": "Unchanged CONTROL-only/M2-H1/1; current parser still rejects profile3.",
+    "new_descriptor_D": null,
+    "new_AGCHECK104_Q": null,
+    "reason": "Distinct CONTROL/DATA descriptor remains pending. Do not invent a patched old descriptor or exact D/Q before that grammar and joint bytes exist.",
+    "Q_shape": "ASCII AGCHECK1[8] + ASCII G[32] + full selected descriptor SHA256[32] + C[32] =104"
+  },
+  "joint_status": "Vect source definition and independent review prepared; parent obtains matching Aeg owner acknowledgement. No additional user permission required for this representation."
+}

@@ -1,0 +1,2785 @@
+{
+  "schema": "aegvium-m2-c02-independent-literal-traces-v1",
+  "source_base": "a69572576eb401406df7d174bdb55512531ed7d7",
+  "design_sha256": "f678713a2169bc460b83317951ea5a55b548724e096861ead04cb4bce8ef3f42",
+  "authorship": "Independent finite expected state tables authored before Go implementation; no Go/product imports or execution.",
+  "special_aliases": {
+    "nil": "typed nil receiver/argument in its category",
+    "zero": "pointer to zero-value receiver/argument in its category"
+  },
+  "semantics": "Initialize named owners via New; keep category-specific alias maps. Store acquisitions under result, including nil refusals. Observe all expect_usage and expect_pending after every operation. expect_value is explicit usage/pending return; expect_generation is Lease.Generation return. Void methods have null expect_error.",
+  "traces": [
+    {
+      "id": "four-leases-eight-slots-and-refill",
+      "owners": [
+        "a"
+      ],
+      "steps": [
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "00000000000000000000000000000000",
+          "result": "g",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i1",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "i1",
+          "result": "l1",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i2",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 3
+            }
+          },
+          "expect_pending": {
+            "g": 1
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "i2",
+          "result": "l2",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 2,
+              "Sockets": 4
+            }
+          },
+          "expect_pending": {
+            "g": 2
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i3",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 2,
+              "Sockets": 5
+            }
+          },
+          "expect_pending": {
+            "g": 2
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "i3",
+          "result": "l3",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 3,
+              "Sockets": 6
+            }
+          },
+          "expect_pending": {
+            "g": 3
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i4",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 3,
+              "Sockets": 7
+            }
+          },
+          "expect_pending": {
+            "g": 3
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "i4",
+          "result": "l4",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 4,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g": 4
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "fifth",
+          "expect_error": "ErrCapacity",
+          "expect_usage": {
+            "a": {
+              "Requests": 4,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g": 4
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "i1",
+          "result": "dup",
+          "expect_error": "ErrTransferred",
+          "expect_usage": {
+            "a": {
+              "Requests": 4,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g": 4
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i1",
+          "expect_error": "ErrTransferred",
+          "expect_usage": {
+            "a": {
+              "Requests": 4,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g": 4
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l1",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 3,
+              "Sockets": 6
+            }
+          },
+          "expect_pending": {
+            "g": 3
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l1",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 3,
+              "Sockets": 6
+            }
+          },
+          "expect_pending": {
+            "g": 3
+          }
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i5",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 3,
+              "Sockets": 7
+            }
+          },
+          "expect_pending": {
+            "g": 3
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "i5",
+          "result": "l5",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 4,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g": 4
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "close_lease",
+          "lease": "l2",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 3,
+              "Sockets": 6
+            }
+          },
+          "expect_pending": {
+            "g": 3
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l3",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 2,
+              "Sockets": 4
+            }
+          },
+          "expect_pending": {
+            "g": 2
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l4",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l5",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i1",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "lease_generation",
+          "lease": "l1",
+          "expect_generation": "00000000000000000000000000000000",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "eight-preauth-slots-and-atomic-outbound-reservation",
+      "owners": [
+        "a"
+      ],
+      "steps": [
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "00000000000000000000000000000000",
+          "result": "g",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i1",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i2",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i3",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 3
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i4",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 4
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i5",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 5
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i6",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 6
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i7",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 7
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i8",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "ninth",
+          "expect_error": "ErrCapacity",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "i1",
+          "result": "no-outbound",
+          "expect_error": "ErrCapacity",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i8",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 7
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "i1",
+          "result": "l",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g": 1
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i1",
+          "expect_error": "ErrTransferred",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g": 1
+          }
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "full",
+          "expect_error": "ErrCapacity",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g": 1
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "close_lease",
+          "lease": "l",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 6
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i2",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 5
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i3",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 4
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i4",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 3
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i5",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i6",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i7",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "cross-generation-contention-retirement-stop",
+      "owners": [
+        "a"
+      ],
+      "steps": [
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "00000000000000000000000000000000",
+          "result": "g1",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g1": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "11111111111111111111111111111111",
+          "result": "g2",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g1": 0,
+            "g2": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i1",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g1": 0,
+            "g2": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g1",
+          "inbound": "i1",
+          "result": "l1",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g1": 1,
+            "g2": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i2",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 3
+            }
+          },
+          "expect_pending": {
+            "g1": 1,
+            "g2": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g2",
+          "inbound": "i2",
+          "result": "l2",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 2,
+              "Sockets": 4
+            }
+          },
+          "expect_pending": {
+            "g1": 1,
+            "g2": 1
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i3",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 2,
+              "Sockets": 5
+            }
+          },
+          "expect_pending": {
+            "g1": 1,
+            "g2": 1
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g1",
+          "inbound": "i3",
+          "result": "l3",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 3,
+              "Sockets": 6
+            }
+          },
+          "expect_pending": {
+            "g1": 2,
+            "g2": 1
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i4",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 3,
+              "Sockets": 7
+            }
+          },
+          "expect_pending": {
+            "g1": 2,
+            "g2": 1
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g2",
+          "inbound": "i4",
+          "result": "l4",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 4,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g1": 2,
+            "g2": 2
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "22222222222222222222222222222222",
+          "result": "g3",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 4,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g1": 2,
+            "g2": 2,
+            "g3": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "full",
+          "expect_error": "ErrCapacity",
+          "expect_usage": {
+            "a": {
+              "Requests": 4,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g1": 2,
+            "g2": 2,
+            "g3": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "retire",
+          "generation": "g2",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 4,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g1": 2,
+            "g2": 2,
+            "g3": 0
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l2",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 3,
+              "Sockets": 6
+            }
+          },
+          "expect_pending": {
+            "g1": 2,
+            "g2": 1,
+            "g3": 0
+          }
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i5",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 3,
+              "Sockets": 7
+            }
+          },
+          "expect_pending": {
+            "g1": 2,
+            "g2": 1,
+            "g3": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g2",
+          "inbound": "i5",
+          "result": "retired",
+          "expect_error": "ErrRetired",
+          "expect_usage": {
+            "a": {
+              "Requests": 3,
+              "Sockets": 7
+            }
+          },
+          "expect_pending": {
+            "g1": 2,
+            "g2": 1,
+            "g3": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "try_request",
+          "generation": "g1",
+          "inbound": "i5",
+          "result": "l5",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 4,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g1": 3,
+            "g2": 1,
+            "g3": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "stop",
+          "owner": "a",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 4,
+              "Sockets": 8
+            }
+          },
+          "expect_pending": {
+            "g1": 3,
+            "g2": 1,
+            "g3": 0
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l1",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 3,
+              "Sockets": 6
+            }
+          },
+          "expect_pending": {
+            "g1": 2,
+            "g2": 1,
+            "g3": 0
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l3",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 2,
+              "Sockets": 4
+            }
+          },
+          "expect_pending": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 0
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l4",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g1": 1,
+            "g2": 0,
+            "g3": 0
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l5",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g1": 0,
+            "g2": 0,
+            "g3": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "foreign-owner-input-never-transfers",
+      "owners": [
+        "a",
+        "b"
+      ],
+      "steps": [
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "00000000000000000000000000000000",
+          "result": "ga",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            },
+            "b": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "ga": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "new_generation",
+          "owner": "b",
+          "token": "11111111111111111111111111111111",
+          "result": "gb",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            },
+            "b": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "ga": 0,
+            "gb": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "b",
+          "result": "ib",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            },
+            "b": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "ga": 0,
+            "gb": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "ga",
+          "inbound": "ib",
+          "result": "foreign",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            },
+            "b": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "ga": 0,
+            "gb": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "try_request",
+          "generation": "gb",
+          "inbound": "ib",
+          "result": "lb",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            },
+            "b": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "ga": 0,
+            "gb": 1
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "ga",
+          "inbound": "ib",
+          "result": "foreign-transferred",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            },
+            "b": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "ga": 0,
+            "gb": 1
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "ia",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            },
+            "b": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "ga": 0,
+            "gb": 1
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "gb",
+          "inbound": "ia",
+          "result": "foreign-a",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            },
+            "b": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "ga": 0,
+            "gb": 1
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "stop",
+          "owner": "a",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            },
+            "b": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "ga": 0,
+            "gb": 1
+          }
+        },
+        {
+          "op": "try_request",
+          "generation": "ga",
+          "inbound": "ib",
+          "result": "input-before-stopped",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            },
+            "b": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "ga": 0,
+            "gb": 1
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "ia",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            },
+            "b": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "ga": 0,
+            "gb": 1
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "lb",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            },
+            "b": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "ga": 0,
+            "gb": 0
+          }
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "ib",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            },
+            "b": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "ga": 0,
+            "gb": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "closed-transferred-idempotence-and-retained-token",
+      "owners": [
+        "a"
+      ],
+      "steps": [
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "00000000000000000000000000000000",
+          "result": "g",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "i",
+          "result": "closed",
+          "expect_error": "ErrClosed",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "j",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "j",
+          "result": "l",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "j",
+          "expect_error": "ErrTransferred",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1
+          }
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "j",
+          "result": "transferred",
+          "expect_error": "ErrTransferred",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "lease_generation",
+          "lease": "l",
+          "expect_generation": "00000000000000000000000000000000",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "j",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "j",
+          "result": "closed-before-transferred",
+          "expect_error": "ErrClosed",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "lease_generation",
+          "lease": "l",
+          "expect_generation": "00000000000000000000000000000000",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "state-error-precedence-and-release-after-stop",
+      "owners": [
+        "a"
+      ],
+      "steps": [
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "00000000000000000000000000000000",
+          "result": "g",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "11111111111111111111111111111111",
+          "result": "h",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0,
+            "h": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0,
+            "h": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "i",
+          "result": "l",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "retire",
+          "generation": "h",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          }
+        },
+        {
+          "op": "try_request",
+          "generation": "h",
+          "inbound": "i",
+          "result": "retired-before-transferred",
+          "expect_error": "ErrRetired",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "j",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 3
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "j",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          }
+        },
+        {
+          "op": "try_request",
+          "generation": "h",
+          "inbound": "j",
+          "result": "retired-before-closed",
+          "expect_error": "ErrRetired",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "j",
+          "result": "closed",
+          "expect_error": "ErrClosed",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "stop",
+          "owner": "a",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          }
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "j",
+          "result": "stopped-before-closed",
+          "expect_error": "ErrStopped",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "try_request",
+          "generation": "h",
+          "inbound": "i",
+          "result": "stopped-before-retired",
+          "expect_error": "ErrStopped",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "nil",
+          "result": "input-before-stopped",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "bad",
+          "result": "input-token-before-stopped",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "22222222222222222222222222222222",
+          "result": "stopped",
+          "expect_error": "ErrStopped",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "stopped-in",
+          "expect_error": "ErrStopped",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i",
+          "expect_error": "ErrTransferred",
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          }
+        },
+        {
+          "op": "retire",
+          "generation": "g",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 1,
+            "h": 0
+          }
+        },
+        {
+          "op": "close_lease",
+          "lease": "l",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0,
+            "h": 0
+          }
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0,
+            "h": 0
+          }
+        },
+        {
+          "op": "retire",
+          "generation": "g",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0,
+            "h": 0
+          }
+        },
+        {
+          "op": "stop",
+          "owner": "a",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0,
+            "h": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "exact-generation-grammar-and-no-freshness-inference",
+      "owners": [
+        "a"
+      ],
+      "steps": [
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "00000000000000000000000000000000",
+          "result": "g-zero",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "ffffffffffffffffffffffffffffffff",
+          "result": "g-all-f",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0,
+            "g-all-f": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "00000000000000001111111111111111",
+          "result": "g-mixed",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0,
+            "g-all-f": 0,
+            "g-mixed": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "00000000000000000000000000000000",
+          "result": "g-duplicate",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0,
+            "g-all-f": 0,
+            "g-mixed": 0,
+            "g-duplicate": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "",
+          "result": "invalid-0",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0,
+            "g-all-f": 0,
+            "g-mixed": 0,
+            "g-duplicate": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "result": "invalid-1",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0,
+            "g-all-f": 0,
+            "g-mixed": 0,
+            "g-duplicate": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "result": "invalid-2",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0,
+            "g-all-f": 0,
+            "g-mixed": 0,
+            "g-duplicate": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "result": "invalid-3",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0,
+            "g-all-f": 0,
+            "g-mixed": 0,
+            "g-duplicate": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "gggggggggggggggggggggggggggggggg",
+          "result": "invalid-4",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0,
+            "g-all-f": 0,
+            "g-mixed": 0,
+            "g-duplicate": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": " aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "result": "invalid-5",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0,
+            "g-all-f": 0,
+            "g-mixed": 0,
+            "g-duplicate": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+          "result": "invalid-6",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0,
+            "g-all-f": 0,
+            "g-mixed": 0,
+            "g-duplicate": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\u00e9",
+          "result": "invalid-7",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0,
+            "g-all-f": 0,
+            "g-mixed": 0,
+            "g-duplicate": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\u0000",
+          "result": "invalid-8",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g-zero": 0,
+            "g-all-f": 0,
+            "g-mixed": 0,
+            "g-duplicate": 0
+          },
+          "expect_nil": true
+        }
+      ]
+    },
+    {
+      "id": "nil-zero-unavailable-and-inert-observations",
+      "owners": [
+        "a"
+      ],
+      "steps": [
+        {
+          "op": "new_generation",
+          "owner": "nil",
+          "token": "00000000000000000000000000000000",
+          "result": "invalid-g-nil",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {},
+          "expect_nil": true
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "nil",
+          "result": "invalid-i-nil",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {},
+          "expect_nil": true
+        },
+        {
+          "op": "stop",
+          "owner": "nil",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "usage",
+          "owner": "nil",
+          "expect_value": {
+            "Requests": 0,
+            "Sockets": 0
+          },
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "try_request",
+          "generation": "nil",
+          "inbound": "nil",
+          "result": "invalid-l-nil",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {},
+          "expect_nil": true
+        },
+        {
+          "op": "retire",
+          "generation": "nil",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "pending",
+          "generation": "nil",
+          "expect_value": 0,
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "nil",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "close_lease",
+          "lease": "nil",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "lease_generation",
+          "lease": "nil",
+          "expect_generation": "",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "new_generation",
+          "owner": "zero",
+          "token": "00000000000000000000000000000000",
+          "result": "invalid-g-zero",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {},
+          "expect_nil": true
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "zero",
+          "result": "invalid-i-zero",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {},
+          "expect_nil": true
+        },
+        {
+          "op": "stop",
+          "owner": "zero",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "usage",
+          "owner": "zero",
+          "expect_value": {
+            "Requests": 0,
+            "Sockets": 0
+          },
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "try_request",
+          "generation": "zero",
+          "inbound": "nil",
+          "result": "invalid-l-zero",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {},
+          "expect_nil": true
+        },
+        {
+          "op": "retire",
+          "generation": "zero",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "pending",
+          "generation": "zero",
+          "expect_value": 0,
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "zero",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "close_lease",
+          "lease": "zero",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "lease_generation",
+          "lease": "zero",
+          "expect_generation": "",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {}
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "00000000000000000000000000000000",
+          "result": "g",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "nil",
+          "inbound": "i",
+          "result": "nil-g-valid-i",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "try_request",
+          "generation": "zero",
+          "inbound": "i",
+          "result": "zero-g-valid-i",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "nil",
+          "result": "g-nil-i",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "zero",
+          "result": "g-zero-i",
+          "expect_error": "ErrInput",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "close_inbound",
+          "inbound": "i",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "retired-refusal-preserves-reservation-for-live-generation",
+      "owners": [
+        "a"
+      ],
+      "steps": [
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "00000000000000000000000000000000",
+          "result": "g",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "new_generation",
+          "owner": "a",
+          "token": "11111111111111111111111111111111",
+          "result": "h",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0,
+            "h": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "retire",
+          "generation": "g",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0,
+            "h": 0
+          }
+        },
+        {
+          "op": "reserve_inbound",
+          "owner": "a",
+          "result": "i",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0,
+            "h": 0
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "try_request",
+          "generation": "g",
+          "inbound": "i",
+          "result": "retired",
+          "expect_error": "ErrRetired",
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 1
+            }
+          },
+          "expect_pending": {
+            "g": 0,
+            "h": 0
+          },
+          "expect_nil": true
+        },
+        {
+          "op": "try_request",
+          "generation": "h",
+          "inbound": "i",
+          "result": "l",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 1,
+              "Sockets": 2
+            }
+          },
+          "expect_pending": {
+            "g": 0,
+            "h": 1
+          },
+          "expect_nil": false
+        },
+        {
+          "op": "close_lease",
+          "lease": "l",
+          "expect_error": null,
+          "expect_usage": {
+            "a": {
+              "Requests": 0,
+              "Sockets": 0
+            }
+          },
+          "expect_pending": {
+            "g": 0,
+            "h": 0
+          }
+        }
+      ]
+    }
+  ]
+}

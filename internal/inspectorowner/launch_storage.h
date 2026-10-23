@@ -1,0 +1,28 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
+#ifndef AEG_INSPECTOROWNER_LAUNCH_STORAGE_H
+#define AEG_INSPECTOROWNER_LAUNCH_STORAGE_H
+#include <stdbool.h>
+#include <stddef.h>
+enum aeg_storage_error { AEG_STORAGE_OK = 0, AEG_STORAGE_STATE, AEG_STORAGE_OS, AEG_STORAGE_INPUT, AEG_STORAGE_UNCERTAIN };
+enum aeg_storage_phase { AEG_STORAGE_EMPTY = 0, AEG_STORAGE_FAILED, AEG_STORAGE_LOCAL_PAIR, AEG_STORAGE_UPDATE_GUARD, AEG_STORAGE_CLEAN };
+struct aeg_storage_view {
+    enum aeg_storage_phase phase;
+    bool attempted, uncertain, committed, bootstrap_claimed;
+    bool settlement_attempted, settled;
+    unsigned known_descriptors;
+};
+/* Private, single event-loop/process attempt. No installed caller, initializer,
+ * raw FD/path/profile input, cleanup/reset or positive launch authority. Trusted
+ * C provenance and qualified native construction remain operational gates. */
+int aeg_launch_storage_prepare(void);
+int aeg_update_exclusion_prepare(void);
+/* Private native-emitter coupling: output-only immutable bytes, never caller
+ * input or a qualified launch/channel/receiver capability. One claim after U. */
+const unsigned char *aeg_launch_bootstrap_take(size_t *);
+struct aeg_storage_view aeg_storage_get_view(void);
+#ifdef AEG_INSPECTOR_SOURCE
+/* Private bridge: sole production caller is the actual native terminal owner,
+ * after its one-shot physical-clean guard. Never a public cleanup/reset API. */
+int aeg_launch_storage_clean_source(void);
+#endif
+#endif

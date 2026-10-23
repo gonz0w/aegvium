@@ -1,0 +1,19 @@
+{
+  "schema": "aegvium-controller-preimplementation-freeze-v1",
+  "created_utc": "2026-10-21T11:03:32.864120+00:00",
+  "source_parent": "114ea8312ca2952eb1e66828d699120491c89589",
+  "independent_review": "CLEAR_FOR_FINITE_PURE_CONTROLLER_SOURCE; content-only review by existing admin_access_design_review agent; no independent file/hash/tool verification",
+  "root_verified_product_c_absent": true,
+  "traces": 32,
+  "operations": 289,
+  "max_operations_per_trace": 24,
+  "files": {
+    "docs/milestones/M2/SUPERVISOR-CONTROLLER.md": "79b8aa00862ff3c5e7d6054e83e553ebde810ccc67033efd7d35b703d9b26c6e",
+    "docs/architecture/adr-0011-inspector-owner-containment.md": "e9b4a3b78c4f4fedb0aa3f027875a493b9137ed28a3f15d0077138d83299af7b",
+    "tools/tests/fixtures/inspector-controller-1.json": "07bbcf3763703032560511a809164a527511e3714fdeeed98d1561f4e8e3dcf4",
+    "tools/tests/fixtures/inspector-controller-2.json": "8bec28aa6386a84e46d871f972b49fc698d735d9571ca31f89f9fbc3682abd6d",
+    "tools/tests/fixtures/inspector-controller-3.json": "2182fce35275ddb30e3f6cc07f86722ec524e27aae67de3f7da5b25eba1b936f",
+    "tools/tests/fixtures/inspector-controller-4.json": "17bf4b5222a6be3eebe212752068a8672eeb2079746b8e3c5e2700b30d558e37"
+  },
+  "scope": "Synthetic trusted observations only. No native timing, child ownership, resource reclamation, C02 release or adapter qualification."
+}

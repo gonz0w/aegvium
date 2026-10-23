@@ -54,6 +54,7 @@ type Snapshot struct {
 	mu         sync.Mutex
 	retired    bool
 	generation string
+	profile    string // Immutable local descriptor choice, never selected by input.
 	routes     map[string]route
 	admission  chan struct{}
 }
@@ -76,6 +77,10 @@ type Record struct {
 	Protocol, Method, Authority, Target                        string
 	Fields                                                     []Field
 	Body                                                       []byte
+	// Public frontend observations under H1/3 only; detached data, not proof
+	// of the frontend connection or permission to inspect/forward.
+	Remote, Local netip.AddrPort
+	PublicPort    uint16
 }
 
 // Recorder retains at most four contexts without eviction or a callback. There
@@ -86,10 +91,14 @@ type Recorder struct {
 }
 
 func NewSnapshot(generation string, config []Route) (*Snapshot, error) {
-	if !hex(generation, 32) || len(config) == 0 || len(config) > MaxRoutes {
+	return newSnapshotProfile(generation, config, "M2-H1/1")
+}
+
+func newSnapshotProfile(generation string, config []Route, profile string) (*Snapshot, error) {
+	if !hex(generation, 32) || len(config) == 0 || len(config) > MaxRoutes || (profile != "M2-H1/1" && profile != "M2-H1/3") {
 		return nil, ErrInput
 	}
-	s := &Snapshot{generation: strings.Clone(generation), routes: make(map[string]route), admission: make(chan struct{}, MaxRecords)}
+	s := &Snapshot{generation: strings.Clone(generation), profile: profile, routes: make(map[string]route), admission: make(chan struct{}, MaxRecords)}
 	authorities := map[string]bool{}
 	budget := len(generation)
 	for _, c := range config {
@@ -187,6 +196,12 @@ func (r *Recorder) Records() []Record {
 
 func (s *Snapshot) project(peer Peer, in Request) (Record, error) {
 	var zero Record
+	connectionName := "aegvium-client"
+	if s.profile == "M2-H1/3" {
+		connectionName = "aegvium-connection"
+	} else if s.profile != "M2-H1/1" {
+		return zero, ErrInput
+	}
 	if in.Protocol != "HTTP/1.1" || (in.Method != "GET" && in.Method != "HEAD" && in.Method != "POST") || len(in.Body) > MaxBody || len(in.Fields) > MaxFields || !target(in.Target) {
 		return zero, ErrInput
 	}
@@ -203,7 +218,7 @@ func (s *Snapshot) project(peer Peer, in Request) (Record, error) {
 		n := len(f.Name) + 2 + len(f.Value) + 2
 		if strings.HasPrefix(name, "aegvium-") {
 			switch name {
-			case "aegvium-contract", "aegvium-route", "aegvium-generation", "aegvium-request", "aegvium-sni", "aegvium-client":
+			case "aegvium-contract", "aegvium-route", "aegvium-generation", "aegvium-request", "aegvium-sni", connectionName:
 			default:
 				return zero, ErrInput
 			}
@@ -235,12 +250,24 @@ func (s *Snapshot) project(peer Peer, in Request) (Record, error) {
 			return zero, ErrInput
 		}
 	}
-	if len(meta) != 6 || meta["aegvium-contract"] != "M2-H1/1" || !identifier(meta["aegvium-route"], 32, false) || !identifier(meta["aegvium-request"], 64, true) || !dns(meta["aegvium-sni"]) {
+	if len(meta) != 6 || meta["aegvium-contract"] != s.profile || !identifier(meta["aegvium-route"], 32, false) || !identifier(meta["aegvium-request"], 64, true) || !dns(meta["aegvium-sni"]) {
 		return zero, ErrInput
 	}
-	client, err := netip.ParseAddr(meta["aegvium-client"])
-	if err != nil || !client.Is4() || client.String() != meta["aegvium-client"] {
-		return zero, ErrInput
+	var client netip.Addr
+	var remote, local netip.AddrPort
+	if s.profile == "M2-H1/3" {
+		var ok bool
+		remote, local, ok = parseConnection(meta[connectionName])
+		if !ok {
+			return zero, ErrInput
+		}
+		client = remote.Addr()
+	} else {
+		var err error
+		client, err = netip.ParseAddr(meta[connectionName])
+		if err != nil || !client.Is4() || client.String() != meta[connectionName] {
+			return zero, ErrInput
+		}
 	}
 	if meta["aegvium-generation"] != s.generation {
 		return zero, ErrGeneration
@@ -277,7 +304,7 @@ func (s *Snapshot) project(peer Peer, in Request) (Record, error) {
 			return zero, ErrInput
 		}
 	}
-	return Record{Peer: strings.Clone(peer.identity), Route: strings.Clone(meta["aegvium-route"]), Generation: s.generation, PolicyPin: r.pin, RequestID: strings.Clone(meta["aegvium-request"]), SNI: r.name, Client: client.String(), Protocol: strings.Clone(in.Protocol), Method: strings.Clone(in.Method), Authority: strings.Clone(single["host"]), Target: strings.Clone(in.Target), Fields: public, Body: append([]byte(nil), in.Body...)}, nil
+	return Record{Peer: strings.Clone(peer.identity), Route: strings.Clone(meta["aegvium-route"]), Generation: s.generation, PolicyPin: r.pin, RequestID: strings.Clone(meta["aegvium-request"]), SNI: r.name, Client: client.String(), Remote: remote, Local: local, PublicPort: r.port, Protocol: strings.Clone(in.Protocol), Method: strings.Clone(in.Method), Authority: strings.Clone(single["host"]), Target: strings.Clone(in.Target), Fields: public, Body: append([]byte(nil), in.Body...)}, nil
 }
 
 func hex(s string, n int) bool {

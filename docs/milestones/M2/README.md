@@ -31,6 +31,27 @@ transaction owner. Its first implementation slice is a no-dial receiver and
 coordinator fixture; strict original-wire framing and backend enablement remain
 separate blocking gates. This proposal is not current runtime behavior.
 
+The separate [M2-C02 capacity owner](CAPACITY-OWNER.md) scopes ordinary effect-free
+bookkeeping for A01a's shared request/socket reservations, retirement and explicit
+release. It leaves the real peer, transport, attempt barrier, cancellation,
+transaction and shutdown/join integration unimplemented. It neither adopts the
+paused pair descriptor nor changes M2-H1/1 or the existing validation pause.
+
+The [A01a body owner](BODY-OWNER.md) now binds private C02 reservations to actual
+bounded Read/Close calls and detached memory-only body records. It retains charges
+while either call is unfinished and stops admission on uncertain Close. Original
+deadline/cancellation, retirement and Stop suppress late records. Real engine
+transaction ownership, authenticated same-connection transport/framing and full
+receiver/shutdown qualification remain separate; no application dial is present.
+
+The maintainer selected [exclusive external inspector ownership](../../architecture/adr-0011-inspector-owner-containment.md)
+for scoped source implementation. Its first [private C11 lifecycle controller](../../../internal/inspectorowner/README.md)
+implements the [frozen contract](SUPERVISOR-CONTROLLER.md) with synthetic
+ownership/clock observations and no native launcher, signal,
+wait, credentials or runtime activation. Four-second shutdown remains mandatory
+and unqualified; old reservations cannot be released merely because stop was
+requested. Durable startup history and native containment remain separate gates.
+
 This paper packet uses canonical source
 `c080a869ac60b2844490e16532b5f3687f4e8b7e` and its linked historical receipts.
 It creates no keys, runtime configuration, service, installer or execution packet.

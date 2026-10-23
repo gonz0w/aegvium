@@ -25,6 +25,7 @@ runtime acceptance packet. A skipped/blocked row is not passing.
 | M2-06 | M2-A06 | Generation/ownership unit contracts; later native lifecycle | Prepublication reject preserves old; whole publication/drain/retirement; crash/startup/cleanup faults and known-good restoration | #23, #24 |
 | M2-07 | M2-A07 | Redaction/outcome contract; later candidate receipt review | Client status, effect and completion distinct; fixed bounded errors; log exhaustion policy; no secret/raw-traffic evidence | #23, #24 |
 | M2-08 | M2-A08 | Independent full native acceptance and cleanup readback | Exact complete expected matrix, source/build/runtime/fixture identity, resources, restore and owned absence; no hidden failed/skipped rows | #24, M2 #3 |
+| M2-09 | M2-A09 | Standalone installation with conforming non-suite frontend/perimeter, plus separately enabled optional suite adapter | Core works without other suite products; explicit interface/bounds/roles; unavailable requested security integration refuses without bypass. Pure non-suite role syntax is source coverage only; both real workflows remain unqualified | WAF-09, #24 |
 
 ## Unit, component and independent contract tests
 

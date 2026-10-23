@@ -37,6 +37,17 @@ implementation and its capability gates exist. Do not route around it.
 
 ## Scope and consequences
 
+Maintainer clarification,2026-10-22: Vectivium/EdgeWall identify the selected
+optional suite integration, not mandatory dependencies of Aegvium's core
+function. Any independently configured frontend satisfying the explicit current
+protocol, authentication, provenance, byte fidelity and ownership contract may
+integrate. Keep the isolated OpenBSD inspector behind an operator-controlled
+perimeter. No Vectivium binary, EdgeWall API or suite control plane is required.
+Standalone installation and third-party conformance are required acceptance,
+still undelivered/unqualified. An enabled WAF integration must fail closed;
+"optional" permits deliberate feature selection, never silent bypass on failure.
+Public-key custody and the series inspection boundary remain unchanged.
+
 The first WAF contract is close-only HTTPS HTTP/1.1 with a complete bounded
 fixed-length request. Chunked input, trailers, h2/h3, gRPC, upgrades, CONNECT and
 streaming remain unavailable. This narrows the earlier proposed fixed/chunked
