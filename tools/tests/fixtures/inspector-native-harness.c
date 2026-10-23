@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <sys/un.h>
+#include <errno.h>
 
 static int fail_at, calls, bad, peak, live, next_high = 4;
 static bool owned[64];
@@ -51,6 +53,13 @@ static void unmark(int fd) {
     owned[fd] = false; live--;
 }
 int aeg_test_socketpair(int family, int type, int protocol, int pair[2]) {
+#ifdef AEG_INSPECTOR_SOURCE
+    if(type==(SOCK_DGRAM|SOCK_CLOEXEC|SOCK_NONBLOCK)) {
+        if(family!=AF_UNIX || protocol!=0) bad++;
+        if(note("audit-pair",0,0,0)) return -1;
+        pair[0]=8;pair[1]=9;mark(8);mark(9);return 0;
+    }
+#endif
     if (family != AF_UNIX || type != (SOCK_STREAM|SOCK_CLOEXEC|SOCK_NONBLOCK) || protocol != 0) bad++;
     if (note("pair",0,0,0)) return -1;
     if (strcmp(mode,"pair-negative") == 0) { pair[0]=-1;pair[1]=3;return 0; }
@@ -81,12 +90,20 @@ int aeg_test_fcntl(int fd, int command, ...) {
         result=next_high++;mark(result);return result;
     }
     if (command == F_GETFD) {
-        if (fd != 3) bad++;
+        if (fd != 3
+#ifdef AEG_INSPECTOR_SOURCE
+            && fd != 2
+#endif
+        ) bad++;
         if (note("getfd",fd,0,1)) return -1;
         return strcmp(mode,"cloexec") == 0 ? FD_CLOEXEC : 0;
     }
     if (command == F_GETFL) {
-        if (fd != 3) bad++;
+        if (fd != 3
+#ifdef AEG_INSPECTOR_SOURCE
+            && fd != 2
+#endif
+        ) bad++;
         if (note("getfl",fd,0,1)) return -1;
         return strcmp(mode,"blocking") == 0 ? 0 : O_NONBLOCK;
     }
@@ -100,6 +117,9 @@ int aeg_test_close(int fd) {
 }
 int aeg_test_dup2(int fd, int target) {
     if (fd<0 || fd>=64 || !owned[fd] || target<0 || target>3 || fd<4) bad++;
+#ifdef AEG_INSPECTOR_SOURCE
+    if(target==2 && fd!=9) bad++; /* Independent audit endpoint, never null/control. */
+#endif
     if (note("dup",fd,target,2)) return -1;
     if (strcmp(mode,"dup-target") == 0) return 4;
     if (owned[target]) unmark(target);
@@ -145,6 +165,28 @@ int aeg_test_getresuid(uid_t *r,uid_t *e,uid_t *s) {
     if (strcmp(mode,"uid1") == 0) *e=0;
     if (strcmp(mode,"uid2") == 0) *s=0;
     return 0;
+}
+
+/* The fixed local diagnostics OS edges are also fully intercepted. */
+int aeg_test_socket(int family,int type,int protocol) {
+    if(family!=AF_UNIX || type!=(SOCK_DGRAM|SOCK_CLOEXEC|SOCK_NONBLOCK) || protocol!=0) bad++;
+    if(note("log-socket",0,0,0)) return -1;
+    mark(10);return 10;
+}
+int aeg_test_connect(int fd,const struct sockaddr *address,socklen_t size) {
+    const struct sockaddr_un *un=(const struct sockaddr_un *)address;
+    if(fd!=10 || !owned[fd] || size!=sizeof(*un) || un->sun_family!=AF_UNIX || strcmp(un->sun_path,"/dev/log")!=0) bad++;
+    return note("log-connect",fd,0,1) ? -1 : 0;
+}
+ssize_t aeg_test_recv(int fd,void *p,size_t n,int flags) {
+#ifdef AEG_DIAGNOSTIC_FIXTURE
+    extern ssize_t aeg_diag_test_receive(int,void *,size_t,int);
+    return aeg_diag_test_receive(fd,p,n,flags);
+#else
+    (void)p;
+    if(fd!=8 || !owned[fd] || n!=65 || flags!=MSG_DONTWAIT) bad++;
+    errno=EAGAIN;return -1;
+#endif
 }
 
 int main(int argc,char **argv) {

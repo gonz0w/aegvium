@@ -17,6 +17,7 @@ type InspectorEngineSource struct {
 	generation    *Generation
 	failedData    *requestctx.DataSessionSource
 	failedInbound *Inbound
+	diagnostics   sourceDiagnostics
 }
 
 var inspectorEngineSource struct {

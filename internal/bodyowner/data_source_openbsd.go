@@ -27,6 +27,7 @@ func (s *InspectorEngineSource) ServeDataSource(n *requestctx.SourceListeners) e
 	if s == nil || s.owner == nil || s.generation == nil || n == nil {
 		return ErrInput
 	}
+	s.diagnostics = acquireDiagnosticsSource()
 	for {
 		s.owner.state.mu.Lock()
 		stopped := s.owner.state.stopped
@@ -34,6 +35,7 @@ func (s *InspectorEngineSource) ServeDataSource(n *requestctx.SourceListeners) e
 		if stopped {
 			return nil
 		}
+		s.drainDiagnosticsSource() // Same accept actor, outside locks and jobs.
 		select {
 		case s.owner.state.dataPrefixes <- struct{}{}:
 		default:

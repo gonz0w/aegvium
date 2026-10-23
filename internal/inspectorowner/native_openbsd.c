@@ -7,6 +7,28 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#ifdef AEG_INSPECTOR_SOURCE
+#include <sys/un.h>
+#include <string.h>
+int aeg_os_audit_pair(int fd[2]) {
+    return socketpair(AF_UNIX,SOCK_DGRAM|SOCK_CLOEXEC|SOCK_NONBLOCK,0,fd);
+}
+int aeg_os_log_open(int *fd) {
+    struct sockaddr_un address={0};
+    *fd=socket(AF_UNIX,SOCK_DGRAM|SOCK_CLOEXEC|SOCK_NONBLOCK,0);
+    if(*fd<0) return -1;
+    address.sun_family=AF_UNIX;
+    memcpy(address.sun_path,"/dev/log",9);
+    address.sun_len=sizeof(address);
+    return connect(*fd,(const struct sockaddr *)&address,sizeof(address));
+}
+ssize_t aeg_os_audit_receive(int fd,unsigned char *p,size_t n) {
+    return recv(fd,p,n,MSG_DONTWAIT);
+}
+ssize_t aeg_os_log_send(int fd,const unsigned char *p,size_t n) {
+    return send(fd,p,n,MSG_DONTWAIT|MSG_NOSIGNAL);
+}
+#endif
 
 int aeg_os_pair(int fd[2]) { return socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC | SOCK_NONBLOCK, 0, fd); }
 ssize_t aeg_os_bootstrap_send(int fd, const unsigned char *p, size_t n) { return send(fd,p,n,MSG_NOSIGNAL); }

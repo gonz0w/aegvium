@@ -11,8 +11,10 @@ type auditEvent struct{ result, flags uint8 }
 type auditHistory struct {
 	events             [16]auditEvent
 	total, overwritten uint64
+	lost               uint64
 	next, count        uint8
-	prejob             bool // Sticky actual pre-job transport cleanup uncertainty.
+	prejob             bool   // Sticky actual pre-job transport cleanup uncertainty.
+	pending            uint16 // Slot ownership, independent of saturating totals.
 }
 
 const (
@@ -64,7 +66,11 @@ func (s *ownerState) recordDataOutcome(out Outcome) {
 		}
 	}
 	a := &s.audit
+	if a.pending&(1<<a.next) != 0 {
+		incrementAudit(&a.lost)
+	}
 	a.events[a.next] = event
+	a.pending |= 1 << a.next
 	a.next = (a.next + 1) % uint8(len(a.events))
 	if a.count < uint8(len(a.events)) {
 		a.count++
@@ -192,6 +198,8 @@ func (o *Owner) OperationalReport() string {
 	b.number(v.audit.total)
 	b.text(" overwritten=")
 	b.number(v.audit.overwritten)
+	b.text(" delivery_lost=")
+	b.number(v.audit.lost)
 	b.text("\n")
 	for i := uint8(0); i < v.audit.count; i++ {
 		e := v.audit.events[(v.audit.next+uint8(len(v.audit.events))-v.audit.count+i)%uint8(len(v.audit.events))]

@@ -144,7 +144,7 @@ int aeg_native_close_source(void) {
     int i; bool clean=true;
     if(source_launch.closed) return AEG_NATIVE_STATE;
     if (source_launch.no_child && !construction.view.uncertain) {
-        for (i=0;i<4;i++) if (!close_slot(i)) clean=false;
+        for (i=0;i<NATIVE_SLOTS;i++) if (!close_slot(i)) clean=false;
         if(!clean) return AEG_NATIVE_UNCERTAIN;
         source_launch.closed=true; /* Actual closes, independent of clock. */
         return source_event(AEG_CLOSED);
@@ -152,7 +152,8 @@ int aeg_native_close_source(void) {
     if (!source_launch.terminal || source_launch.lost ||
         construction.view.uncertain || construction.view.phase!=AEG_NATIVE_PARENT)
         return AEG_NATIVE_STATE;
-    if (!close_slot(construction.parent)) return AEG_NATIVE_UNCERTAIN;
+    for(i=0;i<NATIVE_SLOTS;i++) if(!close_slot(i)) clean=false;
+    if(!clean) return AEG_NATIVE_UNCERTAIN;
     source_launch.closed=true;
     return source_event(AEG_CLOSED); /* Actual local close plus retained terminal. */
 }
@@ -172,7 +173,7 @@ int aeg_native_settle_source(void) {
         (source_launch.terminal_kind!=1 && source_launch.terminal_kind!=2)))
         return AEG_NATIVE_STATE;
     if(source_launch.no_child && source_launch.child!=0) return AEG_NATIVE_STATE;
-    for(i=0;i<4;i++) if(construction.fd[i]>=0) return AEG_NATIVE_STATE;
+    for(i=0;i<NATIVE_SLOTS;i++) if(construction.fd[i]>=0) return AEG_NATIVE_STATE;
     owner=aeg_owner_get_view();
     if(owner.phase!=AEG_RECLAIMED || owner.held || owner.known_child ||
         owner.identity_fault || !owner.protocol_closed ||

@@ -19,4 +19,10 @@ int aeg_os_set_uid(uid_t);
 int aeg_os_group_count(void);
 int aeg_os_get_gid(gid_t [3]);
 int aeg_os_get_uid(uid_t [3]);
+#ifdef AEG_INSPECTOR_SOURCE
+int aeg_os_audit_pair(int [2]);
+int aeg_os_log_open(int *);
+ssize_t aeg_os_audit_receive(int, unsigned char *, size_t);
+ssize_t aeg_os_log_send(int, const unsigned char *, size_t);
+#endif
 #endif

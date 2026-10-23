@@ -65,7 +65,7 @@ Each experiment owns and tears down its VM, sockets, daemons and synthetic TLS a
 
 The [Bootweave appliance requirements](docs/milestones/M2/BOOTWEAVE-APPLIANCE-PROFILE.md) target prospective OpenBSD 8.0 installation, minimal setup and required logging/monitoring. Production installer integration is not delivered; the closed 7.9 private builder and historical evidence are retained.
 
-The DATA owner now retains [bounded local outcomes and read-only status](docs/milestones/M2/LOCAL-STATUS.md): sixteen redacted returned-job events plus current charged work, transaction and cleanup state. Reports carry no readiness or forwarding authority. External audit transport, health endpoints and native qualification remain separate work.
+The DATA owner now retains [bounded local outcomes and read-only status](docs/milestones/M2/LOCAL-STATUS.md): sixteen redacted returned-job events plus current charged work, transaction and cleanup state. Reports carry no readiness or forwarding authority. The approved source now connects bounded nonblocking local diagnostics through I fd 2 and the same S, retaining loss and descriptor uncertainty. Required durable security records, health endpoints and native qualification remain separate work; installed/default gates remain closed.
 
 ## Adoption and project structure
 

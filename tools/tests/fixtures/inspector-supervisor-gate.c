@@ -25,6 +25,8 @@ int aeg_native_settle_source(void) {effects++;return AEG_NATIVE_STATE;}
 int aeg_native_prepared_source(void) {effects++;return AEG_NATIVE_STATE;}
 int aeg_native_stop_source(void) {effects++;return AEG_NATIVE_STATE;}
 int aeg_native_tick_source(void) {effects++;return AEG_NATIVE_STATE;}
+void aeg_native_diagnostics_prepare_source(void) {effects++;}
+void aeg_native_diagnostics_source(void) {effects++;}
 int main(void) {
     char *args[]={"synthetic-supervisor",NULL};
     int rc=fixture_supervisor_main(1,args);

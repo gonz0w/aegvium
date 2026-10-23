@@ -5,18 +5,29 @@
 #include "launch_storage.h"
 #include <string.h>
 
+#ifdef AEG_INSPECTOR_SOURCE
+#define NATIVE_SLOTS 6
+#else
+#define NATIVE_SLOTS 4
+#endif
+
 /* Private sources originate only in successful fixed OS acquisition calls.
  * Slots never escape through a view. No reset, raw FD input or positive issuer. */
 static struct {
     struct aeg_native_view view;
-    int fd[4];
-    bool close_tried[4];
+    int fd[NATIVE_SLOTS];
+    bool close_tried[NATIVE_SLOTS];
     int parent, child, nullfd;
     unsigned targets;
 #ifdef AEG_INSPECTOR_SOURCE
+    int audit_parent, audit_child;
     unsigned char expected_start[104];
 #endif
-} construction = { .fd = { -1, -1, -1, -1 } };
+} construction = { .fd = { -1, -1, -1, -1
+#ifdef AEG_INSPECTOR_SOURCE
+    , -1, -1
+#endif
+} };
 _Static_assert(sizeof(construction) <= 256, "construction logical storage");
 
 static int
@@ -24,7 +35,7 @@ adopt(int fd)
 {
     int i, free_slot = -1;
     if (fd < 0) return -1;
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < NATIVE_SLOTS; i++) {
         if (construction.fd[i] == fd) return -1;
         if (construction.fd[i] < 0) free_slot = i;
     }
@@ -54,7 +65,7 @@ fail(int error, bool uncertain, bool cleanup)
     int i;
     construction.view.phase = AEG_NATIVE_FAILED;
     construction.view.uncertain |= uncertain;
-    if (cleanup) for (i = 0; i < 4; i++)
+    if (cleanup) for (i = 0; i < NATIVE_SLOTS; i++)
         if (construction.fd[i] >= 0 && !construction.close_tried[i])
             (void)close_slot(i); /* Only independently owned sources, once. */
     return construction.view.uncertain ? AEG_NATIVE_UNCERTAIN : error;
@@ -93,6 +104,18 @@ aeg_native_pair_prepare(void)
         return fail(AEG_NATIVE_UNCERTAIN, true, false);
     construction.parent = adopt(pair[0]);
     construction.child = adopt(pair[1]);
+#ifdef AEG_INSPECTOR_SOURCE
+    pair[0]=pair[1]=-1;
+    if (aeg_os_audit_pair(pair)!=0)
+        return fail(AEG_NATIVE_OS,pair[0]!=-1 || pair[1]!=-1,
+            pair[0]==-1 && pair[1]==-1);
+    if (pair[0]<0 || pair[1]<0 || pair[0]==pair[1])
+        return fail(AEG_NATIVE_UNCERTAIN,true,false);
+    construction.audit_parent=adopt(pair[0]);
+    construction.audit_child=adopt(pair[1]);
+    if(construction.audit_parent<0 || construction.audit_child<0)
+        return fail(AEG_NATIVE_UNCERTAIN,true,false);
+#endif
     fd = aeg_os_null();
     if (fd < 0) return fail(AEG_NATIVE_OS, false, true);
     construction.nullfd = adopt(fd);
@@ -102,6 +125,10 @@ aeg_native_pair_prepare(void)
         !relocate(&construction.nullfd))
         return fail(AEG_NATIVE_OS, construction.view.uncertain,
             !construction.view.uncertain);
+#ifdef AEG_INSPECTOR_SOURCE
+    if(!relocate(&construction.audit_parent) || !relocate(&construction.audit_child))
+        return fail(AEG_NATIVE_OS,construction.view.uncertain,!construction.view.uncertain);
+#endif
     construction.view.phase = AEG_NATIVE_PAIR;
     return AEG_NATIVE_OK;
 }
@@ -156,6 +183,9 @@ aeg_native_parent_prepare(void)
     if (!claim_branch()) return AEG_NATIVE_STATE;
     child_closed = close_slot(construction.child);
     null_closed = close_slot(construction.nullfd);
+#ifdef AEG_INSPECTOR_SOURCE
+    if(!close_slot(construction.audit_child)) child_closed=false;
+#endif
     if (!child_closed || !null_closed)
         return fail(AEG_NATIVE_OS, true, false);
     construction.view.phase = AEG_NATIVE_PARENT;
@@ -175,16 +205,25 @@ aeg_native_child_prepare(uid_t uid, gid_t gid)
     if (rc != 3) return fail(AEG_NATIVE_OS, rc >= 0, rc < 0);
     construction.targets |= 1U << 3;
     for (i = 0; i < 3; i++) {
+#ifdef AEG_INSPECTOR_SOURCE
+        int from=i==2 ? construction.audit_child : construction.nullfd;
+        rc = aeg_os_dup_target(construction.fd[from], i);
+#else
         rc = aeg_os_dup_target(construction.fd[construction.nullfd], i);
+#endif
         if (rc != i) return fail(AEG_NATIVE_OS, rc >= 0, rc < 0);
         construction.targets |= 1U << i;
     }
     flags = aeg_os_getfd(3);
     if (flags != 0) return fail(AEG_NATIVE_OS, false, true);
     if (aeg_os_nonblock(3) != 1) return fail(AEG_NATIVE_OS, false, true);
+#ifdef AEG_INSPECTOR_SOURCE
+    if(aeg_os_getfd(2)!=0 || aeg_os_nonblock(2)!=1)
+        return fail(AEG_NATIVE_OS,false,true);
+#endif
     if (aeg_os_closefrom4() != 0)
         return fail(AEG_NATIVE_UNCERTAIN, true, false); /* No later OS call. */
-    for (i = 0; i < 4; i++) construction.fd[i] = -1;
+    for (i = 0; i < NATIVE_SLOTS; i++) construction.fd[i] = -1;
     if (aeg_os_clear_groups() != 0 || aeg_os_set_gid(gid) != 0 ||
         aeg_os_set_uid(uid) != 0 || aeg_os_group_count() != 0 ||
         aeg_os_get_gid(g) != 0 || g[0] != gid || g[1] != gid || g[2] != gid ||
@@ -201,7 +240,7 @@ aeg_native_get_view(void)
     struct aeg_native_view view = construction.view;
     int i;
     view.known_owned_descriptors = 0;
-    for (i = 0; i < 4; i++) if (construction.fd[i] >= 0)
+    for (i = 0; i < NATIVE_SLOTS; i++) if (construction.fd[i] >= 0)
         view.known_owned_descriptors++;
     for (i = 0; i < 4; i++) if (construction.targets & (1U << i))
         view.known_owned_descriptors++;
@@ -209,4 +248,5 @@ aeg_native_get_view(void)
 }
 #ifdef AEG_INSPECTOR_SOURCE
 #include "launch_source.inc"
+#include "diagnostics_source.inc"
 #endif

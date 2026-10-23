@@ -23,6 +23,9 @@
 #endif
 ssize_t aeg_test_send(int, const void *, size_t, int);
 int aeg_test_socketpair(int, int, int, int [2]);
+int aeg_test_socket(int,int,int);
+int aeg_test_connect(int,const struct sockaddr *,socklen_t);
+ssize_t aeg_test_recv(int,void *,size_t,int);
 int aeg_test_open(const char *, int, ...);
 int aeg_test_fstat(int, struct stat *);
 int aeg_test_fcntl(int, int, ...);
@@ -37,6 +40,9 @@ int aeg_test_getresgid(gid_t *, gid_t *, gid_t *);
 int aeg_test_getresuid(uid_t *, uid_t *, uid_t *);
 #define send aeg_test_send
 #define socketpair aeg_test_socketpair
+#define socket aeg_test_socket
+#define connect aeg_test_connect
+#define recv aeg_test_recv
 #define open aeg_test_open
 #define fstat aeg_test_fstat
 #define fcntl aeg_test_fcntl

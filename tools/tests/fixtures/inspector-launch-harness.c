@@ -26,6 +26,12 @@ const unsigned char *aeg_launch_bootstrap_take(size_t *n) {
     *n=sizeof(source_packet);return source_packet;
 }
 ssize_t aeg_test_send(int fd,const void *p,size_t n,int flags) {
+#ifdef AEG_DIAGNOSTIC_FIXTURE
+    if(fd==10) {
+        extern ssize_t aeg_diag_test_log(int,const void *,size_t,int);
+        return aeg_diag_test_log(fd,p,n,flags);
+    }
+#endif
     if(n!=64) return aeg_test_bootstrap_send(fd,p,n,flags);
     stop_sends++;
     if(fd!=4 || flags!=MSG_NOSIGNAL || memcmp(p,source_stop,64)!=0) bad++;
@@ -71,7 +77,10 @@ int aeg_start_kill(pid_t pid) {
     return 0;
 }
 
-int main(int argc,char **argv) {
+#ifndef AEG_LAUNCH_FIXTURE_MAIN
+#define AEG_LAUNCH_FIXTURE_MAIN main
+#endif
+int AEG_LAUNCH_FIXTURE_MAIN(int argc,char **argv) {
     int spawned=-1,started=-1,stopped=-1,ticked=-1,waited=-1,closed=-1,again=-1,i,held_after_kill=-1;
     struct aeg_owner_view owner;struct aeg_native_view native;
     if(argc!=2 || strlen(argv[1])>32) return 2;

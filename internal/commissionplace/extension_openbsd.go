@@ -22,6 +22,7 @@ var supervisorInputs = []string{
 	"launch_storage.c", "launch_storage.h", "storage_openbsd.c", "storage_os.h",
 	"native_construction.c", "native_construction.h", "native_openbsd.c", "native_os.h",
 	"launch_source.inc", "launch_source_openbsd.c", "launch_source_os.h",
+	"diagnostics_source.inc",
 }
 
 // Reads owned private media only. No credential is parsed or emitted. Every
@@ -229,7 +230,7 @@ func placeExtension(root *os.Root, dirs map[string]*os.File, descriptor []byte) 
 		}
 	}
 	inputs := make(map[string][32]byte)
-	entries, e = dirs["aegvium.install/supervisor-source"].ReadDir(17)
+	entries, e = dirs["aegvium.install/supervisor-source"].ReadDir(len(supervisorInputs) + 1)
 	if e != nil || len(entries) != len(supervisorInputs) {
 		return zero, errPlacement
 	}

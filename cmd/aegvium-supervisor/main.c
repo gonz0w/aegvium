@@ -27,6 +27,7 @@ int main(int argc,char **argv) {
     if (aeg_launch_storage_prepare()!=AEG_STORAGE_OK) return 1;
     if (stopping) return 1; /* Preserve burned U; never launch after observed stop. */
     if (aeg_native_spawn_source()!=AEG_NATIVE_OK) { stopping=1; failed=true; }
+    if(!stopping) aeg_native_diagnostics_prepare_source();
     for (;;) {
         owner=aeg_owner_get_view();
         if (owner.identity_fault) return 1; /* Cold recovery, never PID adoption. */
@@ -51,6 +52,7 @@ int main(int argc,char **argv) {
             if (aeg_native_stop_source()!=AEG_NATIVE_OK) failed=true;
         }
         if (aeg_native_tick_source()!=AEG_NATIVE_OK) failed=true;
+        if(!stopping) aeg_native_diagnostics_source();
         /* Nonblocking source calls above; no journal I/O on active stop/wait.
          * Actual scheduling/resource/4s behavior remains unqualified. */
         (void)poll(NULL,0,10);

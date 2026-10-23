@@ -49,8 +49,9 @@ class CommissionOwnerTests(unittest.TestCase):
             'launch_storage.c', 'launch_storage.h', 'storage_openbsd.c', 'storage_os.h',
             'native_construction.c', 'native_construction.h', 'native_openbsd.c',
             'native_os.h', 'launch_source.inc', 'launch_source_openbsd.c', 'launch_source_os.h',
+            'diagnostics_source.inc',
         }
-        self.assertEqual(len(OWNER.SUPERVISOR_INPUTS), 16)
+        self.assertEqual(len(OWNER.SUPERVISOR_INPUTS), 17)
         self.assertEqual({Path(p).name for p in OWNER.SUPERVISOR_INPUTS}, expected)
         self.assertEqual(sum(p.endswith('.c') for p in OWNER.SUPERVISOR_INPUTS), 8)
         for name in OWNER.SUPERVISOR_INPUTS:

@@ -31,7 +31,8 @@ SUPERVISOR_INPUTS = (
         'controller.c', 'controller.h', 'control_frame.c', 'control_frame.h',
         'launch_storage.c', 'launch_storage.h', 'storage_openbsd.c', 'storage_os.h',
         'native_construction.c', 'native_construction.h', 'native_openbsd.c',
-        'native_os.h', 'launch_source.inc', 'launch_source_openbsd.c', 'launch_source_os.h')),
+        'native_os.h', 'launch_source.inc', 'launch_source_openbsd.c', 'launch_source_os.h',
+        'diagnostics_source.inc')),
 )
 
 

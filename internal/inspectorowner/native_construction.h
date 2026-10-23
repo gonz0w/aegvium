@@ -31,5 +31,13 @@ int aeg_native_stop_source(void);
 int aeg_native_tick_source(void);
 int aeg_native_close_source(void);
 int aeg_native_settle_source(void);
+/* Diagnostic only: max four message attempts, no control/ready capability. */
+void aeg_native_diagnostics_prepare_source(void);
+void aeg_native_diagnostics_source(void);
+struct aeg_diagnostic_view {
+    unsigned long long sequence, invalid, missing, sink_lost;
+    bool attempted, sink_unavailable;
+};
+struct aeg_diagnostic_view aeg_native_diagnostics_view(void);
 #endif
 #endif
