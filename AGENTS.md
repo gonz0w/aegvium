@@ -4,7 +4,7 @@
 2. OpenBSD is the runtime target. Host checks and cross-builds are tooling evidence only.
 3. Foundation setup is authorized by the 2026-10-11 user request. Architecture is proposed; nontrivial runtime implementation follows scoped reviewed design or explicitly authorized bounded research.
 4. Prefer base tools and Go standard library; new dependencies require license/provenance review and an ADR.
-5. Keep the WAF on a separate VM behind EdgeWall. Never test against live gateway, storage or applications.
+5. Aegvium runs independently; an EdgeWall integration is optional. Use disposable isolated systems for native tests. Never test against live gateway, storage or applications.
 6. Require signed Conventional Commits, author DCO sign-offs and codex/ topic branches. Never disable signing silently. Post-bootstrap changes use PRs; leave them open.
 7. Run make verify locally. GitHub Actions, runners and hosted success publishers are prohibited.
 8. Keep credentials, TLS private keys, production traffic and private inventories out of Git and evidence.
@@ -20,9 +20,11 @@
 
 ## Backlog delivery
 
-Follow the authoritative [central delivery contract](https://github.com/gonz0w/suite-standards/blob/4aeb70ae4d7423c4ae7d52c025f94af4fb53ff22/docs/backlog-delivery.md)
-and [rollout](https://github.com/gonz0w/suite-standards/blob/4aeb70ae4d7423c4ae7d52c025f94af4fb53ff22/docs/backlog-delivery-rollout.md)
-at Suite-Standards `4aeb70ae4d7423c4ae7d52c025f94af4fb53ff22`.
+Follow the authoritative [central delivery contract](https://github.com/gonz0w/suite-standards/blob/5b5a36ea63989357c62eba132bec6f59c9e4f1e3/docs/backlog-delivery.md)
+and [rollout](https://github.com/gonz0w/suite-standards/blob/5b5a36ea63989357c62eba132bec6f59c9e4f1e3/docs/backlog-delivery-rollout.md)
+at Suite-Standards `5b5a36ea63989357c62eba132bec6f59c9e4f1e3`.
+Product independence and installer ownership follow the [central boundary](https://github.com/gonz0w/suite-standards/blob/5b5a36ea63989357c62eba132bec6f59c9e4f1e3/docs/standards.md#product-independence-and-bootweave-boundary). Product profiles, setup/commissioning code and Bootweave usage instructions stay in this repository; Bootweave is an external generic installer with no product dispatch or runtime dependency. Existing execution/authority and qualification holds remain.
+
 Adoption owner: delegated LAB product lane; [issue #128](https://github.com/gonz0w/aegvium/issues/128).
 
 Next outcome/queue: Standalone install/start/inspect/backend/restart: #22/#23/#28/#31; existing Draft126.

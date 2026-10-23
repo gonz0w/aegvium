@@ -8,8 +8,11 @@ amd64 is an initial qualification candidate, not a product-wide architecture lim
 No 8.0 image/source acquisition, build, installation, setting, credential or native
 execution is authorized or qualified by this document. Preserve all 7.9 evidence.
 
-Bootweave owns the production installer and its constrained target-operation
-contract. This document supplies Aegvium's consumer requirements, **not a new
+Bootweave is an external third-party general-purpose installer owning reusable
+configuration schemas and constrained extension/target operations. Aegvium owns
+its profiles, packages, setup/commissioning code, role/path/service mappings and
+instructions for consuming that generic interface. No Aegvium product dispatch
+or account mapping belongs in Bootweave. This document supplies Aegvium's consumer requirements, **not a new
 Bootweave schema or authority issuer**. `tools/commission-owner.py` and the private
 `install.site` remain closed 7.9 experimental source. Their `install79.iso`,
 `site79.tgz`, set paths, answer file and target compiler assumptions must not be
@@ -18,11 +21,8 @@ Bootweave is an installation integration, not an Aegvium runtime dependency.
 
 ## Product and supported-target acceptance
 
-Bootweave's four appliance profiles are **Aegvium, Nomvium, Arxwall and Vectivium**.
-The maintainer also selected a Vectivium appliance on 2026-10-23, using the same
-product code as its independent package/service distribution. Aegvium remains
-optional for Vectivium, and Vectivium remains optional for Aegvium. This does not
-create a required suite runtime dependency. Aegvium's goal is a WAF image
+Aegvium's profile belongs in this repository; no suite runtime dependency is
+required. Optional Vectivium integration remains separate. Aegvium's goal is a WAF image
 for a VM or supported bare metal, not merely an inspector component or research
 bundle. Actual inspection, rejection without bypass, application/backend isolation,
 protected startup/restart, operational logging and honest health must pass for the
@@ -96,9 +96,11 @@ An explicit read-only health interface, complete retention and the installed
 8.0 resource profile remain unqualified; no health/control socket is adopted.
 Do not infer Aegvium control-socket authority from Vectivium's separate decision.
 
-The next integration step is Bootweave's concrete typed placement/account/service/
-logging interface plus a genuine paired-target handoff provider. Then connect
-Aegvium's production profile without a second installer. Initial private inputs,
+The next integration step is mapping Aegvium-owned placement/account/service/
+logging configuration to Bootweave's concrete generic schema when provided,
+with genuine original-target lifetime/handoff. The product-specific mappings
+and setup instructions stay here, without a second installer or Bootweave dispatch.
+Initial private inputs,
 8.0 qualification, resource/four-second proof and standalone installation remain required;
 no image here is presently hardened, ready to run or deployable.
 
@@ -110,5 +112,5 @@ with no arguments, connected to the existing protected per-instance placement.
 Its qualification gate remains false before effects. A bundled standalone profile
 needs ONE actual fresh never-started target containing both separate owners/roles;
 BOTH target lifetime applies only to optional external paired-image integration.
-No package was built, signed, installed or commissioned. Boot-owned actual target
+No package was built, signed, installed or commissioned. The actual installer's target
 lifetime/hand-off and full8.0 package/service/native acceptance remain undelivered.

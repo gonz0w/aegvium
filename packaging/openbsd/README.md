@@ -53,13 +53,13 @@ only. There is no signed/built product tgz or installed allocation evidence yet.
 ## Fixed production commissioning ABI
 
 The product entry is **`/usr/local/libexec/aegvium/commission` with no arguments**,
-invoked inside the offline target by its actual Bootweave owner. No target-root
+invoked inside the offline target by its actual qualified installer owner. No target-root
 selector, imported FD, receipt, callback, shell command or enable flag is accepted.
 `nativeProductionCommissionQualified=false` refuses77 before files, accounts,
 credentials, processes or output. Source builds typecheck the actual connected
 body without enabling it. No environment override changes that gate.
 
-Bootweave must continuously own **one actual fresh, never-started target** for
+The actual installer must continuously own **one fresh, never-started target** for
 the bundled standalone appliance. Frontend and inspector share that image with
 separate placement namespaces/runtime owners/principals. No second Vectivium
 image is required. Both-target ownership/handoff applies only when the optional
@@ -125,7 +125,12 @@ still owns the original commissioning/tool process and exclusive target lifetime
 
 ## Remaining integration and evidence
 
-Bootweave owns its production8.0 target/package/commission composition. The private
+Aegvium owns its production8.0 profile, package/commission composition and setup
+instructions. Bootweave is an external general-purpose installer: only reusable
+schemas/extension mechanisms belong there, never Aegvium-specific dispatch,
+accounts or roles. The actual generic installation job still must supply the
+original target lifetime; a profile cannot issue that authority. No new concrete
+profile syntax is invented before the generic schema is provided. The private
 `tools/commission-owner.py` / `install.site`7.9 workflow remains historical research;
 none of its ISO pins, arbitrary root-hook delivery or execution authority is
 promoted to production by this ABI. No new generic installer schema is defined.
