@@ -23,3 +23,13 @@
 Use the [local task context](docs/engineering/agent-tasks.md) for the compact shared
 packet and repository command/path index. Existing instructions, required reviews
 and source/native execution and acceptance gates remain authoritative.
+
+## Agent Temper routing
+
+Apply the pinned [method](.agent-temper/METHOD.md), the selected
+[Codex profile](.agent-temper/profiles/codex.md) and [project policy](PROJECT.md)
+alongside all existing instructions. Only when delegation is already authorized,
+use the policy's bounded role routing, explicit fallback and default serial limit.
+The lead owns tracker updates and integration and verifies returned evidence;
+final review must be separate from authorship. Routing grants no permissions,
+concurrency or native authority, and source parsing does not prove runtime use.
