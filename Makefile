@@ -17,7 +17,7 @@ verify: check lint test secrets
 
 .PHONY: contract-check contract-race contract-fuzz
 contract-check:
-	@test -z "$$(.tools/go/bin/gofmt -l internal/requestctx)"
+	@test -z "$$(.tools/go/bin/gofmt -l internal/requestctx internal/pairmodel)"
 	sh tools/run-contract-go.sh vet ./...
 	sh tools/run-contract-go.sh test -count=1 -timeout=60s ./...
 contract-race:
@@ -160,3 +160,9 @@ research-native-request-wire:
 .PHONY: research-native-official-lifecycle
 research-native-official-lifecycle:
 	python3 tools/native-engine.py --lifecycle-components --official-baseline
+
+.PHONY: model-race model-fuzz
+model-race:
+	sh tools/run-contract-go.sh test -race -count=1 -timeout=60s ./internal/pairmodel
+model-fuzz:
+	sh tools/run-contract-go.sh test ./internal/pairmodel -run '^$$' -fuzz '^FuzzModel$$' -fuzztime=3s -parallel=1 -timeout=20s

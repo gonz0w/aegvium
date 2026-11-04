@@ -19,6 +19,10 @@ The optional sender-containment experiment uses stock PF to restrict fresh conne
 | Existing connector comparison | [Configured Caddy TLS/server/reverse-proxy](research/native/configured-caddy-observations.json), [API/rule-pool findings](research/connector/README.md), [comparison](docs/research/connector-comparison.md). No complete parity or runtime selection. |
 | Dependencies and advisories | [Review](docs/research/dependency-review.md), [compatible remediation](research/native/dependency-remediation-observations.json). Companion source scans have no findings; Caddy retains CEL package-only and deprecated OpenPGP module-only adoption blockers. |
 
+The scoped [pair descriptor model](docs/milestones/M2/A01a-pair-model.md) adds
+inert AGPAIR1 parsing and exact equality only. Connection authentication and
+readiness remain unavailable; the advisory/security/traffic pause stays in force.
+
 ## Build and verify
 
 The current [ordinary component build and execution](research/native/lab-file-input-observations.json) passes on OpenBSD: eighteen lifecycle parents/twelve subtests plus five owned-file input parents/nineteen subtests. Inputs are checked through the opened descriptor; invalid bounds and read/stat/close failures reject without usable bytes. Both binaries compile and run as UID 32767 with matching output/installed/executed hashes. Earlier [lifecycle build success](research/native/lifecycle-native-build-observations.json), [cross-built execution](research/native/lifecycle-component-observations.json) and [build timeout](research/native/lifecycle-native-build-failure.json) retain their original source and scope. Complete WAF/traffic/profile qualification remains pending for this changed runtime.
