@@ -20,7 +20,8 @@ separate filesystems need separate checks. Account for concurrent peak demand.
 A snapshot reserves no space; recheck before later substantial allocation stages.
 
 The existing build/tool entry points listed by Makefile now call these gates.
-Direct scripts and held native executors are not silently rewritten or activated.
+Direct tool-bootstrap scripts also invoke the gate. Other direct scripts and
+held native executors are not silently rewritten or activated.
 The preflight never deletes old data to make a run fit. Unavailable measurements
 or exceeded limits stop dependent generation. Keep one verified canonical OS
 input per identity and protect all bases referenced by surviving overlays.

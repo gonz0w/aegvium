@@ -51,3 +51,12 @@ class StoragePreflight(unittest.TestCase):
     def test_small_filesystem_reserve_scales(self):
         with tempfile.TemporaryDirectory() as td, patch.object(module._guard, 'allocated_bytes', return_value=0), patch.object(module.shutil, 'disk_usage', return_value=SimpleNamespace(free=6_000_000_000, total=40_000_000_000)):
             module.preflight([Path(td)])
+
+    def test_native_make_entrypoints_are_gated(self):
+        lines = (Path(__file__).resolve().parents[2] / 'Makefile').read_text().splitlines()
+        target = ''
+        for line in lines:
+            if line and not line[0].isspace() and ':' in line:
+                target = line
+            if line.startswith('\t') and any(name in line for name in ('tools/native-engine.py', 'tools/bootstrap-construction-lab.py', 'tools/bootstrap-image-boot-lab.py', 'tools/bootstrap-installed-input-lab.py')):
+                self.assertIn('storage-image-preflight', target)
