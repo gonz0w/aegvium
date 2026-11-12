@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: BSD-3-Clause
 """Checksum-pinned host research toolchain; never installs system software."""
+import sys
 import hashlib
 import io
 import json
@@ -13,6 +14,7 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+subprocess.run([sys.executable, str(ROOT / "tools/storage_preflight.py")], check=True)
 pins = json.loads((ROOT / 'tools/research-pins.json').read_text())
 arch = {'arm64': 'arm64', 'aarch64': 'arm64', 'x86_64': 'amd64'}.get(platform.machine())
 artifact = pins['go']['artifacts'].get(platform.system().lower() + '_' + str(arch))

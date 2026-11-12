@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: BSD-3-Clause
 """Install checksum-pinned development tools inside the ignored .tools directory."""
+import sys
 import hashlib
 import io
 import json
@@ -11,6 +12,7 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+subprocess.run([sys.executable, str(ROOT / "tools/storage_preflight.py")], check=True)
 if platform.python_version() != (ROOT / ".python-version").read_text().strip():
     raise SystemExit("Python does not match .python-version; use the pinned development interpreter")
 pins = json.loads((ROOT / "tools/pins.json").read_text())
