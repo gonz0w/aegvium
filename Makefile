@@ -1,9 +1,9 @@
 .PHONY: tools hooks check lint test secrets verify
-tools:
+tools: storage-preflight
 	python3 tools/bootstrap-tools.py
 hooks:
 	git config core.hooksPath .githooks
-check:
+check: storage-git-check
 	sh tools/check-repo.sh
 lint:
 	.tools/bin/shellcheck tools/run-contract-go.sh tools/native/lifecycle-components.sh tools/native/lifecycle-build.sh
@@ -16,7 +16,7 @@ secrets:
 verify: check lint test secrets
 
 .PHONY: contract-check contract-race contract-fuzz
-contract-check:
+contract-check: storage-preflight
 	@test -z "$$(.tools/go/bin/gofmt -l internal/requestctx)"
 	sh tools/run-contract-go.sh vet ./...
 	sh tools/run-contract-go.sh test -count=1 -timeout=60s ./...
@@ -26,14 +26,14 @@ contract-fuzz:
 	sh tools/run-contract-go.sh test ./internal/requestctx -run '^$$' -fuzz '^FuzzParsedContext$$' -fuzztime=10s -parallel=2 -timeout=30s
 
 .PHONY: research-test research-cross
-research-test:
+research-test: storage-preflight
 	cd research/coraza && ../../tools/run-research-go.sh test -count=1 -v ./...
-research-cross:
+research-cross: storage-preflight
 	mkdir -p .tools/research
 	cd research/coraza && GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 ../../tools/run-research-go.sh test -c -o ../../.tools/research/coraza-openbsd-amd64.test
 
 .PHONY: research-tools research-audit
-research-tools:
+research-tools: storage-preflight
 	python3 tools/bootstrap-research.py
 
 research-audit:
@@ -44,11 +44,11 @@ research-advisories:
 	python3 tools/research-advisories.py
 
 .PHONY: research-native
-research-native:
+research-native: storage-image-preflight
 	python3 tools/native-engine.py
 
 .PHONY: research-lifecycle-cross research-native-lifecycle
-research-lifecycle-cross:
+research-lifecycle-cross: storage-preflight
 	mkdir -p .tools/research
 	cd research/coraza && GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 ../../tools/run-research-go.sh test -c -o ../../.tools/research/labcontrol-openbsd-amd64.test ./cmd/labproxy
 research-native-lifecycle:
@@ -71,12 +71,12 @@ research-relayd-traffic:
 	python3 tools/native-engine.py --relayd-traffic
 
 .PHONY: research-readycheck-cross
-research-readycheck-cross:
+research-readycheck-cross: storage-preflight
 	mkdir -p .tools/research
 	cd research/coraza && GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 ../../tools/run-research-go.sh build -o ../../.tools/research/readycheck-openbsd-amd64 ./cmd/readycheck
 
 .PHONY: research-signalobserve-cross
-research-signalobserve-cross:
+research-signalobserve-cross: storage-preflight
 	mkdir -p .tools/research
 	cd research/coraza && GOOS=openbsd GOARCH=amd64 CGO_ENABLED=0 ../../tools/run-research-go.sh build -o ../../.tools/research/signalobserve-openbsd-amd64 ./cmd/signalobserve
 
@@ -160,3 +160,13 @@ research-native-request-wire:
 .PHONY: research-native-official-lifecycle
 research-native-official-lifecycle:
 	python3 tools/native-engine.py --lifecycle-components --official-baseline
+
+.PHONY: storage-preflight storage-image-preflight storage-git-check
+storage-preflight:
+	python3 tools/storage_preflight.py
+storage-image-preflight:
+	@test -n "$(IMAGE_OUTPUT_BUDGET_BYTES)" -a -n "$(IMAGE_PEAK_BYTES)" || { echo "Reviewed image budget and peak required" >&2; exit 1; }
+	python3 tools/storage_preflight.py --image --image-budget-bytes "$(IMAGE_OUTPUT_BUDGET_BYTES)" --image-peak-bytes "$(IMAGE_PEAK_BYTES)"
+storage-git-check:
+	python3 tools/storage_guard.py staged --repo .
+	python3 tools/storage_guard.py tree --repo .

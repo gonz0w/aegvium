@@ -23,3 +23,9 @@
 Use the [local task context](docs/engineering/agent-tasks.md) for the compact shared
 packet and repository command/path index. Existing instructions, required reviews
 and source/native execution and acceptance gates remain authoritative.
+
+## Storage prevention
+
+Follow [local storage gates and retention](docs/engineering/storage.md) before
+substantial output. Include external run roots and concurrent demand. Preserve
+source, current work, canonical inputs and backing chains; no broad purge.
