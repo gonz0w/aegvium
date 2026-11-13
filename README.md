@@ -1,5 +1,8 @@
 # Aegvium
 
+[Agent Temper project policy and routing](PROJECT.md) index the pinned method
+and existing contribution, verification and authority rules.
+
 Lean, auditable OpenBSD WAF research for a dedicated VM behind EdgeWall. BSD-3-Clause; independent of the OpenBSD project. Private repository: [gonz0w/aegvium](https://github.com/gonz0w/aegvium).
 
 A runnable lab companion now forwards owned HTTP/HTTPS applications through pinned Coraza/OWASP CRS. It supports verified HTTPS backends, strict route allowlists, transactional SIGHUP route replacement and four-request admission. Stock relayd can terminate TLS in the retained control or pass TCP/TLS to the companion, where actual SNI/HTTP authority binding is enforced. The [M2 boundary](docs/architecture/adr-0010-frontend-key-mandatory-inspector.md) is now selected for reviewed source adoption; runtime integration remains unimplemented/unqualified. This is not an installable WAF.
