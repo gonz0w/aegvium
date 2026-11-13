@@ -57,6 +57,87 @@ No profile or extension grants access, merge, release, deployment, or operationa
 authority. A copied check or command is not automatically authorized to run.
 Follow the project's existing authority and verification requirements.
 
+## Organize local policy by responsibility
+
+A project may keep small rules inline or use selected modules: ordinary documents
+that each own one coherent policy. Keep `PROJECT.md` as the entry point to the
+purpose, decision owner, adopted sources, selected modules and local choices.
+Read the selected modules before affected work. A directory of files does not
+select them. Shared technical profiles can come from any suitable retained,
+versioned source; the portable method requires no particular standards provider.
+
+| Home | Owns |
+| --- | --- |
+| Pinned method | Portable engineering requirements and composition rules. |
+| Selected profile or policy module | Rules for a tool, practice, technical boundary or project concern. |
+| Project policy | Explicit selections, local choices and who may change them. |
+| Owning work item | Current scope, evidence, authorized attempts and continuation. |
+
+Give a maintained requirement a stable identifier where cross-references or
+exceptions need one. State whether it is a requirement, default or delegated
+choice. Keep its wording in one home; reference that identity instead of copying
+it into agent instructions, contribution guides and check scripts. A source pin
+belongs in its provenance record; validators should consume the maintained record
+rather than embed another current pin or fixed role count.
+
+Each selected module identifies applicability, canonical path/source identity,
+owner, prerequisites, declared incompatibilities, verification and change authority.
+Local module bytes are bound by the containing consumer revision. Retained external
+modules need the source, hashes and rights described above. Avoid dynamic includes,
+remote imports and elaborate inheritance. A compact selection table is sufficient.
+An optional machine-readable selection record must be explicitly adopted and
+linked; it does not select itself or become another copy of the policy prose.
+
+When replacing a rule, name its identifier/source, replacement, affected scope,
+reason and authorizing decision. A local choice can fill a delegated decision or
+replace a default; relaxing a requirement needs its approved deviation. The newest
+file, most specific path, or apparently strictest rule is not automatic precedence.
+Compatible obligations apply together; an unresolved conflict stops dependent work.
+
+Keep currently active exceptions easy to find. Retain superseded decisions and
+expired exceptions as labeled history or links, without requiring readers to
+interpret them as current permission. An exception's expiry removes its allowance;
+it does not erase the original requirement or renew an attempt. A future date
+alone cannot establish that an event-limited exception is still active.
+
+## Select checks and execution separately
+
+For an actual change, distinguish four decisions:
+
+1. Identify changed contracts and the evidence needed to accept them.
+2. Identify the permitted executor, tools, isolation and resource limits for each check.
+3. Establish availability and authority before execution; resolve a missing required gate.
+4. Integrate or deliver only under the project's separate review and action authority.
+
+Classify semantic effects, not extensions alone. An instruction edit may change
+permissions or required checks; a role file may change available tools. A project
+can define a standing method-maintenance boundary for a known set of passive
+source checks, but its owner must approve the exact allowed actions/executors,
+exclusions and integration gates. Copying a template grants no host permission
+and does not waive an existing BSD, Windows, release or other requirement.
+
+| Change | Questions for the project's check map |
+| --- | --- |
+| Method/provenance maintenance | Which obligations actually change? Are passive inventory, source, license, link and review checks sufficient under approved policy? |
+| Role/configuration change | Does it alter model access, tools, fallback or authority? What configuration and observable client behavior must be checked before relying on it? |
+| Product or data change | Which behavior, compatibility, security, native, recovery or user checks establish the affected outcome? |
+| Policy, checker or delivery change | Who approves the changed contract? Which positive, rejection and failure cases prove its implementation? |
+| Unknown impact | Investigate or select the conservative required checks; do not infer a lighter category. |
+
+The check map records trigger, inputs, working directory/command or manual
+procedure, permitted executor, expected result, evidence, review and stop/recovery
+conditions. Identify local versus hosted checks and integration versus release or
+operation. A structural checker cannot establish policy meaning or actual authority.
+Use the [verification](verification.md) and [workflow](workflow.md) references.
+
+A delivery adapter maps these concepts to the chosen engine, build tools, forge
+and pipeline. Required checks must produce truthful outcomes for the selected
+scope. An unavailable required executor remains a block until resolved through
+the authorized process; a prose decision does not change enforced protections.
+Adopting a policy or copying a pipeline does not qualify it. Exercise positive,
+negative, unavailable and recovery paths before relying on a new check selector
+or delivery implementation. No specific OS, provider, engine or agent is required.
+
 ## Check the combined result
 
 Review the selected rules as one policy. Verify their pinned sources and local

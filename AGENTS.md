@@ -33,3 +33,9 @@ use the policy's bounded role routing, explicit fallback and default serial limi
 The lead owns tracker updates and integration and verifies returned evidence;
 final review must be separate from authorship. Routing grants no permissions,
 concurrency or native authority, and source parsing does not prove runtime use.
+
+## Storage prevention
+
+Follow [local storage gates and retention](docs/engineering/storage.md) before
+substantial output. Include external run roots and concurrent demand. Preserve
+source, current work, canonical inputs and backing chains; no broad purge.

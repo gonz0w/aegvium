@@ -2,14 +2,14 @@
 
 Repository: https://github.com/gonz0w/agent-temper
 
-Reviewed immutable revision: `fcfb819f62d1a1091010db1df8fc5b7560cd1b8a`
+Reviewed immutable revision: `1c9e9fb7e5e1152691dbc669d5f7222a7c0c377d`
 
-Source tree: `859a643400a9d3c8cf559652d56e7639c7c26b87`
+Source tree: `80bff32f08baa772cf9b9b570bf44f057c103bec`
 
-Source: https://github.com/gonz0w/agent-temper/tree/fcfb819f62d1a1091010db1df8fc5b7560cd1b8a
+Source: https://github.com/gonz0w/agent-temper/tree/1c9e9fb7e5e1152691dbc669d5f7222a7c0c377d
 
-The nine upstream files retain their original paths and exact bytes from this
-revision: `LICENSE`, `METHOD.md`, four `docs/reference/` files and three
+The ten upstream files retain their original paths and exact bytes from this
+revision: `LICENSE`, `METHOD.md`, five `docs/reference/` files and three
 `profiles/` files. The upstream license and notices remain in `LICENSE`.
 Only the Codex profile is selected by [project policy](../PROJECT.md); the
 GitHub and strict-test-first profiles are bundled but inactive.

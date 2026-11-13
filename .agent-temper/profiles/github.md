@@ -97,6 +97,14 @@ limits, and next owners; it does not require every discovered defect to be fixed
 
 ## Reviews and completion
 
+Map a delivery batch to one coherent PR. Record the selected issues, outcome,
+exclusions, lead and integration acceptance in its description or a linked owning
+issue before implementation. Keep issue-level acceptance at its canonical home.
+Follow the [batch and discovery rules](../docs/reference/workflow.md#select-ready-work)
+and the project's work-in-progress limit. Do not make a PR for every test or phase,
+or leave a complete PR open while adding optional work. New findings stay in
+backlog until selected by the recorded milestone priority authority.
+
 Open a pull request against the project's recorded integration branch when GitHub
 hosts the source and PRs are the chosen integration mechanism. Give reviewers the
 problem, resulting behavior, acceptance mapping, actual verification, and material

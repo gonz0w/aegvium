@@ -113,12 +113,10 @@ runtime settings. Use client metadata when available; an agent's self-descriptio
 is not proof. If metadata is unavailable, report model selection as unverified.
 Do not mistake a TOML parse or a successful answer for runtime routing verification.
 
-Before claiming savings, compare representative completed work against the
-project's previous approach. Include lead and subagent usage, elapsed time,
-failed attempts, review corrections, and acceptance quality. Mark unavailable
-cost or usage data explicitly. Smaller models and parallel work can reduce some
-costs while extra context, retries, and coordination increase others. Keep the
-lightest arrangement that meets the project's evidence and quality requirements.
+Use the [workflow comparison procedure](../docs/reference/verification.md#compare-agent-workflows)
+before claiming efficiency gains. Compare representative accepted outcomes and
+whole-task resource use while preserving required quality. The lightest arrangement
+that meets those requirements may differ by task and client.
 
 Recheck the selected settings when updating the client, changing models, or
 adopting an upstream revision. Follow the

@@ -9,7 +9,7 @@ conflict with the authorized owner rather than choosing the easier rule.
 
 Adopt the pinned [Agent Temper method](.agent-temper/METHOD.md) and **only** the
 [Codex routing profile](.agent-temper/profiles/codex.md), from reviewed revision
-`fcfb819f62d1a1091010db1df8fc5b7560cd1b8a`; [source and integrity](.agent-temper/SOURCE.md)
+`1c9e9fb7e5e1152691dbc669d5f7222a7c0c377d`; [source and integrity](.agent-temper/SOURCE.md)
 identify the exact bundle. The bundled GitHub and strict-test-first profiles are
 inactive. No external extension is selected; the local choices below belong to
 the consumer revision containing this file.
@@ -108,3 +108,10 @@ Update or remove this selection only through the same authorized review process.
 If adoption proves defective, revert the scoped adoption change through normal
 signed review, preserving unrelated configuration, contracts and historical
 receipts. Keep live failures, blockers and follow-up in the adoption issue.
+
+## Artifact lifecycle
+
+Apply the pinned [artifact lifecycle](.agent-temper/docs/reference/artifact-lifecycle.md)
+and [local storage policy](docs/engineering/storage.md). Check capacity before
+allocation, retain compact evidence, and reconcile owned temporary outputs on
+every exit. Existing holds, cleanup approvals and native gates remain binding.

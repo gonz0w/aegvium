@@ -15,7 +15,8 @@ bundle does not activate itself. Adoption never grants permission to act.
 Platform instructions, access controls, and the owner's actual authority still
 apply. A work item defines a task; it cannot silently override project policy.
 An explicit authorized decision can change policy, but the agent must record the
-change and its effect. If applicable rules conflict, stop dependent work and ask.
+change and its effect. If applicable rules conflict, stop dependent work and ask
+the recorded decision maker. That role may be a person or an authorized agent.
 
 ## The core requirements
 
@@ -25,9 +26,14 @@ change and its effect. If applicable rules conflict, stop dependent work and ask
    be derived from, or link to, the authoritative tracker.
 2. **Make work finite.** Before implementation, identify the outcome, non-goals,
    acceptance, dependencies, verification, and owner. A broad milestone is context;
-   select a bounded deliverable. Do not extend finished acceptance with upgrades.
-3. **Resolve project policy once.** Ask the owner about a missing or conflicting
-   required decision before affected work. Record the answer. Apply it in later
+   select bounded issues and an explicit delivery boundary. Related issues may
+   share one integration; neither an issue nor a delivery grows automatically
+   when an agent discovers more work. Recording a finding does not authorize
+   implementation or reprioritization. Do not extend finished acceptance with upgrades.
+   By default, deliver related ready issues as one coherent batch; an issue, edit
+   or commit is not automatically a test, review or merge boundary.
+3. **Resolve project policy once.** Ask the authorized decision maker about a
+   missing or conflicting required decision before affected work. Record the answer. Apply it in later
    sessions without asking again. Change it only through an explicit authorized
    decision. Delegate routine implementation choices in that same policy.
 4. **Specify observable behavior.** Establish expected results and failure cases
@@ -41,21 +47,30 @@ change and its effect. If applicable rules conflict, stop dependent work and ask
 6. **Verify honestly.** Use meaningful checks of the affected contracts. Keep
    passed, failed, skipped, unavailable, and not-applicable results distinct.
    Never invent execution, weaken an expectation to hide a defect, or describe
-   historical results as fresh tests.
+   historical results as fresh tests. Bound investigations and verification
+   attempts; stop when the required evidence is sufficient or the recorded
+   limit is reached. A limit cannot waive an unmet gate.
+   Use focused development checkpoints and the required gates for the assembled
+   delivery. Refresh evidence when relevant inputs change or project policy
+   requires it; avoid repeating unaffected checks for administrative updates.
 7. **Deliver for people.** Update the affected user instructions, reference, and
    examples with the behavior. Keep changes readable, explain consequential
    choices, and provide setup, recovery, and support limits where relevant.
 8. **Finish and reconcile.** Review the integrated result, satisfy the applicable
-   gates, and update the work record. Integration, release, deployment, and
-   operational acceptance are separate events when the project distinguishes them.
+   gates, and update the work record. Account for generated output under the
+   project's artifact-retention policy; preserve required evidence and recovery
+   assets. Integration, release, deployment, and operational acceptance are separate
+   events when the project distinguishes them.
 
 ## Decide locally
 
 The project must record its purpose and constraints, work authority, technology
 and support scope, verification commands, documentation conventions, and authority
 for review, integration, release, and consequential external actions. Record
-license and dependency policy where material. An explicit "not applicable" needs
-a reason; an empty field is not consent.
+license and dependency policy where material. Before substantial generated output,
+record its locations, storage bounds, retention triggers and cleanup authority
+under the [artifact lifecycle](docs/reference/artifact-lifecycle.md). An explicit
+"not applicable" needs a reason; an empty field is not consent.
 
 Projects may strengthen requirements. A departure from a core requirement must be
 visible as a deviation; do not claim full method conformance for that scope. A
@@ -84,6 +99,7 @@ after checking its users and recovery implications.
 - [Workflow](docs/reference/workflow.md): discovery through maintenance and continuation.
 - [Verification](docs/reference/verification.md): test selection, evidence, and review.
 - [Documentation](docs/reference/documentation.md): structure and clear writing for readers.
+- [Artifact lifecycle](docs/reference/artifact-lifecycle.md): bounded output, retained evidence, and safe cleanup.
 - [Profiles and extensions](docs/reference/extensions.md): compose rules and feed adoption findings back.
 - [GitHub profile](profiles/github.md): the first concrete mapping of portable concepts.
 - [Strict test-first profile](profiles/strict-test-first.md): an optional stronger verification practice.
